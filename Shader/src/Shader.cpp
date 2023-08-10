@@ -183,7 +183,7 @@ namespace OE1Core
 				return;
 			}
 		}
-
+		 
 		_shader_source_dest = ZERO_SHADER;
 	}
 	void Shader::ProcessPackedShaderSource(std::string _source_code)
