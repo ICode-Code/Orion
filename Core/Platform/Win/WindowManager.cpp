@@ -7,14 +7,6 @@ namespace OE1Core
 	WindowManager::WindowManager()
 	{
 		InitGLFW();
-
-		const char* engine_window_name = "Engine";
-		s_Windows.insert(std::make_pair(engine_window_name, new Window(engine_window_name)));
-		s_ActiveWindow = s_Windows[engine_window_name];
-		InitGLEW();
-
-		ShowLog();
-		s_ActiveWindow->ShowWin();
 	}
 
 	WindowManager::~WindowManager()
@@ -23,10 +15,6 @@ namespace OE1Core
 			delete win.second;
 
 		glfwTerminate();
-	}
-	bool WindowManager::IsActiveWindowRunning()
-	{
-		return s_ActiveWindow->GetArg().Running;
 	}
 
 	void WindowManager::InitGLFW()
@@ -74,27 +62,17 @@ namespace OE1Core
 		}
 
 		s_Windows.insert(std::make_pair(_name.c_str(), new Window(_name.c_str(), _width, _height)));
-		return s_Windows[_name.c_str()];
-	}
-	void WindowManager::SetWindowActive(std::string _name)
-	{
-		if (s_Windows.find(_name) == s_Windows.end())
+
+		if (!s_HasValidContext)
 		{
-			LOG_ERROR("Failed to activate window: No Window registed with the name {0}", _name);
-			return;
+			s_HasValidContext = true;
+			InitGLEW();
+			ShowSystemLog();
 		}
 
-		s_ActiveWindow = s_Windows[_name.c_str()];
-		s_ActiveWindow->ShowWin();
-		glfwMakeContextCurrent(s_ActiveWindow->GetWin());
+		return s_Windows[_name.c_str()];
 	}
-	void WindowManager::SetWindowActive(Window* _ptr)
-	{
-		s_ActiveWindow = _ptr;
-		s_ActiveWindow->ShowWin();
-		glfwMakeContextCurrent(s_ActiveWindow->GetWin());
-	}
-	void WindowManager::ShowLog()
+	void WindowManager::ShowSystemLog()
 	{
 		// Info
 		LOG_INFO("Renderer: {0}", std::string((char*)glGetString(GL_RENDERER)));

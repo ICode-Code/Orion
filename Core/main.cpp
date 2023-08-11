@@ -9,7 +9,6 @@ int main(int argc, char** argv)
 {
 	OE1Core::Log::Init();
 	OE1Core::WindowManager window_manager;
-    OE1Core::WindowManager::s_ActiveWindow->HideWin();
 
 	OE1Core::Window* _win1 = OE1Core::WindowManager::RegisterWindow("Window 1", 900, 300);
 	OE1Core::Window* _win2 = OE1Core::WindowManager::RegisterWindow("Window 2");
@@ -24,6 +23,7 @@ int main(int argc, char** argv)
 
         while (_win1->GetArg().Running) {
             _win2->CleanDefaultBuffer();
+
 
             _win2->SwapZDoubleBuffer();
         }
