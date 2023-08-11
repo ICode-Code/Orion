@@ -160,6 +160,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Platform\Win\Window.cpp" />
+    <ClCompile Include="Platform\Win\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Log\Log.vcxproj">
@@ -168,6 +170,11 @@
     <ProjectReference Include="..\Shader\Shader.vcxproj">
       <Project>{ab0fdc2f-ecda-4f29-a226-9267007f6162}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Platform\Win\Window.h" />
+    <ClInclude Include="Platform\Win\WindowData.h" />
+    <ClInclude Include="Platform\Win\WindowManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
