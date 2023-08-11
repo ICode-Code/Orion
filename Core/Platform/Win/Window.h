@@ -21,13 +21,14 @@ namespace OE1Core
 
 		GLFWwindow* GetWin();
 		WindowArg& GetArg();
+		inline operator bool() const { return m_Args.Running; };
 		void SetClearColor(float _color[4] = nullptr);
 		void SetClearColor(std::initializer_list<float> _list);
 		void Update();
 		void CleanDefaultBuffer();
 		void SwapZDoubleBuffer();
-		void ShowWin();
-		void HideWin();
+		void EnableWin();
+		void DisableWin();
 		
 
 

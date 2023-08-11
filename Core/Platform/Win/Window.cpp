@@ -26,13 +26,13 @@ namespace OE1Core
 
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // dont show
 	}
-	void Window::ShowWin()
+	void Window::EnableWin()
 	{
 		glfwMakeContextCurrent(m_Args.Win);
 		glfwShowWindow(m_Args.Win);
 		m_Args.Running = true;
 	}
-	void Window::HideWin()
+	void Window::DisableWin()
 	{
 		glfwHideWindow(m_Args.Win);
 		m_Args.Running = false;

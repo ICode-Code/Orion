@@ -17,11 +17,11 @@ int main(int argc, char** argv)
     
 
     std::thread thread2([&]() {
-        _win2->ShowWin();
+        _win2->EnableWin();
 
         _win2->SetClearColor({0.1f, 0.5f, 0.9f, 1.0f});
 
-        while (_win1->GetArg().Running) {
+        while (_win1) {
             _win2->CleanDefaultBuffer();
 
 
@@ -30,9 +30,9 @@ int main(int argc, char** argv)
         });
 
 
-    _win1->ShowWin();
+    _win1->EnableWin();
 
-    while (_win1->GetArg().Running) {
+    while (_win1) {
         _win1->CleanDefaultBuffer();
 
         _win1->SwapZDoubleBuffer();
