@@ -9,6 +9,8 @@
 #include "Key/KeyPressedEvent.h"
 #include "Key/KeyReleaseEvent.h"
 #include "Key/KeyRepeatEvent.h"
+#include "Window/WindowCloseEvent.h"
+#include "Window/WindowResizeEvent.h"
 #include "Dispatcher.h"
 
 #endif // !OE1_IEVENT_H_

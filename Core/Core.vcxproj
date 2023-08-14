@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Common\CoreEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Platform\Win\Window.cpp" />
     <ClCompile Include="Platform\Win\WindowManager.cpp" />
@@ -172,6 +173,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\CoreEngine.h" />
     <ClInclude Include="Event\Dispatcher.h" />
     <ClInclude Include="Event\Event.h" />
     <ClInclude Include="Event\IEvent.h" />

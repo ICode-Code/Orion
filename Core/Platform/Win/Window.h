@@ -3,12 +3,14 @@
 
 // orion
 #include <Log.h> 
+#include "../../Event/IEvent.h"
 
 
 // gl
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+// must after gl
 #include "WindowData.h"
 
 namespace OE1Core
@@ -21,6 +23,7 @@ namespace OE1Core
 
 		GLFWwindow* GetWin();
 		WindowArg& GetArg();
+		using EVENT_CALLBACK = std::function<void(Event&)>;
 		inline operator bool() const { return m_Args.Running; };
 		void SetClearColor(float _color[4] = nullptr);
 		void SetClearColor(std::initializer_list<float> _list);
@@ -29,15 +32,19 @@ namespace OE1Core
 		void SwapZDoubleBuffer();
 		void EnableWin();
 		void DisableWin();
+		void Close();
+		void SetEventCallback(const EVENT_CALLBACK& _callback);
 		
 
 
 	protected:
 		void InitOpenGLContext();
 		void InitWindow();
+		void RegisterEventCalls();
 
 	protected:
 		WindowArg m_Args;
+		EVENT_CALLBACK m_Callback;
 
 	};
 }

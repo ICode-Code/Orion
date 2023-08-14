@@ -35,7 +35,14 @@ namespace OE1Core
 	void Window::DisableWin()
 	{
 		glfwHideWindow(m_Args.Win);
+	}
+	void Window::Close()
+	{
 		m_Args.Running = false;
+	}
+	void Window::SetEventCallback(const EVENT_CALLBACK& _callback)
+	{
+		m_Callback = _callback;
 	}
 	GLFWwindow* Window::GetWin()
 	{
@@ -56,9 +63,93 @@ namespace OE1Core
 		}
 
 		glfwMakeContextCurrent(m_Args.Win);
+		glfwSetWindowUserPointer(m_Args.Win, &m_Callback);
+		RegisterEventCalls();
 		SetClearColor();
 	}
+	void Window::RegisterEventCalls()
+	{
+		/// Window Resize
 
+		glfwSetWindowSizeCallback(m_Args.Win, [](GLFWwindow* _window, int _width, int _height)
+			{
+				EVENT_CALLBACK& callback = *(EVENT_CALLBACK*)glfwGetWindowUserPointer(_window);
+
+				WindowResizeEvent event(_width, _height);
+				callback(event);
+			});
+
+		/// Window Close
+		glfwSetWindowCloseCallback(m_Args.Win, [](GLFWwindow* _window)
+			{
+				EVENT_CALLBACK& callback = *(EVENT_CALLBACK*)glfwGetWindowUserPointer(_window);
+
+				WindowCloseEvent e;
+				callback(e);
+			});
+
+
+		/// Key Press
+		glfwSetKeyCallback(m_Args.Win, [](GLFWwindow* _window, int _key, int _scan_code, int _action, int _mode)
+			{
+				EVENT_CALLBACK& callback = *(EVENT_CALLBACK*)glfwGetWindowUserPointer(_window);
+
+				if (_action == GLFW_PRESS)
+				{
+					KeyPressedEvent e(_key, 0);
+					callback(e);
+				}
+				else if (_action == GLFW_REPEAT)
+				{
+					KeyRepeatEvent e(_key, 1);
+					callback(e);
+				}
+				else if (_action == GLFW_RELEASE)
+				{
+					KeyReleaseEvent e(_key);
+					callback(e);
+				}
+			});
+
+
+		/// Mouse Motion
+		glfwSetCursorPosCallback(m_Args.Win, [](GLFWwindow* _window, double _xpos, double _ypos)
+			{
+				EVENT_CALLBACK& callback = *(EVENT_CALLBACK*)glfwGetWindowUserPointer(_window);
+
+				MouseMovedEvent e(_xpos, _ypos);
+				callback(e);
+			});
+
+
+		/// Mouse Scroll
+		glfwSetScrollCallback(m_Args.Win, [](GLFWwindow* _window, double _xoffset, double _yoffset)
+			{
+				EVENT_CALLBACK& callback = *(EVENT_CALLBACK*)glfwGetWindowUserPointer(_window);
+
+				MouseScrolledEvent e((float)_xoffset, (float)_yoffset);
+				callback(e);
+			});
+
+
+		/// Mouse Key
+		glfwSetMouseButtonCallback(m_Args.Win, [](GLFWwindow* _window, int _button, int _action, int _mods)
+			{
+				EVENT_CALLBACK& callback = *(EVENT_CALLBACK*)glfwGetWindowUserPointer(_window);
+
+				if (_action == GLFW_PRESS)
+				{
+					MouseButtonPressedEvent e(_button);
+					callback(e);
+				}
+				else if (_action == GLFW_RELEASE)
+				{
+					MouseButtonReleaseEvent e(_button);
+					callback(e);
+				}
+			});
+
+	}
 	void Window::Update()
 	{
 
