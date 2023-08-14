@@ -172,6 +172,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Event\Dispatcher.h" />
+    <ClInclude Include="Event\Event.h" />
+    <ClInclude Include="Event\IEvent.h" />
+    <ClInclude Include="Event\Key\KeyEvent.h" />
+    <ClInclude Include="Event\Key\KeyPressedEvent.h" />
+    <ClInclude Include="Event\Key\KeyReleaseEvent.h" />
+    <ClInclude Include="Event\Key\KeyRepeatEvent.h" />
+    <ClInclude Include="Event\Mouse\MouseButton.h" />
+    <ClInclude Include="Event\Mouse\MouseButtonPressedEvent.h" />
+    <ClInclude Include="Event\Mouse\MouseButtonReleaseEvent.h" />
+    <ClInclude Include="Event\Mouse\MouseMovedEvent.h" />
+    <ClInclude Include="Event\Mouse\MouseScrolledEvent.h" />
+    <ClInclude Include="Event\Window\WindowCloseEvent.h" />
+    <ClInclude Include="Event\Window\WindowResizeEvent.h" />
     <ClInclude Include="Platform\Win\Window.h" />
     <ClInclude Include="Platform\Win\WindowData.h" />
     <ClInclude Include="Platform\Win\WindowManager.h" />

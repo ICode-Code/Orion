@@ -4,6 +4,7 @@
 #include <Log.h>
 
 #include <thread>
+#include "Event/IEvent.h"
 
 int main(int argc, char** argv)
 {
