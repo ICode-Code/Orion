@@ -3,6 +3,7 @@
 
 #include "../Platform/Win/WindowManager.h"
 #include "../Event/IEvent.h"
+#include <Gui.h>
 
 namespace OE1Core
 {
@@ -22,6 +23,7 @@ namespace OE1Core
 
 	protected:
 		inline static OE1Core::Window* s_Window = nullptr;
+		inline static OE1Core::Gui* s_Gui = nullptr;
 	};
 }
 
