@@ -1,0 +1,249 @@
+#include "TopMenuLayer.h"
+
+
+namespace OE1Core
+{
+	TopMenuLayer::TopMenuLayer()
+	{
+
+	}
+	TopMenuLayer::~TopMenuLayer() 
+	{
+
+	}
+
+	void TopMenuLayer::Update()
+	{
+
+	}
+	void TopMenuLayer::Render()
+	{
+		ImGui::BeginMainMenuBar();
+		
+		this->File();
+		this->Edit();
+		this->Tools();
+		this->Debug();
+		this->Window();
+		this->Help();
+
+		ImGui::EndMainMenuBar();
+	}
+
+	void TopMenuLayer::File()
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem(ICON_FA_FILE_MEDICAL"   New"))
+			{
+
+			}
+			if (ImGui::BeginMenu(ICON_FA_MOUNTAIN_SUN"   Scene"))
+			{
+				if (ImGui::MenuItem("New Scene"))
+				{
+
+				}
+				if (ImGui::BeginMenu("Template"))
+				{
+					if (ImGui::MenuItem("PBR Example"))
+					{
+
+					}
+					if (ImGui::MenuItem("FPS Example"))
+					{
+
+					}
+
+					ImGui::EndMenu();
+				}
+
+				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN"   Open..."))
+			{
+
+			}
+			if (ImGui::BeginMenu(ICON_FA_FOLDER_OPEN"   Open Recent"))
+			{
+				ImGui::MenuItem("fish_hat.c");
+				ImGui::MenuItem("fish_hat.inl");
+				ImGui::MenuItem("fish_hat.h");
+
+				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem(ICON_FA_FILE_CIRCLE_PLUS"   Import gltf..."))
+			{
+				/*std::string __path = OE1Core::FileDialog::OE1WindowNativeDialog::LoadFile("*.gltf\0*.gltf");
+				if (!__path.empty())
+				{
+					UI::ImportantWindow::m_BeginDialog = true;
+					UI::ImportantWindow::m_AssetDir = __path;
+				}*/
+			}
+			if (ImGui::MenuItem(ICON_FA_FILE_CIRCLE_PLUS"   Import fbx..."))
+			{
+				/*std::string __path = OE1Core::FileDialog::OE1WindowNativeDialog::LoadFile("*.fbx\0*.fbx");
+				if (!__path.empty())
+				{
+					UI::ImportantWindow::m_BeginDialog = true;
+					UI::ImportantWindow::m_AssetDir = __path;
+				}*/
+			}
+			if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK"   Save", "  Ctr + S"))
+			{
+
+			}
+			if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK"   Save As..", " LShit + S"))
+			{
+
+			}
+			if (ImGui::MenuItem(ICON_FA_ARROW_RIGHT_FROM_BRACKET"   Exit", "  Alt + F4"))
+			{
+
+			}
+
+			ImGui::EndMenu();
+		}
+	}
+	void TopMenuLayer::Edit()
+	{
+		if (ImGui::BeginMenu("Edit"))
+		{
+
+			if (ImGui::MenuItem(ICON_FA_SCISSORS"   Cut"))
+			{
+
+			}
+			if (ImGui::MenuItem(ICON_FA_COPY"   Copy"))
+			{
+
+			}
+			if (ImGui::MenuItem(ICON_FA_PASTE"   Past"))
+			{
+
+			}
+			if (ImGui::MenuItem(ICON_FA_XMARK"   Delete"))
+			{
+
+			}
+
+
+			ImGui::Separator();
+
+			if (ImGui::BeginMenu(ICON_FA_MOUNTAIN_SUN"	World Light (Quick Setting)"))
+			{
+
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu(ICON_FA_MOUNTAIN"	Landscape"))
+			{
+				
+
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::MenuItem(ICON_FA_GEAR"   Preferences"))
+			{
+				//m_MasterSetting = true;
+			}
+
+
+			ImGui::EndMenu();
+		}
+	}
+	void TopMenuLayer::Window()
+	{
+		if (ImGui::BeginMenu("Window"))
+		{
+
+			if (ImGui::MenuItem("    Save Window Layout", "    ", false))
+			{
+
+			}
+			if (ImGui::MenuItem("    Reset Window Layout", "    ", false))
+			{
+
+			}
+
+			ImGui::Separator();
+
+			ImGui::MenuItem(ICON_FA_WINDOW_RESTORE"    Inspector", "    ");
+			ImGui::MenuItem(ICON_FA_WINDOW_RESTORE"    Scene Hierarchy", "    ");
+			ImGui::MenuItem(ICON_FA_WINDOW_RESTORE"    Content Browser", "    ");
+			ImGui::MenuItem(ICON_FA_WINDOW_RESTORE"    Log", "    ");
+			ImGui::MenuItem(ICON_FA_WINDOW_RESTORE"    Renderer Info", "    ");
+			ImGui::MenuItem(ICON_FA_WINDOW_RESTORE"    Tool-Bar", "    ", true);
+			ImGui::MenuItem(ICON_FA_WINDOW_RESTORE"    ImGUi Demo", "    ");
+
+
+
+			ImGui::EndMenu();
+		}
+	}
+	void TopMenuLayer::Tools()
+	{
+		if (ImGui::BeginMenu("Tools"))
+		{
+			//ImGui::BeginDisabled(mRenderLayer->m_ActiveScene->GetSceneState() == LandscapeTopologyEdit || mRenderLayer->m_ActiveScene->GetSceneState() == LandscapeMaterialEdit);
+			if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Point Light", "        GameObject        "))
+			{
+
+			}
+			if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Directional Light", "        GameObject        "))
+			{
+
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem(ICON_FA_CUBE"   Empty", "        GameObject        "))
+			{
+
+			}
+			if (ImGui::MenuItem(ICON_FA_CUBE"   Cube", "        GameObject        "))
+			{
+
+			}
+			if (ImGui::MenuItem(ICON_FA_CUBE"   Plane", "        GameObject        "))
+			{
+
+			}
+			if (ImGui::MenuItem(ICON_FA_CUBE"   Sphere", "        GameObject        "))
+			{
+
+			}
+			if (ImGui::MenuItem(ICON_FA_CUBE"   Cylinder", "        GameObject        "))
+			{
+
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem(ICON_FA_VIDEO"   Camera", "        GameObject        "))
+			{
+
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem(ICON_FA_MOUNTAIN"   Landscape Tool", "        GameObject        "))
+			{
+
+			}
+
+			ImGui::EndMenu();
+		}
+	}
+	void TopMenuLayer::Debug()
+	{
+		if (ImGui::BeginMenu("Debug"))
+		{
+
+			ImGui::EndMenu();
+		}
+	}
+	void TopMenuLayer::Help()
+	{
+		if (ImGui::BeginMenu("Help"))
+		{
+
+			ImGui::EndMenu();
+		}
+	}
+}

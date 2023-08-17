@@ -30,7 +30,7 @@ namespace OE1Core
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-		io.Fonts->AddFontFromFileTTF("../StaticAsset/fonts/Rajdhani/Rajdhani-Regular.ttf", 13.0f);
+		io.Fonts->AddFontFromFileTTF("../StaticAsset/fonts/Rajdhani/Rajdhani-Bold.ttf", 13.0f);
 		io.DisplaySize = ImVec2(1366.0f, 768.0f);
 
 		ImGui_ImplGlfw_InitForOpenGL(_window, true);
@@ -46,20 +46,20 @@ namespace OE1Core
 		ImVec4* colors = ImGui::GetStyle().Colors;
 		colors[ImGuiCol_Text]						= ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 		colors[ImGuiCol_TextDisabled]				= ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-		colors[ImGuiCol_WindowBg]					= ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
-		colors[ImGuiCol_ChildBg]					= ImVec4(0.063f, 0.063f, 0.063f, 1.0f);
+		colors[ImGuiCol_WindowBg]					= ImVec4(0.051f, 0.051f, 0.051f, 1.000f);
+		colors[ImGuiCol_ChildBg]					= ImVec4(0.101f, 0.101f, 0.101f, 1.000f);
 		colors[ImGuiCol_PopupBg]					= ImVec4(0.19f, 0.19f, 0.19f, 1.0f);
 
-		colors[ImGuiCol_Border]						= ImVec4(0.304f, 0.304f, 0.304f, 1.0f);
+		colors[ImGuiCol_Border]						= ImVec4(0.235f, 0.235f, 0.235f, 0.110f);
 		colors[ImGuiCol_BorderShadow]				= ImVec4(0.304f, 0.304f, 0.304f, 1.0f);
 		//0.141
 		colors[ImGuiCol_FrameBg]					= ImVec4(0.141f, 0.141f, 0.141f, 0.54f);
 		colors[ImGuiCol_FrameBgHovered]				= ImVec4(0.19f, 0.19f, 0.19f, 1.0f);
 		colors[ImGuiCol_FrameBgActive]				= ImVec4(0.20f, 0.22f, 0.23f, 1.00f);
-		colors[ImGuiCol_TitleBg]					= ImVec4(0.0823f, 0.0823f, 0.0823f, 1.00f);
+		colors[ImGuiCol_TitleBg]					= ImVec4(0.235f, 0.235f, 0.235f, 1.000f);
 		colors[ImGuiCol_TitleBgActive]				= ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
 		colors[ImGuiCol_TitleBgCollapsed]			= ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_MenuBarBg]					= ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+		colors[ImGuiCol_MenuBarBg]					= ImVec4(0.235f, 0.235f, 0.235f, 1.000f);
 		colors[ImGuiCol_ScrollbarBg]				= ImVec4(0.05f, 0.05f, 0.05f, 0.54f);
 		colors[ImGuiCol_ScrollbarGrab]				= ImVec4(0.34f, 0.34f, 0.34f, 0.54f);
 		colors[ImGuiCol_ScrollbarGrabHovered]		= ImVec4(0.40f, 0.40f, 0.40f, 0.54f);
@@ -73,7 +73,7 @@ namespace OE1Core
 		colors[ImGuiCol_Header]						= ImVec4(0.00f, 0.00f, 0.00f, 0.52f);
 		colors[ImGuiCol_HeaderHovered]				= ImVec4(0.00f, 0.00f, 0.00f, 0.36f);
 		colors[ImGuiCol_HeaderActive]				= ImVec4(0.20f, 0.22f, 0.23f, 0.33f);
-		colors[ImGuiCol_Separator]					= ImVec4(0.28f, 0.28f, 0.28f, 0.29f);
+		colors[ImGuiCol_Separator]					= ImVec4(0.493f, 0.493f, 0.493f, 0.290f);
 		colors[ImGuiCol_SeparatorHovered]			= ImVec4(0.44f, 0.44f, 0.44f, 0.29f);
 		colors[ImGuiCol_SeparatorActive]			= ImVec4(0.40f, 0.44f, 0.47f, 1.00f);
 		colors[ImGuiCol_ResizeGrip]					= ImVec4(0.28f, 0.28f, 0.28f, 0.29f);
@@ -83,7 +83,7 @@ namespace OE1Core
 		colors[ImGuiCol_TabHovered]					= ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
 		colors[ImGuiCol_TabActive]					= ImVec4(0.20f, 0.20f, 0.20f, 0.36f);
 		colors[ImGuiCol_TabUnfocused]				= ImVec4(0.00f, 0.00f, 0.00f, 0.52f);
-		colors[ImGuiCol_TabUnfocusedActive]			= ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+		colors[ImGuiCol_TabUnfocusedActive]			= ImVec4(0.249f, 0.235f, 0.235f, 1.000f);
 		colors[ImGuiCol_DockingPreview]				= ImVec4(0.33f, 0.67f, 0.86f, 1.00f);
 		colors[ImGuiCol_DockingEmptyBg]				= ImVec4(0.00f, 0.00f, 0.00f, 0.1f); // back
 		colors[ImGuiCol_PlotLines]					= ImVec4(0.015f, 0.806f, 0.620f, 1.000f); // The Green One

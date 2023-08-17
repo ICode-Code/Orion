@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2fd9ec27-7aba-4f36-a79f-e40397aa3099}</ProjectGuid>
-    <RootNamespace>Core</RootNamespace>
+    <ProjectGuid>{693d420b-c9a6-4fb9-b5b6-0519587ef8ec}</ProjectGuid>
+    <RootNamespace>AssetLoader</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -72,22 +72,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)Build\Bin\</OutDir>
-    <LibraryPath>$(SolutionDir)Build;$(SolutionDir)3rdParty\StaticLib\GL;$(SolutionDir)3rdParty\StaticLib\Assimp_D;$(SolutionDir)3rdParty\StaticLib\Assimp_R;$(SolutionDir)3rdParty\StaticLib\Bullet;$(SolutionDir)3rdParty\StaticLib\BulletD;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)Build\Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)Build\Bin\</OutDir>
-    <LibraryPath>$(SolutionDir)Build;$(SolutionDir)3rdParty\StaticLib\GL;$(SolutionDir)3rdParty\StaticLib\Assimp_D;$(SolutionDir)3rdParty\StaticLib\Assimp_R;$(SolutionDir)3rdParty\StaticLib\Bullet;$(SolutionDir)3rdParty\StaticLib\BulletD;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)Build\Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Build\Bin\</OutDir>
-    <LibraryPath>$(SolutionDir)Build;$(SolutionDir)3rdParty\StaticLib\GL;$(SolutionDir)3rdParty\StaticLib\Assimp_D;$(SolutionDir)3rdParty\StaticLib\Assimp_R;$(SolutionDir)3rdParty\StaticLib\Bullet;$(SolutionDir)3rdParty\StaticLib\BulletD;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)Build\Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Build\Bin\</OutDir>
-    <LibraryPath>$(SolutionDir)Build;$(SolutionDir)3rdParty\StaticLib\GL;$(SolutionDir)3rdParty\StaticLib\Assimp_D;$(SolutionDir)3rdParty\StaticLib\Assimp_R;$(SolutionDir)3rdParty\StaticLib\Bullet;$(SolutionDir)3rdParty\StaticLib\BulletD;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)Build\Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -97,12 +93,11 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Shader\src;$(SolutionDir)Log\src;$(SolutionDir)DrearImGui\src;$(SolutionDir)DrearImGui\Include;$(SolutionDir)AssetLoader\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include;$(SolutionDir)3rdParty\Include;$(SolutionDir)Log\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3_mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -114,14 +109,13 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Shader\src;$(SolutionDir)Log\src;$(SolutionDir)DrearImGui\src;$(SolutionDir)DrearImGui\Include;$(SolutionDir)AssetLoader\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include;$(SolutionDir)3rdParty\Include;$(SolutionDir)Log\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3_mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -131,12 +125,11 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Shader\src;$(SolutionDir)Log\src;$(SolutionDir)DrearImGui\src;$(SolutionDir)DrearImGui\Include;$(SolutionDir)AssetLoader\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include;$(SolutionDir)3rdParty\Include;$(SolutionDir)Log\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3_mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,73 +141,34 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Shader\src;$(SolutionDir)Log\src;$(SolutionDir)DrearImGui\src;$(SolutionDir)DrearImGui\Include;$(SolutionDir)AssetLoader\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Include;$(SolutionDir)3rdParty\Include;$(SolutionDir)Log\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3_mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Common\CoreEngine.cpp" />
-    <ClCompile Include="GUI\GUIBase.cpp" />
-    <ClCompile Include="GUI\Layer\ContentBrowserLayer.cpp" />
-    <ClCompile Include="GUI\Layer\InspectorLayer.cpp" />
-    <ClCompile Include="GUI\Layer\LogLayer.cpp" />
-    <ClCompile Include="GUI\Layer\ProjectDirLayer.cpp" />
-    <ClCompile Include="GUI\Layer\SceneHierarchyLayer.cpp" />
-    <ClCompile Include="GUI\Layer\ToolBarLayer.cpp" />
-    <ClCompile Include="GUI\Layer\TopMenuLayer.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Platform\Win\Window.cpp" />
-    <ClCompile Include="Platform\Win\WindowManager.cpp" />
+    <ClCompile Include="src\Geometry\DynamicGeometryLoader.cpp" />
+    <ClCompile Include="src\Geometry\StaticGeometryLoader.cpp" />
+    <ClCompile Include="src\Texture\TextureLoader.cpp" />
+    <ClCompile Include="src\Util\LoaderUtil.cpp" />
+    <ClCompile Include="src\Util\NameHandle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AssetLoader\AssetLoader.vcxproj">
-      <Project>{693d420b-c9a6-4fb9-b5b6-0519587ef8ec}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\DrearImGui\DrearImGui.vcxproj">
-      <Project>{1bce4ebf-b385-4be9-becc-41599d6e4821}</Project>
-    </ProjectReference>
+    <ClInclude Include="src\Geometry\DynamicGeometryLoader.h" />
+    <ClInclude Include="src\Geometry\StaticGeometryLoader.h" />
+    <ClInclude Include="src\Texture\TextureLoader.h" />
+    <ClInclude Include="src\Util\DataBlock.h" />
+    <ClInclude Include="src\Util\LoaderUtil.h" />
+    <ClInclude Include="src\Util\NameHandle.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Log\Log.vcxproj">
       <Project>{c0ca4f68-5b99-43a3-b661-4b5f5e880df8}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Shader\Shader.vcxproj">
-      <Project>{ab0fdc2f-ecda-4f29-a226-9267007f6162}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Common\CoreEngine.h" />
-    <ClInclude Include="Event\Dispatcher.h" />
-    <ClInclude Include="Event\Event.h" />
-    <ClInclude Include="Event\IEvent.h" />
-    <ClInclude Include="Event\Key\KeyEvent.h" />
-    <ClInclude Include="Event\Key\KeyPressedEvent.h" />
-    <ClInclude Include="Event\Key\KeyReleaseEvent.h" />
-    <ClInclude Include="Event\Key\KeyRepeatEvent.h" />
-    <ClInclude Include="Event\Mouse\MouseButton.h" />
-    <ClInclude Include="Event\Mouse\MouseButtonPressedEvent.h" />
-    <ClInclude Include="Event\Mouse\MouseButtonReleaseEvent.h" />
-    <ClInclude Include="Event\Mouse\MouseMovedEvent.h" />
-    <ClInclude Include="Event\Mouse\MouseScrolledEvent.h" />
-    <ClInclude Include="Event\Window\WindowCloseEvent.h" />
-    <ClInclude Include="Event\Window\WindowResizeEvent.h" />
-    <ClInclude Include="GUI\GUIBase.h" />
-    <ClInclude Include="GUI\Layer\ContentBrowserLayer.h" />
-    <ClInclude Include="GUI\Layer\ILayer.h" />
-    <ClInclude Include="GUI\Layer\InspectorLayer.h" />
-    <ClInclude Include="GUI\Layer\LayerBase.h" />
-    <ClInclude Include="GUI\Layer\LogLayer.h" />
-    <ClInclude Include="GUI\Layer\ProjectDirLayer.h" />
-    <ClInclude Include="GUI\Layer\SceneHierarchyLayer.h" />
-    <ClInclude Include="GUI\Layer\ToolBarLayer.h" />
-    <ClInclude Include="GUI\Layer\TopMenuLayer.h" />
-    <ClInclude Include="Platform\Win\Window.h" />
-    <ClInclude Include="Platform\Win\WindowData.h" />
-    <ClInclude Include="Platform\Win\WindowManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

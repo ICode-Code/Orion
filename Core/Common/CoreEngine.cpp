@@ -8,13 +8,13 @@ namespace OE1Core
 		s_Window = OE1Core::WindowManager::RegisterWindow("Orion", 1366, 768);
 		s_Window->EnableWin();
 		s_Window->SetEventCallback(std::bind(&CoreEngine::OnEvent, this, std::placeholders::_1));
-
-		s_Gui = new OE1Core::Gui(s_Window->GetWin());
+		s_GuiBase = new OE1Core::GUIBase(s_Window->GetWin());
+		
 	}
 
 	CoreEngine::~CoreEngine()
 	{
-		delete s_Gui;
+		delete s_GuiBase;
 	}
 	void CoreEngine::Run()
 	{
@@ -24,6 +24,9 @@ namespace OE1Core
 
 			s_Window->CleanDefaultBuffer();
 
+			s_GuiBase->Attach();
+			s_GuiBase->Update();
+			s_GuiBase->Render();
 
 			s_Window->SwapZDoubleBuffer();
 		}
