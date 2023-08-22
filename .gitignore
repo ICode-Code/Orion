@@ -367,3 +367,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/ExternalAsset
+/Core/Core.vcxproj.filters
+/Core/imgui.ini
+/Core/Core.vcxproj
