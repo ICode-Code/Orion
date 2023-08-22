@@ -5,7 +5,7 @@ namespace OE1Core
 {
 	Framebuffer::Framebuffer(int _width, int _height)
 	{
-		if (_width < 1 || _height < 1)
+		if ((_width < 1 || _height < 1) || (_width > 4096 || _height > 4096))
 		{
 			LOG_ERROR("Framebuffer Initialization Error: The provided framebuffer size is invalid.");
 		}
@@ -18,7 +18,7 @@ namespace OE1Core
 	}
 	Framebuffer::Framebuffer(glm::ivec2 _res)
 	{
-		if (_res.x < 1 || _res.y < 1)
+		if ((_res.x < 1 || _res.y < 1) || (_res.x > 4096 || _res.y > 4096))
 		{
 			LOG_ERROR("Framebuffer Initialization Error: The provided framebuffer size is invalid.");
 		}

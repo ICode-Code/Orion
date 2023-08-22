@@ -60,6 +60,12 @@
     <ClCompile Include="Core\SFQuad\SFQuad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\DisplayCanvas\Forward\MainFDC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Renderer\SceneRenderer\SceneRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Platform\Win\Window.h">
@@ -156,6 +162,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\SFQuad\SFQuad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DisplayCanvas\Forward\MainFDC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Renderer\SceneRenderer\SceneRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

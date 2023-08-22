@@ -160,7 +160,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Common\CoreEngine.cpp" />
+    <ClCompile Include="Core\DisplayCanvas\Forward\MainFDC.cpp" />
     <ClCompile Include="Core\Framebuffer\Framebuffer.cpp" />
+    <ClCompile Include="Core\Renderer\SceneRenderer\SceneRenderer.cpp" />
     <ClCompile Include="Core\SFQuad\SFQuad.cpp" />
     <ClCompile Include="Core\UUID\UUID.cpp" />
     <ClCompile Include="GUI\GUIBase.cpp" />
@@ -191,8 +193,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\CoreEngine.h" />
+    <ClInclude Include="Core\DisplayCanvas\Forward\MainFDC.h" />
     <ClInclude Include="Core\Framebuffer\DefaultFramebufferValue.h" />
     <ClInclude Include="Core\Framebuffer\Framebuffer.h" />
+    <ClInclude Include="Core\Renderer\SceneRenderer\SceneRenderer.h" />
     <ClInclude Include="Core\SFQuad\SFQuad.h" />
     <ClInclude Include="Core\UUID\UUID.h" />
     <ClInclude Include="Event\Dispatcher.h" />
