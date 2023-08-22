@@ -162,6 +162,8 @@
     <ClCompile Include="Common\CoreEngine.cpp" />
     <ClCompile Include="Core\DisplayCanvas\Forward\MainFDC.cpp" />
     <ClCompile Include="Core\Framebuffer\Framebuffer.cpp" />
+    <ClCompile Include="Core\MeshCluster\CoreStaticMeshPkg.h" />
+    <ClCompile Include="Core\Mesh\StaticMesh\StaticMesh.cpp" />
     <ClCompile Include="Core\Renderer\SceneRenderer\SceneRenderer.cpp" />
     <ClCompile Include="Core\Scene\Entity.cpp" />
     <ClCompile Include="Core\Scene\Scene.cpp" />
@@ -198,6 +200,8 @@
     <ClInclude Include="Core\DisplayCanvas\Forward\MainFDC.h" />
     <ClInclude Include="Core\Framebuffer\DefaultFramebufferValue.h" />
     <ClInclude Include="Core\Framebuffer\Framebuffer.h" />
+    <ClInclude Include="Core\MeshCluster\lwStaticMeshPkg.h" />
+    <ClInclude Include="Core\Mesh\StaticMesh\StaticMesh.h" />
     <ClInclude Include="Core\Renderer\SceneRenderer\SceneRenderer.h" />
     <ClInclude Include="Core\Scene\Entity.h" />
     <ClInclude Include="Core\Scene\Scene.h" />
