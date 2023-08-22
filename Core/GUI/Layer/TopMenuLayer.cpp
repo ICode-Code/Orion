@@ -80,6 +80,9 @@ namespace OE1Core
 					UI::ImportantWindow::m_BeginDialog = true;
 					UI::ImportantWindow::m_AssetDir = __path;
 				}*/
+				std::string loaded_file = WindowFileDialog::LoadFile("*.gltf\0*.gltf", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin());
+				if (!loaded_file.empty())
+					LOG_INFO(loaded_file.c_str());
 			}
 			if (ImGui::MenuItem(ICON_FA_FILE_CIRCLE_PLUS"   Import fbx..."))
 			{

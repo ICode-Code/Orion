@@ -6,6 +6,7 @@
 
 namespace OE1Core
 {
+#define ENGINE_MAIN_WINDOW "Orion64x"
 	class WindowManager
 	{
 	public:

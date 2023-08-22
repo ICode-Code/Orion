@@ -5,7 +5,7 @@ namespace OE1Core
 {
 	CoreEngine::CoreEngine(int argc, char** argv)
 	{
-		s_Window = OE1Core::WindowManager::RegisterWindow("Orion", 1366, 768);
+		s_Window = OE1Core::WindowManager::RegisterWindow(ENGINE_MAIN_WINDOW, 1366, 768);
 		s_Window->EnableWin();
 		s_Window->SetEventCallback(std::bind(&CoreEngine::OnEvent, this, std::placeholders::_1));
 		s_GuiBase = new OE1Core::GUIBase(s_Window->GetWin());

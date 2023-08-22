@@ -17,6 +17,7 @@ namespace OE1Core
 		s_Layers.push_back(new TopMenuLayer());
 		s_Layers.push_back(new ProjectDirLayer());
 		s_Layers.push_back(new ToolBarLayer());
+		s_Layers.push_back(new ThreadInfoLayer());
 	}
 	GUIBase::~GUIBase()
 	{

@@ -1,6 +1,9 @@
 #ifndef OE_LAYER_BASE_H_
 #define OE_LAYER_BASE_H_
 
+
+#include "../../Platform/Win/WindowManager.h"
+#include "../Native/WindowFileDialog.h"
 #include <Gui.h>
 
 namespace OE1Core

@@ -19,7 +19,7 @@ namespace OE1Core
 
 	void ToolBarLayer::Render()
 	{
-		ImGui::Begin("##toobar");
+		ImGui::Begin("#tool_bar");
 
 
 		ImGui::End();

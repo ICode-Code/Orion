@@ -8,5 +8,6 @@
 #include "LogLayer.h"
 #include "ProjectDirLayer.h"
 #include "ToolBarLayer.h"
+#include "ThreadInfoLayer.h"
 
 #endif // !OE1_ILAYER_H_
