@@ -18,7 +18,7 @@ namespace OE1Core
 	class WindowFileDialog
 	{
 	public:
-		static std::string LoadFile(const char* _filter, GLFWwindow* _window);
+		static std::string LoadFile(const char* _filter, GLFWwindow* _window, const char* _title = "Load Asset");
 	};
 }
 

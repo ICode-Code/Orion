@@ -4,6 +4,8 @@
 
 #include "../../Platform/Win/WindowManager.h"
 #include "../Native/WindowFileDialog.h"
+#include "../../Core/Command/Commnad.h"
+#include "../MiniWindow/IMiniWin.h"
 #include <Gui.h>
 
 namespace OE1Core

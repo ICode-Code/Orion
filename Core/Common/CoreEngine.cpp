@@ -20,6 +20,9 @@ namespace OE1Core
 	{
 		while (*s_Window)
 		{
+			ExecutionHandler::__exe();
+
+
 
 
 			s_Window->CleanDefaultBuffer();
@@ -45,7 +48,7 @@ namespace OE1Core
 	}
 	bool CoreEngine::HandleWindowCloseEvent(WindowCloseEvent& e)
 	{
-		s_Window->Close();
+		CloseWin::s_ShouldOpen = !CloseWin::s_ShouldOpen;
 		return true;
 	}
 	bool CoreEngine::HandleWindowResizeEvent(WindowResizeEvent& e)

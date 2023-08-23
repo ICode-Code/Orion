@@ -2,6 +2,7 @@
 #define OE1_GUI_BASE_H_
 
 #include "Layer/ILayer.h"
+#include "MiniWindow/IMiniWin.h"
 #include <vector>
 
 namespace OE1Core
@@ -20,6 +21,7 @@ namespace OE1Core
 
 	public:
 		inline static std::vector<LayerBase*> s_Layers;
+		inline static std::vector<BaseMiniWindow*> s_MiniWins;
 
 	protected:
 		inline static GLFWwindow*  s_Window = nullptr;

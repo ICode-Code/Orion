@@ -6,6 +6,11 @@ namespace OE1Core
 	Gui::Gui(GLFWwindow* _window)
 	{
 		Init(_window);
+
+		s_ThemeColor = ImVec4(0.0f, 0.439f, 0.878f, 1.0f);
+		//s_ThemeColor = ImVec4(0.0392157f, 0.7490196f, 0.3254902f, 1.0f);
+		//s_ThemeColor = ImVec4(0.0f, 0.6235294f, 0.3019608f, 1.0f);
+
 		InstallDarkTheme();
 	}
 	Gui::~Gui()

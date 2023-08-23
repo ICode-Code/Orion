@@ -18,11 +18,22 @@ namespace OE1Core
 		s_Layers.push_back(new ProjectDirLayer());
 		s_Layers.push_back(new ToolBarLayer());
 		s_Layers.push_back(new ThreadInfoLayer());
+
+
+		/// Mini Windows
+		s_MiniWins.push_back(new CloseWin());
+		s_MiniWins.push_back(new PreferenceWin());
+		s_MiniWins.push_back(new Asset3DLoaderWin());
 	}
 	GUIBase::~GUIBase()
 	{
 		for (auto _layer : s_Layers)
 			delete _layer;
+
+		for (auto _mini : s_MiniWins)
+			delete _mini;
+
+		delete s_GUI;
 	}
 	void GUIBase::Update()
 	{
@@ -31,6 +42,10 @@ namespace OE1Core
 			s_Layers[i]->Update();
 			s_Layers[i]->Render();
 		}
+
+		for (size_t i = 0; i < s_MiniWins.size(); i++)
+			s_MiniWins[i]->Render();
+
 	}
 	void GUIBase::SetContext(GLFWwindow* _window)
 	{

@@ -3,7 +3,7 @@
 
 namespace OE1Core
 {
-	std::string WindowFileDialog::LoadFile(const char* _filter, GLFWwindow* _window)
+	std::string WindowFileDialog::LoadFile(const char* _filter, GLFWwindow* _window, const char* _title)
 	{
         OPENFILENAMEA oft;
         CHAR scFile[260] = { 0 };
@@ -11,6 +11,7 @@ namespace OE1Core
         oft.lStructSize = sizeof(OPENFILENAME);
         oft.hwndOwner = glfwGetWin32Window(_window);
         oft.lpstrFile = scFile;
+        oft.lpstrTitle = _title;
         oft.nMaxFile = sizeof(scFile);
         oft.lpstrFilter = _filter;
         oft.nFilterIndex = 1;

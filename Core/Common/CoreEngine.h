@@ -4,6 +4,7 @@
 #include "../Platform/Win/WindowManager.h"
 #include "../Event/IEvent.h"
 #include "../GUI/GUIBase.h"
+#include "../Core/Command/ExecutionHandler.h"
 
 namespace OE1Core
 {

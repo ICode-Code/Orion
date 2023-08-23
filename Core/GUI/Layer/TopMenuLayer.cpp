@@ -72,7 +72,7 @@ namespace OE1Core
 
 				ImGui::EndMenu();
 			}
-			if (ImGui::MenuItem(ICON_FA_FILE_CIRCLE_PLUS"   Import gltf..."))
+			if (ImGui::MenuItem(ICON_FA_FILE_CIRCLE_PLUS"   Import 3D Asset..."))
 			{
 				/*std::string __path = OE1Core::FileDialog::OE1WindowNativeDialog::LoadFile("*.gltf\0*.gltf");
 				if (!__path.empty())
@@ -80,18 +80,14 @@ namespace OE1Core
 					UI::ImportantWindow::m_BeginDialog = true;
 					UI::ImportantWindow::m_AssetDir = __path;
 				}*/
-				std::string loaded_file = WindowFileDialog::LoadFile("*.gltf\0*.gltf", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin());
+
+				//std::string loaded_file = WindowFileDialog::LoadFile("GLTF Files (*.gltf;*.glb)\0*.gltf;*.glb\0FBX Files (*.fbx)\0*.fbx\0", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin());
+				std::string loaded_file = WindowFileDialog::LoadFile("GLTF and FBX Files (*.gltf;*.glb;*.fbx)\0*.gltf;*.glb;*.fbx\0", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin(), "Load 3D Asset");
 				if (!loaded_file.empty())
-					LOG_INFO(loaded_file.c_str());
-			}
-			if (ImGui::MenuItem(ICON_FA_FILE_CIRCLE_PLUS"   Import fbx..."))
-			{
-				/*std::string __path = OE1Core::FileDialog::OE1WindowNativeDialog::LoadFile("*.fbx\0*.fbx");
-				if (!__path.empty())
 				{
-					UI::ImportantWindow::m_BeginDialog = true;
-					UI::ImportantWindow::m_AssetDir = __path;
-				}*/
+					Asset3DLoaderWin::Open(loaded_file);
+					//Command::PushLoadCommand(loaded_file);
+				}
 			}
 			if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK"   Save", "  Ctr + S"))
 			{
@@ -149,7 +145,7 @@ namespace OE1Core
 
 			if (ImGui::MenuItem(ICON_FA_GEAR"   Preferences"))
 			{
-				//m_MasterSetting = true;
+				PreferenceWin::s_ShouldOpen = !PreferenceWin::s_ShouldOpen;
 			}
 
 
