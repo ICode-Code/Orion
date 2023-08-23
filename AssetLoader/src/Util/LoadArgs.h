@@ -16,6 +16,15 @@ namespace OE1Core
 
 			std::string DestinationPath = "";
 			std::string SourcePath = "";
+
+			void Reset()
+			{
+				HasAnimation = false;
+				CreateMaterial = true;
+				GenerateDynamicLOD = false;
+				DestinationPath = "";
+				SourcePath = "";
+			}
 			
 		};
 	}

@@ -5,6 +5,7 @@
 
 #include "BaseMiniWindw.h"
 #include "Util/NameHandle.h"
+#include "Util/LoadArgs.h"
 #include <glm/glm.hpp>
 
 
@@ -22,6 +23,7 @@ namespace OE1Core
 	protected:
 		inline static bool s_ShouldOpen = false;
 		inline static std::string s_AssetPath;
+		inline static Loader::LoadArgs s_LoadArgs;
 		virtual void Update() override;
 	};
 }

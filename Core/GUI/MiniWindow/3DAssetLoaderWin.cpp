@@ -23,6 +23,7 @@ namespace OE1Core
 
 		s_ShouldOpen = true;
 		s_AssetPath = _asset_path;
+		s_LoadArgs.Reset();
 	}
 	void Asset3DLoaderWin::Render()
 	{
@@ -72,16 +73,13 @@ namespace OE1Core
 		{
 			ImGui::Indent(s_TreeIndent);
 
-			static bool load_skalaton = false;
-			static bool create_material = true;
 			static bool separte_by_dir = false;
-			static bool generate_lod = false;
 
 
-			CustomFrame::UIEditorCheckbox("Has Animation", &load_skalaton);
-			CustomFrame::UIEditorCheckbox("Load Material", &create_material);
+			CustomFrame::UIEditorCheckbox("Has Animation", &s_LoadArgs.HasAnimation);
+			CustomFrame::UIEditorCheckbox("Load Material", &s_LoadArgs.CreateMaterial);
 			CustomFrame::UIEditorCheckbox("Create Directory", &separte_by_dir);
-			CustomFrame::UIEditorCheckbox("Generate LOD", &generate_lod);
+			CustomFrame::UIEditorCheckbox("Generate LOD", &s_LoadArgs.GenerateDynamicLOD);
 			
 
 			ImGui::Indent(-s_TreeIndent);
@@ -98,7 +96,8 @@ namespace OE1Core
 		ImGui::SetCursorPosX((avail_region.x / 2.0f) - 120.0f);
 		if (ImGui::Button("Import", ImVec2(120.0f, 0.0f)))
 		{
-
+			s_LoadArgs.SourcePath = s_AssetPath;
+			s_LoadArgs.DestinationPath = "none";
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Cancel", ImVec2(120.0f, 0.0f)))
