@@ -98,6 +98,7 @@ namespace OE1Core
 		{
 			s_LoadArgs.SourcePath = s_AssetPath;
 			s_LoadArgs.DestinationPath = "none";
+			Loader::GeometryLoader::LoadGeometry(s_LoadArgs);
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Cancel", ImVec2(120.0f, 0.0f)))

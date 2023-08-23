@@ -13,7 +13,7 @@ namespace OE1Core
 		{
 		public:
 			// This will pharse the load args
-			void LoadGeometry(LoadArgs _load_args);
+			static void LoadGeometry(LoadArgs _load_args);
 		};
 	}
 }
