@@ -25,7 +25,16 @@ namespace OE1Core
 		inline static bool s_ShouldOpen = false;
 		inline static std::string s_AssetPath;
 		inline static Loader::LoadArgs s_LoadArgs;
+		const inline static int s_DirectoryNameBufferSize = 256;
+		// if we have separate directory
+		inline static char s_DirectoryNameBuffer[s_DirectoryNameBufferSize];
+		inline static bool s_CreateSeparateFolder = false;
+	protected:
 		virtual void Update() override;
+
+
+	protected: // Util
+		void CleanBuffer(char* _buffer, int _size);
 	};
 }
 

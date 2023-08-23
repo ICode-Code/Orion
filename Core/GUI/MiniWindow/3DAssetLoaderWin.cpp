@@ -1,6 +1,5 @@
 #include "3DAssetLoaderWin.h"
 
-
 namespace OE1Core
 {
 	Asset3DLoaderWin::Asset3DLoaderWin()
@@ -33,7 +32,7 @@ namespace OE1Core
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, { 0.2f, 0.2f, 0.2f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, { 0.28f, 0.28f, 0.28f, 1.0f });
 		ImGui::Begin(ICON_FA_DOWNLOAD"\tLoad 3D Asset", &s_ShouldOpen, s_BaseWinFlag);
-		
+	
 		Update();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0.0f });
@@ -73,12 +72,17 @@ namespace OE1Core
 		{
 			ImGui::Indent(s_TreeIndent);
 
-			static bool separte_by_dir = false;
-
-
 			CustomFrame::UIEditorCheckbox("Has Animation", &s_LoadArgs.HasAnimation);
 			CustomFrame::UIEditorCheckbox("Load Material", &s_LoadArgs.CreateMaterial);
-			CustomFrame::UIEditorCheckbox("Create Directory", &separte_by_dir);
+			CustomFrame::UIEditorCheckbox("Create Directory", &s_CreateSeparateFolder);
+
+			if (s_CreateSeparateFolder)
+			{
+				static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
+				ImGui::Text("Dir");
+				ImGui::InputText("##sourceFolderName", s_DirectoryNameBuffer, IM_ARRAYSIZE(s_DirectoryNameBuffer), flags);
+			}
+
 			CustomFrame::UIEditorCheckbox("Generate LOD", &s_LoadArgs.GenerateDynamicLOD);
 			
 
@@ -97,13 +101,19 @@ namespace OE1Core
 		if (ImGui::Button("Import", ImVec2(120.0f, 0.0f)))
 		{
 			s_LoadArgs.SourcePath = s_AssetPath;
-			s_LoadArgs.DestinationPath = "none";
+			s_LoadArgs.DestinationPath = s_DirectoryNameBuffer;
 			Loader::GeometryLoader::LoadGeometry(s_LoadArgs);
+			s_ShouldOpen = false;
+
+			if(s_CreateSeparateFolder)
+				CleanBuffer(s_DirectoryNameBuffer, s_DirectoryNameBufferSize);
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Cancel", ImVec2(120.0f, 0.0f)))
 		{
-
+			s_ShouldOpen = false;
+			if(s_CreateSeparateFolder)
+				CleanBuffer(s_DirectoryNameBuffer, s_DirectoryNameBufferSize);
 		}
 
 
@@ -111,5 +121,11 @@ namespace OE1Core
 
 		ImGui::End();
 		ImGui::PopStyleColor(2);
+	}
+
+	void Asset3DLoaderWin::CleanBuffer(char* _buffer, int _size)
+	{
+		for (int i = 0; i < _size; i++)
+			_buffer[i] = NULL;
 	}
 }
