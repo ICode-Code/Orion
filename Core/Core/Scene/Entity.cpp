@@ -12,42 +12,6 @@ namespace OE1Core
 	{
 
 	}
-
-
-	template<typename T> void Entity::RemoveComponent()
-	{
-		if (HasComponent<T>())
-			m_Scene->m_EntityRegistry.remove<T>(m_EntityHandle);
-		else
-			LOG_ERROR("Unable to remove component! Component not found!");
-	}
-	template<typename T> bool Entity::HasComponent()
-	{
-		return m_Scene->m_EntityRegistry.any_of<T>(m_EntityHandle);
-	}
-	template<typename T> T& Entity::GetComponent()
-	{
-		return m_Scene->m_EntityRegistry.get<T>(m_EntityHandle);
-	}
-	template<typename T> T& Entity::GetComponent_if()
-	{
-		if (HasComponent<T>())
-			return m_Scene->m_EntityRegistry.get<T>(m_EntityHandle);
-		else
-		{
-			LOG_ERROR("Unable to get component: Component do not exist");
-			assert(true);
-		}
-	}
-	template<typename T, typename... Args> T& Entity::AddComponent(Args&&... _args)
-	{
-		if(!HasComponent<T>())
-			return m_Scene->m_EntityRegistry.emplace<T>(m_EntityHandle, std::forward<Args>(_args)...);
-		LOG_ERROR("Cannot add a component type that already exist");
-		assert(1);
-	}
-
-
 	void Entity::Update()
 	{
 

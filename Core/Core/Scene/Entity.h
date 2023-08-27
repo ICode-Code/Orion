@@ -13,11 +13,38 @@ namespace OE1Core
 		Entity(entt::entity _entity, Scene* _scene);
 		~Entity();
 
-		template<typename T> void RemoveComponent();
-		template<typename T> bool HasComponent();
-		template<typename T> T& GetComponent();
-		template<typename T> T& GetComponent_if();
-		template<typename T, typename... Args> T& AddComponent(Args&&... _args);
+		template<typename T> void RemoveComponent()
+		{
+			if (HasComponent<T>())
+				m_Scene->m_EntityRegistry.remove<T>(m_EntityHandle);
+			else
+				LOG_ERROR("Unable to remove component! Component not found!");
+		}
+		template<typename T> bool HasComponent()
+		{
+			return m_Scene->m_EntityRegistry.any_of<T>(m_EntityHandle);
+		}
+		template<typename T> T& GetComponent()
+		{
+			return m_Scene->m_EntityRegistry.get<T>(m_EntityHandle);
+		}
+		template<typename T> T& GetComponent_if()
+		{
+			if (HasComponent<T>())
+				return m_Scene->m_EntityRegistry.get<T>(m_EntityHandle);
+			else
+			{
+				LOG_ERROR("Unable to get component: Component do not exist");
+				assert(true);
+			}
+		}
+		template<typename T, typename... Args> T& AddComponent(Args&&... _args)
+		{
+			if (!HasComponent<T>())
+				return m_Scene->m_EntityRegistry.emplace<T>(m_EntityHandle, std::forward<Args>(_args)...);
+			LOG_ERROR("Cannot add a component type that already exist");
+			assert(1);
+		}
 
 		void Update();
 		bool IsFunctional();
