@@ -24,6 +24,10 @@ namespace OE1Core
 		s_MiniWins.push_back(new CloseWin());
 		s_MiniWins.push_back(new PreferenceWin());
 		s_MiniWins.push_back(new Asset3DLoaderWin());
+
+
+		/// Viewport
+		s_Viewports.push_back(new MainViewport());
 	}
 	GUIBase::~GUIBase()
 	{
@@ -32,6 +36,9 @@ namespace OE1Core
 
 		for (auto _mini : s_MiniWins)
 			delete _mini;
+
+		for (auto _viewport : s_Viewports)
+			delete _viewport;
 
 		delete s_GUI;
 	}
@@ -45,6 +52,9 @@ namespace OE1Core
 
 		for (size_t i = 0; i < s_MiniWins.size(); i++)
 			s_MiniWins[i]->Render();
+
+		for (size_t i = 0; i < s_Viewports.size(); i++)
+			s_Viewports[i]->Render();
 
 	}
 	void GUIBase::SetContext(GLFWwindow* _window)

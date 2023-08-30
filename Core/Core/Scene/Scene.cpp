@@ -35,9 +35,10 @@ namespace OE1Core
 		}
 		return Entity((entt::entity)_id, this);
 	}
-
-
-
+	void Scene::Update(int _width, int _height)
+	{
+		m_RendererUpdateCallback(_width, _height);
+	}
 	void Scene::Update()
 	{
 

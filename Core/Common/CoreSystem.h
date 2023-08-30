@@ -21,6 +21,7 @@ namespace OE1Core
 		~CoreSystem();
 
 		void UpdateScene() override;
+		Scene* GetScene() override;
 		Entity GetEntityByID(uint32_t _id) override;
 		entt::registry& GetSceneRegistry() override;
 

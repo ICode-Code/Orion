@@ -166,12 +166,14 @@
     <ClCompile Include="src\DisplayCanvas\Forward\IVFMainCanavs.cpp" />
     <ClCompile Include="src\DisplayCanvas\IVFramebuffer\IVFramebuffer.cpp" />
     <ClCompile Include="src\IVRender.cpp" />
+    <ClCompile Include="src\SceneRenderer\SceneRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DisplayCanvas\Forward\IVFMainCanavs.h" />
     <ClInclude Include="src\DisplayCanvas\IVFramebuffer\FrameSize.h" />
     <ClInclude Include="src\DisplayCanvas\IVFramebuffer\IVFramebuffer.h" />
     <ClInclude Include="src\IVRender.h" />
+    <ClInclude Include="src\SceneRenderer\SceneRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Log\Log.vcxproj">

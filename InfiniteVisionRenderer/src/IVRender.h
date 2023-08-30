@@ -4,6 +4,8 @@
 
 #include "SceneInterface.h"
 
+#include <functional>
+
 namespace OE1Core
 {
 	namespace Renderer
@@ -14,6 +16,7 @@ namespace OE1Core
 			IVRender(SceneInterface* _scene_interface);
 			~IVRender();
 
+			void Update(int _width, int _height);
 			unsigned int RenderScene();
 
 		protected:

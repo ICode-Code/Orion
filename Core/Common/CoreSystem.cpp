@@ -11,7 +11,10 @@ namespace OE1Core
 	{
 
 	}
-
+	Scene* CoreSystem::GetScene()
+	{
+		return SceneManager::GetActiveScene();
+	}
 	void CoreSystem::UpdateScene()
 	{
 
