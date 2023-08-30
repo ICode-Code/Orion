@@ -2,6 +2,9 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
+      <FullPath>C:\Dev\Orion\Build\Bin\IVRender.dll</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
       <FullPath>C:\Dev\Orion\Build\Bin\Core.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>

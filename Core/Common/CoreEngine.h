@@ -6,6 +6,11 @@
 #include "../GUI/GUIBase.h"
 #include "../Core/Command/ExecutionHandler.h"
 
+#include "CoreSystem.h"
+
+// Renderer
+#include "IVRender.h"
+
 namespace OE1Core
 {
 	class CoreEngine
@@ -23,8 +28,10 @@ namespace OE1Core
 		bool HandleWindowResizeEvent(WindowResizeEvent& e);
 
 	protected:
+		inline static OE1Core::CoreSystem* s_CoreSystem = nullptr;
 		inline static OE1Core::Window* s_Window = nullptr;
 		inline static OE1Core::GUIBase* s_GuiBase = nullptr;
+		inline static OE1Core::Renderer::IVRender* s_MainSceneRenderer = nullptr;
 	};
 }
 

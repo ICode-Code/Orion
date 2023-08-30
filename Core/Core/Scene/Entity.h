@@ -30,20 +30,21 @@ namespace OE1Core
 		}
 		template<typename T> T& GetComponent_if()
 		{
-			if (HasComponent<T>())
-				return m_Scene->m_EntityRegistry.get<T>(m_EntityHandle);
-			else
+			if (!HasComponent<T>())
 			{
 				LOG_ERROR("Unable to get component: Component do not exist");
 				assert(true);
 			}
+			return m_Scene->m_EntityRegistry.get<T>(m_EntityHandle);
 		}
 		template<typename T, typename... Args> T& AddComponent(Args&&... _args)
 		{
-			if (!HasComponent<T>())
-				return m_Scene->m_EntityRegistry.emplace<T>(m_EntityHandle, std::forward<Args>(_args)...);
-			LOG_ERROR("Cannot add a component type that already exist");
-			assert(1);
+			if (HasComponent<T>())
+			{
+				LOG_ERROR("Cannot add a component type that already exist");
+				assert(1);
+			}
+			return m_Scene->m_EntityRegistry.emplace<T>(m_EntityHandle, std::forward<Args>(_args)...);
 		}
 
 		void Update();

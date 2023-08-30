@@ -1,0 +1,25 @@
+#ifndef OE1_SCENE_MANAGER_H_
+#define OE1_SCENE_MANAGER_H_
+
+#include <Log.h>
+#include "Scene.h"
+#include <memory>
+
+namespace OE1Core
+{
+	class SceneManager
+	{
+	protected:
+		~SceneManager();
+	public:
+		static void RegisterScene(std::string _name, Scene* _scene, bool _set_active = false);
+		static void ActivateScene(std::string _name);
+		static Scene* GetActiveScene();
+
+	protected:
+		inline static Scene* s_ActiveScene = nullptr;
+		inline static std::unordered_map<std::string, Scene*> s_Scenes;
+	};
+}
+
+#endif // !OE1_SCENE_MANAGER_H_
