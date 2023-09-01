@@ -5,6 +5,8 @@
 
 #include "TagComponent/TagComponent.h"
 #include "TransformComponent/TransformComponent.h"
+#include "CameraComponent/CameraComponent.h"
+#include "CameraControllerComponent/FreeLookCameraControllerComponent/FreeLookCameraControllerComponent.h"
 
 #endif // !OE1_ICOMPONENT_H_
  

@@ -8,12 +8,13 @@ namespace OE1Core
 		s_Window = OE1Core::WindowManager::RegisterWindow(ENGINE_MAIN_WINDOW, 1366, 768);
 		s_Window->EnableWin();
 		s_Window->SetEventCallback(std::bind(&CoreEngine::OnEvent, this, std::placeholders::_1));
-		
+		s_ShaderManager = new OE1Core::ShaderManager();
+		s_MemeoryManager = new Memory::UniformBlockManager();
 		// Init ImGui
 		s_GuiBase = new OE1Core::GUIBase(s_Window->GetWin());
 
 		// Create Master Scene
-		SceneManager::RegisterScene("MasterScene", new Scene(), true);
+		SceneManager::RegisterScene("MasterScene", new Scene(s_Window->GetWin()), true);
 
 		// Init Core system
 		s_CoreSystem = new OE1Core::CoreSystem();
@@ -27,6 +28,8 @@ namespace OE1Core
 		delete s_GuiBase;
 		delete s_CoreSystem;
 		delete s_MainSceneRenderer;
+		delete s_ShaderManager;
+		delete s_MemeoryManager;
 	}
 	void CoreEngine::Run()
 	{

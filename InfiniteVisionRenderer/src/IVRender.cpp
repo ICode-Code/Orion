@@ -21,7 +21,7 @@ namespace OE1Core
 		}
 		void IVRender::Update(int _width, int _height)
 		{
-			printf("Updated {%i}, {%i}\n", _width, _height);
+
 		}
 		unsigned int IVRender::RenderScene()
 		{

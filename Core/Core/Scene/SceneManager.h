@@ -1,8 +1,9 @@
 #ifndef OE1_SCENE_MANAGER_H_
 #define OE1_SCENE_MANAGER_H_
 
-#include <Log.h>
 #include "Scene.h"
+
+#include <Log.h>
 #include <memory>
 
 namespace OE1Core

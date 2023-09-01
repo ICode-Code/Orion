@@ -1,15 +1,19 @@
 #ifndef OE1_CORE_ENGINE_H_
 #define OE1_CORE_ENGINE_H_
 
+
 #include "../Platform/Win/WindowManager.h"
+// Renderer
+#include "IVRender.h"
+#include "CoreSystem.h"
+#include "ShaderManager/ShaderManager.h"
+#include "MemoryManager/Uniform/UniformBlockManager.h"
+
 #include "../Event/IEvent.h"
 #include "../GUI/GUIBase.h"
 #include "../Core/Command/ExecutionHandler.h"
 
-#include "CoreSystem.h"
 
-// Renderer
-#include "IVRender.h"
 
 namespace OE1Core
 {
@@ -31,6 +35,8 @@ namespace OE1Core
 		inline static OE1Core::CoreSystem* s_CoreSystem = nullptr;
 		inline static OE1Core::Window* s_Window = nullptr;
 		inline static OE1Core::GUIBase* s_GuiBase = nullptr;
+		inline static OE1Core::ShaderManager* s_ShaderManager = nullptr;
+		inline static OE1Core::Memory::UniformBlockManager* s_MemeoryManager = nullptr;
 		inline static OE1Core::Renderer::IVRender* s_MainSceneRenderer = nullptr;
 	};
 }

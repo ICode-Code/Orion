@@ -2,7 +2,7 @@
 #define OE1_SCENE_INTERFACE_H_
 
 #include "../Core/Scene/Entity.h"
-#include "../Core/Scene/Scene.h"
+#include "../Core/Scene/SceneManager.h"
 
 namespace OE1Core
 {

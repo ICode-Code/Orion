@@ -1,20 +1,22 @@
 #ifndef OE1_SCENE_H_
 #define OE1_SCENE_H_
 
-#include <unordered_map>
 
-#include <Entt/entt.hpp>
+#include "../CameraPackage/CameraPackage.h"
 #include "../Mesh/StaticMesh/StaticMesh.h"
 
+#include <Entt/entt.hpp>
+
+#include <unordered_map>
 #include <functional>
 
-namespace OE1Core
+namespace OE1Core 
 {
 	class Entity;
 	class Scene
 	{
 	public:
-		Scene();
+		Scene(GLFWwindow* _window);
 		~Scene();
 
 		Entity CreateEntity();
@@ -23,8 +25,9 @@ namespace OE1Core
 
 		inline void SetRendererCallBack(std::function<void(int, int)> _renderer_update_callbacks) { m_RendererUpdateCallback = _renderer_update_callbacks; }
 		void Update(int _width, int _height);
-		void Update();
+		void Update(float dt);
 		void ResetPhysics();
+		void OnEvent(Event& e);
 		/// <summary>
 		/// This include the physics
 		/// </summary>
@@ -32,6 +35,8 @@ namespace OE1Core
 
 
 	public:
+		GLFWwindow* m_Window;
+		CameraPackage m_CameraPkg;
 		entt::registry m_EntityRegistry;
 		std::unordered_map<uint32_t, StaticMesh> m_StaticMeshRegistry;
 

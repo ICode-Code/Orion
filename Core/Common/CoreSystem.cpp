@@ -17,7 +17,7 @@ namespace OE1Core
 	}
 	void CoreSystem::UpdateScene()
 	{
-
+		
 	}
 	Entity CoreSystem::GetEntityByID(uint32_t _id)
 	{

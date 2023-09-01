@@ -3,7 +3,8 @@
 
 namespace OE1Core
 {
-	Scene::Scene()
+	Scene::Scene(GLFWwindow* _window)
+		: m_Window{_window}, m_CameraPkg{ m_Window }
 	{
 
 	}
@@ -39,13 +40,17 @@ namespace OE1Core
 	{
 		m_RendererUpdateCallback(_width, _height);
 	}
-	void Scene::Update()
+	void Scene::Update(float dt)
 	{
-
+		m_CameraPkg.Update(dt);
 	}
 	void Scene::ResetPhysics()
 	{
 
+	}
+	void Scene::OnEvent(Event& e)
+	{
+		m_CameraPkg.OnEvent(e);
 	}
 	void Scene::ResetScene()
 	{

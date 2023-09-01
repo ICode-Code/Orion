@@ -1,9 +1,8 @@
 #ifndef OE1_CORE_SYSTEM_H_
 #define OE1_CORE_SYSTEM_H_
 
-#include "SceneInterface.h"
-#include "../Core/Scene/SceneManager.h"
 #include "../Core/Component/IComponent.h"
+#include "SceneInterface.h"
 
 namespace OE1Core
 {
