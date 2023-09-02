@@ -41,7 +41,7 @@ namespace OE1Core
 			// any queued command will be executed here
 			ExecutionHandler::__exe();
 
-
+			SceneManager::UpdateScene(s_Window->GetArg().DeltaTime);
 			s_MainSceneRenderer->RenderScene();
 
 
@@ -67,6 +67,8 @@ namespace OE1Core
 
 		// and also Resize Event
 		event_dispatcher.Dispatch<WindowResizeEvent>(std::bind(&CoreEngine::HandleWindowResizeEvent, this, std::placeholders::_1));
+
+		SceneManager::OnEvent(e);
 	}
 	bool CoreEngine::HandleWindowCloseEvent(WindowCloseEvent& e)
 	{

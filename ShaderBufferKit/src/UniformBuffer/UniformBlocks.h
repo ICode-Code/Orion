@@ -53,6 +53,12 @@ namespace OE1Core
 			std::string			Name;
 			unsigned int		Buffer = 0;
 			unsigned int		BindingPoint = 0;
+			void Update(size_t _size, int _offset, void* _data)
+			{
+				glBindBuffer(GL_UNIFORM_BUFFER, Buffer);
+				glBufferSubData(GL_UNIFORM_BUFFER, _offset, _size, _data);
+				glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			}
 		};
 
 		/// ///////////////////////////////////////////////////////////////////////////

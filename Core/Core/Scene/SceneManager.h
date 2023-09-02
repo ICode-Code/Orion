@@ -2,6 +2,7 @@
 #define OE1_SCENE_MANAGER_H_
 
 #include "Scene.h"
+#include "UniformBuffer/UniformBlockManager.h"
 
 #include <Log.h>
 #include <memory>
@@ -16,6 +17,8 @@ namespace OE1Core
 		static void RegisterScene(std::string _name, Scene* _scene, bool _set_active = false);
 		static void ActivateScene(std::string _name);
 		static Scene* GetActiveScene();
+		static void UpdateScene(float _dt);
+		static void OnEvent(Event& e);
 
 	protected:
 		inline static Scene* s_ActiveScene = nullptr;

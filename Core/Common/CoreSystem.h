@@ -18,6 +18,8 @@ namespace OE1Core
 		~CoreSystem();
 
 		Shader* GetShader(ShaderID _id) override;
+		spdlog::logger* GetLog() override;
+		void SetRenderedFrame(unsigned int _id) override;
 	};
 }
 

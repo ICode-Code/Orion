@@ -45,6 +45,8 @@ namespace OE1Core
 	protected:
 		WindowArg m_Args;
 		EVENT_CALLBACK m_Callback;
+		float m_LastFrameTime = 0.0f;
+		float m_CurrentTime = 0.0;
 
 	};
 }

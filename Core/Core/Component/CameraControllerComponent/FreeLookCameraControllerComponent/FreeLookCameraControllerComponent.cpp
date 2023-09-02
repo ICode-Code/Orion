@@ -9,8 +9,8 @@ namespace OE1Core
 		FreeLookCameraControllerComponent::FreeLookCameraControllerComponent(GLFWwindow* _window)
 			: BaseCameraControllerComponent{_window}
 		{
-			m_CurrentPosition = glm::vec3(0.0f, 10.0f, 0.0f);
-			m_FinalPosition = glm::vec3(0.0f, 9.0f, 0.0f);
+			m_FinalPosition = glm::vec3(0.870874405f, 2.5f, 0.002f);
+			m_CurrentPosition = m_FinalPosition;
 		}
 
 
@@ -67,6 +67,7 @@ namespace OE1Core
 
 			if (glm::length(Direction) > 0.0f)
 				m_FinalPosition = m_CurrentPosition + (glm::normalize(Direction) * speed);
+
 		}
 		void FreeLookCameraControllerComponent::UpdateInput(float _dt)
 		{
@@ -74,12 +75,12 @@ namespace OE1Core
 			m_InitialPosition = m_CurrentPosition;
 			HandleKeyInput();
 			
-			if (m_FinalPosition != m_CurrentPosition)
+			if (glm::length(m_FinalPosition - m_CurrentPosition) > 0.001f)
 			{
 				m_DeltaPosition = Lerp(m_InitialPosition, m_FinalPosition, m_DeltaTime * m_SpeedFactor);
 				m_CurrentPosition = m_DeltaPosition;
-				m_Camera->Update(m_CurrentPosition);
 			}
+			m_Camera->Update(m_CurrentPosition);
 		}
 
 		bool FreeLookCameraControllerComponent::MousePosition(MouseMovedEvent& e)
@@ -104,12 +105,12 @@ namespace OE1Core
 			m_Camera->m_Pitch += y_offset;
 			m_Camera->m_Yaw += x_offset;
 
-			/*if (m_Camera->m_Pitch > 89.0f)
+			if (m_Camera->m_Pitch > 89.0f)
 				m_Camera->m_Pitch = 89.0f;
 			else if (m_Camera->m_Pitch < -89.0f)
-				m_Camera->m_Pitch = -89.0f;*/
+				m_Camera->m_Pitch = -89.0f;
 
-			glm::clamp(m_Camera->m_Pitch, -89.0f, 89.0f);
+			/*glm::clamp(m_Camera->m_Pitch, -89.0f, 89.0f);*/
 
 			m_LastMousePosition.x = (float)e.GetX();
 			m_LastMousePosition.y = (float)e.GetY();

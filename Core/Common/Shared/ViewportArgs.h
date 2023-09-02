@@ -6,8 +6,8 @@ namespace OE1Core
 {
 	namespace ViewportArgs
 	{
-		inline static unsigned int FINAL_FRAME = 0;
-		inline static unsigned int PRE_PROCESS_FRAME = 0;
+		inline unsigned int FINAL_FRAME = 0;
+		inline unsigned int PRE_PROCESS_FRAME = 0;
 	}
 }
 

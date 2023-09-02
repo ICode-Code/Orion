@@ -22,6 +22,7 @@ namespace OE1Core
 		void BaseCameraControllerComponent::SetCameraComponent(Component::CameraComponent* _camera)
 		{
 			m_Camera = _camera;
+			UpdateCameraView();
 			m_Camera->Update(m_CurrentPosition);
 		}
 

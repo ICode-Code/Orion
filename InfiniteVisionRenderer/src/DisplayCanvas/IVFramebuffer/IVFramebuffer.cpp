@@ -1,4 +1,5 @@
 #include "IVFramebuffer.h"
+#include "../../Interface.h"
 
 
 namespace OE1Core
@@ -90,7 +91,7 @@ namespace OE1Core
 		}
 		void IVFramebuffer::LogError(std::string _buffer_name)
 		{
-			LOG_ERROR("Framebuffer -{0}- is not complate", _buffer_name);
+			Interface::m_CoreInterface->GetLog()->error("Framebuffer -{0}- is not complate", _buffer_name);
 		}
 
 

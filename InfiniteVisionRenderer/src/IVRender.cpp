@@ -9,6 +9,9 @@ namespace OE1Core
 		IVRender::IVRender(SceneInterface* _scene_interface, CoreSystemInterface* _core_system_interface)
 			: m_SceneInterface{ _scene_interface }, m_CoreSystemInterface{ _core_system_interface }
 		{
+
+			Interface interface(_scene_interface, _core_system_interface);
+
 			m_SceneInterface->GetScene()->SetRendererCallBack(
 				[this](int _width, int _height)
 				{ 
@@ -18,8 +21,6 @@ namespace OE1Core
 
 			InitFramebuffer();
 			InitRenderer();
-
-			
 		}
 		IVRender::~IVRender()
 		{
@@ -34,12 +35,13 @@ namespace OE1Core
 		void IVRender::InitFramebuffer()
 		{
 			m_IVMainCanavas = new IVFMainCanavs(IVFrameSize::R_1k);
+			//m_IVMainCanavas->SetClearColor(glm::vec4(0.5, 0.1f, 0.8f, 1.0f));
 		}
 		void IVRender::Update(int _width, int _height)
 		{
 			m_IVMainCanavas->Update(_width, _height);
 		}
-		unsigned int IVRender::RenderScene()
+		void IVRender::RenderScene()
 		{
 			m_IVMainCanavas->Attach();
 
@@ -49,7 +51,7 @@ namespace OE1Core
 
 			m_IVMainCanavas->Detach();
 
-			return ViewportArgs::FINAL_FRAME = m_IVMainCanavas->GetAttachment(0);
+			m_CoreSystemInterface->SetRenderedFrame(m_IVMainCanavas->GetAttachment(0));
 		}
 	}
 }

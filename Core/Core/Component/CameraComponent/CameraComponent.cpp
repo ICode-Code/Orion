@@ -8,12 +8,12 @@ namespace OE1Core
 		CameraComponent::CameraComponent()
 		{
 			m_Position = glm::vec3(0.0f, 0.0f, 0.0f);
-			m_Front = glm::vec3(0.0f, 0.0f, -1.0f);
-			m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
-			m_Right = glm::cross(m_Up, m_Front);
+			m_Front = glm::vec3(-0.775104523f, -0.631757855f, 0.00974634290f);
+			m_Up = glm::vec3(-0.631707966f, 0.775165856f, 0.00794324186f);
+			m_Right = glm::vec3(-0.0125732366f, 0.0f, -0.999920905f);//glm::cross(m_Up, m_Front);
 			m_Resolution = glm::vec2(512.0f, 512.0f);
-			m_Yaw = -89.0f;
-			m_Pitch = 0.0f;
+			m_Yaw = -180.0f;
+			m_Pitch = -40.0f;
 			m_AspectRatio = 1.0f;
 		}
 		CameraComponent::~CameraComponent()

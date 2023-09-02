@@ -66,6 +66,7 @@ namespace OE1Core
 			float m_DeltaTime = 0.0f;
 			float m_DistanceFromFocusTarget = 5.0f;
 			int m_ControlKey;
+			float m_LerpThreshold = 0.3f;
 
 			// Data
 			//Component::TransformComponent* m_Transform = nullptr;

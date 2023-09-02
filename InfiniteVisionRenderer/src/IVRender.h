@@ -4,6 +4,7 @@
 
 #include "Interface/CoreSystemInterface.h"
 #include "Interface/SceneInterface.h"
+#include "Interface.h"
 
 // Framebuffer
 #include "DisplayCanvas/Forward/IVFMainCanavs.h"
@@ -24,7 +25,7 @@ namespace OE1Core
 			~IVRender();
 
 			void Update(int _width, int _height);
-			unsigned int RenderScene();
+			void RenderScene();
 
 		protected:
 			SceneInterface* m_SceneInterface = nullptr;

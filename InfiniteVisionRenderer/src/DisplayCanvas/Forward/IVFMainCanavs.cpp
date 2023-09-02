@@ -8,12 +8,12 @@ namespace OE1Core
 		IVFMainCanavs::IVFMainCanavs(const int _width, const int _height)
 			: IVFramebuffer{ _width, _height }
 		{
-
+			Init();
 		}
 		IVFMainCanavs::IVFMainCanavs(const int _res[2])
 			: IVFramebuffer{ _res }
 		{
-
+			Init();
 		}
 		IVFMainCanavs::~IVFMainCanavs()
 		{
@@ -36,10 +36,10 @@ namespace OE1Core
 			glViewport(0, 0, m_Width, m_Height);
 
 			glBindTexture(GL_TEXTURE_2D, m_Color);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA16F, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
 
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_Width, m_Height);
 
 			SetBufferAttachment();
 		}
@@ -53,7 +53,7 @@ namespace OE1Core
 			// Color
 			glGenTextures(1, &m_Color);
 			glBindTexture(GL_TEXTURE_2D, m_Color);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA16F, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
 			DefaultTextureFilter();
 
 			// Depth

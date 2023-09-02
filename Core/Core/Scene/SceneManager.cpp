@@ -14,6 +14,17 @@ namespace OE1Core
 	{
 		return s_ActiveScene;
 	}
+	void SceneManager::UpdateScene(float _dt)
+	{
+		 s_ActiveScene->Update(_dt);
+
+		 Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::SCENE_TRANSFORM)->Update(Memory::s_SceneTransformBufferSize, 0, &s_ActiveScene->m_CameraPkg.GetSceneTransform());
+	
+	}
+	void SceneManager::OnEvent(Event& e)
+	{
+		s_ActiveScene->OnEvent(e);
+	}
 
 	void SceneManager::RegisterScene(std::string _name, Scene* _scene, bool _set_active)
 	{

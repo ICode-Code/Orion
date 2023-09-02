@@ -39,6 +39,7 @@ namespace OE1Core
 	void Scene::Update(int _width, int _height)
 	{
 		m_RendererUpdateCallback(_width, _height);
+		m_CameraPkg.GetCamera()->SetResolution(glm::vec2((float)_width, (float)_height));
 	}
 	void Scene::Update(float dt)
 	{

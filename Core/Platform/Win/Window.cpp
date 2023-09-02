@@ -183,6 +183,10 @@ namespace OE1Core
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();
+
+		m_CurrentTime = (float)glfwGetTime();
+		m_Args.DeltaTime = m_CurrentTime - m_LastFrameTime;
+		m_LastFrameTime = m_CurrentTime;
 	}
 	void Window::SwapZDoubleBuffer()
 	{

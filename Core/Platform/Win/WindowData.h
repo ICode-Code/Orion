@@ -13,6 +13,7 @@ namespace OE1Core
 		int Height;
 		bool Running = false;
 		const char* Name;
+		float DeltaTime;
 		float ClearColor[4]{ 0.1f, 0.1f, 0.1f, 1.0f };
 	};
 }

@@ -31,7 +31,12 @@ namespace OE1Core
 			~UniformBlockManager();
 
 			static void LinkShader(Shader* _shader);
+			// This function will return nullptr if the id isn't match up
 			static Memory::UniformBuffer* GetBuffer(Memory::UniformBufferID _id);
+			// This function assumes that the ID exists; 
+			// Not checking it may lead to crashes.
+			// Use this function with caution.
+			static Memory::UniformBuffer* UseBuffer(Memory::UniformBufferID _id);
 			static GLuint MaxUniformBlockSize();
 
 		public: 

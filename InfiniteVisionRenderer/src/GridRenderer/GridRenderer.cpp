@@ -27,9 +27,7 @@ namespace OE1Core
 			grid.ColorBold = glm::vec4(s_ColorBold[0], s_ColorBold[1], s_ColorBold[2], s_ColorBold[3]);
 			grid.ColorLight = glm::vec4(s_ColorLight[0], s_ColorLight[1], s_ColorLight[2], s_ColorLight[3]);
 
-			glBindBuffer(GL_UNIFORM_BUFFER, buffer->Buffer);
-			glBufferSubData(GL_UNIFORM_BUFFER, 0, Memory::s_InfiniteGridBufferSize, &grid);
-			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			buffer->Update(Memory::s_InfiniteGridBufferSize, 0, &grid);
 		}
 
 		void GridRenderer::Render()

@@ -171,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseRenderer.h" />
+    <ClInclude Include="src\Interface.h" />
     <ClInclude Include="src\DisplayCanvas\Forward\IVFMainCanavs.h" />
     <ClInclude Include="src\DisplayCanvas\IVFramebuffer\FrameSize.h" />
     <ClInclude Include="src\DisplayCanvas\IVFramebuffer\IVFramebuffer.h" />

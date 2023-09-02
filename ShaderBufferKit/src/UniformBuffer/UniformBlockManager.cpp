@@ -23,10 +23,14 @@ namespace OE1Core
 				return nullptr;
 			return &s_UniformBuffers[_id];
 		}
+		Memory::UniformBuffer* UniformBlockManager::UseBuffer(Memory::UniformBufferID _id)
+		{
+			return &s_UniformBuffers[_id];
+		}
 		void UniformBlockManager::RegisterUniformBuffers()
 		{
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::SCENE_TRANSFORM,		Memory::UniformBuffer("SceneTransform")));
-			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::INFIN_GRID,				Memory::UniformBuffer("infinite_grid")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::INFIN_GRID,				Memory::UniformBuffer("InfiniteGrid")));
 		}
 		void UniformBlockManager::LinkUniformBuffers()
 		{
