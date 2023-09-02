@@ -5,14 +5,14 @@ namespace OE1Core
 {
 	namespace Renderer
 	{
-		IVFramebuffer::IVFramebuffer(int _width, int _height)
+		IVFramebuffer::IVFramebuffer(const int _width, const int _height)
 		{
 			m_Width = _width;
 			m_Height = _height;
 
 			glGenFramebuffers(1, &m_Framebuffer);
 		}
-		IVFramebuffer::IVFramebuffer(int _res[2])
+		IVFramebuffer::IVFramebuffer(const int _res[2])
 		{
 			m_Width = _res[0];
 			m_Height = _res[1];

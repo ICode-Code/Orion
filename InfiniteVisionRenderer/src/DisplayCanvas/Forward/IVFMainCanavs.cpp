@@ -5,12 +5,12 @@ namespace OE1Core
 {
 	namespace Renderer
 	{
-		IVFMainCanavs::IVFMainCanavs(int _width, int _height)
+		IVFMainCanavs::IVFMainCanavs(const int _width, const int _height)
 			: IVFramebuffer{ _width, _height }
 		{
 
 		}
-		IVFMainCanavs::IVFMainCanavs(int _res[2])
+		IVFMainCanavs::IVFMainCanavs(const int _res[2])
 			: IVFramebuffer{ _res }
 		{
 

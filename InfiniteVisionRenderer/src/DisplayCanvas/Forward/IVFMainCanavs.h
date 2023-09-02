@@ -10,8 +10,8 @@ namespace OE1Core
 		class IVFMainCanavs : public IVFramebuffer
 		{
 		public:
-			IVFMainCanavs(int _width, int _height);
-			IVFMainCanavs(int _res[2]);
+			IVFMainCanavs(const int _width, const int _height);
+			IVFMainCanavs(const int _res[2]);
 			virtual ~IVFMainCanavs();
 
 

@@ -1,41 +1,23 @@
 #ifndef OE1_CORE_SYSTEM_H_
 #define OE1_CORE_SYSTEM_H_
 
-#include "../Core/Component/IComponent.h"
-#include "SceneInterface.h"
+#include "Interface/CoreSystemInterface.h"
 
 namespace OE1Core
 {
 
 
 	/// <summary>
-	/// It's where you manage the creation, modification, and deletion of entities,
-	/// components, and other scene-related data.
-	//  The CoreSystem has a direct relationship with the scene data.
+	/// This clas help as interface for accessing the core engine element to renderer
+	/// or any other lib who wan to access the core element
 	/// </summary>
-	class CoreSystem : public SceneInterface
+	class CoreSystem : public CoreSystemInterface
 	{
 	public:
 		CoreSystem();
 		~CoreSystem();
 
-		void UpdateScene() override;
-		Scene* GetScene() override;
-		Entity GetEntityByID(uint32_t _id) override;
-		entt::registry& GetSceneRegistry() override;
-
-		// Actions
-		Entity CloneEntity(Entity _entity);
-
-		// Entity Creation
-		Entity CreateEmptyEntity();
-		Entity CreateCameraEntity();
-
-		// Component Creation
-		void AddRigidbodyComponent(Entity _entity);
-		void AddMeshColliderComponent(Entity _entity);
-		void AddAudioComponent(Entity _entity);
-		void AddProjectileComponent(Entity _entity);
+		Shader* GetShader(ShaderID _id) override;
 	};
 }
 

@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <Log.h>
 
+#include "FrameSize.h"
 #include <vector>
 
 
@@ -15,8 +16,8 @@ namespace OE1Core
 		class __declspec(dllexport) IVFramebuffer
 		{
 		public:
-			IVFramebuffer(int _width, int _he34ight);
-			IVFramebuffer(int _res[2]);
+			IVFramebuffer(const int _width, const int _he34ight);
+			IVFramebuffer(const int _res[2]);
 			virtual ~IVFramebuffer();
 
 

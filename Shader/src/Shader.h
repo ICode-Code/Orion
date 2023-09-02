@@ -13,7 +13,7 @@
 
 #include "ShaderData.h"
 
-namespace OE1Core
+namespace  OE1Core
 {
 	class Shader
 	{

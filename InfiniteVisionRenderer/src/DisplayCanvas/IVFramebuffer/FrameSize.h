@@ -5,7 +5,7 @@
 
 namespace OE1Core
 {
-	namespace Rendere
+	namespace Renderer
 	{
 		namespace IVFrameSize
 		{

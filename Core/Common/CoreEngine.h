@@ -5,9 +5,12 @@
 #include "../Platform/Win/WindowManager.h"
 // Renderer
 #include "IVRender.h"
+
 #include "CoreSystem.h"
-#include "ShaderManager/ShaderManager.h"
-#include "MemoryManager/Uniform/UniformBlockManager.h"
+#include "SceneSystem.h"
+
+#include <ShaderManager/ShaderManager.h>
+#include <UniformBuffer/UniformBlockManager.h>
 
 #include "../Event/IEvent.h"
 #include "../GUI/GUIBase.h"
@@ -33,6 +36,7 @@ namespace OE1Core
 
 	protected:
 		inline static OE1Core::CoreSystem* s_CoreSystem = nullptr;
+		inline static OE1Core::SceneSystem* s_SceneSystem = nullptr;
 		inline static OE1Core::Window* s_Window = nullptr;
 		inline static OE1Core::GUIBase* s_GuiBase = nullptr;
 		inline static OE1Core::ShaderManager* s_ShaderManager = nullptr;

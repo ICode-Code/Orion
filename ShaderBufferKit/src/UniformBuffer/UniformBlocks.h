@@ -6,6 +6,11 @@
 #include <string>
 
 
+// Suppress warning C4251 when including GLM headers.
+// Explanation: GLM is a header-only library and does not need a DLL interface.
+// The warning is suppressed because it doesn't apply to GLM and can be safely ignored.
+#pragma warning(disable: 4251)
+
 namespace OE1Core
 {
 	namespace Memory
@@ -13,7 +18,7 @@ namespace OE1Core
 
 		/// //////////////////////////// SceneTransfrom-Block //////////////////////
 
-		struct SceneTransfrom
+		struct __declspec(dllexport) SceneTransfrom
 		{
 			glm::mat4 Projection;
 			glm::mat4 View;
@@ -27,9 +32,21 @@ namespace OE1Core
 
 
 
+		/// //////////////////////////////////// Infinte Grid Param /////////////
+		struct __declspec(dllexport) InfiniteGrid
+		{
+			glm::vec4 ColorLight;
+			glm::vec4 ColorBold;
+			float Scale;
+		};
+		inline static constexpr size_t s_InfiniteGridBufferSize = sizeof(InfiniteGrid);
+
+		/// //////////////////////////////////////////////////////////////////////////
+
+
 		/// ////////////////////////////////////// Block-structure ///////////////////////////////
 
-		struct UniformBuffer
+		struct __declspec(dllexport) UniformBuffer
 		{
 			UniformBuffer(std::string name = "#") : Name(name) {};
 
@@ -42,9 +59,10 @@ namespace OE1Core
 
 
 		/// /////////////////////////////////////// Uniform Buffer Cata ///////////////////////
-		enum class UniformBufferID
+		enum class __declspec(dllexport) UniformBufferID
 		{
 			SCENE_TRANSFORM = 0,
+			INFIN_GRID,
 			MATERIAL_PROPERTY,
 			TEXTURE_ACCESS_INDEX,
 			ENVIRONMENT_VARIABLES,

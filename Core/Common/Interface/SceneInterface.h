@@ -1,8 +1,9 @@
 #ifndef OE1_SCENE_INTERFACE_H_
 #define OE1_SCENE_INTERFACE_H_
 
-#include "../Core/Scene/Entity.h"
-#include "../Core/Scene/SceneManager.h"
+#include "../../Core/Scene/Entity.h"
+#include "../../Core/Scene/SceneManager.h"
+
 
 namespace OE1Core
 {

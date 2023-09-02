@@ -17,14 +17,21 @@ namespace OE1Core
 			for (auto& iter : s_UniformBuffers)
 				glDeleteBuffers(1, &iter.second.Buffer);
 		}
-
+		Memory::UniformBuffer* UniformBlockManager::GetBuffer(Memory::UniformBufferID _id)
+		{
+			if (s_UniformBuffers.find(_id) == s_UniformBuffers.end())
+				return nullptr;
+			return &s_UniformBuffers[_id];
+		}
 		void UniformBlockManager::RegisterUniformBuffers()
 		{
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::SCENE_TRANSFORM,		Memory::UniformBuffer("SceneTransform")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::INFIN_GRID,				Memory::UniformBuffer("infinite_grid")));
 		}
 		void UniformBlockManager::LinkUniformBuffers()
 		{
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::SCENE_TRANSFORM], Memory::s_SceneTransformBufferSize, 1);
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::INFIN_GRID],		Memory::s_InfiniteGridBufferSize,	1);
 		}
 
 		GLuint UniformBlockManager::GetNextBlockBindingPoint() { return s_CurrentBlockBindingPoint++; };

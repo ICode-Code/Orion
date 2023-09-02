@@ -3,8 +3,7 @@
 
 
 // ORion
-#include <Log.h>
-#include <Shader.h>
+#include "../Shader.h"
 #include "ShaderID.h"
 
 

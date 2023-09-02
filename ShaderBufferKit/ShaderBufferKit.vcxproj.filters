@@ -15,24 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ShaderData.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ShaderManager\ShaderManager.cpp">
+    <ClCompile Include="src\UniformBuffer\UniformBlockManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Shader.h">
+    <ClInclude Include="src\UniformBuffer\UniformBlockManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ShaderManager\ShaderID.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ShaderManager\ShaderManager.h">
+    <ClInclude Include="src\UniformBuffer\UniformBlocks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
