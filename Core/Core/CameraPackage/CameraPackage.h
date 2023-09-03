@@ -2,7 +2,7 @@
 #define OE1_CAMERA_PACKAGE_H_
 
 #include "../Component/CameraControllerComponent/FreeLookCameraControllerComponent/FreeLookCameraControllerComponent.h"
-#include "UniformBuffer/UniformBlockManager.h"
+#include "../../Common/Shared/UniformBlocks.h"
 namespace OE1Core
 {
 	class CameraPackage

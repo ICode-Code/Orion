@@ -97,7 +97,7 @@
       <PreprocessorDefinitions>MEMORY_MANAGER_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Shader\src\;$(SolutionDir)Log\src\;$(SolutionDir)Core\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Log\src\;$(SolutionDir)Core\Common;$(SolutionDir)Shader\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,7 +114,7 @@
       <PreprocessorDefinitions>MEMORY_MANAGER_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Shader\src\;$(SolutionDir)Log\src\;$(SolutionDir)Core\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Log\src\;$(SolutionDir)Core\Common;$(SolutionDir)Shader\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,7 +131,7 @@
       <PreprocessorDefinitions>MEMORY_MANAGER_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Shader\src\;$(SolutionDir)Log\src\;$(SolutionDir)Core\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Log\src\;$(SolutionDir)Core\Common;$(SolutionDir)Shader\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,7 +148,7 @@
       <PreprocessorDefinitions>MEMORY_MANAGER_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Shader\src\;$(SolutionDir)Log\src\;$(SolutionDir)Core\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;$(SolutionDir)Log\src\;$(SolutionDir)Core\Common;$(SolutionDir)Shader\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -163,7 +163,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\UniformBuffer\UniformBlockManager.h" />
-    <ClInclude Include="src\UniformBuffer\UniformBlocks.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Log\Log.vcxproj">

@@ -21,6 +21,10 @@ namespace OE1Core
 	{
 		return &*Log::GetCoreLogger();
 	}
+	ShaderManager::ShaderRegistry* CoreSystem::GetShaderRegistry()
+	{
+		return &ShaderManager::s_Shaders;
+	}
 	void CoreSystem::SetRenderedFrame(unsigned int _id)
 	{
 		ViewportArgs::FINAL_FRAME = _id;

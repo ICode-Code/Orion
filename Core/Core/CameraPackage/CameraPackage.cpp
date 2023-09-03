@@ -1,6 +1,5 @@
 #include "CameraPackage.h"
 
-
 namespace OE1Core
 {
 	CameraPackage::CameraPackage(GLFWwindow* _window)

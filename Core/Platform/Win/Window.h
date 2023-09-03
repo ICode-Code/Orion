@@ -38,6 +38,7 @@ namespace OE1Core
 
 
 	protected:
+		void InitRenderState();
 		void InitOpenGLContext();
 		void InitWindow();
 		void RegisterEventCalls();

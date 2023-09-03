@@ -8,6 +8,7 @@
 
 #include "CoreSystem.h"
 #include "SceneSystem.h"
+#include "ShaderSystem.h"
 
 #include <ShaderManager/ShaderManager.h>
 #include <UniformBuffer/UniformBlockManager.h>
@@ -37,6 +38,8 @@ namespace OE1Core
 	protected:
 		inline static OE1Core::CoreSystem* s_CoreSystem = nullptr;
 		inline static OE1Core::SceneSystem* s_SceneSystem = nullptr;
+		inline static OE1Core::ShaderSystem* s_ShaderSystem = nullptr;
+
 		inline static OE1Core::Window* s_Window = nullptr;
 		inline static OE1Core::GUIBase* s_GuiBase = nullptr;
 		inline static OE1Core::ShaderManager* s_ShaderManager = nullptr;

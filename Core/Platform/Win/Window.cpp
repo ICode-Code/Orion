@@ -11,6 +11,7 @@ namespace OE1Core
 
 		InitOpenGLContext();
 		InitWindow();
+		InitRenderState();
 
 	}
 	Window::~Window()
@@ -25,6 +26,19 @@ namespace OE1Core
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // dont show
+	}
+	void Window::InitRenderState()
+	{
+		// Depth
+		glEnable(GL_DEPTH_TEST);
+
+		// Stencil
+		glEnable(GL_STENCIL_TEST);
+		glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
+
+		// Blend operation
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	void Window::EnableWin()
 	{

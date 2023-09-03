@@ -23,8 +23,5 @@
     <ClInclude Include="src\UniformBuffer\UniformBlockManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\UniformBuffer\UniformBlocks.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,14 +1,15 @@
 #include "UniformBlockManager.h"
 
-
 namespace OE1Core
 {
 	namespace Memory
 	{
-		UniformBlockManager::UniformBlockManager()
+		UniformBlockManager::UniformBlockManager(ShaderInterface* _shader_interface)
 		{
+			s_ShaderInterface =  _shader_interface;
 			RegisterUniformBuffers();
 			LinkUniformBuffers();
+
 
 			s_SceneTransformBuffer = &s_UniformBuffers[Memory::UniformBufferID::SCENE_TRANSFORM];
 		}
@@ -29,13 +30,13 @@ namespace OE1Core
 		}
 		void UniformBlockManager::RegisterUniformBuffers()
 		{
-			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::SCENE_TRANSFORM,		Memory::UniformBuffer("SceneTransform")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::INFIN_GRID,				Memory::UniformBuffer("InfiniteGrid")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::SCENE_TRANSFORM,		Memory::UniformBuffer("SceneTransform")));
 		}
 		void UniformBlockManager::LinkUniformBuffers()
 		{
-			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::SCENE_TRANSFORM], Memory::s_SceneTransformBufferSize, 1);
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::INFIN_GRID],		Memory::s_InfiniteGridBufferSize,	1);
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::SCENE_TRANSFORM], Memory::s_SceneTransformBufferSize, 1);
 		}
 
 		GLuint UniformBlockManager::GetNextBlockBindingPoint() { return s_CurrentBlockBindingPoint++; };
@@ -66,15 +67,17 @@ namespace OE1Core
 		{
 			std::vector<int> block_index;
 
+
+			auto& SHADER_REG = s_ShaderInterface->GetShaderRegistry();
 			// Collect block index
-			for (auto& _shader : ShaderManager::s_Shaders)
+			for (auto& _shader : SHADER_REG)
 				block_index.push_back(glGetUniformBlockIndex(_shader.second->GetShader(), _buffer.Name.c_str()));
 
 			// Register Binding point
 			_buffer.BindingPoint = GetNextBlockBindingPoint();
 
 			int vector_access_idx = 0; // to access the vector data
-			for (auto _shader = ShaderManager::s_Shaders.begin(); _shader != ShaderManager::s_Shaders.end(); _shader++, vector_access_idx++)
+			for (auto _shader = SHADER_REG.begin(); _shader != SHADER_REG.end(); _shader++, vector_access_idx++)
 				glUniformBlockBinding(_shader->second->GetShader(), block_index.at(vector_access_idx), _buffer.BindingPoint);
 
 			glBindBufferBase(GL_UNIFORM_BUFFER, _buffer.BindingPoint, _buffer.Buffer);
@@ -87,8 +90,6 @@ namespace OE1Core
 			int block_index = glGetUniformBlockIndex(_shader->GetShader(), _buffer.Name.c_str());
 			glUniformBlockBinding(_shader->GetShader(), block_index, _buffer.BindingPoint);
 			glBindBufferBase(GL_UNIFORM_BUFFER, _buffer.BindingPoint, _buffer.Buffer);
-
-			glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		}
 	}
 }

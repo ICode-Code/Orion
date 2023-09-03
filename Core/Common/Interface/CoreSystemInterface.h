@@ -14,6 +14,7 @@ namespace OE1Core
 		virtual Shader* GetShader(ShaderID _id) = 0;
 		virtual spdlog::logger* GetLog() = 0;
 		virtual void SetRenderedFrame(unsigned int _id) = 0;
+		virtual ShaderManager::ShaderRegistry* GetShaderRegistry() = 0;
 	};
 }
 

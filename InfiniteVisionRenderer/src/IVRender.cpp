@@ -35,7 +35,7 @@ namespace OE1Core
 		void IVRender::InitFramebuffer()
 		{
 			m_IVMainCanavas = new IVFMainCanavs(IVFrameSize::R_1k);
-			//m_IVMainCanavas->SetClearColor(glm::vec4(0.5, 0.1f, 0.8f, 1.0f));
+			m_IVMainCanavas->SetClearColor(glm::vec4(glm::vec3(0.05f), 1.0f));
 		}
 		void IVRender::Update(int _width, int _height)
 		{

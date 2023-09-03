@@ -1,9 +1,9 @@
 #ifndef OE1_UNIFORM_BLOCK_MANAGER_H_
 #define OE1_UNIFORM_BLOCK_MANAGER_H_
 
-#include <ShaderManager/ShaderManager.h>
 
-#include "UniformBlocks.h"
+#include "Interface/ShaderInterface.h"
+#include "Shared/UniformBlocks.h"
 
 #include <unordered_map>
 
@@ -27,7 +27,7 @@ namespace OE1Core
 		class __declspec(dllexport) UniformBlockManager
 		{
 		public:
-			UniformBlockManager();
+			UniformBlockManager(ShaderInterface* _shader_interface);
 			~UniformBlockManager();
 
 			static void LinkShader(Shader* _shader);
@@ -53,7 +53,8 @@ namespace OE1Core
 			static void LinkUniformBuffers();
 
 		private: // data
-			static inline GLuint s_CurrentBlockBindingPoint = 0;
+			inline static GLuint s_CurrentBlockBindingPoint = 0;
+			inline static ShaderInterface* s_ShaderInterface = nullptr;
 
 		};
 	}

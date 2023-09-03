@@ -39,4 +39,8 @@ namespace OE1Core
 			return nullptr;
 		return s_Shaders[_id];
 	}
+	ShaderManager::ShaderRegistry& ShaderManager::GetShaderRegistry()
+	{
+		return s_Shaders;
+	}
 }

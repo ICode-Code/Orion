@@ -1,7 +1,7 @@
 #ifndef OE1_UNIFROM_MEMORY_BLOCK_H_
 #define OE1_UNIFROM_MEMORY_BLOCK_H_
 
-
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <string>
 
@@ -18,7 +18,7 @@ namespace OE1Core
 
 		/// //////////////////////////// SceneTransfrom-Block //////////////////////
 
-		struct __declspec(dllexport) SceneTransfrom
+		struct SceneTransfrom
 		{
 			glm::mat4 Projection;
 			glm::mat4 View;
@@ -33,7 +33,7 @@ namespace OE1Core
 
 
 		/// //////////////////////////////////// Infinte Grid Param /////////////
-		struct __declspec(dllexport) InfiniteGrid
+		struct InfiniteGrid
 		{
 			glm::vec4 ColorLight;
 			glm::vec4 ColorBold;
@@ -46,7 +46,7 @@ namespace OE1Core
 
 		/// ////////////////////////////////////// Block-structure ///////////////////////////////
 
-		struct __declspec(dllexport) UniformBuffer
+		struct UniformBuffer
 		{
 			UniformBuffer(std::string name = "#") : Name(name) {};
 
@@ -65,7 +65,7 @@ namespace OE1Core
 
 
 		/// /////////////////////////////////////// Uniform Buffer Cata ///////////////////////
-		enum class __declspec(dllexport) UniformBufferID
+		enum class UniformBufferID
 		{
 			SCENE_TRANSFORM = 0,
 			INFIN_GRID,
