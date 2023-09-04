@@ -1,7 +1,7 @@
 #ifndef OE_LAYER_BASE_H_
 #define OE_LAYER_BASE_H_
 
-
+#include "../../AssetManager/AssetManager.h"
 #include "../../Platform/Win/WindowManager.h"
 #include "../Native/WindowFileDialog.h"
 #include "../../Core/Command/Commnad.h"

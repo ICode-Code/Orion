@@ -21,6 +21,9 @@ namespace OE1Core
 		// Load compile all the Shader
 		s_ShaderManager = new OE1Core::ShaderManager();
 
+		// Init resource
+		s_ResourceInitializer = new OE1Core::ResourceInitializer();
+
 		// Init UI
 		s_GuiBase = new OE1Core::GUIBase(s_Window->GetWin());
 
@@ -38,8 +41,6 @@ namespace OE1Core
 
 		// Initialize Master Renderer
 		s_MainSceneRenderer = new OE1Core::Renderer::IVRender(s_SceneSystem, s_CoreSystem);
-
-		
 	}
 
 	CoreEngine::~CoreEngine()
@@ -51,6 +52,7 @@ namespace OE1Core
 		delete s_MainSceneRenderer;
 		delete s_ShaderManager;
 		delete s_MemeoryManager;
+		delete s_ResourceInitializer;
 	}
 	void CoreEngine::Run()
 	{

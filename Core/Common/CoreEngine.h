@@ -13,6 +13,8 @@
 #include <ShaderManager/ShaderManager.h>
 #include <UniformBuffer/UniformBlockManager.h>
 
+#include "../AssetManager/ResourceInitializer.h"
+
 #include "../Event/IEvent.h"
 #include "../GUI/GUIBase.h"
 #include "../Core/Command/ExecutionHandler.h"
@@ -45,6 +47,7 @@ namespace OE1Core
 		inline static OE1Core::ShaderManager* s_ShaderManager = nullptr;
 		inline static OE1Core::Memory::UniformBlockManager* s_MemeoryManager = nullptr;
 		inline static OE1Core::Renderer::IVRender* s_MainSceneRenderer = nullptr;
+		inline static OE1Core::ResourceInitializer* s_ResourceInitializer = nullptr;
 	};
 }
 

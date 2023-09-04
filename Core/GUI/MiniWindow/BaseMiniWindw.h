@@ -2,7 +2,7 @@
 #define OE1_BASE_MINI_WINDOW_H_
 
 
-
+#include "../../AssetManager/AssetManager.h"
 #include "../../Platform/Win/WindowManager.h"
 #include "../Native/WindowFileDialog.h"
 #include "../../Core/Command/Commnad.h"

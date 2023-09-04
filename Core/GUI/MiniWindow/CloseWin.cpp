@@ -5,7 +5,7 @@ namespace OE1Core
 {
 	CloseWin::CloseWin()
 	{
-
+		m_LogoutTexture = AssetManager::GetTexture("Question")->GetTexture();
 	}
 	CloseWin::~CloseWin()
 	{
@@ -25,7 +25,7 @@ namespace OE1Core
 		ImGui::OpenPopup("Departing Orion's Realm");
 		if (ImGui::BeginPopupModal("Departing Orion's Realm", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			ImGui::Image((ImTextureID)(intptr_t)0, { 60, 60 }); ImGui::SameLine();
+			ImGui::Image((ImTextureID)(intptr_t)m_LogoutTexture, { 60, 60 }); ImGui::SameLine();
 			ImGui::Text("Warning! Exiting now might cause a disturbance in the Orion Engine space-time codecontinuum. \nYour stellar creations deserve a safe landing – make sure to save your work and avoid cosmic \nglitches before embarking on your intergalactic journey");
 			ImGui::Separator();
 
