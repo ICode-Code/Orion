@@ -18,6 +18,7 @@ namespace OE1Core
 		AssetManager::RegisterImage(s_DefaultTexturePath + "Folder.png",		"Folder");
 		AssetManager::RegisterImage(s_DefaultTexturePath + "Question.png",		"Question");
 		AssetManager::RegisterImage(s_DefaultTexturePath + "Play.png",			"Play");
+		AssetManager::RegisterImage(s_DefaultTexturePath + "Unknown.png",		"Unknown");
 	}
 	void ResourceInitializer::InitBaseMesh()
 	{

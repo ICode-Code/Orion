@@ -1,6 +1,10 @@
 #ifndef OE1_CORE_ENGINE_H_
 #define OE1_CORE_ENGINE_H_
 
+#include <ShlObj.h>
+#include <Shlwapi.h> // For PathFileExists
+
+//#pragma comment(lib, "Shlwapi.lib")
 
 #include "../Platform/Win/WindowManager.h"
 // Renderer
@@ -34,6 +38,9 @@ namespace OE1Core
 
 
 	protected:
+		void CreateDefaultProjectDir();
+
+	protected: // Event Handle
 		bool HandleWindowCloseEvent(WindowCloseEvent& e);
 		bool HandleWindowResizeEvent(WindowResizeEvent& e);
 
@@ -48,6 +55,9 @@ namespace OE1Core
 		inline static OE1Core::Memory::UniformBlockManager* s_MemeoryManager = nullptr;
 		inline static OE1Core::Renderer::IVRender* s_MainSceneRenderer = nullptr;
 		inline static OE1Core::ResourceInitializer* s_ResourceInitializer = nullptr;
+
+	private:
+		inline static const std::wstring s_ProjectRoot = L"\\ORion";
 	};
 }
 

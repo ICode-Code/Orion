@@ -8,6 +8,7 @@ namespace OE1Core
 
 		///////////////////////// ORDER MATTER HERE SO DON'T FUCK IT UP ///////////////////////////
 
+		CreateDefaultProjectDir();
 
 		// Init Window System
 		s_Window = OE1Core::WindowManager::RegisterWindow(ENGINE_MAIN_WINDOW, 1366, 768);
@@ -89,6 +90,37 @@ namespace OE1Core
 		event_dispatcher.Dispatch<WindowResizeEvent>(std::bind(&CoreEngine::HandleWindowResizeEvent, this, std::placeholders::_1));
 
 		SceneManager::OnEvent(e);
+	}
+	void CoreEngine::CreateDefaultProjectDir()
+	{
+		PWSTR my_documents_path = nullptr;
+		if (SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &my_documents_path) == S_OK)
+		{
+			std::wstring project_folder_path = my_documents_path;
+			CoTaskMemFree(my_documents_path);
+
+			project_folder_path += s_ProjectRoot;
+
+			if (!PathFileExists(project_folder_path.c_str()))
+			{
+				if (!CreateDirectoryW(project_folder_path.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
+				{
+					LOG_ERROR("Failed to create ROOT folder");
+				}
+			}
+
+			// Create Project folder
+			project_folder_path += L"\\PRJ_Pilot";
+			if (!PathFileExists(project_folder_path.c_str()))
+			{
+				if (!CreateDirectoryW(project_folder_path.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
+				{
+					LOG_ERROR("Failed to create PROJECT folder");
+				}
+			}
+
+			
+		}
 	}
 	bool CoreEngine::HandleWindowCloseEvent(WindowCloseEvent& e)
 	{

@@ -21,7 +21,7 @@ namespace OE1Core
 
 
 	private:
-		GLuint m_LogoutTexture = 0;
+		ImTextureID m_LogoutTexture = 0;
 	};
 }
 

@@ -53,7 +53,7 @@ namespace OE1Core
 		colors[ImGuiCol_TextDisabled]				= ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
 		colors[ImGuiCol_WindowBg]					= ImVec4(0.051f, 0.051f, 0.051f, 1.000f);
 		colors[ImGuiCol_ChildBg]					= ImVec4(0.101f, 0.101f, 0.101f, 1.000f);
-		colors[ImGuiCol_PopupBg]					= ImVec4(0.19f, 0.19f, 0.19f, 1.0f);
+		colors[ImGuiCol_PopupBg]					= ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
 
 		colors[ImGuiCol_Border]						= ImVec4(0.235f, 0.235f, 0.235f, 0.110f);
 		colors[ImGuiCol_BorderShadow]				= ImVec4(0.304f, 0.304f, 0.304f, 1.0f);
@@ -62,7 +62,7 @@ namespace OE1Core
 		colors[ImGuiCol_FrameBgHovered]				= ImVec4(0.19f, 0.19f, 0.19f, 1.0f);
 		colors[ImGuiCol_FrameBgActive]				= ImVec4(0.20f, 0.22f, 0.23f, 1.00f);
 		colors[ImGuiCol_TitleBg]					= ImVec4(0.235f, 0.235f, 0.235f, 1.000f);
-		colors[ImGuiCol_TitleBgActive]				= ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
+		colors[ImGuiCol_TitleBgActive]				= ImVec4(0.235f, 0.235f, 0.235f, 1.00f);
 		colors[ImGuiCol_TitleBgCollapsed]			= ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
 		colors[ImGuiCol_MenuBarBg]					= ImVec4(0.235f, 0.235f, 0.235f, 1.000f);
 		colors[ImGuiCol_ScrollbarBg]				= ImVec4(0.05f, 0.05f, 0.05f, 0.54f);
@@ -74,7 +74,7 @@ namespace OE1Core
 		colors[ImGuiCol_SliderGrabActive]			= ImVec4(0.56f, 0.56f, 0.56f, 0.54f);
 		colors[ImGuiCol_Button]						= ImVec4(0.05f, 0.05f, 0.05f, 0.54f);
 		colors[ImGuiCol_ButtonHovered]				= s_ThemeColor; 
-		colors[ImGuiCol_ButtonActive]				= s_ThemeColor;
+		colors[ImGuiCol_ButtonActive]				= ImVec4(0.17f, 0.17f, 0.17f, 1.0f);
 		colors[ImGuiCol_Header]						= ImVec4(0.00f, 0.00f, 0.00f, 0.52f);
 		colors[ImGuiCol_HeaderHovered]				= ImVec4(0.00f, 0.00f, 0.00f, 0.36f);
 		colors[ImGuiCol_HeaderActive]				= ImVec4(0.20f, 0.22f, 0.23f, 0.33f);
