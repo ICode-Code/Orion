@@ -6,11 +6,11 @@ namespace OE1Core
 	Scene::Scene(GLFWwindow* _window)
 		: m_Window{_window}, m_CameraPkg{ m_Window }
 	{
-
+		m_Grid = new Grid();
 	}
 	Scene::~Scene()
 	{
-
+		delete m_Grid;
 	}
 
 

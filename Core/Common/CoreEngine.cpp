@@ -5,26 +5,41 @@ namespace OE1Core
 {
 	CoreEngine::CoreEngine(int argc, char** argv)
 	{
+
+		///////////////////////// ORDER MATTER HERE SO DON'T FUCK IT UP ///////////////////////////
+
+
+		// Init Window System
 		s_Window = OE1Core::WindowManager::RegisterWindow(ENGINE_MAIN_WINDOW, 1366, 768);
+		
+		// Enbale the Window
 		s_Window->EnableWin();
+
+		// Setup the callback
 		s_Window->SetEventCallback(std::bind(&CoreEngine::OnEvent, this, std::placeholders::_1));
+		
+		// Load compile all the Shader
 		s_ShaderManager = new OE1Core::ShaderManager();
 
-		// Init ImGui
+		// Init UI
 		s_GuiBase = new OE1Core::GUIBase(s_Window->GetWin());
 
-		// Create Master Scene
-		SceneManager::RegisterScene("MasterScene", new Scene(s_Window->GetWin()), true);
 
-		// Init Core system
+		// Init System Interface
 		s_CoreSystem = new OE1Core::CoreSystem();
 		s_SceneSystem = new OE1Core::SceneSystem();
 		s_ShaderSystem = new OE1Core::ShaderSystem();
 
 		// Buffer Manger
 		s_MemeoryManager = new Memory::UniformBlockManager(s_ShaderSystem);
+
+		// Create Master Scene
+		SceneManager::RegisterScene("MasterScene", new Scene(s_Window->GetWin()), true);
+
 		// Initialize Master Renderer
 		s_MainSceneRenderer = new OE1Core::Renderer::IVRender(s_SceneSystem, s_CoreSystem);
+
+		
 	}
 
 	CoreEngine::~CoreEngine()

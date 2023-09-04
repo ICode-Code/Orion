@@ -28,6 +28,10 @@ namespace OE1Core
 	{
 		return SceneManager::GetActiveScene()->m_EntityRegistry;
 	}
+	Grid* SceneSystem::GetSceneGrid()
+	{
+		return SceneManager::GetActiveScene()->m_Grid;
+	}
 
 	///////////////////////////////////////////////////// ACTION FUNCTION
 

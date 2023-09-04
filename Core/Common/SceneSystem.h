@@ -21,6 +21,7 @@ namespace OE1Core
 		Scene* GetScene() override;
 		Entity GetEntityByID(uint32_t _id) override;
 		entt::registry& GetSceneRegistry() override;
+		virtual Grid* GetSceneGrid() override;
 
 		// Actions
 		Entity CloneEntity(Entity _entity);

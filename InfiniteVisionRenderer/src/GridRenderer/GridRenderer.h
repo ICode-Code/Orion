@@ -12,17 +12,10 @@ namespace OE1Core
 		public:
 			GridRenderer(SceneInterface* _scene_interface, CoreSystemInterface* _coreSystem_interface);
 			~GridRenderer();
-
-			void Update();
 			void Render();
 
-		private: 
-			GLuint s_VAO;
-			float s_ColorLight[4] = { 0.55f, 0.55f, 0.55f, 1.0f };
-			float s_ColorBold[4] = { 0.75f, 0.75f, 0.75f, 1.0f };
-			float s_Background[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
-			float s_Scale = 500.0f;
-
+		protected:
+			Grid* m_Grid = nullptr;
 		};
 	}
 }

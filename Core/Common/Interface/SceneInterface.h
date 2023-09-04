@@ -15,6 +15,7 @@ namespace OE1Core
 		virtual Scene* GetScene() = 0;
 		virtual Entity GetEntityByID(uint32_t _id) = 0;
 		virtual entt::registry& GetSceneRegistry() = 0;
+		virtual Grid* GetSceneGrid() = 0;
 	};
 }
 

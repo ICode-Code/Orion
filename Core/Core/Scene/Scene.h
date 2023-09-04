@@ -4,6 +4,7 @@
 
 #include "../CameraPackage/CameraPackage.h"
 #include "../Mesh/StaticMesh/StaticMesh.h"
+#include "../Grid/Grid.h"
 
 #include <Entt/entt.hpp>
 
@@ -35,6 +36,7 @@ namespace OE1Core
 
 
 	public:
+		Grid* m_Grid = nullptr;
 		GLFWwindow* m_Window;
 		CameraPackage m_CameraPkg;
 		entt::registry m_EntityRegistry;
