@@ -60,7 +60,7 @@ namespace OE1Core
 		while (*s_Window)
 		{
 			// any queued command will be executed here
-			ExecutionHandler::__exe();
+			ExecutionHandler::ProcessQueueCommands();
 
 			SceneManager::UpdateScene(s_Window->GetArg().DeltaTime);
 			s_MainSceneRenderer->RenderScene();

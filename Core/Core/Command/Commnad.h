@@ -3,6 +3,7 @@
 
 #include <string>
 #include <queue>
+#include "Util/LoadArgs.h"
 
 namespace OE1Core
 {
@@ -21,10 +22,10 @@ namespace OE1Core
 	{
 		friend class ExecutionHandler;
 	public:
-		static void PushLoadCommand(std::string _path);	
+		static void PushAssetLoadCommand(Loader::LoadArgs _args);	
 
 	private:
-		inline static std::queue<std::string> s_Load3DAssetCommands;
+		inline static std::queue<Loader::LoadArgs> s_Load3DAssetCommands;
 	};
 }
 

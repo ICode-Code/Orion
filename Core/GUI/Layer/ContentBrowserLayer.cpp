@@ -36,6 +36,7 @@ namespace OE1Core
 	void ContentBrowserLayer::ContentBrowserMiniOptionPopup()
 	{
 		ImGui::SetNextWindowSize(ImVec2(270.0f, 60.0f));
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.09f, 0.09f, 0.09f, 1.0f));
 		if (ImGui::BeginPopup("content_setting"))
 		{
 			CustomFrame::UIEditorFloat("Padding", &m_Padding, 32, 100, "%.3f", 0, 70);
@@ -43,6 +44,7 @@ namespace OE1Core
 
 			ImGui::EndPopup();
 		}
+		ImGui::PopStyleColor();
 	}
 	void ContentBrowserLayer::Render()
 	{

@@ -79,6 +79,44 @@ namespace OE1Core
 
 		/// ///////////////////////////////////////////////////////////////////////////
 
+
+
+		/// /////////////////////////////////// MaterialProperties-Block //////////////////////
+
+		/*
+		* Using glm::vec4 ensure that each member of
+		* the struct occupies a contiguous 16-byte block,
+		* which is the default alignment for uniform buffers
+		*/
+		struct MaterialProperties
+		{
+			glm::vec4 Color = glm::vec4(1.0f);
+			glm::vec4 EmissionColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+			glm::vec4 AmbientOcclusion = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+			glm::vec4 MetalRoughEmissionAlpha = glm::vec4(0.0f, 0.5f, 0.0f, 1.0f); // m_Metal, m_Roughness, m_EmissionStength, m_Alpha
+			glm::vec4 BaseReflectivityPadding = glm::vec4(0.02f, 0.0f, 0.0f, 0.0f); // m_BaseReflectivity, padding, padding, padding
+		};
+		inline static constexpr size_t s_MaterialPropertiesBufferSize = sizeof(MaterialProperties);
+
+
+		struct TextureAccessIndex
+		{
+			/// Color Texture
+			int Color;
+			int Emission;
+
+			/// Non-Color Texture
+			int Normal;
+			int Roughness;
+			int Metal;
+			int RoughnessMetal;
+			int AmbientOcclusion;
+			int AlphaMask;
+		};
+		inline static constexpr size_t s_TextureAccessIndexBufferSize = sizeof(TextureAccessIndex);
+
+		/// /////////////////////////////////////////////////////////////////////////
+
 	}
 }
 

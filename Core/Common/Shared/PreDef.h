@@ -1,0 +1,8 @@
+#ifndef OE1_PRE_DEF_H_
+#define OE1_PRE_DEF_H_
+
+#define ORI_MAX_INSTANCE_PER_MESH 2048
+#define ORI_MATERIAL_PREFIX "ORMAT_"
+
+
+#endif // !OE1_PRE_DEF_H_

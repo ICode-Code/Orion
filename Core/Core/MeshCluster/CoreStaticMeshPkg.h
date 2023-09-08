@@ -22,6 +22,7 @@ namespace OE1Core
 
 		uint32_t PackageID;
 		uint32_t MaterialID;
+		std::string Name;
 
 		std::vector<DataBlock::Vertex> VertexData; // Big
 		std::vector<uint32_t> IndiceData;  // Big

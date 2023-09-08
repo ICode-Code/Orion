@@ -5,6 +5,8 @@
 #include "StaticGeometryLoader.h"
 #include "DynamicGeometryLoader.h"
 
+#include <queue>
+
 namespace OE1Core
 {
 	namespace Loader
@@ -12,8 +14,11 @@ namespace OE1Core
 		class GeometryLoader
 		{
 		public:
+			~GeometryLoader() = default;
 			// This will pharse the load args
-			static void LoadGeometry(LoadArgs _load_args);
+			static void LoadGeometry(LoadArgs _load_args, bool& _is_running);
+			inline static std::queue<StaticGeometryLoader::MeshSet> s_MeshSets;
+			inline static bool s_Working = false;
 		};
 	}
 }

@@ -53,7 +53,7 @@ namespace OE1Core
 		colors[ImGuiCol_TextDisabled]				= ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
 		colors[ImGuiCol_WindowBg]					= ImVec4(0.051f, 0.051f, 0.051f, 1.000f);
 		colors[ImGuiCol_ChildBg]					= ImVec4(0.101f, 0.101f, 0.101f, 1.000f);
-		colors[ImGuiCol_PopupBg]					= ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
+		colors[ImGuiCol_PopupBg]					= ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
 
 		colors[ImGuiCol_Border]						= ImVec4(0.235f, 0.235f, 0.235f, 0.110f);
 		colors[ImGuiCol_BorderShadow]				= ImVec4(0.304f, 0.304f, 0.304f, 1.0f);

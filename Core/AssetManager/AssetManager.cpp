@@ -56,4 +56,18 @@ namespace OE1Core
 
 		return s_TextureHDRIRegistry[_name];
 	}
+
+
+	ModelPkg* AssetManager::GetGeometry(uint32_t _model_id)
+	{
+		if (s_RenderableGeometry.find(_model_id) == s_RenderableGeometry.end())
+			return nullptr;
+		return &s_RenderableGeometry[_model_id];
+	}
+	void AssetManager::RegisterGeometry(ModelPkg _model, uint32_t _model_id)
+	{
+		if (s_RenderableGeometry.find(_model_id) != s_RenderableGeometry.end())
+			return;
+		s_RenderableGeometry.insert(std::make_pair(_model_id, _model));
+	}
 }

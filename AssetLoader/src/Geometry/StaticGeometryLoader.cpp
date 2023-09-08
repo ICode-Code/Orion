@@ -16,7 +16,7 @@ namespace OE1Core
 
 		void StaticGeometryLoader::OELoadStaticGeometry(std::string _path, MeshSet& _mesh_set)
 		{
-			PROGRESS_INFO = "Loading to memory.."; PROGRESS_LEVEL = 0.05f;
+			PROGRESS_INFO = "Loading to memory.."; PROGRESS_LEVEL = 0.02f;
 
 			if (!LoadToMemory(_path))
 			{
@@ -81,7 +81,7 @@ namespace OE1Core
 			std::string mesh_name = _mesh_node->mName.C_Str();
 			PROGRESS_INFO = "Unpacking "; 
 			PROGRESS_INFO.append(mesh_name);
-			PROGRESS_LEVEL = (0.9f / (float)s_Scene->mNumMeshes);
+			PROGRESS_LEVEL += (0.9f / (float)s_Scene->mNumMeshes);
 
 			DataBlock::UnprocessedGeometry unprocessed_geom;
 			unprocessed_geom.Name = mesh_name;

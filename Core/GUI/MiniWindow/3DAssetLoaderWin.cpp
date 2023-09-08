@@ -102,7 +102,7 @@ namespace OE1Core
 		{
 			s_LoadArgs.SourcePath = s_AssetPath;
 			s_LoadArgs.DestinationPath = s_DirectoryNameBuffer;
-			Loader::GeometryLoader::LoadGeometry(s_LoadArgs);
+			Command::PushAssetLoadCommand(s_LoadArgs);
 			s_ShouldOpen = false;
 
 			if(s_CreateSeparateFolder)

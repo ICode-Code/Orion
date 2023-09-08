@@ -3,6 +3,7 @@
 
 #include "../Core/Texture/Texture.h"
 #include "Texture/TextureLoader.h"
+#include "../Core/MeshCluster/ModelPkg.h"
 
 #include <unordered_map>
 
@@ -21,10 +22,14 @@ namespace OE1Core
 		static void RegisterHDRIImage(std::string _path, std::string _name);
 		static void RegisterImage(std::string _path, std::string _name);
 
+		static ModelPkg* GetGeometry(uint32_t _model_id);
+		static void RegisterGeometry(ModelPkg _model, uint32_t _model_id);
+
 
 	protected:
 		inline static std::unordered_map<std::string, Texture*> s_TextureRegistry;
 		inline static std::unordered_map<std::string, Texture*> s_TextureHDRIRegistry;
+		inline static std::unordered_map<uint32_t, ModelPkg> s_RenderableGeometry;
 
 	};
 }
