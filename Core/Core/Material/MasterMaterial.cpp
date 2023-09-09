@@ -74,7 +74,10 @@ namespace OE1Core
 	void MasterMaterial::SetEmissionIndex(int _idx) {		m_TAI.Emission			= _idx; }
 	void MasterMaterial::SetAOIndex(int _idx) {				m_TAI.AmbientOcclusion	= _idx; }
 	void MasterMaterial::SetAlphaMaskIndex(int _idx) {		m_TAI.AlphaMask			= _idx; }
-
+	void MasterMaterial::Update()
+	{
+		Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::MATERIAL_REGISTRY)->Update(Memory::s_MaterialPropertiesBufferSize, m_Offset, &m_Parameter);
+	}
 	void MasterMaterial::Attach()
 	{
 		glActiveTexture(GL_TEXTURE0);

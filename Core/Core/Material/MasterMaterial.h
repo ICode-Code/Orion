@@ -1,7 +1,7 @@
 #ifndef OE1_MASTER_MATERIAL_H_
 #define OE1_MASTER_MATERIAL_H_
 
-
+#include "UniformBuffer/UniformBlockManager.h"
 #include "../../Common/Shared/UniformBlocks.h"
 #include "ShaderManager/ShaderManager.h"
 #include "../../Common/Shared/MaterialType.h"
@@ -35,6 +35,7 @@ namespace OE1Core
 		/// <param name="_shader"></param>
 		void Attach(Shader* _shader);
 
+		void Update();
 		
 		int GetOffset() const;
 		void SetOffset(int _offset);

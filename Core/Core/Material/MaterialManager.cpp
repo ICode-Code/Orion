@@ -24,6 +24,9 @@ namespace OE1Core
 
 		s_MaterialRegistry.insert(std::make_pair(_name, new MasterMaterial(_shader, _name, (int)s_MaterialRegistry.size())));
 
+		MasterMaterial* master_material = s_MaterialRegistry[_name];
+		Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::MATERIAL_REGISTRY)->Update(Memory::s_MaterialPropertiesBufferSize, master_material->GetOffset(), &master_material->m_Parameter);
+		Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::TAI_REGISTRY)->Update(Memory::s_TextureAccessIndexBufferSize, master_material->GetOffset(), &master_material->m_TAI);
 		return s_MaterialRegistry[_name];
 	}
 	MasterMaterial* MaterialManager::GetMaterial(std::string _name)
