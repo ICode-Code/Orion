@@ -32,21 +32,19 @@ namespace OE1Core
 		{
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::INFIN_GRID,				Memory::UniformBuffer("InfiniteGrid")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::SCENE_TRANSFORM,		Memory::UniformBuffer("SceneTransform")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::MATERIAL_REGISTRY,		Memory::UniformBuffer("MaterialProperties")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::TAI_REGISTRY,			Memory::UniformBuffer("TextureAccessIndex")));
 		}
 		void UniformBlockManager::LinkUniformBuffers()
 		{
-			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::INFIN_GRID],		Memory::s_InfiniteGridBufferSize,	1);
-			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::SCENE_TRANSFORM], Memory::s_SceneTransformBufferSize, 1);
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::INFIN_GRID],			Memory::s_InfiniteGridBufferSize,	1);
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::SCENE_TRANSFORM],		Memory::s_SceneTransformBufferSize, 1);
+
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::MATERIAL_REGISTRY],	Memory::s_MaterialPropertiesBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::TAI_REGISTRY],		Memory::s_TextureAccessIndexBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);
 		}
 
 		GLuint UniformBlockManager::GetNextBlockBindingPoint() { return s_CurrentBlockBindingPoint++; };
-
-		GLuint UniformBlockManager::MaxUniformBlockSize()
-		{
-			GLint max_uniform_buff;
-			glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &max_uniform_buff);
-			return max_uniform_buff;
-		}
 		void UniformBlockManager::LinkShader(Shader* _shader)
 		{
 			for (auto& _iter : s_UniformBuffers)

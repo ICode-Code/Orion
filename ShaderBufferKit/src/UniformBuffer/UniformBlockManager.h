@@ -4,11 +4,10 @@
 
 #include "Interface/ShaderInterface.h"
 #include "Shared/UniformBlocks.h"
+#include "Shared/PreDef.h"
 
 #include <unordered_map>
 
-#define UNIFORM_BLOCK_MEMORY_STRESS 256
-#define MAX_MATERIAL Memory::UniformBlockManager::MaxUniformBlockSize()
 
 
 // Suppress warning C4251: 'std::unordered_map' needs to have dll-interface to be used by clients.
@@ -37,7 +36,6 @@ namespace OE1Core
 			// Not checking it may lead to crashes.
 			// Use this function with caution.
 			static Memory::UniformBuffer* UseBuffer(Memory::UniformBufferID _id);
-			static GLuint MaxUniformBlockSize();
 
 		public: 
 			inline static std::unordered_map<Memory::UniformBufferID, Memory::UniformBuffer> s_UniformBuffers;

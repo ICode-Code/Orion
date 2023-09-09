@@ -2,7 +2,7 @@
 #define OE1_MATERIAL_MANAGER_H_
 
 #include "MasterMaterial.h"
-
+#include "PreDef.h"
 #include <unordered_map>
 
 namespace OE1Core
