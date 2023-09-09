@@ -12,6 +12,7 @@ namespace OE1Core
 {
 	class MasterMaterial
 	{
+		friend class MaterialManager;
 	public:
 		MasterMaterial(Shader* _shade = nullptr, std::string _name = "Untitled", int _offset = 0);
 		/// <summary>

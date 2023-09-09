@@ -19,6 +19,8 @@ namespace OE1Core
 
 		if (glIsTexture(m_NonColorTexture))
 			glDeleteTextures(1, &m_NonColorTexture);
+
+		delete m_Shader;
 	}
 
 	void MasterMaterial::AssignShader(Shader* _shader)
