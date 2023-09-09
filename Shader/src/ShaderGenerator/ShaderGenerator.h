@@ -4,6 +4,7 @@
 #include <string>
 #include <utility>
 #include "AvailTexture.h"
+#include "PreDef.h"
 
 
 // Suppress warning C4251: std::string
@@ -16,7 +17,6 @@ namespace OE1Core
 	public:
 		ShaderGenerator() = default;
 		~ShaderGenerator() = default;
-		static void SetMaxMaterialCount(int _count);
 		static std::string GetStandardVertexShader();
 		static std::string GetForwardPixelShader(AvailTexture& _texture_set);
 		static std::string GetDeferredPixelShader(AvailTexture& _texture_set);
@@ -54,10 +54,6 @@ namespace OE1Core
 		static void FR_ReadEmission();
 		static void FR_ReadEmissionRaw();
 		static void FR_ReadCommon();
-
-
-	private:
-		inline static int MAX_MATERIAL_PER_BLOCK = 100;
 
 	};
 }

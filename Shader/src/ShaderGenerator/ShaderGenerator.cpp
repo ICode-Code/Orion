@@ -99,17 +99,12 @@ void main()
 		CM_CloseMainPixelShader();
 		return std::exchange(s_Source, "");
 	}
-	void ShaderGenerator::SetMaxMaterialCount(int _count)
-	{
-		if(_count > 0)
-			MAX_MATERIAL_PER_BLOCK = _count;
-	}
 	void ShaderGenerator::CM_Definations()
 	{
 		s_Source.append("\n");
 		s_Source.append("#define MAX_MATERIAL");
 		s_Source.append(" ");
-		s_Source.append(std::to_string(MAX_MATERIAL_PER_BLOCK));
+		s_Source.append(std::to_string(ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK));
 		s_Source.append("\n");
 	}
 	void ShaderGenerator::FR_RegisterUniforms()
