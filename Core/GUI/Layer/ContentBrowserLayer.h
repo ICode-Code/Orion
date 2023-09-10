@@ -2,6 +2,7 @@
 #define OE1_CONTENT_BROWSER_LAYER_H_
 
 #include "LayerBase.h"
+#include "PreDef.h"
 #include <filesystem>
 
 #include <ShlObj.h>

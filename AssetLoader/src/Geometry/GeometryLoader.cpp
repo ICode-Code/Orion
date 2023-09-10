@@ -21,16 +21,13 @@ namespace OE1Core
 			StaticGeometryLoader::OELoadStaticGeometry(_load_args.SourcePath, mesh_set);
 
 			// to the list
-			s_MeshSets.push(mesh_set);
+			s_MeshSets.push(std::make_pair(_load_args, mesh_set));
 
 			// update info
 			StaticGeometryLoader::PROGRESS_INFO = "Establishing Orion asset..";
 
 			// For proper sync 
 			std::this_thread::sleep_for(1s);
-
-			// update info
-			StaticGeometryLoader::PROGRESS_INFO = "Job Done.";
 
 
 			// update flags

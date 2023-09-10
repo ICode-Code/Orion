@@ -60,14 +60,24 @@ namespace OE1Core
 
 	ModelPkg* AssetManager::GetGeometry(uint32_t _model_id)
 	{
-		if (s_RenderableGeometry.find(_model_id) == s_RenderableGeometry.end())
+		if(s_RenderableGeometryIDTranslator.find(_model_id) == s_RenderableGeometryIDTranslator.end())
 			return nullptr;
-		return &s_RenderableGeometry[_model_id];
+		return &s_RenderableGeometry[s_RenderableGeometryIDTranslator[_model_id]];
 	}
-	void AssetManager::RegisterGeometry(ModelPkg _model, uint32_t _model_id)
+	ModelPkg* AssetManager::GetGeometry(std::string _name)
 	{
-		if (s_RenderableGeometry.find(_model_id) != s_RenderableGeometry.end())
+		if (s_RenderableGeometry.find(_name) == s_RenderableGeometry.end())
+			return nullptr;
+		return &s_RenderableGeometry[_name];
+	}
+	void AssetManager::RegisterGeometry(ModelPkg _model)
+	{
+		uint32_t model_id = _model.PackageID;
+		std::string model_name = _model.Name;
+
+		if (s_RenderableGeometry.find(model_name) != s_RenderableGeometry.end())
 			return;
-		s_RenderableGeometry.insert(std::make_pair(_model_id, _model));
+		s_RenderableGeometryIDTranslator.insert(std::make_pair(model_id, model_name));
+		s_RenderableGeometry.insert(std::make_pair(model_name, _model));
 	}
 }

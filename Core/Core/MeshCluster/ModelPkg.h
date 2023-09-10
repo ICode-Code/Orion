@@ -9,6 +9,12 @@ namespace OE1Core
 	{
 		std::string Name;
 		uint32_t PackageID;
+		glm::vec3 Extents;
+		int SubMeshCount	= 0;
+		int VertexCount		= 0;
+		int IndicesCount	= 0;
+		int TriangleCount	= 0;
+		unsigned int SnapShot = 0;
 		std::vector<CoreStaticMeshPkg> MeshList;
 		
 	};

@@ -2,6 +2,7 @@
 #define OE1_ASSET_PARSER_H_
 
 #include "ShaderGenerator/ShaderGenerator.h"
+#include "../../Core/Material/MaterialManager.h"
 #include "../../Common/Shared/AvailTexture.h"
 #include "../../Common/Shared/PreDef.h"
 #include "../AssetManager.h"
@@ -23,10 +24,14 @@ namespace OE1Core
 
 
 	protected:
+		static void ReadModelInfo(ModelPkg& model_package);
+		static glm::vec2 GrabTextureSize(Loader::StaticGeometryLoader::TextureSet& _texture);
+		static void ReadTextureData(const DataBlock::Image2D& _image, int _layer, std::string _mat_name);
 		static void Texture2DFilter();
-		static uint32_t CreateMaterial(Loader::StaticGeometryLoader::TextureSet& _texture);
+		static uint32_t CreateMaterial(Loader::StaticGeometryLoader::TextureSet& _texture, std::string _name);
 		static void BufferIntilization(CoreStaticMeshPkg& _core_mesh);
 		static CoreStaticMeshPkg ProcessGeometry(DataBlock::UnprocessedGeometry& _unprocessed_geometry, uint32_t _package_id, bool _load_mat = true);
+		static void PreProcessGeometry(std::vector<DataBlock::UnprocessedGeometry>& _unprocessed_geometry);
 		static uint32_t GetAssetID();
 
 	private:

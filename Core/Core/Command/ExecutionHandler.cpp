@@ -6,6 +6,7 @@ namespace OE1Core
 	void ExecutionHandler::ProcessQueueCommands()
 	{
 		ProcessAssetLoadCommand();
+		ProcessAsset();
 
 
 		
@@ -27,8 +28,14 @@ namespace OE1Core
 		while (!Loader::GeometryLoader::s_MeshSets.empty())
 		{
 			auto& mesh_data = Loader::GeometryLoader::s_MeshSets.front();
-			AssetParser::ParseStaticGeometry(mesh_data);
+			AssetParser::ParseStaticGeometry(std::get<1>(mesh_data));
+			Loader::LoadArgs& load_args = std::get<0>(mesh_data);
+			
 			Loader::GeometryLoader::s_MeshSets.pop();
+
+			// update info
+			Loader::StaticGeometryLoader::PROGRESS_INFO = "Job Done.";
+			
 		}
 	}
 }

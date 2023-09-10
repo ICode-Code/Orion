@@ -14,6 +14,7 @@ static GLuint MaxUniformBlockSize()
 
 #define ORI_MAX_INSTANCE_PER_MESH 2048
 #define ORI_MATERIAL_PREFIX "ORMAT_"
+#define ORI_ASSET_POSTFIX "ORIAsset"
 #define ORI_UNIFORM_BLOCK_MEMORY_STRESS 256
 #define ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK ((MaxUniformBlockSize() / Memory::s_MaterialPropertiesBufferSize) - ORI_UNIFORM_BLOCK_MEMORY_STRESS)
 

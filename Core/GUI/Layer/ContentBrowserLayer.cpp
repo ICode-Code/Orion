@@ -147,9 +147,11 @@ namespace OE1Core
 					m_ActiveDirectory = m_IterPath;
 				}
 			}
-			else if (m_IterExt == ".ORasset")
+			else if (m_IterExt == ORI_ASSET_POSTFIX)
 			{
-
+				PushPanalItemStyle();
+				ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_RenderableGeometry[m_IterName].SnapShot, {m_ThumbnailSize, m_ThumbnailSize});
+				PopPanalItemStyle();
 			}
 			else if (m_IterExt == ".wav" || m_IterExt == ".mp3")
 			{

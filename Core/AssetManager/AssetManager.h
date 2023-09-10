@@ -11,6 +11,7 @@ namespace OE1Core
 {
 	class AssetManager
 	{
+		friend class ContentBrowserLayer;
 	public:
 		AssetManager();
 		~AssetManager();
@@ -23,13 +24,15 @@ namespace OE1Core
 		static void RegisterImage(std::string _path, std::string _name);
 
 		static ModelPkg* GetGeometry(uint32_t _model_id);
-		static void RegisterGeometry(ModelPkg _model, uint32_t _model_id);
+		static ModelPkg* GetGeometry(std::string _name);
+		static void RegisterGeometry(ModelPkg _model);
 
 
 	protected:
 		inline static std::unordered_map<std::string, Texture*> s_TextureRegistry;
 		inline static std::unordered_map<std::string, Texture*> s_TextureHDRIRegistry;
-		inline static std::unordered_map<uint32_t, ModelPkg> s_RenderableGeometry;
+		inline static std::unordered_map<std::string, ModelPkg> s_RenderableGeometry;
+		inline static std::unordered_map<uint32_t, std::string> s_RenderableGeometryIDTranslator;
 
 	};
 }

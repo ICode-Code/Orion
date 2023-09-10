@@ -5,10 +5,12 @@
 
 namespace OE1Core
 {
+	class Asset3DLoaderWin;
 	namespace Loader
 	{
 		struct LoadArgs
 		{
+			friend class Asset3DLoaderWin;
 			bool HasAnimation = false;
 			// load all texture in a way that makes sense
 			bool CreateMaterial = true;
@@ -17,6 +19,7 @@ namespace OE1Core
 			std::string DestinationPath = "";
 			std::string SourcePath = "";
 
+		private:
 			void Reset()
 			{
 				HasAnimation = false;
