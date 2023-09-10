@@ -2,12 +2,14 @@
 #define OE1_3D_ASSET_LOAD_WIN_H_
 
 
-
+#include "PreDef.h"
 #include "BaseMiniWindw.h"
 #include "Util/NameHandle.h"
 #include "Util/LoadArgs.h"
 #include "Geometry/GeometryLoader.h"
 #include <glm/glm.hpp>
+
+#include <filesystem>
 
 
 namespace OE1Core

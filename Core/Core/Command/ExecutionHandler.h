@@ -1,13 +1,12 @@
 #ifndef OE1_EXECUTION_HANDLER_H_
 #define OE1_EXECUTION_HANDLER_H_
 
-
 #include "Util/LoadArgs.h"
 #include "Geometry/GeometryLoader.h"
 #include "../../AssetManager/AssetParser/AssetParser.h"
 #include "Commnad.h"
 
-
+#include <fstream>
 #include <thread>
 #include <Log.h>
 using namespace std::chrono_literals;
@@ -28,6 +27,7 @@ namespace OE1Core
 	protected:
 		static void ProcessAssetLoadCommand();
 		static void ProcessAsset();
+		static void WriteBinary(std::ofstream& _file, std::string _data);
 		
 
 

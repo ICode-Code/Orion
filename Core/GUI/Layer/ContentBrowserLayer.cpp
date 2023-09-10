@@ -13,13 +13,6 @@ namespace OE1Core
 	{
 
 	}
-	std::string ContentBrowserLayer::WideStrToNarrowStr(std::wstring _str)
-	{
-		std::string dest;
-		for (wchar_t c : _str)
-			dest += (char)c;
-		return dest;
-	}
 	void ContentBrowserLayer::QueryProjectDir()
 	{
 		PWSTR my_documents_path = nullptr;
@@ -31,6 +24,7 @@ namespace OE1Core
 			project_folder_path += m_RootDirectory;
 			m_RootDirectory = project_folder_path;
 			m_ActiveDirectory = m_RootDirectory;
+			ORI_ACTIVE_PATH = m_ActiveDirectory.string();
 		}
 	}
 	void ContentBrowserLayer::ContentBrowserMiniOptionPopup()
@@ -145,6 +139,7 @@ namespace OE1Core
 				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 				{
 					m_ActiveDirectory = m_IterPath;
+					ORI_ACTIVE_PATH = m_ActiveDirectory.string();
 				}
 			}
 			else if (m_IterExt == ORI_ASSET_POSTFIX)

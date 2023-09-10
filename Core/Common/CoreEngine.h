@@ -3,6 +3,7 @@
 
 #include <ShlObj.h>
 #include <Shlwapi.h> // For PathFileExists
+#include <direct.h>
 
 //#pragma comment(lib, "Shlwapi.lib")
 
@@ -43,6 +44,8 @@ namespace OE1Core
 	protected: // Event Handle
 		bool HandleWindowCloseEvent(WindowCloseEvent& e);
 		bool HandleWindowResizeEvent(WindowResizeEvent& e);
+		void CleanVirtualAsset(std::string _dir);
+		void InitializeDirectoryHierarchy(std::string _root);
 
 	protected:
 		inline static OE1Core::CoreSystem* s_CoreSystem = nullptr;
@@ -55,9 +58,7 @@ namespace OE1Core
 		inline static OE1Core::Memory::UniformBlockManager* s_MemeoryManager = nullptr;
 		inline static OE1Core::Renderer::IVRender* s_MainSceneRenderer = nullptr;
 		inline static OE1Core::ResourceInitializer* s_ResourceInitializer = nullptr;
-
-	private:
-		inline static const std::wstring s_ProjectRoot = L"\\ORion";
+		
 	};
 }
 

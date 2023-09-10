@@ -28,8 +28,23 @@ namespace OE1Core
 		while (!Loader::GeometryLoader::s_MeshSets.empty())
 		{
 			auto& mesh_data = Loader::GeometryLoader::s_MeshSets.front();
-			AssetParser::ParseStaticGeometry(std::get<1>(mesh_data));
+			std::vector<std::string> registered_packages = AssetParser::ParseStaticGeometry(std::get<1>(mesh_data));
 			Loader::LoadArgs& load_args = std::get<0>(mesh_data);
+			
+			for (size_t i = 0; i < registered_packages.size(); i++)
+			{
+				std::string full_address = load_args.DestinationPath + "\\" + registered_packages[i] + ORI_ASSET_POSTFIX;
+				std::ofstream file_macro(full_address, std::ios::out | std::ios::binary);
+				ModelPkg* model = AssetManager::GetGeometry(registered_packages[i]);
+				WriteBinary(file_macro, "-- ORION ENGINE ASSET -- \n\n\n");
+				WriteBinary(file_macro, "Name:				" + model->Name + "\n");
+				WriteBinary(file_macro, "Vertex Count:		" + std::to_string(model->VertexCount) + "\n");
+				WriteBinary(file_macro, "Indices Count:		" + std::to_string(model->IndicesCount) + "\n");
+				WriteBinary(file_macro, "Triangle Count:	" + std::to_string(model->TriangleCount) + "\n");
+				WriteBinary(file_macro, "SubMesh Count:		" + std::to_string(model->SubMeshCount) + "\n\n");
+				WriteBinary(file_macro, "--	--	--	--	\n");
+				file_macro.close();
+			}
 			
 			Loader::GeometryLoader::s_MeshSets.pop();
 
@@ -37,5 +52,10 @@ namespace OE1Core
 			Loader::StaticGeometryLoader::PROGRESS_INFO = "Job Done.";
 			
 		}
+
+	}
+	void ExecutionHandler::WriteBinary(std::ofstream& _file, std::string _data)
+	{
+		_file.write(_data.c_str(), _data.size());
 	}
 }

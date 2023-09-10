@@ -25,7 +25,6 @@ namespace OE1Core
 		void PushPanalItemStyle();
 		void PopPanalItemStyle();
 		void QueryProjectDir();
-		std::string WideStrToNarrowStr(std::wstring _str);
 		void DrawHeader();
 		void PathIterator();
 

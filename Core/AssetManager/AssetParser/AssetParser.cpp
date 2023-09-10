@@ -3,9 +3,9 @@
 
 namespace OE1Core
 {
-	void AssetParser::ParseStaticGeometry(Loader::StaticGeometryLoader::MeshSet& _mesh_set)
+	std::vector<std::string> AssetParser::ParseStaticGeometry(Loader::StaticGeometryLoader::MeshSet& _mesh_set)
 	{
-
+		std::vector<std::string> packages_names;
 		for (auto& iter : _mesh_set)
 		{
 			ModelPkg model_package;
@@ -24,9 +24,11 @@ namespace OE1Core
 			ReadModelInfo(model_package);
 
 			AssetManager::RegisterGeometry(model_package);
+			packages_names.push_back(model_package.Name);
 		}
 
 		_mesh_set.clear();
+		return packages_names;
 	}
 	void AssetParser::ParseDynamicGeometry()
 	{
@@ -67,6 +69,7 @@ namespace OE1Core
 		core_mesh_package.IndiceData = _unprocessed_geometry.Indices;
 		core_mesh_package.MaxPoint = _unprocessed_geometry.MaxPoint;
 		core_mesh_package.MinPoint = _unprocessed_geometry.MinPoint;
+		core_mesh_package.IndiceCount = (int)_unprocessed_geometry.Indices.size();
 		core_mesh_package.TriangleCount = (int)(_unprocessed_geometry.Indices.size() / 3);
 		core_mesh_package.VertexCount = (int)_unprocessed_geometry.VertexData.size();
 		core_mesh_package.PackageID = _package_id;

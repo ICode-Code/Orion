@@ -101,7 +101,10 @@ namespace OE1Core
 		if (ImGui::Button("Import", ImVec2(120.0f, 0.0f)))
 		{
 			s_LoadArgs.SourcePath = s_AssetPath;
-			s_LoadArgs.DestinationPath = s_DirectoryNameBuffer;
+			
+			s_LoadArgs.DestinationPath = ORI_ACTIVE_PATH + "\\" + s_DirectoryNameBuffer;
+			std::filesystem::create_directories(s_LoadArgs.DestinationPath);
+
 			Command::PushAssetLoadCommand(s_LoadArgs);
 			s_ShouldOpen = false;
 
