@@ -4,5 +4,6 @@
 #include "CloseWin.h"
 #include "PreferenceWin.h"
 #include "3DAssetLoaderWin.h"
+#include "ProjectCreatorWin.h"
 
 #endif // !OE1_I_MINI_WIN_H_

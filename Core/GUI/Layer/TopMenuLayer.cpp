@@ -36,7 +36,7 @@ namespace OE1Core
 		{
 			if (ImGui::MenuItem(ICON_FA_FILE_MEDICAL"   New"))
 			{
-
+				ProjectCreatorWin::Open();
 			}
 			if (ImGui::BeginMenu(ICON_FA_MOUNTAIN_SUN"   Scene"))
 			{
