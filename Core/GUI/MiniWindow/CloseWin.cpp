@@ -23,7 +23,7 @@ namespace OE1Core
 
 		
 		ImGui::OpenPopup("Departing Orion's Realm");
-		if (ImGui::BeginPopupModal("Departing Orion's Realm", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		if (ImGui::BeginPopupModal("Departing Orion's Realm", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::Image(m_LogoutTexture, { 60, 60 }); ImGui::SameLine();
 			ImGui::Text("Warning! Exiting now might cause a disturbance in the Orion Engine space-time codecontinuum. \nYour stellar creations deserve a safe landing – make sure to save your work and avoid cosmic \nglitches before embarking on your intergalactic journey");

@@ -152,12 +152,12 @@ namespace OE1Core
 	}
 	bool CoreEngine::HandleWindowMax(OECore::WindowMaximizedEvent& e)
 	{
-		s_Window->GetArg().Running = true;
+		//s_Window->GetArg().Running = true;
 		return true;
 	}
 	bool CoreEngine::HandleWindowMin(OECore::WindowMinimizedEvent& e)
 	{
-		s_Window->GetArg().Running = false;
+		//s_Window->GetArg().Running = false;
 		return true;
 	}
 	bool CoreEngine::HandleApplicationKeyInput(OECore::KeyPressedEvent& e)
