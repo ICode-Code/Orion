@@ -2,16 +2,20 @@
 #define OE1_WINDOW_DATA_H_
 
 
-struct GLFWwindow;
+#include <SDL.h>
 
 namespace OE1Core
 {
 	struct WindowArg
 	{
-		GLFWwindow* Win;
+		const char* UserDataKey = "EventCallback";
+		SDL_Event SDL_Event;
+		SDL_GLContext Context;
+		SDL_Window* Win;
 		int Width;
 		int Height;
 		bool Running = false;
+		bool Maximized = false;
 		const char* Name;
 		float DeltaTime;
 		float ClearColor[4]{ 0.1f, 0.1f, 0.1f, 1.0f };

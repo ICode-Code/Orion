@@ -3,9 +3,9 @@
 
 namespace OE1Core
 {
-	Gui::Gui(GLFWwindow* _window)
+	Gui::Gui(SDL_Window* _window, SDL_GLContext* _context)
 	{
-		Init(_window);
+		Init(_window, _context);
 
 		s_ThemeColor = ImVec4(0.0f, 0.439f, 0.878f, 1.0f);
 		//s_ThemeColor = ImVec4(0.0392157f, 0.7490196f, 0.3254902f, 1.0f);
@@ -15,7 +15,7 @@ namespace OE1Core
 	}
 	Gui::~Gui()
 	{
-		ImGui_ImplGlfw_Shutdown();
+		ImGui_ImplSDL2_Shutdown();
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui::DestroyContext();
 	}
@@ -25,8 +25,12 @@ namespace OE1Core
 	{
 		return ImGui::GetCurrentContext();
 	}
+	void Gui::SetGLContext(const SDL_GLContext* _context)
+	{
 
-	void Gui::Init(GLFWwindow* _window)
+	}
+
+	void Gui::Init(SDL_Window* _window, SDL_GLContext* _context)
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -38,7 +42,8 @@ namespace OE1Core
 		io.Fonts->AddFontFromFileTTF("../StaticAsset/fonts/Rajdhani/Rajdhani-Bold.ttf", 13.0f);
 		io.DisplaySize = ImVec2(1366.0f, 768.0f);
 
-		ImGui_ImplGlfw_InitForOpenGL(_window, true);
+		
+		ImGui_ImplSDL2_InitForOpenGL(_window, _context);
 		ImGui_ImplOpenGL3_Init("#version 400 core");
 
 		static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_16_FA, 0 };

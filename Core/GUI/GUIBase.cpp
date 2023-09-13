@@ -4,10 +4,9 @@
 
 namespace OE1Core
 {
-	GUIBase::GUIBase(GLFWwindow* _window)
+	GUIBase::GUIBase(SDL_Window* _window, SDL_GLContext* _context)
 	{
-		s_Window = _window;
-		s_GUI = new OE1Core::Gui(s_Window);
+		s_GUI = new OE1Core::Gui(_window, _context);
 
 
 		s_Layers.push_back(new ContentBrowserLayer());
@@ -58,28 +57,23 @@ namespace OE1Core
 			s_Viewports[i]->Render();
 
 	}
-	void GUIBase::SetContext(GLFWwindow* _window)
-	{
-		s_Window = _window;
-	}
-	void GUIBase::Attach()
+	void GUIBase::Attach(SDL_Event* _event)
 	{
 		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
-		ImGuizmo::BeginFrame();
-		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 	}
-	void GUIBase::Render()
+	void GUIBase::Render(SDL_Window* _window, SDL_GLContext& _context)
 	{
 		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		ImGuiIO& io = ImGui::GetIO();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(s_Window);
+			SDL_GL_MakeCurrent(_window, _context);
 		}
 	}
 }

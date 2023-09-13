@@ -20,7 +20,7 @@
 
 #include "../AssetManager/ResourceInitializer.h"
 
-#include "../Event/IEvent.h"
+#include <IEvent/IEvent.h>
 #include "../GUI/GUIBase.h"
 #include "../Core/Command/ExecutionHandler.h"
 
@@ -35,15 +35,18 @@ namespace OE1Core
 		~CoreEngine();
 
 		void Run();
-		void OnEvent(Event& e);
+		void OnEvent(OECore::IEvent& e);
 
 
 	protected:
 		void CreateDefaultProjectDir();
 
 	protected: // Event Handle
-		bool HandleWindowCloseEvent(WindowCloseEvent& e);
-		bool HandleWindowResizeEvent(WindowResizeEvent& e);
+		bool HandleWindowCloseEvent(OECore::WindowCloseEvent& e);
+		bool HandleWindowResizeEvent(OECore::WindowResizeEvent& e);
+		bool HandleWindowMax(OECore::WindowMaximizedEvent& e);
+		bool HandleWindowMin(OECore::WindowMinimizedEvent& e);
+		bool HandleApplicationKeyInput(OECore::KeyPressedEvent& e);
 		void CleanVirtualAsset(std::string _dir);
 		void InitializeDirectoryHierarchy(std::string _root);
 

@@ -1,6 +1,5 @@
 #include "CoreEngine.h"
 
-
 namespace OE1Core
 {
 	CoreEngine::CoreEngine(int argc, char** argv)
@@ -10,12 +9,12 @@ namespace OE1Core
 		CreateDefaultProjectDir();
 
 		// Init Window System
-		s_Window = OE1Core::WindowManager::RegisterWindow(ENGINE_MAIN_WINDOW, 1366, 768);
+		s_Window = OE1Core::WindowManager::RegisterWindow(ENGINE_MAIN_WINDOW);
 		
 		
 
 		// Setup the callback
-		s_Window->SetEventCallback(std::bind(&CoreEngine::OnEvent, this, std::placeholders::_1));
+		s_Window->RegisterEventCallback(std::bind(&CoreEngine::OnEvent, this, std::placeholders::_1));
 		
 		// Load compile all the Shader
 		s_ShaderManager = new OE1Core::ShaderManager();
@@ -24,8 +23,10 @@ namespace OE1Core
 		s_ResourceInitializer = new OE1Core::ResourceInitializer();
 
 		// Init UI
-		s_GuiBase = new OE1Core::GUIBase(s_Window->GetWin());
+		s_GuiBase = new OE1Core::GUIBase(s_Window->GetWin(), &s_Window->GetArg().Context);
 
+		// Register ImGui Event Callabck
+		s_Window->RegisterImGuiSDLEventProcessorCallback(std::bind(ImGui_ImplSDL2_ProcessEvent, std::placeholders::_1));
 
 		// Init System Interface
 		s_CoreSystem = new OE1Core::CoreSystem();
@@ -58,43 +59,52 @@ namespace OE1Core
 		delete s_ResourceInitializer;
 
 	}
+	
 	void CoreEngine::Run()
 	{
 		// Enbale the Window
 		s_Window->EnableWin();
 
-
 		while (*s_Window)
 		{
+			s_Window->PullEvent();
+
 			// any queued command will be executed here
 			ExecutionHandler::ProcessQueueCommands();
-
+			
 			SceneManager::UpdateScene(s_Window->GetArg().DeltaTime);
 			s_MainSceneRenderer->RenderScene();
 
 
-
-
-			s_Window->CleanDefaultBuffer();
-
-			s_GuiBase->Attach();
+			s_GuiBase->Attach(&s_Window->GetArg().SDL_Event);
 			s_GuiBase->Update();
-			s_GuiBase->Render();
+			s_GuiBase->Render(s_Window->GetWin(), s_Window->GetArg().Context);
 
-			s_Window->SwapZDoubleBuffer();
+			s_Window->SwapBuffer();
 		}
 	}
 
-	void CoreEngine::OnEvent(Event& e) 
+	void CoreEngine::OnEvent(OECore::IEvent& e) 
 	{
 		// Create dispacther and dispatch event
-		EventDispatcher event_dispatcher(e);
+		OECore::IEventDispatcher event_dispatcher(e);
 
 		// handle close window event right here
-		event_dispatcher.Dispatch<WindowCloseEvent>(std::bind(&CoreEngine::HandleWindowCloseEvent, this, std::placeholders::_1));
+		event_dispatcher.Dispatch<OECore::WindowCloseEvent>(std::bind(&CoreEngine::HandleWindowCloseEvent, this, std::placeholders::_1));
 
-		// and also Resize Event
-		event_dispatcher.Dispatch<WindowResizeEvent>(std::bind(&CoreEngine::HandleWindowResizeEvent, this, std::placeholders::_1));
+		// Resize Event
+		event_dispatcher.Dispatch<OECore::WindowResizeEvent>(std::bind(&CoreEngine::HandleWindowResizeEvent, this, std::placeholders::_1));
+
+		// Key Event
+		event_dispatcher.Dispatch<OECore::KeyPressedEvent>(std::bind(&CoreEngine::HandleApplicationKeyInput, this, std::placeholders::_1));
+
+		// Maximized Event
+		event_dispatcher.Dispatch<OECore::WindowMaximizedEvent>(std::bind(&CoreEngine::HandleWindowMax, this, std::placeholders::_1));
+
+
+		// Minimized Event
+		event_dispatcher.Dispatch<OECore::WindowMinimizedEvent>(std::bind(&CoreEngine::HandleWindowMin, this, std::placeholders::_1));
+
 
 		SceneManager::OnEvent(e);
 	}
@@ -130,14 +140,44 @@ namespace OE1Core
 			InitializeDirectoryHierarchy(_root + "\\");
 		}
 	}
-	bool CoreEngine::HandleWindowCloseEvent(WindowCloseEvent& e)
+	bool CoreEngine::HandleWindowCloseEvent(OECore::WindowCloseEvent& e)
 	{
 		CloseWin::s_ShouldOpen = !CloseWin::s_ShouldOpen;
 		return true;
 	}
-	bool CoreEngine::HandleWindowResizeEvent(WindowResizeEvent& e)
+	bool CoreEngine::HandleWindowResizeEvent(OECore::WindowResizeEvent& e)
 	{
+
 		return true;
+	}
+	bool CoreEngine::HandleWindowMax(OECore::WindowMaximizedEvent& e)
+	{
+		s_Window->GetArg().Running = true;
+		return true;
+	}
+	bool CoreEngine::HandleWindowMin(OECore::WindowMinimizedEvent& e)
+	{
+		s_Window->GetArg().Running = false;
+		return true;
+	}
+	bool CoreEngine::HandleApplicationKeyInput(OECore::KeyPressedEvent& e)
+	{
+		if (e.GetKeyCode() == SDLK_F11)
+		{
+			if (s_Window->GetArg().Maximized)
+			{
+				SDL_RestoreWindow(s_Window->GetWin()); 
+				SDL_SetWindowFullscreen(s_Window->GetWin(), SDL_WINDOW_MAXIMIZED);
+			}
+			else
+				SDL_SetWindowFullscreen(s_Window->GetWin(), SDL_WINDOW_FULLSCREEN_DESKTOP);
+
+			s_Window->GetArg().Maximized = !s_Window->GetArg().Maximized;
+
+			return true;
+		}
+
+		return false;
 	}
 	void CoreEngine::InitializeDirectoryHierarchy(std::string _root)
 	{

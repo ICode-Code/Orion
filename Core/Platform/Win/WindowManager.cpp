@@ -6,25 +6,26 @@ namespace OE1Core
 {
 	WindowManager::WindowManager()
 	{
-		InitGLFW();
+		InitSDL();
 	}
 
 	WindowManager::~WindowManager()
 	{
 		for (auto win : s_Windows)
 			delete win.second;
-
-		glfwTerminate();
+		SDL_Quit();
 	}
 
-	void WindowManager::InitGLFW()
+	void WindowManager::InitSDL()
 	{
-		glfwInit();
+		if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+		{
+			LOG_ERROR("Failed to Intialize SDL!");
+			exit(0);
+		}
 	}
 	void WindowManager::InitGLEW()
 	{
-		glewExperimental = GL_TRUE;
-
 		auto init_glew = glewInit();
 
 		if (init_glew != GLEW_OK)

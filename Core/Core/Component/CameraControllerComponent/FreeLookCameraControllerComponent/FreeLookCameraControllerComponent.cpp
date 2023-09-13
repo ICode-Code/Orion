@@ -1,12 +1,10 @@
 #include "FreeLookCameraControllerComponent.h"
-#include <GLFW/glfw3.h>
-
 
 namespace OE1Core
 {
 	namespace Component
 	{
-		FreeLookCameraControllerComponent::FreeLookCameraControllerComponent(GLFWwindow* _window)
+		FreeLookCameraControllerComponent::FreeLookCameraControllerComponent(SDL_Window* _window)
 			: BaseCameraControllerComponent{_window}
 		{
 			m_FinalPosition = glm::vec3(0.870874405f, 2.5f, 0.002f);
@@ -14,16 +12,16 @@ namespace OE1Core
 		}
 
 
-		void FreeLookCameraControllerComponent::OnEvent(Event& e)
+		void FreeLookCameraControllerComponent::OnEvent(OECore::IEvent& e)
 		{
-			EventDispatcher Dispatcher(e);
-			Dispatcher.Dispatch<MouseMovedEvent>			(std::bind(&FreeLookCameraControllerComponent::MousePosition,			this,		std::placeholders::_1));
-			Dispatcher.Dispatch<MouseButtonPressedEvent>	(std::bind(&FreeLookCameraControllerComponent::MouseKeyPressed,			this,		std::placeholders::_1));
-			Dispatcher.Dispatch<MouseButtonReleaseEvent>	(std::bind(&FreeLookCameraControllerComponent::MouseKeyRelease,			this,		std::placeholders::_1));
-			Dispatcher.Dispatch<KeyPressedEvent>			(std::bind(&FreeLookCameraControllerComponent::KeyPessed,				this,		std::placeholders::_1));
-			Dispatcher.Dispatch<KeyReleaseEvent>			(std::bind(&FreeLookCameraControllerComponent::KeyRelease,				this,		std::placeholders::_1));
-			Dispatcher.Dispatch<KeyRepeatEvent>				(std::bind(&FreeLookCameraControllerComponent::KeyRepeat,				this,		std::placeholders::_1));
-			Dispatcher.Dispatch<MouseScrolledEvent>			(std::bind(&FreeLookCameraControllerComponent::MouseOnScroll,			this,		std::placeholders::_1));
+			OECore::IEventDispatcher Dispatcher(e);
+			Dispatcher.Dispatch<OECore::MouseMovedEvent>			(std::bind(&FreeLookCameraControllerComponent::MousePosition,			this,		std::placeholders::_1));
+			Dispatcher.Dispatch<OECore::MouseButtonPressedEvent>	(std::bind(&FreeLookCameraControllerComponent::MouseKeyPressed,			this,		std::placeholders::_1));
+			Dispatcher.Dispatch<OECore::MouseButtonReleaseEvent>	(std::bind(&FreeLookCameraControllerComponent::MouseKeyRelease,			this,		std::placeholders::_1));
+			Dispatcher.Dispatch<OECore::KeyPressedEvent>			(std::bind(&FreeLookCameraControllerComponent::KeyPessed,				this,		std::placeholders::_1));
+			Dispatcher.Dispatch<OECore::KeyReleaseEvent>			(std::bind(&FreeLookCameraControllerComponent::KeyRelease,				this,		std::placeholders::_1));
+			Dispatcher.Dispatch<OECore::KeyRepeatEvent>				(std::bind(&FreeLookCameraControllerComponent::KeyRepeat,				this,		std::placeholders::_1));
+			Dispatcher.Dispatch<OECore::MouseScrolledEvent>			(std::bind(&FreeLookCameraControllerComponent::MouseOnScroll,			this,		std::placeholders::_1));
 		}
 		void FreeLookCameraControllerComponent::UpdateCameraView()
 		{
@@ -46,23 +44,22 @@ namespace OE1Core
 
 			glm::vec3 Direction = glm::vec3(0.0f);
 
-
-			if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
+			if (m_KeyState[SDL_SCANCODE_W])
 				Direction += m_Camera->m_Front;
 
-			if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
+			if (m_KeyState[SDL_SCANCODE_S])
 				Direction -= m_Camera->m_Front;
 
-			if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
+			if (m_KeyState[SDL_SCANCODE_A])
 				Direction -= m_Camera->m_Right;
 
-			if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
+			if (m_KeyState[SDL_SCANCODE_D])
 				Direction += m_Camera->m_Right;
 
-			if (glfwGetKey(m_Window, GLFW_KEY_E) == GLFW_PRESS)
+			if (m_KeyState[SDL_SCANCODE_E])
 				Direction += m_Camera->m_Up;
 
-			if (glfwGetKey(m_Window, GLFW_KEY_Q) == GLFW_PRESS)
+			if (m_KeyState[SDL_SCANCODE_Q])
 				Direction -= m_Camera->m_Up;
 
 			if (glm::length(Direction) > 0.0f)
@@ -73,9 +70,11 @@ namespace OE1Core
 		{
 			m_DeltaTime = _dt;
 			m_InitialPosition = m_CurrentPosition;
+
 			HandleKeyInput();
 			
-			if (glm::length(m_FinalPosition - m_CurrentPosition) > 0.001f)
+			float delta_dist = glm::length(m_FinalPosition - m_CurrentPosition);
+			if (delta_dist > 0.001f)
 			{
 				m_DeltaPosition = Lerp(m_InitialPosition, m_FinalPosition, m_DeltaTime * m_SpeedFactor);
 				m_CurrentPosition = m_DeltaPosition;
@@ -83,24 +82,15 @@ namespace OE1Core
 			m_Camera->Update(m_CurrentPosition);
 		}
 
-		bool FreeLookCameraControllerComponent::MousePosition(MouseMovedEvent& e)
+		bool FreeLookCameraControllerComponent::MousePosition(OECore::MouseMovedEvent& e)
 		{
 			if (!m_IsControlKeyPressed)
 				return true;
 
-			if (m_FirstMouse)
-			{
-				m_LastMousePosition.x = (float)e.GetX();
-				m_LastMousePosition.y = (float)e.GetY();
-				m_FirstMouse = false;
-			}
+			float x_offset = (float)e.GetX() * m_Sensitivity;
+			float y_offset = -(float)e.GetY() * m_Sensitivity;
 
-			float x_offset = (float)e.GetX() - m_LastMousePosition.x;
-			float y_offset = m_LastMousePosition.y - (float)e.GetY();
-
-
-			x_offset *= m_Sensitivity;
-			y_offset *= m_Sensitivity;
+			SDL_WarpMouseInWindow(m_Window, m_WinCenterX, m_WinCenterY);
 
 			m_Camera->m_Pitch += y_offset;
 			m_Camera->m_Yaw += x_offset;
@@ -110,7 +100,6 @@ namespace OE1Core
 			else if (m_Camera->m_Pitch < -89.0f)
 				m_Camera->m_Pitch = -89.0f;
 
-			/*glm::clamp(m_Camera->m_Pitch, -89.0f, 89.0f);*/
 
 			m_LastMousePosition.x = (float)e.GetX();
 			m_LastMousePosition.y = (float)e.GetY();
@@ -120,26 +109,42 @@ namespace OE1Core
 			return true;
 
 		}
-		bool FreeLookCameraControllerComponent::KeyPessed(KeyPressedEvent& e)			{ return true; }
-		bool FreeLookCameraControllerComponent::KeyRelease(KeyReleaseEvent& e)			{ return true; }
-		bool FreeLookCameraControllerComponent::KeyRepeat(KeyRepeatEvent& e)			{ return true; }
-		bool FreeLookCameraControllerComponent::MouseOnScroll(MouseScrolledEvent& e)	{ return false; }
-		bool FreeLookCameraControllerComponent::MouseKeyPressed(MouseButtonPressedEvent& e)
+		bool FreeLookCameraControllerComponent::KeyPessed(OECore::KeyPressedEvent& e)			
+		{ 
+
+			return true; 
+		}
+		bool FreeLookCameraControllerComponent::KeyRelease(OECore::KeyReleaseEvent& e)			{ return true; }
+		bool FreeLookCameraControllerComponent::KeyRepeat(OECore::KeyRepeatEvent& e)			{ return true; }
+		bool FreeLookCameraControllerComponent::MouseOnScroll(OECore::MouseScrolledEvent& e)	{ return false; }
+		bool FreeLookCameraControllerComponent::WindowResize(OECore::WindowResizeEvent& e)
+		{
+			m_WinCenterX = e.GetWidth();
+			m_WinCenterY = e.GetHeight();
+
+			m_WinCenterX /= 2;
+			m_WinCenterY /= 2;
+
+
+			return true;
+		}
+		bool FreeLookCameraControllerComponent::MouseKeyPressed(OECore::MouseButtonPressedEvent& e)
 		{
 			if (m_ControlKey == e.GetButton())
 			{
 				m_IsControlKeyPressed = true;
-				LockMouse(true);
+				LockMouse(m_IsControlKeyPressed);
 			}
 			return true;
 		}
-		bool FreeLookCameraControllerComponent::MouseKeyRelease(MouseButtonReleaseEvent& e)
+		bool FreeLookCameraControllerComponent::MouseKeyRelease(OECore::MouseButtonReleaseEvent& e)
 		{
 			if (m_ControlKey == e.GetButton())
 			{
 				m_IsControlKeyPressed = false;
-				LockMouse(false);
+				LockMouse(m_IsControlKeyPressed);
 			}
+
 			return true;
 		}
 	}

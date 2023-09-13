@@ -21,7 +21,7 @@ namespace OE1Core
 		 Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::SCENE_TRANSFORM)->Update(Memory::s_SceneTransformBufferSize, 0, &s_ActiveScene->m_CameraPkg.GetSceneTransform());
 	
 	}
-	void SceneManager::OnEvent(Event& e)
+	void SceneManager::OnEvent(OECore::IEvent& e)
 	{
 		s_ActiveScene->OnEvent(e);
 	}

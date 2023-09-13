@@ -3,8 +3,8 @@
 
 namespace OE1Core
 {
-	Scene::Scene(GLFWwindow* _window)
-		: m_Window{_window}, m_CameraPkg{ m_Window }
+	Scene::Scene(SDL_Window* _window)
+		: m_Window{_window}, m_CameraPkg{ _window }
 	{
 		m_Grid = new Grid();
 	}
@@ -49,7 +49,7 @@ namespace OE1Core
 	{
 
 	}
-	void Scene::OnEvent(Event& e)
+	void Scene::OnEvent(OECore::IEvent& e)
 	{
 		m_CameraPkg.OnEvent(e);
 	}

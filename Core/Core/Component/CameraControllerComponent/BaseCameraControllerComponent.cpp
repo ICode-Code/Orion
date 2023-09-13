@@ -1,14 +1,17 @@
 #include "BaseCameraControllerComponent.h"
-#include <GLFW/glfw3.h>
 
 namespace OE1Core
 {
 	namespace Component
 	{
-		BaseCameraControllerComponent::BaseCameraControllerComponent(GLFWwindow* _active_context)
+		BaseCameraControllerComponent::BaseCameraControllerComponent(SDL_Window* _active_context)
 		{
 			m_Window = _active_context;
-			m_ControlKey = GLFW_MOUSE_BUTTON_RIGHT;
+			m_ControlKey = SDL_BUTTON_RIGHT;
+
+			SDL_GetWindowSize(m_Window, &m_WinCenterX, &m_WinCenterY);
+			m_WinCenterX /= 2;
+			m_WinCenterY /= 2;
 		}
 
 		void BaseCameraControllerComponent::SetControlMouseKey(int _key)
@@ -34,11 +37,18 @@ namespace OE1Core
 		{
 			return m_Transform;
 		}*/
-		void BaseCameraControllerComponent::LockMouse(bool _v)
+		void BaseCameraControllerComponent::LockMouse(bool _lock)
 		{
-			m_FirstMouse = _v;
-			_v ? glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED)
-				: glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			if (_lock)
+			{
+				SDL_ShowCursor(SDL_DISABLE);
+				SDL_SetRelativeMouseMode(SDL_TRUE);
+			}
+			else
+			{
+				SDL_ShowCursor(SDL_ENABLE);
+				SDL_SetRelativeMouseMode(SDL_FALSE);
+			}
 		}
 		glm::vec3 BaseCameraControllerComponent::Lerp(const glm::vec3& a, const glm::vec3& b, float t)
 		{
@@ -59,12 +69,13 @@ namespace OE1Core
 			m_Camera->m_Right = glm::normalize(glm::cross(m_Camera->m_Front, glm::vec3(0.0f, 1.0f, 0.0f)));
 			m_Camera->m_Up = glm::normalize(glm::cross(m_Camera->m_Right, m_Camera->m_Front));
 		}
-		bool BaseCameraControllerComponent::MousePosition(MouseMovedEvent& e)				{ return false; };
-		bool BaseCameraControllerComponent::KeyPessed(KeyPressedEvent& e)					{ return false; };
-		bool BaseCameraControllerComponent::KeyRepeat(KeyRepeatEvent& e)					{ return false; }
-		bool BaseCameraControllerComponent::KeyRelease(KeyReleaseEvent& e)					{ return false; };
-		bool BaseCameraControllerComponent::MouseKeyPressed(MouseButtonPressedEvent& e)		{ return false; };
-		bool BaseCameraControllerComponent::MouseKeyRelease(MouseButtonReleaseEvent& e)		{ return false; };
-		bool BaseCameraControllerComponent::MouseOnScroll(MouseScrolledEvent& e)			{ return false; };
+		bool BaseCameraControllerComponent::MousePosition(OECore::MouseMovedEvent& e)				{ return false; };
+		bool BaseCameraControllerComponent::KeyPessed(OECore::KeyPressedEvent& e)					{ return false; };
+		bool BaseCameraControllerComponent::KeyRepeat(OECore::KeyRepeatEvent& e)					{ return false; }
+		bool BaseCameraControllerComponent::KeyRelease(OECore::KeyReleaseEvent& e)					{ return false; };
+		bool BaseCameraControllerComponent::MouseKeyPressed(OECore::MouseButtonPressedEvent& e)		{ return false; };
+		bool BaseCameraControllerComponent::MouseKeyRelease(OECore::MouseButtonReleaseEvent& e)		{ return false; };
+		bool BaseCameraControllerComponent::MouseOnScroll(OECore::MouseScrolledEvent& e)			{ return false; };
+		bool BaseCameraControllerComponent::WindowResize(OECore::WindowResizeEvent& e)				{ return false; };
 	}
 }

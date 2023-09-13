@@ -18,7 +18,7 @@ namespace OE1Core
 		static void ActivateScene(std::string _name);
 		static Scene* GetActiveScene();
 		static void UpdateScene(float _dt);
-		static void OnEvent(Event& e);
+		static void OnEvent(OECore::IEvent& e);
 
 	protected:
 		inline static Scene* s_ActiveScene = nullptr;

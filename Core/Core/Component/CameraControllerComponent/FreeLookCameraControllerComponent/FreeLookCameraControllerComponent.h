@@ -10,26 +10,26 @@ namespace OE1Core
 		class FreeLookCameraControllerComponent : public BaseCameraControllerComponent
 		{
 		public:
-			FreeLookCameraControllerComponent(GLFWwindow* _window);
+			FreeLookCameraControllerComponent(SDL_Window* _window);
 			~FreeLookCameraControllerComponent() = default;
 
 
-			void OnEvent(Event& e) override;
+			void OnEvent(OECore::IEvent& e) override;
 			void UpdateCameraView() override;
 			void UpdateInput(float _dt) override;
 
 
 		protected:
 			virtual void HandleKeyInput() override;
-
 		protected:
-			bool MousePosition(MouseMovedEvent& e) override;
-			bool KeyPessed(KeyPressedEvent& e) override;
-			bool KeyRelease(KeyReleaseEvent& e) override;
-			bool KeyRepeat(KeyRepeatEvent& e) override;
-			bool MouseKeyPressed(MouseButtonPressedEvent& e) override;
-			bool MouseKeyRelease(MouseButtonReleaseEvent& e) override;
-			bool MouseOnScroll(MouseScrolledEvent& e) override;
+			bool MousePosition(OECore::MouseMovedEvent& e) override;
+			bool KeyPessed(OECore::KeyPressedEvent& e) override;
+			bool KeyRelease(OECore::KeyReleaseEvent& e) override;
+			bool KeyRepeat(OECore::KeyRepeatEvent& e) override;
+			bool MouseKeyPressed(OECore::MouseButtonPressedEvent& e) override;
+			bool MouseKeyRelease(OECore::MouseButtonReleaseEvent& e) override;
+			bool MouseOnScroll(OECore::MouseScrolledEvent& e) override;
+			bool WindowResize(OECore::WindowResizeEvent& e) override;
 
 		};
 	}

@@ -2,7 +2,7 @@
 
 namespace OE1Core
 {
-	CameraPackage::CameraPackage(GLFWwindow* _window)
+	CameraPackage::CameraPackage(SDL_Window* _window)
 	{
 		m_Camera = new Component::CameraComponent();
 		m_Controller = new Component::FreeLookCameraControllerComponent(_window);
@@ -29,6 +29,6 @@ namespace OE1Core
 	{
 		return m_SceneTransform;
 	}
-	void CameraPackage::OnEvent(Event& e) { m_Controller->OnEvent(e); }
+	void CameraPackage::OnEvent(OECore::IEvent& e) { m_Controller->OnEvent(e); }
 
 }

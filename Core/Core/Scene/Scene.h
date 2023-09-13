@@ -17,7 +17,7 @@ namespace OE1Core
 	class Scene
 	{
 	public:
-		Scene(GLFWwindow* _window);
+		Scene(SDL_Window* _window);
 		~Scene();
 
 		Entity CreateEntity();
@@ -28,7 +28,7 @@ namespace OE1Core
 		void Update(int _width, int _height);
 		void Update(float dt);
 		void ResetPhysics();
-		void OnEvent(Event& e);
+		void OnEvent(OECore::IEvent& e);
 		/// <summary>
 		/// This include the physics
 		/// </summary>
@@ -37,7 +37,7 @@ namespace OE1Core
 
 	public:
 		Grid* m_Grid = nullptr;
-		GLFWwindow* m_Window;
+		SDL_Window* m_Window;
 		CameraPackage m_CameraPkg;
 		entt::registry m_EntityRegistry;
 		std::unordered_map<uint32_t, StaticMesh> m_StaticMeshRegistry;

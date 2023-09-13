@@ -1,15 +1,15 @@
 #ifndef OE1_BASE_CAMERA_CONTROLLER_COMPONENT_H_
 #define OE1_BASE_CAMERA_CONTROLLER_COMPONENT_H_
 
+#include <SDL.h>
 
 // Component
 #include "../CameraComponent/CameraComponent.h"
 
 #include <glm/glm.hpp>
-#include "../../../Event/IEvent.h"
+#include <IEvent/IEvent.h>
  
 
-struct GLFWwindow;
 namespace OE1Core
 {
 	namespace Component
@@ -17,12 +17,12 @@ namespace OE1Core
 		class BaseCameraControllerComponent
 		{
 		public:
-			BaseCameraControllerComponent(GLFWwindow* _active_context);
+			BaseCameraControllerComponent(SDL_Window* _active_context);
 			virtual ~BaseCameraControllerComponent() = default;
 
 			virtual void UpdateCameraView() = 0;
 			virtual void UpdateInput(float _dt) = 0;
-			virtual void OnEvent(Event& _e) = 0;
+			virtual void OnEvent(OECore::IEvent& _e) = 0;
 			virtual void HandleKeyInput() = 0;
 		
 			//virtual void SetTransform(Component::TransformComponent* _transform);
@@ -32,19 +32,20 @@ namespace OE1Core
 			//virtual Component::TransformComponent* GetTransformComponent();
 
 			virtual void SetControlMouseKey(int _key);
-			virtual void LockMouse(bool _v);
+			virtual void LockMouse(bool _lock);
 			virtual glm::vec3 Lerp(const glm::vec3& a, const glm::vec3& b, float t);
 			virtual void Focus(glm::vec3 _target);
 
 
 		protected: // Event
-			virtual bool MousePosition(MouseMovedEvent& e);
-			virtual bool KeyPessed(KeyPressedEvent& e);
-			virtual bool KeyRelease(KeyReleaseEvent& e);
-			virtual bool KeyRepeat(KeyRepeatEvent& e);
-			virtual bool MouseKeyPressed(MouseButtonPressedEvent& e);
-			virtual bool MouseKeyRelease(MouseButtonReleaseEvent& e);
-			virtual bool MouseOnScroll(MouseScrolledEvent& e);
+			virtual bool MousePosition(OECore::MouseMovedEvent& e);
+			virtual bool KeyPessed(OECore::KeyPressedEvent& e);
+			virtual bool KeyRelease(OECore::KeyReleaseEvent& e);
+			virtual bool KeyRepeat(OECore::KeyRepeatEvent& e);
+			virtual bool MouseKeyPressed(OECore::MouseButtonPressedEvent& e);
+			virtual bool MouseKeyRelease(OECore::MouseButtonReleaseEvent& e);
+			virtual bool MouseOnScroll(OECore::MouseScrolledEvent& e);
+			virtual bool WindowResize(OECore::WindowResizeEvent& e);
 
 
 		protected:
@@ -56,7 +57,6 @@ namespace OE1Core
 
 			// Flag
 			bool m_LockMouseAtCenter = true;
-			bool m_FirstMouse = true;
 			bool m_IsControlKeyPressed = false;
 
 			// Controller Specific Data
@@ -72,7 +72,10 @@ namespace OE1Core
 			//Component::TransformComponent* m_Transform = nullptr;
 			Component::CameraComponent* m_Camera = nullptr;
 		protected:
-			GLFWwindow* m_Window = nullptr;
+			const Uint8* m_KeyState = SDL_GetKeyboardState(NULL);
+			SDL_Window* m_Window = nullptr;
+			int m_WinCenterX = 500;
+			int m_WinCenterY = 500;
 		};
 	}
 }

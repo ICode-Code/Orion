@@ -3,37 +3,39 @@
 
 // orion
 #include <Log.h> 
-#include "../../Event/IEvent.h"
+#include <IEvent/IEvent.h>
 
 
 // gl
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <SDL.h>
 
 // must after gl
 #include "WindowData.h"
 
 namespace OE1Core
 {
+	typedef std::function<void(OECore::IEvent&)> EventCallback;
+	typedef std::function<bool(const SDL_Event*)> EventPollCallback;
 	class Window
 	{
 	public:
-		Window(const char* _name = "Win", int _width = 1366, int _height = 768);
+		Window(const char* _name = "Win", int _width = -1, int _height = -1);
 		~Window();
 
-		GLFWwindow* GetWin();
+		SDL_Window* GetWin();
 		WindowArg& GetArg();
-		using EVENT_CALLBACK = std::function<void(Event&)>;
 		inline operator bool() const { return m_Args.Running; };
 		void SetClearColor(float _color[4] = nullptr);
 		void SetClearColor(std::initializer_list<float> _list);
 		void Update();
-		void CleanDefaultBuffer();
-		void SwapZDoubleBuffer();
+		void SwapBuffer();
 		void EnableWin();
 		void DisableWin();
 		void Close();
-		void SetEventCallback(const EVENT_CALLBACK& _callback);
+		void RegisterEventCallback(const EventCallback& _callback);
+		void RegisterImGuiSDLEventProcessorCallback(const EventPollCallback& _event_pull_callback);
+		void PullEvent();
 		
 
 
@@ -45,9 +47,10 @@ namespace OE1Core
 
 	protected:
 		WindowArg m_Args;
-		EVENT_CALLBACK m_Callback;
-		float m_LastFrameTime = 0.0f;
-		float m_CurrentTime = 0.0;
+		EventPollCallback m_EventPullCallback;
+		EventCallback m_Callback;
+		Uint64 m_LastFrameTime = 0;
+		Uint64 m_CurrentTime = 0;
 
 	};
 }

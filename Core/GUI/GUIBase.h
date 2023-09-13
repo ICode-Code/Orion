@@ -11,13 +11,12 @@ namespace OE1Core
 	class GUIBase
 	{
 	public:
-		GUIBase(GLFWwindow* _window);
+		GUIBase(SDL_Window* _window, SDL_GLContext* _context);
 		~GUIBase();
 
 		static void Update();
-		static void Attach();
-		static void Render();
-		static void SetContext(GLFWwindow* _window);
+		static void Attach(SDL_Event* _event);
+		static void Render(SDL_Window* _window, SDL_GLContext& _context);
 
 
 	public:
@@ -26,7 +25,6 @@ namespace OE1Core
 		inline static std::vector<BaseMiniWindow*> s_MiniWins;
 
 	protected:
-		inline static GLFWwindow*  s_Window = nullptr;
 		inline static OE1Core::Gui* s_GUI = nullptr;
 	};
 }

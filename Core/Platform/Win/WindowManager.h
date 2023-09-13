@@ -15,12 +15,12 @@ namespace OE1Core
 
 		static Window*	GetWindow(std::string _name);
 		static void		PurgWindow(std::string _name);
-		static Window*	RegisterWindow(std::string _name, int _width = 800, int _height = 600);
+		static Window*	RegisterWindow(std::string _name, int _width = -1, int _height = -1);
 	protected:
 		inline static std::unordered_map<std::string, Window*> s_Windows;
 
 	protected:
-		static void InitGLFW();
+		static void InitSDL();
 		static void InitGLEW();
 		static void ShowSystemLog();
 

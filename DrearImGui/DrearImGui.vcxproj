@@ -93,7 +93,7 @@
       <PreprocessorDefinitions>IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;Include;$(SolutionDir)3rdParty\Include\SDL2\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -109,7 +109,7 @@
       <PreprocessorDefinitions>IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;Include;$(SolutionDir)3rdParty\Include\SDL2\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,7 +125,7 @@
       <PreprocessorDefinitions>IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;Include;$(SolutionDir)3rdParty\Include\SDL2\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,7 +141,7 @@
       <PreprocessorDefinitions>IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\Include;Include;$(SolutionDir)3rdParty\Include\SDL2\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,9 +155,10 @@
     <ClInclude Include="Include\imgui\imconfig.h" />
     <ClInclude Include="Include\imgui\imgui.h" />
     <ClInclude Include="Include\imgui\ImGuizmo.h" />
-    <ClInclude Include="Include\imgui\imgui_impl_glfw.h" />
     <ClInclude Include="Include\imgui\imgui_impl_opengl3.h" />
     <ClInclude Include="Include\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Include\imgui\imgui_impl_sdl2.h" />
+    <ClInclude Include="Include\imgui\imgui_impl_sdlrenderer2.h" />
     <ClInclude Include="Include\imgui\imgui_internal.h" />
     <ClInclude Include="Include\imgui\imstb_rectpack.h" />
     <ClInclude Include="Include\imgui\imstb_textedit.h" />
@@ -169,8 +170,9 @@
     <ClCompile Include="Include\imgui\ImGuizmo.cpp" />
     <ClCompile Include="Include\imgui\imgui_demo.cpp" />
     <ClCompile Include="Include\imgui\imgui_draw.cpp" />
-    <ClCompile Include="Include\imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="Include\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Include\imgui\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="Include\imgui\imgui_impl_sdlrenderer2.cpp" />
     <ClCompile Include="Include\imgui\imgui_tables.cpp" />
     <ClCompile Include="Include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Gui.cpp" />

@@ -8,13 +8,13 @@ namespace OE1Core
 	class CameraPackage
 	{
 	public:
-		CameraPackage(GLFWwindow* _window);
+		CameraPackage(SDL_Window* _window);
 		~CameraPackage();
 
 		Component::CameraComponent* GetCamera();
 		Component::FreeLookCameraControllerComponent* GetController();
 		void Update(float _dt);
-		void OnEvent(Event& e);
+		void OnEvent(OECore::IEvent& e);
 		Memory::SceneTransfrom& GetSceneTransform();
 
 
