@@ -41,7 +41,8 @@ namespace OE1Core
 
 		io.Fonts->AddFontFromFileTTF("../StaticAsset/fonts/Rajdhani/Rajdhani-Bold.ttf", 13.0f);
 		io.DisplaySize = ImVec2(1366.0f, 768.0f);
-
+		
+		io.UserData = _window;
 		
 		ImGui_ImplSDL2_InitForOpenGL(_window, _context);
 		ImGui_ImplOpenGL3_Init("#version 400 core");

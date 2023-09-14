@@ -12,7 +12,7 @@ namespace OE1Core
 	}
 	ProjectCreatorWin::~ProjectCreatorWin()
 	{
-
+		CleanBuffer(s_ProjectNameBuffer, s_ProjectNameBufferSize);
 	}
 	void ProjectCreatorWin::Open()
 	{
@@ -20,31 +20,112 @@ namespace OE1Core
 	}
 	void ProjectCreatorWin::Update()
 	{
-		ImGui::SetWindowSize({ 1000, 500 });
+		ImGui::SetWindowSize(s_LocalWinSize);
 	}
 	void ProjectCreatorWin::Render()
 	{
 		if (!s_ShouldOpen)
 			return;
 
-		ImGui::Begin(ICON_FA_SHAPES"\tNew Project", &s_ShouldOpen, s_BaseWinFlag);
+
+		//FORCE_WINDOW_CENTER(s_LocalWinSize);
+
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, { 0.087f, 0.087f, 0.087f, 1.0f });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0.0f });
+		
+
+		ImGui::Begin(ICON_FA_SHAPES"\tNew Project", &s_ShouldOpen, s_BaseWinFlag | ImGuiWindowFlags_NoMove);
 		Update();
 
-		ImGui::ImageButton(m_EmptyProjectIcon, { 300, 200 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 8 });
+
+
+		if (ProjectImageButton(ProjectType::Empty, m_EmptyProjectIcon))
+		{
+			s_ProjectType = ProjectType::Empty;
+		} 
 		ImGui::SameLine();
-		ImGui::ImageButton(m_PBRTestProjectIcon, { 300, 200 });
+		if (ProjectImageButton(ProjectType::PBR_Template, m_PBRTestProjectIcon))
+		{
+			s_ProjectType = ProjectType::PBR_Template;
+		}
 		ImGui::SameLine();
-		ImGui::ImageButton(m_FPSTestProjectIcon, { 300, 200 });
+		if (ProjectImageButton(ProjectType::FPS_Template, m_FPSTestProjectIcon))
+		{
+			s_ProjectType = ProjectType::FPS_Template;
+		}
+
+		
+
+		ImGui::PopStyleVar();
+		
+		
+
+		static bool test = true;
+		CustomFrame::UIEditorCheckbox("Inlucde Startup Pack", &test);
+		CustomFrame::UIEditorCheckbox("Option 1", &test);
+		CustomFrame::UIEditorCheckbox("Option 2", &test);
+
+
 
 		ImGui::NewLine();
-		
 		ImGui::Separator();
-
-
+		ImGui::Text("Project Name");
 		
-		ImGui::Button("Create  Project", {200, 0});
+		ImGui::PushItemWidth(400);
+		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
+		ImGui::InputText("##sourceFolderName", s_ProjectNameBuffer, IM_ARRAYSIZE(s_ProjectNameBuffer), flags);
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+		
+		if (s_EmptyTextError)
+		{
+			ShowError();
+			ImGui::SameLine();
+		}
+
+		ImGui::PushStyleColor(ImGuiCol_Button, Gui::s_ThemeColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+
+		if (ImGui::Button("Create  Project", { 200, 0 }))
+		{
+			size_t input_length = strlen(s_ProjectNameBuffer);
+			if (input_length == 0)
+				s_EmptyTextError = true;
+			else
+			{
+				s_EmptyTextError = false;
+				if (input_length > 0 && input_length < s_ProjectNameBufferSize)
+					s_ProjectNameBuffer[input_length] = '\0';
+			}
+
+			CleanBuffer(s_ProjectNameBuffer, s_ProjectNameBufferSize);
+		}
+
+		ImGui::PopStyleColor(3);
 
 
 		ImGui::End();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
+	}
+	void ProjectCreatorWin::ShowError()
+	{
+		ImGui::PushStyleColor(ImGuiCol_Text, { 1.0f, 0.5f, 0.5f, 1.0f });
+		ImGui::Text(ICON_FA_TRIANGLE_EXCLAMATION);
+		ImGui::PopStyleColor();
+	}
+	bool ProjectCreatorWin::ProjectImageButton(ProjectType _type, ImTextureID& _image, const ImVec2& _size)
+	{
+		if(s_ProjectType == _type)
+			ImGui::PushStyleColor(ImGuiCol_Button, Gui::s_ThemeColor);
+
+		bool _button_action = ImGui::ImageButton(_image, _size);
+
+		if (s_ProjectType == _type)
+			ImGui::PopStyleColor();
+		
+		return _button_action;
 	}
 }

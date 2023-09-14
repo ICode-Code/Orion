@@ -33,10 +33,6 @@ namespace OE1Core
 		inline static bool s_CreateSeparateFolder = false;
 	protected:
 		virtual void Update() override;
-
-
-	protected: // Util
-		void CleanBuffer(char* _buffer, int _size);
 	};
 }
 

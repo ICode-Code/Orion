@@ -102,7 +102,17 @@ namespace OE1Core
 		{
 			s_LoadArgs.SourcePath = s_AssetPath;
 			
-			s_LoadArgs.DestinationPath = ORI_ACTIVE_PATH + "\\" + s_DirectoryNameBuffer;
+			s_LoadArgs.DestinationPath = ORI_ACTIVE_PATH;
+
+			size_t input_length = strlen(s_DirectoryNameBuffer);
+			if (input_length > 0 && input_length < s_DirectoryNameBufferSize)
+			{
+				s_DirectoryNameBuffer[input_length] = '\0';
+				s_LoadArgs.DestinationPath += "\\";
+				s_LoadArgs.DestinationPath += s_DirectoryNameBuffer;
+			}
+
+			 
 			std::filesystem::create_directories(s_LoadArgs.DestinationPath);
 
 			Command::PushAssetLoadCommand(s_LoadArgs);
@@ -124,11 +134,5 @@ namespace OE1Core
 
 		ImGui::End();
 		ImGui::PopStyleColor(2);
-	}
-
-	void Asset3DLoaderWin::CleanBuffer(char* _buffer, int _size)
-	{
-		for (int i = 0; i < _size; i++)
-			_buffer[i] = NULL;
 	}
 }
