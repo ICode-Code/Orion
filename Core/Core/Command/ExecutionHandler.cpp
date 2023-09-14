@@ -3,6 +3,10 @@
 
 namespace OE1Core
 {
+	void ExecutionHandler::RegisterContentBrowserLayerNotifyCallback(const ContentBrowserLayerNotifyCallback& _callback)
+	{
+		s_ContentBrowserLayerNotifyCallback = _callback;
+	}
 	void ExecutionHandler::ProcessQueueCommands()
 	{
 		ProcessAssetLoadCommand();
@@ -49,6 +53,7 @@ namespace OE1Core
 			Loader::GeometryLoader::s_MeshSets.pop();
 
 			// update info
+			s_ContentBrowserLayerNotifyCallback();
 			Loader::StaticGeometryLoader::PROGRESS_INFO = "Job Done.";
 			
 		}

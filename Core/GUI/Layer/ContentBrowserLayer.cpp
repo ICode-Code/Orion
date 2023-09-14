@@ -8,6 +8,8 @@ namespace OE1Core
 		m_UnknownFileIcon = (ImTextureID)(intptr_t)AssetManager::GetTexture("Unknown")->GetTexture();
 
 		QueryProjectDir();
+		SyncDataEntry();
+		ExecutionHandler::RegisterContentBrowserLayerNotifyCallback(std::bind(&ContentBrowserLayer::SyncDataEntry, this));
 	}
 	ContentBrowserLayer::~ContentBrowserLayer()
 	{
@@ -62,7 +64,7 @@ namespace OE1Core
 	}
 	void ContentBrowserLayer::Update()
 	{
-
+		
 	}
 
 	void ContentBrowserLayer::DrawHeader()
@@ -81,8 +83,13 @@ namespace OE1Core
 
 		ImGui::Text(ICON_FA_LEFT_LONG);
 		if (ImGui::IsItemClicked())
+		{
 			if (m_ActiveDirectory != m_RootDirectory)
+			{
 				m_ActiveDirectory = m_ActiveDirectory.parent_path();
+				SyncDataEntry();
+			}
+		}
 		ImGui::SameLine();
 		ImGui::BeginDisabled();
 		ImGui::Text(ICON_FA_RIGHT_LONG);
@@ -91,18 +98,28 @@ namespace OE1Core
 		ImGui::Text(m_ActiveDirectory.string().c_str());
 
 		ImGui::SameLine();
-		ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x - 20);
+		ImGui::SetCursorPosX(ImGui::GetContentRegionMax().x - 40);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 0.0f });
+
+		if (ImGui::Button(ICON_FA_ARROWS_ROTATE))
+		{
+			SyncDataEntry();
+		}
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip(ICON_FA_CIRCLE_INFO"\tSync");
+		ImGui::SameLine();
 		if (ImGui::Button(ICON_FA_ELLIPSIS_VERTICAL))
 		{
 			ImGui::OpenPopup("content_setting");
 		}
+
 		ContentBrowserMiniOptionPopup();
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(4);
 
 		
@@ -113,6 +130,34 @@ namespace OE1Core
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
 	}
+	void ContentBrowserLayer::SyncDataEntry()
+	{
+		m_DirEntry.clear();
+		m_MusicEntry.clear();
+		m_AssetEntry.clear();
+		m_MaterialEntry.clear();
+		m_ScriptEntry.clear();
+		m_UnknownFileEntry.clear();
+
+		for (auto& data_iter : std::filesystem::directory_iterator(m_ActiveDirectory))
+		{
+			std::string name = data_iter.path().stem().string();
+			std::string path = data_iter.path().string();
+			std::string ext = data_iter.path().extension().string();
+
+			DirEntryInfo info(name, path, ext);
+
+			if (data_iter.is_directory())
+				m_DirEntry.push_back(std::make_pair(info, data_iter));
+			else if (ext == ORI_ASSET_POSTFIX)
+				m_AssetEntry.push_back(std::make_pair(info, data_iter));
+			else if (ext == ".wav" || ext == ".mp3")
+				m_MusicEntry.push_back(std::make_pair(info, data_iter));
+			else 
+				m_UnknownFileEntry.push_back(std::make_pair(info, data_iter));
+
+		}
+	}
 	void ContentBrowserLayer::PathIterator()
 	{
 
@@ -121,67 +166,60 @@ namespace OE1Core
 		ImGui::BeginChild("#dir_itrator");
 		ImGui::Columns(m_ColumnCount, "innerList", false);
 
-		int drag_id = 0;
-		for (auto& data_iter : std::filesystem::directory_iterator(m_ActiveDirectory))
+		s_DRAG_ID = 0;
+
+		for (size_t i = 0; i < m_DirEntry.size(); i++)
 		{
-			ImGui::PushID(drag_id++);
-			m_IterName = data_iter.path().stem().string();
-			m_IterPath = data_iter.path().string();
-			m_IterExt = data_iter.path().extension().string();
+			PushPanalItemStyle();
+			ImGui::ImageButton(m_FolderIcon, { m_ThumbnailSize, m_ThumbnailSize });
+			PopPanalItemStyle();
 
-
-			if (data_iter.is_directory())
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
-				PushPanalItemStyle();
-				ImGui::ImageButton(m_FolderIcon, { m_ThumbnailSize, m_ThumbnailSize });
-				PopPanalItemStyle();
-
-				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-				{
-					m_ActiveDirectory = m_IterPath;
-					ORI_ACTIVE_PATH = m_ActiveDirectory.string();
-				}
+				m_ActiveDirectory = m_DirEntry[i].first.Path;
+				ORI_ACTIVE_PATH = m_ActiveDirectory.string();
+				SyncDataEntry();
+				break;
 			}
-			else if (m_IterExt == ORI_ASSET_POSTFIX)
-			{
-				PushPanalItemStyle();
-				ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_RenderableGeometry[m_IterName].SnapShot, {m_ThumbnailSize, m_ThumbnailSize});
-				PopPanalItemStyle();
-			}
-			else if (m_IterExt == ".wav" || m_IterExt == ".mp3")
-			{
 
-			}
-			else
-			{
-
-				PushPanalItemStyle();
-				ImGui::ImageButton(m_UnknownFileIcon, { m_ThumbnailSize, m_ThumbnailSize });
-				PopPanalItemStyle();
-
-			}
-			float textWidth = ImGui::CalcTextSize(m_IterName.c_str()).x;
-			float columnWidth = ImGui::GetContentRegionAvail().x;
-			float offset = (columnWidth - textWidth) * 0.5f;
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
-			ImGui::TextWrapped(m_IterName.c_str());
+			PrintName(m_DirEntry[i].first.Name.c_str());
 			ImGui::NextColumn();
-
-			ImGui::PopID();
 		}
+
+		for (size_t i = 0; i < m_AssetEntry.size(); i++)
+		{
+			PushPanalItemStyle();
+
+			ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_RenderableGeometry[m_AssetEntry[i].first.Name].SnapShot, { m_ThumbnailSize, m_ThumbnailSize });
+
+			PopPanalItemStyle();
+
+			PrintName(m_AssetEntry[i].first.Name.c_str());
+			ImGui::NextColumn();
+		}
+
+		
 		ImGui::Columns(1);
 
 		ImGui::EndChild();
 		ImGui::PopStyleColor();
 
 	}
+	void ContentBrowserLayer::PrintName(const char* _name)
+	{
+		float textWidth = ImGui::CalcTextSize(_name).x;
+		float columnWidth = ImGui::GetContentRegionAvail().x;
+		float offset = (columnWidth - textWidth) * 0.5f;
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
+		ImGui::TextWrapped(_name);
+	}
 	void ContentBrowserLayer::PushPanalItemStyle()
 	{
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.10f, 0.10f, 0.10f, 1.0f });
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0 });
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 8 });
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 10.0f, 5.0f });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 1 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 10.0f, 10.0f });
 	}
 	void ContentBrowserLayer::PopPanalItemStyle()
 	{

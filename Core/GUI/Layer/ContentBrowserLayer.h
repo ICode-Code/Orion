@@ -5,11 +5,23 @@
 #include "PreDef.h"
 #include <filesystem>
 
+#include "../../Core/Command/ExecutionHandler.h"
+
 #include <ShlObj.h>
 #include <Shlwapi.h> // For PathFileExists
 
 namespace OE1Core
 {
+	struct DirEntryInfo
+	{
+		DirEntryInfo(std::string _name = "", std::string _path = "", std::string _ext = "")
+			: Name(_name), Path(_path), Extenstion(_ext) {}
+		std::string Name;
+		std::string Path;
+		std::string Extenstion;
+	};
+
+
 	class ContentBrowserLayer : public LayerBase
 	{
 	public:
@@ -27,17 +39,27 @@ namespace OE1Core
 		void QueryProjectDir();
 		void DrawHeader();
 		void PathIterator();
+		void SyncDataEntry();
+		void PrintName(const char* _name);
 
 	private: // popups
 		void ContentBrowserMiniOptionPopup();
+
 
 	private: // Directory
 		std::string m_RootDirectory = "\\ORion\\PRJ_Pilot";
 		std::filesystem::path m_CurrentDirectory;
 		std::filesystem::path m_ActiveDirectory = m_RootDirectory;
 
+		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_DirEntry;
+		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_MusicEntry;
+		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_AssetEntry;
+		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_MaterialEntry;
+		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_ScriptEntry;
+		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_UnknownFileEntry;
+
 	private: // Spacing and Size
-		float m_Padding = 42.0f;
+		float m_Padding = 45.0f;
 		float m_ThumbnailSize = 65.0f;
 		float m_CellSize = m_ThumbnailSize + m_Padding;
 		float m_MaxPanelWidth;
@@ -49,11 +71,7 @@ namespace OE1Core
 		ImTextureID m_UnknownFileIcon	= 0;
 		ImTextureID m_AudioIcon			= 0;
 		ImTextureID m_AnimationIcon		= 0;
-
-	private: // iter paramater
-		std::string m_IterName;
-		std::string m_IterPath;
-		std::string m_IterExt;
+		inline static int s_DRAG_ID = 0;
 	};
 }
 

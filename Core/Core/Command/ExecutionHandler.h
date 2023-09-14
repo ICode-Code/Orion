@@ -6,6 +6,7 @@
 #include "../../AssetManager/AssetParser/AssetParser.h"
 #include "Commnad.h"
 
+#include <functional>
 #include <fstream>
 #include <thread>
 #include <Log.h>
@@ -19,10 +20,14 @@ namespace OE1Core
 		bool IsRunning = false;
 	};
 
+	
+	typedef std::function<void()> ContentBrowserLayerNotifyCallback;
+
 	class ExecutionHandler
 	{
 	public:
 		static void ProcessQueueCommands();
+		static void RegisterContentBrowserLayerNotifyCallback(const ContentBrowserLayerNotifyCallback& _callback);
 
 	protected:
 		static void ProcessAssetLoadCommand();
@@ -34,6 +39,7 @@ namespace OE1Core
 	private:
 		inline static _3DAssetLoaderThreadPkg s_3DAssetLoaderThread;
 		inline static bool s_AssetLoaded = false;
+		inline static ContentBrowserLayerNotifyCallback s_ContentBrowserLayerNotifyCallback;
 	};
 }
 
