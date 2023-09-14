@@ -139,7 +139,7 @@ namespace OE1Core
 
 		// Generate the Material
 		// This alloacted shader is managed by the material, so it will delete it, no need to worry
-		MasterMaterial* master_material = MaterialManager::RegisterMaterial(_mat_name, new Shader(vertex_shader, fragment_shader));
+		MasterMaterial* master_material = MaterialManager::RegisterMaterial(_mat_name, new Shader(vertex_shader.c_str(), fragment_shader.c_str()));
 
 
 		// if the material type is default which means there is no texture we can return here

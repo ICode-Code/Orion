@@ -176,7 +176,7 @@ vec3 ComputeNormal()
 vec3 Color;
 vec3 Normal;
 vec3 Emission;
-vec3 AO;
+float AO;
 float Metal = 0.0f;
 float Alpha = 0.0f;
 float Roughness = 0.0f;
