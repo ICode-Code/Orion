@@ -22,12 +22,14 @@ namespace OE1Core
 
 	
 	typedef std::function<void()> ContentBrowserLayerNotifyCallback;
+	typedef std::function<void(bool)> ThreadInfoLayerNotifyCallback;
 
 	class ExecutionHandler
 	{
 	public:
 		static void ProcessQueueCommands();
 		static void RegisterContentBrowserLayerNotifyCallback(const ContentBrowserLayerNotifyCallback& _callback);
+		static void RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback);
 
 	protected:
 		static void ProcessAssetLoadCommand();
@@ -40,6 +42,7 @@ namespace OE1Core
 		inline static _3DAssetLoaderThreadPkg s_3DAssetLoaderThread;
 		inline static bool s_AssetLoaded = false;
 		inline static ContentBrowserLayerNotifyCallback s_ContentBrowserLayerNotifyCallback;
+		inline static ThreadInfoLayerNotifyCallback s_ThreadInfoLayerNotifyCallback;
 	};
 }
 

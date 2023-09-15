@@ -5,7 +5,12 @@ namespace OE1Core
 {
 	ThreadInfoLayer::ThreadInfoLayer()
 	{
-
+		ExecutionHandler::RegisterThreadInfoLayerNotifyCallback(
+			[this](bool _load)
+			{
+				this->IsLoading(_load);
+			}
+		);
 	}
 	ThreadInfoLayer::~ThreadInfoLayer()
 	{
@@ -16,8 +21,14 @@ namespace OE1Core
 	{
 
 	}
+	void ThreadInfoLayer::IsLoading(bool _loading)
+	{
+		m_LoadingInProgress = _loading;
+	}
 	void ThreadInfoLayer::Render()
 	{
+		if (!m_LoadingInProgress)
+			return;
 		ImGui::Begin("#thread_info", NULL, ImGuiWindowFlags_NoScrollbar);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 });

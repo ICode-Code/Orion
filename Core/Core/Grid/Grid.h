@@ -7,10 +7,10 @@
 
 namespace OE1Core
 {
-	namespace Renderer { class GridRenderer; }
+	namespace Renderer { class IVGridRenderer; }
 	class Grid
 	{
-		friend class Renderer::GridRenderer;
+		friend class Renderer::IVGridRenderer;
 	public:
 		Grid();
 		~Grid();

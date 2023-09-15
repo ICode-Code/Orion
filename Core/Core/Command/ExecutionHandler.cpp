@@ -7,6 +7,10 @@ namespace OE1Core
 	{
 		s_ContentBrowserLayerNotifyCallback = _callback;
 	}
+	void ExecutionHandler::RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback)
+	{
+		s_ThreadInfoLayerNotifyCallback = _callback;
+	}
 	void ExecutionHandler::ProcessQueueCommands()
 	{
 		ProcessAssetLoadCommand();
@@ -20,6 +24,7 @@ namespace OE1Core
 	{
 		while (!Command::s_Load3DAssetCommands.empty() && !s_3DAssetLoaderThread.IsRunning)
 		{
+			s_ThreadInfoLayerNotifyCallback(true);
 			auto load_args = Command::s_Load3DAssetCommands.front();
 			Command::s_Load3DAssetCommands.pop();
 			s_3DAssetLoaderThread.Thread = std::thread(&Loader::GeometryLoader::LoadGeometry, load_args, std::ref(s_3DAssetLoaderThread.IsRunning));
@@ -48,14 +53,15 @@ namespace OE1Core
 				WriteBinary(file_macro, "SubMesh Count:		" + std::to_string(model->SubMeshCount) + "\n\n");
 				WriteBinary(file_macro, "--	--	--	--	\n");
 				file_macro.close();
+
+				//Renderer::ModelSnapshotRenderer::Render(model);
 			}
 			
 			Loader::GeometryLoader::s_MeshSets.pop();
-
 			// update info
 			s_ContentBrowserLayerNotifyCallback();
 			Loader::StaticGeometryLoader::PROGRESS_INFO = "Job Done.";
-			
+			s_ThreadInfoLayerNotifyCallback(false);
 		}
 
 	}

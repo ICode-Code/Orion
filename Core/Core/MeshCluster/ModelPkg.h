@@ -14,7 +14,7 @@ namespace OE1Core
 		int VertexCount		= 0;
 		int IndicesCount	= 0;
 		int TriangleCount	= 0;
-		unsigned int SnapShot = 0;
+		GLuint SnapShot		= 0;
 		std::vector<CoreStaticMeshPkg> MeshList;
 		
 	};

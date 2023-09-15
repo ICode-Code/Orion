@@ -14,6 +14,10 @@ namespace OE1Core
 
 		virtual void Update() override;
 		virtual void Render() override;
+		void IsLoading(bool _loading);
+
+	protected:
+		bool m_LoadingInProgress = false;
 	};
 }
 

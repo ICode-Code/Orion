@@ -25,6 +25,18 @@ namespace OE1Core
 	{
 		return &ShaderManager::s_Shaders;
 	}
+	MaterialManager::MaterialRegistry* CoreSystem::GetMaterialRegistry()
+	{
+		return &MaterialManager::s_MaterialRegistry;
+	}
+	MasterMaterial* CoreSystem::GetMaterial(std::string _id)
+	{
+		return MaterialManager::GetMaterial(_id);
+	}
+	MasterMaterial* CoreSystem::GetMaterial(uint32_t _id)
+	{
+		return MaterialManager::GetMaterial(_id);
+	}
 	void CoreSystem::SetRenderedFrame(unsigned int _id)
 	{
 		ViewportArgs::FINAL_FRAME = _id;

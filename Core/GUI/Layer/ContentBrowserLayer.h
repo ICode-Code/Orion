@@ -5,8 +5,6 @@
 #include "PreDef.h"
 #include <filesystem>
 
-#include "../../Core/Command/ExecutionHandler.h"
-
 #include <ShlObj.h>
 #include <Shlwapi.h> // For PathFileExists
 

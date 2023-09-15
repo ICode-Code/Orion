@@ -21,6 +21,9 @@ namespace OE1Core
 		spdlog::logger* GetLog() override;
 		void SetRenderedFrame(unsigned int _id) override;
 		ShaderManager::ShaderRegistry* GetShaderRegistry() override;
+		MaterialManager::MaterialRegistry* GetMaterialRegistry() override;
+		MasterMaterial* GetMaterial(std::string _id) override;
+		MasterMaterial* GetMaterial(uint32_t _id) override;
 	};
 }
 

@@ -1,5 +1,5 @@
-#ifndef OE1_IV_FRAMEBUFFER_H_
-#define OE1_IV_FRAMEBUFFER_H_
+#ifndef OE1_IV_FORWARD_BASE_FRAMEBUFFER_H_
+#define OE1_IV_FORWARD_BASE_FRAMEBUFFER_H_
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -13,12 +13,12 @@ namespace OE1Core
 {
 	namespace Renderer
 	{
-		class __declspec(dllexport) IVFramebuffer
+		class IVForwardBaseFramebuffer
 		{
 		public:
-			IVFramebuffer(const int _width, const int _he34ight);
-			IVFramebuffer(const int _res[2]);
-			virtual ~IVFramebuffer();
+			IVForwardBaseFramebuffer(const int _width, const int _he34ight);
+			IVForwardBaseFramebuffer(const int _res[2]);
+			virtual ~IVForwardBaseFramebuffer();
 
 
 			virtual void Attach(bool _clean_buffer = true, GLenum _usnage = GL_FRAMEBUFFER);
@@ -56,7 +56,7 @@ namespace OE1Core
 			int GetHeight() const;
 
 		protected:
-			float m_ClearColor[4] = {0.1f, 0.1f, 0.1f, 1.0f};
+			float m_ClearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
 			int m_Width;
 			int m_Height;
 			GLuint m_Framebuffer;
@@ -70,9 +70,9 @@ namespace OE1Core
 			void SetDrawBuffers(int _count);
 			void DefaultTextureFilter();
 			template<typename T> T ReadPixelData(int _attach_index, int _posX, int _posY, int _sizeX, int _sizeY, GLenum _data_format, GLenum _data_type);
-		}; 
+		};
 
-		template<typename T> T IVFramebuffer::ReadPixelData(int _attach_index, int _posX, int _posY, int _sizeX, int _sizeY, GLenum _data_format, GLenum _data_type)
+		template<typename T> T IVForwardBaseFramebuffer::ReadPixelData(int _attach_index, int _posX, int _posY, int _sizeX, int _sizeY, GLenum _data_format, GLenum _data_type)
 		{
 			T pixel_value;
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, m_Framebuffer);
@@ -84,4 +84,4 @@ namespace OE1Core
 }
 
 
-#endif // !OE1_IV_FRAMEBUFFER_H_
+#endif // !OE1_IV_FORWARD_BASE_FRAMEBUFFER_H_

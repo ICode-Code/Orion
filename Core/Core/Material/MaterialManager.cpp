@@ -22,6 +22,7 @@ namespace OE1Core
 		if (s_MaterialRegistry.find(_name) != s_MaterialRegistry.end())
 			_name = HandleNameDuplication(_name);
 
+		s_MaterialIDTranslator.insert(std::make_pair((uint32_t)s_MaterialRegistry.size(), _name));
 		s_MaterialRegistry.insert(std::make_pair(_name, new MasterMaterial(_shader, _name, (int)s_MaterialRegistry.size())));
 
 		MasterMaterial* master_material = s_MaterialRegistry[_name];
@@ -33,6 +34,13 @@ namespace OE1Core
 	{
 		if (s_MaterialRegistry.find(_name) != s_MaterialRegistry.end())
 			return s_MaterialRegistry[_name];
+
+		return nullptr;
+	}
+	MasterMaterial* MaterialManager::GetMaterial(uint32_t _id)
+	{
+		if(s_MaterialIDTranslator.find(_id) != s_MaterialIDTranslator.end())
+			return s_MaterialRegistry[s_MaterialIDTranslator[_id]];
 
 		return nullptr;
 	}

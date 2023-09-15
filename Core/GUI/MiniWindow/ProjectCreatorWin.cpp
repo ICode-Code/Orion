@@ -37,7 +37,9 @@ namespace OE1Core
 		ImGui::Begin(ICON_FA_SHAPES"\tNew Project", &s_ShouldOpen, s_BaseWinFlag | ImGuiWindowFlags_NoMove);
 		Update();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 8 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 3 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 2.0f, 2.0f });
 
 
 		if (ProjectImageButton(ProjectType::Empty, m_EmptyProjectIcon))
@@ -57,7 +59,7 @@ namespace OE1Core
 
 		
 
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(3);
 		
 		
 
@@ -122,6 +124,7 @@ namespace OE1Core
 			ImGui::PushStyleColor(ImGuiCol_Button, Gui::s_ThemeColor);
 
 		bool _button_action = ImGui::ImageButton(_image, _size);
+		
 
 		if (s_ProjectType == _type)
 			ImGui::PopStyleColor();

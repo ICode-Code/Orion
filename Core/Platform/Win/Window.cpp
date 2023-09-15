@@ -13,6 +13,8 @@ namespace OE1Core
 		InitWindow();
 		InitRenderState();
 
+		SetClearColor({0.05f, 0.05f, 0.05f, 1.0f});
+
 	}
 	Window::~Window()
 	{

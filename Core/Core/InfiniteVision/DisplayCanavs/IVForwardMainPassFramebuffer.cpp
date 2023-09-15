@@ -1,31 +1,31 @@
-#include "IVFMainCanavs.h"
+#include "IVForwardMainPassFramebuffer.h"
 
 
 namespace OE1Core
 {
 	namespace Renderer
 	{
-		IVFMainCanavs::IVFMainCanavs(const int _width, const int _height)
-			: IVFramebuffer{ _width, _height }
+		IVForwardMainPassFramebuffer::IVForwardMainPassFramebuffer(const int _width, const int _height)
+			: IVForwardBaseFramebuffer{ _width, _height }
 		{
 			Init();
 		}
-		IVFMainCanavs::IVFMainCanavs(const int _res[2])
-			: IVFramebuffer{ _res }
+		IVForwardMainPassFramebuffer::IVForwardMainPassFramebuffer(const int _res[2])
+			: IVForwardBaseFramebuffer{ _res }
 		{
 			Init();
 		}
-		IVFMainCanavs::~IVFMainCanavs()
+		IVForwardMainPassFramebuffer::~IVForwardMainPassFramebuffer()
 		{
 			glDeleteTextures(1, &m_Color);
 			glDeleteRenderbuffers(1, &m_Depth);
 		}
-		void IVFMainCanavs::SetBufferAttachment()
+		void IVForwardMainPassFramebuffer::SetBufferAttachment()
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Color, 0);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_Depth);
 		}
-		void IVFMainCanavs::Update(int _width, int _height)
+		void IVForwardMainPassFramebuffer::Update(int _width, int _height)
 		{
 			if (_width == m_Width && _height == m_Height)
 				return;
@@ -43,12 +43,12 @@ namespace OE1Core
 
 			SetBufferAttachment();
 		}
-		GLuint IVFMainCanavs::GetAttachment(int _index)
+		GLuint IVForwardMainPassFramebuffer::GetAttachment(int _index)
 		{
 			return m_Color;
 		}
 
-		void IVFMainCanavs::Init()
+		void IVForwardMainPassFramebuffer::Init()
 		{
 			// Color
 			glGenTextures(1, &m_Color);
