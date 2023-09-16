@@ -54,11 +54,11 @@ namespace OE1Core
 		{
 			return  a + (b - a) * t;
 		}
-		void BaseCameraControllerComponent::Focus(glm::vec3 _target)
+		void BaseCameraControllerComponent::Focus(glm::vec3 _target, float _distance)
 		{
 			glm::vec3 target_direction = glm::normalize(_target - m_CurrentPosition);
 
-			m_FinalPosition = _target - (target_direction * m_DistanceFromFocusTarget);
+			m_CurrentPosition = _target - (target_direction * _distance);
 
 			// Update the camera's pitch and yaw based on the new direction vector
 			m_Camera->m_Pitch = glm::degrees(asin(target_direction.y));
@@ -69,6 +69,8 @@ namespace OE1Core
 			m_Camera->m_Right = glm::normalize(glm::cross(m_Camera->m_Front, glm::vec3(0.0f, 1.0f, 0.0f)));
 			m_Camera->m_Up = glm::normalize(glm::cross(m_Camera->m_Right, m_Camera->m_Front));
 		}
+		glm::vec3 BaseCameraControllerComponent::GetFinalPosition() { return m_FinalPosition; }
+		glm::vec3 BaseCameraControllerComponent::GetCurrentPosition() { return m_CurrentPosition; };
 		bool BaseCameraControllerComponent::MousePosition(OECore::MouseMovedEvent& e)				{ return false; };
 		bool BaseCameraControllerComponent::KeyPessed(OECore::KeyPressedEvent& e)					{ return false; };
 		bool BaseCameraControllerComponent::KeyRepeat(OECore::KeyRepeatEvent& e)					{ return false; }

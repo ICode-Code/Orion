@@ -41,7 +41,7 @@ namespace OE1Core
 		SceneManager::RegisterScene("MasterScene", new Scene(s_Window->GetWin()), true);
 
 		// Initialize Master Renderer
-		s_MasterRenderer = new OE1Core::Renderer::IVMasterRenderer();
+		s_MasterRenderer = new OE1Core::Renderer::IVMasterRenderer(s_Window->GetWin());
 
 		SceneManager::GetActiveScene()->SetRendererCallBack(std::bind(&Renderer::IVMasterRenderer::Update, s_MasterRenderer, std::placeholders::_1, std::placeholders::_2));
 

@@ -4,14 +4,14 @@ namespace OE1Core
 {
 	namespace Renderer
 	{
-		IVMasterRenderer::IVMasterRenderer()
+		IVMasterRenderer::IVMasterRenderer(SDL_Window* _window)
 			: m_MainPassFramebuffer{ IVFrameSize::R_1k }
 		{
-
+			m_ModelPreviewRenderer = new IVModelPreviewRenderer(_window);
 		}
 		IVMasterRenderer::~IVMasterRenderer()
 		{
-
+			delete m_ModelPreviewRenderer;
 		}
 
 		void IVMasterRenderer::Update(int _width, int _height)

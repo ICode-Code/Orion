@@ -42,6 +42,7 @@ namespace OE1Core
 		}
 		void IVForwardBaseFramebuffer::Clean(GLbitfield _mask)
 		{
+			glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], m_ClearColor[3]);
 			glClear(_mask);
 		}
 		void IVForwardBaseFramebuffer::SetClearColor(float _color[4])

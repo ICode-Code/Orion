@@ -1,7 +1,7 @@
 #ifndef OE1_IV_BASE_RENDERER_H_
 #define OE1_IV_BASE_RENDERER_H_
 
-#include <Shader.h>
+#include <ShaderManager/ShaderManager.h>
 #include "../../../Common/Shared/ViewportArgs.h"
 
 namespace OE1Core

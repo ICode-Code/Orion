@@ -5,6 +5,7 @@
 #include "DisplayCanavs/IVForwardMainPassFramebuffer.h"
 
 #include "Renderers/GridRenderer/IVGridRenderer.h"
+#include "Renderers/ModelPreviewRenderer/IVModelPreviewRenderer.h"
 
 #include "../Scene/Scene.h"
 
@@ -15,7 +16,7 @@ namespace OE1Core
 		class IVMasterRenderer
 		{
 		public:
-			IVMasterRenderer();
+			IVMasterRenderer(SDL_Window* _window);
 			~IVMasterRenderer();
 
 			void Update(int _width, int _height);
@@ -25,6 +26,7 @@ namespace OE1Core
 
 		protected: // Renderer
 			IVGridRenderer m_GridRenderer;
+			IVModelPreviewRenderer* m_ModelPreviewRenderer = nullptr;
 
 		protected: // Framebuffer
 			IVForwardMainPassFramebuffer m_MainPassFramebuffer;

@@ -54,7 +54,7 @@ namespace OE1Core
 				WriteBinary(file_macro, "--	--	--	--	\n");
 				file_macro.close();
 
-				//Renderer::ModelSnapshotRenderer::Render(model);
+				Renderer::IVModelPreviewRenderer::Render(*model);
 			}
 			
 			Loader::GeometryLoader::s_MeshSets.pop();

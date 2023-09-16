@@ -34,7 +34,9 @@ namespace OE1Core
 			virtual void SetControlMouseKey(int _key);
 			virtual void LockMouse(bool _lock);
 			virtual glm::vec3 Lerp(const glm::vec3& a, const glm::vec3& b, float t);
-			virtual void Focus(glm::vec3 _target);
+			virtual glm::vec3 GetFinalPosition();
+			virtual glm::vec3 GetCurrentPosition();
+			virtual void Focus(glm::vec3 _target, float _distance = 3.5f);
 
 
 		protected: // Event

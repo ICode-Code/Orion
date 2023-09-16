@@ -4,12 +4,15 @@
 #include "Util/LoadArgs.h"
 #include "Geometry/GeometryLoader.h"
 #include "../../AssetManager/AssetParser/AssetParser.h"
+#include "../InfiniteVision/Renderers/ModelPreviewRenderer/IVModelPreviewRenderer.h"
 #include "Commnad.h"
 
 #include <functional>
 #include <fstream>
 #include <thread>
 #include <Log.h>
+
+
 using namespace std::chrono_literals;
 
 namespace OE1Core

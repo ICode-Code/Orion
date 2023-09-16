@@ -189,8 +189,8 @@ namespace OE1Core
 		for (size_t i = 0; i < m_AssetEntry.size(); i++)
 		{
 			PushPanalItemStyle();
-
-			ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_RenderableGeometry[m_AssetEntry[i].first.Name].SnapShot, { m_ThumbnailSize, m_ThumbnailSize });
+			
+			ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_RenderableGeometry[m_AssetEntry[i].first.Name].SnapShot, { m_ThumbnailSize, m_ThumbnailSize }, {0, 1}, {1, 0});
 
 			PopPanalItemStyle();
 

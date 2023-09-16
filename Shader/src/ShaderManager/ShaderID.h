@@ -6,7 +6,8 @@ namespace OE1Core
 {
 	enum class ShaderID
 	{
-		INIF_GRID
+		INIF_GRID,
+		MODEL_PREVIEW
 	};
 }
 
