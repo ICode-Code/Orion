@@ -29,9 +29,10 @@ namespace OE1Core
 		s_Window->RegisterImGuiSDLEventProcessorCallback(std::bind(ImGui_ImplSDL2_ProcessEvent, std::placeholders::_1));
 
 		// Init System Interface
+		// This guys will be imporatnt whe  we have dynamic lib who want to interact with the core
 		s_CoreSystem = new OE1Core::CoreSystem();
 		s_SceneSystem = new OE1Core::SceneSystem();
-		s_ShaderSystem = new OE1Core::ShaderSystem();
+		s_ShaderSystem = new OE1Core::ShaderSystem(); 
 
 		// Buffer Manger
 		s_MemeoryManager = new Memory::UniformBlockManager(s_ShaderSystem);
