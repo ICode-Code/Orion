@@ -54,12 +54,23 @@ namespace OE1Core
 	Memory::MaterialProperties& MasterMaterial::GetParameter() { return m_Parameter; }
 	Memory::TextureAccessIndex& MasterMaterial::GetTAI() { return m_TAI; }
 
+	bool MasterMaterial::HasColorMap()
+	{
+		return m_HasColorMap;
+	}
+	bool MasterMaterial::HasNonColorMap()
+	{
+		return m_HasNonColorMap;
+	}
+
 	void MasterMaterial::SetColorMapTexture(GLuint _color)
 	{
+		m_HasColorMap = true;
 		m_ColorTexture = _color;
 	}
 	void MasterMaterial::SetNonColorMapTexture(GLuint _non_color)
 	{
+		m_NonColorTexture = true;
 		m_NonColorTexture = _non_color;
 	}
 	Shader* MasterMaterial::GetShader() const

@@ -17,8 +17,8 @@ namespace OE1Core
 	void ShaderManager::InitShaders()
 	{
 		LOG_WARRNING("\n");
-		AddShaderFromDefaultPath("OES_Grid.shader", ShaderID::INIF_GRID);
 		AddShaderFromDefaultPath("OES_ModelPreview.shader", ShaderID::MODEL_PREVIEW);
+		AddShaderFromDefaultPath("OES_Grid.shader", ShaderID::INIF_GRID);
 	}
 	void ShaderManager::AddShader(std::string _path, ShaderID _id, std::string _name)
 	{

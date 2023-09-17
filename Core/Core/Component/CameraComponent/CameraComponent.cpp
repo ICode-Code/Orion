@@ -24,6 +24,12 @@ namespace OE1Core
 		{
 			return m_Cull;
 		}
+		void CameraComponent::SetPitch(float _pitch) { m_Pitch = _pitch; }
+		void CameraComponent::SetYaw(float _yaw) { m_Yaw = _yaw; }
+
+		float CameraComponent::GetPitch() const { return m_Pitch; };
+		float CameraComponent::GetYaw() const { return m_Yaw; };
+
 		glm::vec3 CameraComponent::GetPosition() const { return m_Position; }
 		void CameraComponent::SetResolution(glm::vec2 _res)
 		{

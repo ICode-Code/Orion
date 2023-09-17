@@ -22,7 +22,12 @@ namespace OE1Core
 			glm::vec3 GetPosition() const;
 			void SetResolution(glm::vec2 _res);
 			void Update(glm::vec3 _position);
+			void SetPitch(float _pitch);
+			void SetYaw(float _yaw);
 			float GetAspectRatio();
+
+			float GetPitch() const;
+			float GetYaw() const;
 
 			/// <summary>
 			/// The color applied to the remaining screen after all elements in view have been drawn and there is no skybox

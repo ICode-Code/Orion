@@ -53,6 +53,8 @@ namespace OE1Core
 		Memory::MaterialProperties& GetParameter();
 		Memory::TextureAccessIndex& GetTAI();
 
+		bool HasColorMap();
+		bool HasNonColorMap();
 
 		void SetColorMapTexture(GLuint _color);
 		void SetNonColorMapTexture(GLuint _non_color);
@@ -75,6 +77,10 @@ namespace OE1Core
 		Shader* m_Shader = nullptr;
 		Memory::MaterialProperties m_Parameter;
 		Memory::TextureAccessIndex m_TAI;
+
+	private: // some flags
+		bool m_HasColorMap = false;
+		bool m_HasNonColorMap = false;
 		
 
 	};

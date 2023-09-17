@@ -11,7 +11,7 @@ namespace OE1Core
 		}
 		IVModelPreviewRenderer::~IVModelPreviewRenderer()
 		{
-			delete s_CameraPackage;
+			delete s_CameraPackage;    
 		}
 
 		void IVModelPreviewRenderer::Render(ModelPkg& _model_package)
@@ -21,21 +21,30 @@ namespace OE1Core
 			_frame.Attach();
 			s_LocalShader->Attach();
 
-			s_CameraPackage->GetCamera()->SetResolution(glm::vec2(IVFrameSize::R_1k[0], IVFrameSize::R_1k[1]));
-			
-			s_CameraPackage->GetController()->Focus(glm::vec3(1.0f), glm::length(_model_package.Extents));
+			s_CameraPackage->GetCamera()->SetResolution(glm::vec2(1280, 1024));
+			s_CameraPackage->GetCamera()->m_Near = 0.01f;
+			s_CameraPackage->GetController()->Focus(glm::vec3(0.0f, 0.0f, 0.0f), glm::length(_model_package.Extents * 1.5f));
 			s_CameraPackage->GetController()->UpdateCameraView();
 
 			s_CameraPackage->GetCamera()->Update(s_CameraPackage->GetController()->GetCurrentPosition());
 
-			s_LocalShader->SetMat4("Model", glm::translate(glm::mat4(1.0f), glm::vec3(1.0f)));
+			s_LocalShader->SetMat4("Model", glm::mat4(1.0f));
 			s_LocalShader->SetMat4("View", s_CameraPackage->GetCamera()->m_View);
 			s_LocalShader->SetMat4("Projection", s_CameraPackage->GetCamera()->m_Projection);
 
-			
 
 			for (size_t i = 0; i < _model_package.MeshList.size(); i++)
 			{
+
+				int id = _model_package.MeshList[i].MaterialID;
+				s_LocalShader->set1i("matIndex", id);
+				s_LocalShader->set1i("hasTexture", true);
+				MasterMaterial* mat = MaterialManager::GetMaterial(id);
+				if(!mat->HasColorMap())
+					s_LocalShader->set1i("hasTexture", false);
+
+				mat->Attach();
+
 				glBindVertexArray(_model_package.MeshList[i].VAO);
 				glDrawElements(GL_TRIANGLES, _model_package.MeshList[i].IndiceCount, GL_UNSIGNED_INT, 0);
 			}
