@@ -76,7 +76,7 @@ namespace OE1Core
 			ExecutionHandler::ProcessQueueCommands();
 			
 			SceneManager::UpdateScene(s_Window->GetArg().DeltaTime);
-			s_MasterRenderer->MasterPass(*SceneManager::GetActiveScene());
+			s_MasterRenderer->MasterPass(SceneManager::GetActiveScene());
 
 
 			s_GuiBase->Attach(&s_Window->GetArg().SDL_Event);

@@ -13,7 +13,7 @@
 
 namespace OE1Core 
 {
-	namespace Renderer { class IVMasterRenderer;  }
+	namespace Renderer { class IVMasterRenderer; class IVRenderStack; }
 	typedef std::function<void(int, int)> IVRendererUpdateCallback;
 	class Entity;
 	class Scene
@@ -27,6 +27,9 @@ namespace OE1Core
 		Entity GetEntity(entt::entity _id);
 		Entity GetEntity(uint32_t _id);
 
+		StaticMesh* QueryStaticMesh(uint32_t _package_id);
+		StaticMesh* RegisterStaticMesh(ModelPkg* _model_pkg);
+		bool HasStaticMesh(uint32_t _package_id);
 		void SetRendererCallBack(const IVRendererUpdateCallback& _renderer_update_callbacks) { m_RendererUpdateCallback = _renderer_update_callbacks; }
 		void Update(int _width, int _height);
 		void Update(float dt);
@@ -39,11 +42,12 @@ namespace OE1Core
 
 
 	public:
+		class Renderer::IVRenderStack* m_RenderStack = nullptr;
 		Grid* m_Grid = nullptr;
 		SDL_Window* m_Window;
 		CameraPackage m_CameraPkg;
 		entt::registry m_EntityRegistry;
-		std::unordered_map<uint32_t, StaticMesh> m_StaticMeshRegistry;
+		std::unordered_map<uint32_t, StaticMesh*> m_StaticMeshRegistry;
 
 	protected:
 		IVRendererUpdateCallback m_RendererUpdateCallback;

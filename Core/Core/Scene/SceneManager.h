@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "UniformBuffer/UniformBlockManager.h"
+#include "SceneEntityFactory.h"
 
 #include <Log.h>
 #include <memory>
@@ -22,6 +23,7 @@ namespace OE1Core
 
 	protected:
 		inline static Scene* s_ActiveScene = nullptr;
+		inline static SceneEntityFactory s_SceneEntityFactory;
 		inline static std::unordered_map<std::string, Scene*> s_Scenes;
 	};
 }

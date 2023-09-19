@@ -188,14 +188,27 @@ namespace OE1Core
 
 		for (size_t i = 0; i < m_AssetEntry.size(); i++)
 		{
+			ImGui::PushID(s_DRAG_ID++);
+
 			PushPanalItemStyle();
 			
 			ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_RenderableGeometry[m_AssetEntry[i].first.Name].SnapShot, { m_ThumbnailSize, m_ThumbnailSize }, {0, 1}, {1, 0});
 
 			PopPanalItemStyle();
 
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				ModelPkg* package_payload = AssetManager::GetGeometry(m_AssetEntry[i].first.Name);
+
+				ImGui::SetDragDropPayload(ORI_STATIC_MESH_PACKAGE_PAYLOAD, package_payload, sizeof(ModelPkg));
+
+				ImGui::EndDragDropSource();
+			}
+
 			PrintName(m_AssetEntry[i].first.Name.c_str());
 			ImGui::NextColumn();
+
+			ImGui::PopID();
 		}
 
 		

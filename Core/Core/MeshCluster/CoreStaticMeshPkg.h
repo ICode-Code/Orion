@@ -4,6 +4,8 @@
 #include <Util/DataBlock.h>
 #include <glm/glm.hpp>
 
+#include "../Material/MasterMaterial.h"
+
 namespace OE1Core
 {
 	struct CoreStaticMeshPkg
@@ -22,6 +24,7 @@ namespace OE1Core
 
 		uint32_t PackageID;
 		uint32_t MaterialID;
+		MasterMaterial* Material = nullptr;
 		std::string Name;
 
 		std::vector<DataBlock::Vertex> VertexData; // Big

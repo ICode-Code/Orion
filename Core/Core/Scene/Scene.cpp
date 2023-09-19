@@ -1,5 +1,7 @@
 #include "Scene.h"
 #include "Entity.h"
+#include "../InfiniteVision/IVMasterRenderer.h"
+#include "../InfiniteVision/RenderStack/RenderStack.h"
 
 namespace OE1Core
 {
@@ -7,10 +9,12 @@ namespace OE1Core
 		: m_Window{_window}, m_CameraPkg{ _window }
 	{
 		m_Grid = new Grid();
+		m_RenderStack = new Renderer::IVRenderStack();
 	}
 	Scene::~Scene()
 	{
 		delete m_Grid;
+		delete m_RenderStack;
 	}
 
 
@@ -48,6 +52,34 @@ namespace OE1Core
 	void Scene::ResetPhysics()
 	{
 
+	}
+	bool Scene::HasStaticMesh(uint32_t _package_id)
+	{
+		return (m_StaticMeshRegistry.find(_package_id) != m_StaticMeshRegistry.end());
+	}
+	StaticMesh* Scene::RegisterStaticMesh(ModelPkg* _model_pkg)
+	{
+		if (HasStaticMesh(_model_pkg->PackageID))
+		{
+			LOG_ERROR("Static Mesh already exist! failed to register model package: {0}", _model_pkg->Name);
+			return nullptr;
+		}
+
+		m_StaticMeshRegistry.insert(std::make_pair(_model_pkg->PackageID, new StaticMesh(_model_pkg)));
+
+		Renderer::IVMasterRenderer::PushToRenderStack(m_StaticMeshRegistry[_model_pkg->PackageID], this);
+
+		return m_StaticMeshRegistry[_model_pkg->PackageID];
+	}
+	StaticMesh* Scene::QueryStaticMesh(uint32_t _package_id)
+	{
+		if (!HasStaticMesh(_package_id))
+		{
+			LOG_ERROR("Failed to query static mesh, registry not found, Package ID: {0}", _package_id);
+			return nullptr;
+		}
+
+		return m_StaticMeshRegistry[_package_id];
 	}
 	void Scene::OnEvent(OECore::IEvent& e)
 	{

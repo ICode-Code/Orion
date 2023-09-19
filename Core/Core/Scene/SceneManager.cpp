@@ -36,8 +36,10 @@ namespace OE1Core
 		}
 		else
 		{
-			LOG_ERROR("Failed to register scene: Scene name alreadu exist! {0}", _name);
+			LOG_ERROR("Failed to register scene: Scene name already exist! {0}", _name);
 		}
+
+		SceneEntityFactory::RegisterActiveScene(s_ActiveScene);
 	}
 	void SceneManager::ActivateScene(std::string _name)
 	{

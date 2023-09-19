@@ -29,6 +29,8 @@ namespace OE1Core
 		int MaterialID = -1;
 
 	};
+
+	inline static constexpr size_t StaticMeshInstancePkgSize = sizeof(StaticMeshInstancePkg);
 }
 
 #endif // !OE1_STATIC_MESH_PKG_H_

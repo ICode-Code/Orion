@@ -1,4 +1,5 @@
 #include "MainViewport.h"
+#include "../../../Core/Scene/Entity.h"
 
 
 namespace OE1Core
@@ -32,8 +33,23 @@ namespace OE1Core
 		ImGui::Image((ImTextureID)(intptr_t)ViewportArgs::FINAL_FRAME, m_ViewportSize, { 0, 1 }, { 1, 0 });
 
 
-
+		HandlePayloadPackage();
 
 		ImGui::End();
+	}
+	void MainViewport::HandlePayloadPackage()
+	{
+		if (ImGui::BeginDragDropTarget())
+		{
+
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ORI_STATIC_MESH_PACKAGE_PAYLOAD))
+			{
+				ModelPkg* package = (ModelPkg*)payload->Data;
+				
+				SceneEntityFactory::CreateRichMeshEntity(package);
+			}
+
+			ImGui::EndDragDropTarget();
+		}
 	}
 }

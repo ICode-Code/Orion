@@ -14,6 +14,9 @@ namespace OE1Core
 
 		void Update() override;
 		void Render() override;
+
+	protected:
+		void HandlePayloadPackage();
 	};
 }
 

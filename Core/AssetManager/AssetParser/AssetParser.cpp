@@ -75,7 +75,11 @@ namespace OE1Core
 		core_mesh_package.PackageID = _package_id;
 
 		if (_load_mat)
+		{
 			core_mesh_package.MaterialID = CreateMaterial(_unprocessed_geometry.Texture, core_mesh_package.Name);
+			core_mesh_package.Material = MaterialManager::GetMaterial(core_mesh_package.MaterialID);
+		}
+		
 
 		BufferIntilization(core_mesh_package);
 
