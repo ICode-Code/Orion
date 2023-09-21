@@ -124,6 +124,7 @@ void main()
 		s_Source += R"(
 #version 400 core
 
+layout(location = 0) out vec4 PixelColor;
 )";
 	}
 	void ShaderGenerator::CM_OpenMainPixelShader()
@@ -304,6 +305,7 @@ Emission = texture(t_ColorMapTexture, vec3(TexCoord, TextureIndex[MaterialIndex]
 		s_Source += R"(
 
 Emission = Materials[MaterialIndex].EmissionColor.rgb;
+PixelColor = vec4(1.0f, 0.0f, 0.5f, 1.0f);
 
 )";
 	}

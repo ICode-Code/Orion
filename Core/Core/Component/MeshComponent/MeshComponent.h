@@ -22,7 +22,6 @@ namespace OE1Core
 			void SetOffset(GLintptr _offset);
 			GLintptr GetOffset() const;
 			void Update(const glm::mat4& _transform);
-			void Update(glm::mat4 _transform);
 			void Update();
 
 			uint32_t GetPackageID() const;

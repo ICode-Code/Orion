@@ -6,6 +6,7 @@
 #include "../../../Common/Shared/ViewportArgs.h"
 #include "../../MeshCluster/CoreStaticMeshPkg.h"
 #include "../../MeshCluster/lwStaticMeshPkg.h"
+#include "../RenderStack/RenderStack.h"
 
 namespace OE1Core
 {

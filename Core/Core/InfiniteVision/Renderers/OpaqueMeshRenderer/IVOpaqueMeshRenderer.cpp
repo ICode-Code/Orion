@@ -10,19 +10,22 @@ namespace OE1Core
 
 		}
 
-		void IVOpaqueMeshRenderer::Render(std::vector<lwStaticMeshPkg*>& _list)
+		void IVOpaqueMeshRenderer::Render(IVRenderStack::IVDrawData& _list)
 		{
-			//m_Shader->Attach();
-
-			for (size_t i = 0; i < _list.size(); i++)
+			for (auto iter = _list.begin(); iter != _list.end(); iter++)
 			{
-				if (!_list[i]->DrawCount)
-					continue;
-				_list[i]->Material->GetShader()->Attach();
-				_list[i]->Material->Attach();
+				std::pair<Shader*, std::vector<lwStaticMeshPkg*>>& draw_data = iter->second;
+				draw_data.first->Attach();
+				for (size_t i = 0; i < draw_data.second.size(); i++)
+				{
+					if (!draw_data.second[i]->DrawCount)
+						continue;
 
-				glBindVertexArray(_list[i]->VAO);
-				glDrawElementsInstanced(GL_TRIANGLES, _list[i]->IndiceCount, GL_UNSIGNED_INT, 0, _list[i]->DrawCount);
+					draw_data.second[i]->Material->Attach();
+					glBindVertexArray(draw_data.second[i]->VAO);
+					glDrawElementsInstanced(GL_TRIANGLES, draw_data.second[i]->IndiceCount, GL_UNSIGNED_INT, 0, draw_data.second[i]->DrawCount);
+
+				}
 			}
 		}
 	}

@@ -11,13 +11,19 @@ namespace OE1Core
 		}
 
 
-		void IVRenderStack::RegisterOpaqueMesh(lwStaticMeshPkg* _mesh)
+		void IVRenderStack::RegisterOpaqueMesh(lwStaticMeshPkg* _mesh, MaterialType _type)
 		{
-			s_OpaqueMeshList.push_back(_mesh);
+			if (s_OpaqueMeshList.find(_type) == s_OpaqueMeshList.end())
+				s_OpaqueMeshList.insert(std::make_pair(_type, std::make_pair(_mesh->Material->GetShader(), std::vector<lwStaticMeshPkg*>())));
+
+			std::get<1>(s_OpaqueMeshList[_type]).push_back(_mesh);
 		}
-		void IVRenderStack::RegisterTransparentMesh(lwStaticMeshPkg* _mesh)
+		void IVRenderStack::RegisterTransparentMesh(lwStaticMeshPkg* _mesh, MaterialType _type)
 		{
-			s_TransparentMeshList.push_back(_mesh);
+			if (s_TransparentMeshList.find(_type) == s_TransparentMeshList.end())
+				s_TransparentMeshList.insert(std::make_pair(_type, std::make_pair(_mesh->Material->GetShader(), std::vector<lwStaticMeshPkg*>())));
+
+			std::get<1>(s_TransparentMeshList[_type]).push_back(_mesh);
 		}
 
 		void IVRenderStack::RemoveOpaqueMesh(uint32_t _package_id)

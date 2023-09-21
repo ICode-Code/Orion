@@ -46,7 +46,7 @@ namespace OE1Core
 			{
 				ModelPkg* package = (ModelPkg*)payload->Data;
 				
-				SceneEntityFactory::CreateRichMeshEntity(package);
+				ActiveEntity::Pick(SceneEntityFactory::CreateRichMeshEntity(package));
 			}
 
 			ImGui::EndDragDropTarget();

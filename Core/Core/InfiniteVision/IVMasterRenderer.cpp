@@ -22,9 +22,9 @@ namespace OE1Core
 			{
 
 				if (mesh_package[i].Material->GetType() == MaterialType::ALPHA)
-					_scene->m_RenderStack->RegisterTransparentMesh(&mesh_package[i]);
+					_scene->m_RenderStack->RegisterTransparentMesh(&mesh_package[i], mesh_package[i].Material->GetType());
 				else 
-					_scene->m_RenderStack->RegisterOpaqueMesh(&mesh_package[i]);
+					_scene->m_RenderStack->RegisterOpaqueMesh(&mesh_package[i], mesh_package[i].Material->GetType());
 
 			}
 		}

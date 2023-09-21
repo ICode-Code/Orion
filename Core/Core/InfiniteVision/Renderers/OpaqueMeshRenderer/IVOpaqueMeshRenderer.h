@@ -13,7 +13,7 @@ namespace OE1Core
 			IVOpaqueMeshRenderer() = default;
 			~IVOpaqueMeshRenderer();
 
-			void Render(std::vector<lwStaticMeshPkg*>& _list);
+			void Render(IVRenderStack::IVDrawData& _list);
 
 		protected:
 

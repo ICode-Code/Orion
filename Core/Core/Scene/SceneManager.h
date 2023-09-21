@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "UniformBuffer/UniformBlockManager.h"
 #include "SceneEntityFactory.h"
+#include "../ActiveEntity/ActiveEntity.h"
 
 #include <Log.h>
 #include <memory>

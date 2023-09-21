@@ -22,6 +22,7 @@ namespace OE1Core
 		if (s_MaterialRegistry.find(_name) != s_MaterialRegistry.end())
 			_name = HandleNameDuplication(_name);
 
+		Memory::UniformBlockManager::LinkShader(_shader);
 		s_MaterialIDTranslator.insert(std::make_pair((uint32_t)s_MaterialRegistry.size(), _name));
 		s_MaterialRegistry.insert(std::make_pair(_name, new MasterMaterial(_shader, _name, (int)s_MaterialRegistry.size())));
 

@@ -14,7 +14,10 @@ namespace OE1Core
 	}
 	void Entity::Update()
 	{
-
+		Component::TransformComponent& transform = GetComponent<Component::TransformComponent>();
+		glm::mat4 transfrom_mat = transform.GetWorldTransform();
+		if (HasComponent<Component::MeshComponent>())
+			GetComponent<Component::MeshComponent>().Update(transfrom_mat);
 	}
 	bool Entity::IsFunctional()
 	{
