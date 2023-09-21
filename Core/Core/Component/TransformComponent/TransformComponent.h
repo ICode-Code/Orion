@@ -28,6 +28,7 @@ namespace OE1Core
 		/// </summary>
 		class TransformComponent
 		{
+			friend class InspectorComponent;
 		public:
 			TransformComponent(Entity* _owner_entity = nullptr);
 			TransformComponent(glm::vec3 _position, Entity* _owner_entity = nullptr);

@@ -20,7 +20,9 @@ namespace OE1Core
 
 	Entity Scene::CreateEntity()
 	{
-		return Entity(m_EntityRegistry.create(), this);
+		Entity my_entity(m_EntityRegistry.create(), this);
+		my_entity.AddComponent<Component::InspectorComponent>();
+		return my_entity;
 	}
 	Entity Scene::GetEntity(entt::entity _id)
 	{

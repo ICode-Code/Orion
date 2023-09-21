@@ -10,6 +10,7 @@ namespace OE1Core
 	{
 		class TagComponent
 		{
+			friend class InspectorComponent;
 		public:
 			TagComponent(std::string _tag = "Untitled");
 			~TagComponent();

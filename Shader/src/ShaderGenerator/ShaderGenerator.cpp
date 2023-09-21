@@ -305,7 +305,7 @@ Emission = texture(t_ColorMapTexture, vec3(TexCoord, TextureIndex[MaterialIndex]
 		s_Source += R"(
 
 Emission = Materials[MaterialIndex].EmissionColor.rgb;
-PixelColor = vec4(1.0f, 0.0f, 0.5f, 1.0f);
+PixelColor = vec4(Color, 1.0f);
 
 )";
 	}

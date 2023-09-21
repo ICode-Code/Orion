@@ -8,6 +8,7 @@
 #include "CameraComponent/CameraComponent.h"
 #include "CameraControllerComponent/FreeLookCameraControllerComponent/FreeLookCameraControllerComponent.h"
 #include "MeshComponent/MeshComponent.h"
+#include "InspectorComponent/InspectorComponent.h"
 
 #endif // !OE1_ICOMPONENT_H_
  

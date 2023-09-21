@@ -16,6 +16,7 @@ namespace OE1Core
 	{
 		class BaseCameraControllerComponent
 		{
+			friend class InspectorComponent;
 		public:
 			BaseCameraControllerComponent(SDL_Window* _active_context);
 			virtual ~BaseCameraControllerComponent() = default;

@@ -13,6 +13,7 @@ namespace OE1Core
 	{
 		class MeshComponent
 		{
+			friend class InspectorComponent;
 		public:
 			MeshComponent(uint32_t _package_id, uint32_t _unique_instance_id, GLintptr _offset, std::vector<GLuint> _geometry_buffers, std::vector<uint32_t> _mat_offsets);
 			MeshComponent(const MeshComponent& _other, uint32_t _unique_instance_id, GLintptr _offset);

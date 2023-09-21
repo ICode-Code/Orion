@@ -20,6 +20,14 @@ namespace OE1Core
 	{
 		ImGui::Begin(ICON_FA_SLIDERS"\tInspector");
 
+		if (ActiveEntity::ValidSelection())
+		{
+			ActiveEntity::GetActive().GetComponent<Component::InspectorComponent>().Inspect();
+		}
+		else
+		{
+			ImGui::Text("Select item in the viewport to see entity property!");
+		}
 
 		ImGui::End();
 	}

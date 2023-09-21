@@ -9,6 +9,7 @@ namespace OE1Core
 	{
 		class FreeLookCameraControllerComponent : public BaseCameraControllerComponent
 		{
+			friend class InspectorComponent;
 		public:
 			FreeLookCameraControllerComponent(SDL_Window* _window);
 			~FreeLookCameraControllerComponent() = default;

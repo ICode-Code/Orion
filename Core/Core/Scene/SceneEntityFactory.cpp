@@ -77,7 +77,10 @@ namespace OE1Core
 	void SceneEntityFactory::AddDefaultComponent(Entity& _entity, std::string _name)
 	{
 		_entity.AddComponent<Component::TagComponent>(_name);
+		_entity.GetComponent<Component::InspectorComponent>().SetTagComponent(&_entity.GetComponent<Component::TagComponent>());
+
 		_entity.AddComponent<Component::TransformComponent>();
+		_entity.GetComponent<Component::InspectorComponent>().SetTransformComponent(&_entity.GetComponent<Component::TransformComponent>());
 	}
 
 
@@ -108,5 +111,6 @@ namespace OE1Core
 			geometry_buffer,
 			material_offsets
 		);
+		_entity.GetComponent<Component::InspectorComponent>().SetMeshComponent(&_entity.GetComponent<Component::MeshComponent>());
 	}
 }
