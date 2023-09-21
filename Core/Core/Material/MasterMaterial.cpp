@@ -50,7 +50,7 @@ namespace OE1Core
 	{
 		m_Type = _type;
 	}
-	MaterialType MasterMaterial::GetType() { return m_Type; }
+	MaterialType MasterMaterial::GetType() const { return m_Type; }
 	Memory::MaterialProperties& MasterMaterial::GetParameter() { return m_Parameter; }
 	Memory::TextureAccessIndex& MasterMaterial::GetTAI() { return m_TAI; }
 

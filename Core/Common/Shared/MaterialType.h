@@ -3,7 +3,7 @@
 
 namespace OE1Core
 {
-	enum class MaterialType
+	enum class MaterialType : int
 	{
 		DEFAULT				= 0,
 		DIFFUSE				= 1 << 0,

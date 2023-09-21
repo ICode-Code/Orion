@@ -48,7 +48,7 @@ namespace OE1Core
 		GLuint GetNonColorTexture() const;
 
 		void SetType(MaterialType _type);
-		MaterialType GetType();
+		MaterialType GetType() const;
 
 		Memory::MaterialProperties& GetParameter();
 		Memory::TextureAccessIndex& GetTAI();
