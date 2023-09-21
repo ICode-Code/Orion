@@ -24,6 +24,7 @@ namespace OE1Core
 
 		protected:
 			GLuint m_Color;
+			GLuint m_UID;
 			GLuint m_Depth;
 
 		private: // util

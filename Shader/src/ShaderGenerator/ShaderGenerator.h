@@ -37,6 +37,7 @@ namespace OE1Core
 		static void FR_RegisterCommonPixelShaderUtility();
 		static void FR_RegisterPixelInfo();
 		static void FR_IterateData(AvailTexture& _texture_set);
+		static void FR_ComputeFinalPixel();
 
 	private: // forward read
 		static void FR_ReadAlbedo();

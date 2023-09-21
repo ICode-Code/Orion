@@ -95,6 +95,7 @@ void main()
 		FR_ReadCommon();
 		FR_IterateData(_texture_set);
 
+		FR_ComputeFinalPixel();
 
 		CM_CloseMainPixelShader();
 		return std::exchange(s_Source, "");
@@ -125,6 +126,7 @@ void main()
 #version 400 core
 
 layout(location = 0) out vec4 PixelColor;
+layout(location = 1) out int UID;
 )";
 	}
 	void ShaderGenerator::CM_OpenMainPixelShader()
@@ -305,7 +307,14 @@ Emission = texture(t_ColorMapTexture, vec3(TexCoord, TextureIndex[MaterialIndex]
 		s_Source += R"(
 
 Emission = Materials[MaterialIndex].EmissionColor.rgb;
+
+)";
+	}
+	void ShaderGenerator::FR_ComputeFinalPixel()
+	{
+		s_Source += R"(
 PixelColor = vec4(Color, 1.0f);
+UID = RenderID;
 
 )";
 	}

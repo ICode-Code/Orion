@@ -18,11 +18,13 @@ namespace OE1Core
 		IVForwardMainPassFramebuffer::~IVForwardMainPassFramebuffer()
 		{
 			glDeleteTextures(1, &m_Color);
+			glDeleteTextures(1, &m_UID);
 			glDeleteRenderbuffers(1, &m_Depth);
 		}
 		void IVForwardMainPassFramebuffer::SetBufferAttachment()
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Color, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_UID, 0);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_Depth);
 		}
 		void IVForwardMainPassFramebuffer::Update(int _width, int _height)
@@ -37,6 +39,9 @@ namespace OE1Core
 
 			glBindTexture(GL_TEXTURE_2D, m_Color);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+
+			glBindTexture(GL_TEXTURE_2D, m_UID);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_R32I, m_Width, m_Height, 0, GL_RED_INTEGER, GL_INT, NULL);
 
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_Width, m_Height);
@@ -56,6 +61,12 @@ namespace OE1Core
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
 			DefaultTextureFilter();
 
+			// UID
+			glGenTextures(1, &m_UID);
+			glBindTexture(GL_TEXTURE_2D, m_UID);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_R32I, m_Width, m_Height, 0, GL_RED_INTEGER, GL_INT, NULL);
+			DefaultTextureFilter();
+
 			// Depth
 			glGenRenderbuffers(1, &m_Depth);
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
@@ -67,7 +78,7 @@ namespace OE1Core
 
 			SetBufferAttachment();
 
-			SetDrawBuffers(1);
+			SetDrawBuffers(2);
 
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 				LogError("IVFMainCanavs");
