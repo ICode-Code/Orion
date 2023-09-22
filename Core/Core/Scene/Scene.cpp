@@ -36,11 +36,12 @@ namespace OE1Core
 		}
 		return Entity(_id, this);
 	}
-	Entity Scene::GetEntity(uint32_t _id)
+	Entity Scene::GetEntity(uint32_t _id, bool _suppress_warning)
 	{
 		if (!m_EntityRegistry.valid((entt::entity)_id))
 		{
-			LOG_ERROR("Unable to retrive entity: Invalid ID");
+			if(!_suppress_warning)
+				LOG_ERROR("Unable to retrive entity: Invalid ID");
 			return Entity();
 		}
 		return Entity((entt::entity)_id, this);
