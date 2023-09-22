@@ -32,10 +32,26 @@ namespace OE1Core
 
 		ImGui::Image((ImTextureID)(intptr_t)ViewportArgs::FINAL_FRAME, m_ViewportSize, { 0, 1 }, { 1, 0 });
 
-
+		HandleClickOverViewport();
 		HandlePayloadPackage();
 
 		ImGui::End();
+	}
+	void MainViewport::HandleClickOverViewport()
+	{
+		MousePoseRefToViewport(m_Offset);
+
+		if (ImGui::IsItemHovered())
+		{
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			{
+				CommandDef::EntitySelectionCommandDef selection_command;
+				selection_command.posX = m_MousePosition.x;
+				selection_command.posY = m_MousePosition.y;
+				selection_command.FrameID = 0;
+				Command::PushEntitySelectionCommand(selection_command);
+			}
+		}
 	}
 	void MainViewport::HandlePayloadPackage()
 	{

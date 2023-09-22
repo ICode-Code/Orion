@@ -5,6 +5,8 @@
 #include "Geometry/GeometryLoader.h"
 #include "../../AssetManager/AssetParser/AssetParser.h"
 #include "../InfiniteVision/Renderers/ModelPreviewRenderer/IVModelPreviewRenderer.h"
+#include "../InfiniteVision/IVMasterRenderer.h"
+#include "../Scene/SceneManager.h"
 #include "Commnad.h"
 
 #include <functional>
@@ -35,6 +37,7 @@ namespace OE1Core
 		static void RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback);
 
 	protected:
+		static void ProcessSelectionCommand();
 		static void ProcessAssetLoadCommand();
 		static void ProcessAsset();
 		static void WriteBinary(std::ofstream& _file, std::string _data);

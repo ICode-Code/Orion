@@ -40,11 +40,6 @@ namespace OE1Core
 		// Create Master Scene
 		SceneManager::RegisterScene("MasterScene", new Scene(s_Window->GetWin()), true);
 
-		// Initialize Master Renderer
-		s_MasterRenderer = new OE1Core::Renderer::IVMasterRenderer(s_Window->GetWin());
-
-		SceneManager::GetActiveScene()->SetRendererCallBack(std::bind(&Renderer::IVMasterRenderer::Update, s_MasterRenderer, std::placeholders::_1, std::placeholders::_2));
-
 		CleanVirtualAsset(ORI_ACTIVE_PATH);
 	}
 
@@ -56,7 +51,6 @@ namespace OE1Core
 		delete s_CoreSystem;
 		delete s_SceneSystem;
 		delete s_ShaderSystem;
-		delete s_MasterRenderer;
 		delete s_ShaderManager;
 		delete s_MemeoryManager;
 		delete s_ResourceInitializer;
@@ -76,7 +70,7 @@ namespace OE1Core
 			ExecutionHandler::ProcessQueueCommands();
 			
 			SceneManager::UpdateScene(s_Window->GetArg().DeltaTime);
-			s_MasterRenderer->MasterPass(SceneManager::GetActiveScene());
+			SceneManager::RenderScenes();
 
 
 			s_GuiBase->Attach(&s_Window->GetArg().SDL_Event);

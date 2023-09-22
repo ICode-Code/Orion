@@ -4,16 +4,10 @@
 #include <string>
 #include <queue>
 #include "Util/LoadArgs.h"
+#include "CommandDefinitions.h"
 
 namespace OE1Core
 {
-
-	enum class RT_COMMANDS
-	{
-		ASSET_LOAD		= 0,
-		SELECT_ENTITY	= 1
-	};
-
 	/// <summary>
 	///This command are invocked from the ui and need to queue them and execute them
 	// after the UI call
@@ -23,9 +17,11 @@ namespace OE1Core
 		friend class ExecutionHandler;
 	public:
 		static void PushAssetLoadCommand(Loader::LoadArgs _args);	
+		static void PushEntitySelectionCommand(CommandDef::EntitySelectionCommandDef _command);
 
 	private:
 		inline static std::queue<Loader::LoadArgs> s_Load3DAssetCommands;
+		inline static std::queue<CommandDef::EntitySelectionCommandDef> s_EntitySelectionCommands;
 	};
 }
 

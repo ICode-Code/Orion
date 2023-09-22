@@ -1,11 +1,12 @@
 #include "IVMasterRenderer.h"
+#include "../Scene/Scene.h"
 
 namespace OE1Core
 {
 	namespace Renderer
 	{
-		IVMasterRenderer::IVMasterRenderer(SDL_Window* _window)
-			: m_MainPassFramebuffer{ IVFrameSize::R_1k }
+		IVMasterRenderer::IVMasterRenderer(SDL_Window* _window, class OE1Core::Scene* _scene)
+			: m_MainPassFramebuffer{ IVFrameSize::R_1k }, m_Scene{ _scene }
 		{
 			m_ModelPreviewRenderer = new IVModelPreviewRenderer(_window);
 			m_SceneRenderer = new IVSceneRenderer();
@@ -15,16 +16,16 @@ namespace OE1Core
 			delete m_ModelPreviewRenderer;
 			delete m_SceneRenderer;
 		}
-		void IVMasterRenderer::PushToRenderStack(class StaticMesh* _mesh, class Scene* _scene)
+		void IVMasterRenderer::PushToRenderStack(class StaticMesh* _mesh)
 		{
 			auto& mesh_package = _mesh->m_StaticMeshPkg;
 			for (size_t i = 0; i < mesh_package.size(); i++)
 			{
 
 				if ((int)mesh_package[i].Material->GetType() & (int)MaterialType::ALPHA)
-					_scene->m_RenderStack->RegisterTransparentMesh(&mesh_package[i], mesh_package[i].Material->GetType());
+					m_Scene->m_RenderStack->RegisterTransparentMesh(&mesh_package[i], mesh_package[i].Material->GetType());
 				else 
-					_scene->m_RenderStack->RegisterOpaqueMesh(&mesh_package[i], mesh_package[i].Material->GetType());
+					m_Scene->m_RenderStack->RegisterOpaqueMesh(&mesh_package[i], mesh_package[i].Material->GetType());
 
 			}
 		}
@@ -32,16 +33,16 @@ namespace OE1Core
 		{
 			m_MainPassFramebuffer.Update(_width, _height);
 		}
-
-		void IVMasterRenderer::MasterPass(Scene* _scene)
+		IVForwardMainPassFramebuffer& IVMasterRenderer::GetMainPassFramebuffer() { return m_MainPassFramebuffer; }
+		void IVMasterRenderer::MasterPass()
 		{
 			m_MainPassFramebuffer.Attach();
 
 
-			m_SceneRenderer->Render(_scene->m_RenderStack);
+			m_SceneRenderer->Render(m_Scene->m_RenderStack);
 
 
-			m_GridRenderer.Render(*_scene->m_Grid); 
+			m_GridRenderer.Render(*m_Scene->m_Grid);
 
 			m_MainPassFramebuffer.Detach();
 

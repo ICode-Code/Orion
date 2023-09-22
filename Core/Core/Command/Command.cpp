@@ -8,4 +8,9 @@ namespace OE1Core
 	{
 		s_Load3DAssetCommands.push(_args);
 	}
+
+	void Command::PushEntitySelectionCommand(CommandDef::EntitySelectionCommandDef _command) 
+	{
+		s_EntitySelectionCommands.push(_command);
+	}
 }

@@ -17,6 +17,7 @@ namespace OE1Core
 
 	protected:
 		void HandlePayloadPackage();
+		void HandleClickOverViewport();
 	};
 }
 

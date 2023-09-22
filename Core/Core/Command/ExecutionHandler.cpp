@@ -16,8 +16,7 @@ namespace OE1Core
 		ProcessAssetLoadCommand();
 		ProcessAsset();
 
-
-		
+		ProcessSelectionCommand();
 	}
 
 	void ExecutionHandler::ProcessAssetLoadCommand()
@@ -68,5 +67,18 @@ namespace OE1Core
 	void ExecutionHandler::WriteBinary(std::ofstream& _file, std::string _data)
 	{
 		_file.write(_data.c_str(), _data.size());
+	}
+
+	void ExecutionHandler::ProcessSelectionCommand()
+	{
+		if (!Command::s_EntitySelectionCommands.empty())
+		{
+			CommandDef::EntitySelectionCommandDef& _command = Command::s_EntitySelectionCommands.back();
+			printf("x: %.i  -  y: %.i\n", _command.posX, _command.posY);
+
+			
+
+			Command::s_EntitySelectionCommands.pop();
+		}
 	}
 }

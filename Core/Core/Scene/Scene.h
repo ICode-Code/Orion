@@ -6,6 +6,8 @@
 #include "../Mesh/StaticMesh/StaticMesh.h"
 #include "../Grid/Grid.h"
 
+#include "../InfiniteVision/IVMasterRenderer.h"
+
 #include <Entt/entt.hpp>
 
 #include <unordered_map>
@@ -14,7 +16,6 @@
 namespace OE1Core 
 {
 	namespace Renderer { class IVMasterRenderer; class IVRenderStack; }
-	typedef std::function<void(int, int)> IVRendererUpdateCallback;
 	class Entity;
 	class Scene
 	{
@@ -30,15 +31,20 @@ namespace OE1Core
 		StaticMesh* QueryStaticMesh(uint32_t _package_id);
 		StaticMesh* RegisterStaticMesh(ModelPkg* _model_pkg);
 		bool HasStaticMesh(uint32_t _package_id);
-		void SetRendererCallBack(const IVRendererUpdateCallback& _renderer_update_callbacks) { m_RendererUpdateCallback = _renderer_update_callbacks; }
 		void Update(int _width, int _height);
 		void Update(float dt);
 		void ResetPhysics();
 		void OnEvent(OECore::IEvent& e);
+		
 		/// <summary>
 		/// This include the physics
 		/// </summary>
 		void ResetScene();
+
+
+		// Scene Renderer stuff
+		void Render();
+		Renderer::IVMasterRenderer* GetRenderer();
 
 
 	public:
@@ -50,7 +56,7 @@ namespace OE1Core
 		std::unordered_map<uint32_t, StaticMesh*> m_StaticMeshRegistry;
 
 	protected:
-		IVRendererUpdateCallback m_RendererUpdateCallback;
+		Renderer::IVMasterRenderer* m_MyRenderer;
 		
 	};
 }

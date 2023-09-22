@@ -9,11 +9,14 @@ namespace OE1Core
 		: m_Window{_window}, m_CameraPkg{ _window }
 	{
 		m_Grid = new Grid();
+		m_MyRenderer = new Renderer::IVMasterRenderer(m_Window, this);
 		m_RenderStack = new Renderer::IVRenderStack();
+
 	}
 	Scene::~Scene()
 	{
 		delete m_Grid;
+		delete m_MyRenderer;
 		delete m_RenderStack;
 	}
 
@@ -44,7 +47,7 @@ namespace OE1Core
 	}
 	void Scene::Update(int _width, int _height)
 	{
-		m_RendererUpdateCallback(_width, _height);
+		m_MyRenderer->Update(_width, _height);
 		m_CameraPkg.GetCamera()->SetResolution(glm::vec2((float)_width, (float)_height));
 	}
 	void Scene::Update(float dt)
@@ -69,7 +72,7 @@ namespace OE1Core
 
 		m_StaticMeshRegistry.insert(std::make_pair(_model_pkg->PackageID, new StaticMesh(_model_pkg)));
 
-		Renderer::IVMasterRenderer::PushToRenderStack(m_StaticMeshRegistry[_model_pkg->PackageID], this);
+		m_MyRenderer->PushToRenderStack(m_StaticMeshRegistry[_model_pkg->PackageID]);
 
 		return m_StaticMeshRegistry[_model_pkg->PackageID];
 	}
@@ -90,6 +93,15 @@ namespace OE1Core
 	void Scene::ResetScene()
 	{
 		ResetPhysics();
+	}
+
+	void Scene::Render()
+	{
+		m_MyRenderer->MasterPass();
+	}
+	Renderer::IVMasterRenderer* Scene::GetRenderer()
+	{
+		return m_MyRenderer;
 	}
 
 

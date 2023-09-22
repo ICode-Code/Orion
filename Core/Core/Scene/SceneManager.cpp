@@ -30,6 +30,10 @@ namespace OE1Core
 	{
 		s_ActiveScene->OnEvent(e);
 	}
+	void SceneManager::RenderScenes()
+	{
+		s_ActiveScene->Render();
+	}
 
 	void SceneManager::RegisterScene(std::string _name, Scene* _scene, bool _set_active)
 	{

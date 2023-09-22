@@ -59,7 +59,6 @@ namespace OE1Core
 		inline static OE1Core::GUIBase* s_GuiBase = nullptr;
 		inline static OE1Core::ShaderManager* s_ShaderManager = nullptr;
 		inline static OE1Core::Memory::UniformBlockManager* s_MemeoryManager = nullptr;
-		inline static OE1Core::Renderer::IVMasterRenderer* s_MasterRenderer = nullptr;
 		inline static OE1Core::ResourceInitializer* s_ResourceInitializer = nullptr;
 		
 	};
