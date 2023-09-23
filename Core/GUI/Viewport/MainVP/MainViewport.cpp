@@ -62,7 +62,9 @@ namespace OE1Core
 			{
 				ModelPkg* package = (ModelPkg*)payload->Data;
 				
-				ActiveEntity::Pick(SceneEntityFactory::CreateRichMeshEntity(package));
+				Entity droped_entity = SceneEntityFactory::CreateRichMeshEntity(package);
+				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(droped_entity);
+
 			}
 
 			ImGui::EndDragDropTarget();

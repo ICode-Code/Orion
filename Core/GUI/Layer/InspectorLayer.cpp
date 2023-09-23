@@ -20,9 +20,9 @@ namespace OE1Core
 	{
 		ImGui::Begin(ICON_FA_SLIDERS"\tInspector");
 
-		if (ActiveEntity::ValidSelection())
+		if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
 		{
-			ActiveEntity::GetActive().GetComponent<Component::InspectorComponent>().Inspect();
+			SceneManager::GetActiveScene()->GetActiveEntity()->GetActive().GetComponent<Component::InspectorComponent>().Inspect();
 		}
 		else
 		{

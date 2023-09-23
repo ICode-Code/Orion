@@ -13,22 +13,22 @@ namespace OE1Core
 		ActiveEntity() = default;
 		~ActiveEntity() = default;
 
-		static void Grab(bool _grab);
-		static void Pick(Entity _entity);
-		static void PickBatch(Entity _entity);
-		static bool IsPicked(Entity _entity);
-		static void FlushSelection();
-		static bool ValidSelection();
-		static Entity GetActive();
-		static std::vector<Entity>& GetRegistry();
-		static bool IsBatchMode();
+		void Grab(bool _grab);
+		void Pick(Entity _entity);
+		void PickBatch(Entity _entity);
+		bool IsPicked(Entity _entity);
+		void FlushSelection();
+		bool ValidSelection();
+		Entity GetActive();
+		std::vector<Entity>& GetRegistry();
+		bool IsBatchMode();
 
 
 	protected:
-		inline static std::vector<Entity> s_ActiveRegistry;
-		inline static bool s_BatchMode = false;
-		inline static bool s_EntitySelected = false;
-		inline static bool s_HoldEntity = false;
+		std::vector<Entity> s_ActiveRegistry;
+		bool s_BatchMode = false;
+		bool s_EntitySelected = false;
+		bool s_HoldEntity = false;
 
 	};
 }

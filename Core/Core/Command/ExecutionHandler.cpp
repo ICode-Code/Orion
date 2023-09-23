@@ -1,5 +1,4 @@
 #include "ExecutionHandler.h"
-#include <iostream>
 
 namespace OE1Core
 {
@@ -74,14 +73,15 @@ namespace OE1Core
 		if (!Command::s_EntitySelectionCommands.empty())
 		{
 			CommandDef::EntitySelectionCommandDef& _command = Command::s_EntitySelectionCommands.back();
-			uint32_t entity_id = static_cast<uint32_t>(SceneManager::GetActiveScene()->GetRenderer()->GetMainPassFramebuffer().Readi1(1, _command.posX, _command.posY));
+			Scene* active_scene = SceneManager::GetActiveScene();
+			uint32_t entity_id = static_cast<uint32_t>(active_scene->GetRenderer()->GetMainPassFramebuffer().Readi1(1, _command.posX, _command.posY));
 			
 			Entity entity_query = SceneManager::GetActiveScene()->GetEntity(entity_id, false);
 
 			if (entity_query.IsFunctional())
-				ActiveEntity::Pick(entity_query);
+				active_scene->GetActiveEntity()->Pick(entity_query);
 			else
-				ActiveEntity::FlushSelection();
+				active_scene->GetActiveEntity()->FlushSelection();
 			
 			Command::s_EntitySelectionCommands.pop();
 		}

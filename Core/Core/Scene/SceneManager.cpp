@@ -17,8 +17,8 @@ namespace OE1Core
 	void SceneManager::UpdateScene(float _dt)
 	{
 		// Update Active Entity
-		if (ActiveEntity::ValidSelection())
-			ActiveEntity::GetActive().Update();
+		if (s_ActiveScene->GetActiveEntity()->ValidSelection())
+			s_ActiveScene->GetActiveEntity()->GetActive().Update();
 
 
 		 s_ActiveScene->Update(_dt);

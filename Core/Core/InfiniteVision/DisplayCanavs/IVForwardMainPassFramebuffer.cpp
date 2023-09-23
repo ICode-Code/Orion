@@ -25,7 +25,7 @@ namespace OE1Core
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Color, 0);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_UID, 0);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_Depth);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Depth);
 		}
 		void IVForwardMainPassFramebuffer::Update(int _width, int _height)
 		{
@@ -44,7 +44,7 @@ namespace OE1Core
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_R32I, m_Width, m_Height, 0, GL_RED_INTEGER, GL_INT, NULL);
 
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_Width, m_Height);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
 
 			SetBufferAttachment();
 		}
@@ -70,7 +70,7 @@ namespace OE1Core
 			// Depth
 			glGenRenderbuffers(1, &m_Depth);
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_Width, m_Height);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
 
 
 			// Attach to Framebuffer

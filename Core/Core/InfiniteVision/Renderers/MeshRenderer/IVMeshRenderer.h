@@ -1,5 +1,5 @@
-#ifndef OE1_SCENE_RENDERER_H_
-#define OE1_SCENE_RENDERER_H_
+#ifndef OE1_MESH_RENDERER_H_
+#define OE1_SCEOE1_MESH_RENDERER_H_NE_RENDERER_H_
 
 #include "../IIVRenderer.h"
 #include "../../RenderStack/RenderStack.h"
@@ -8,11 +8,11 @@ namespace OE1Core
 {
 	namespace Renderer
 	{
-		class IVSceneRenderer
+		class IVMeshRenderer
 		{
 		public:
-			IVSceneRenderer();
-			~IVSceneRenderer();
+			IVMeshRenderer();
+			~IVMeshRenderer();
 
 			void Render(IVRenderStack* _render_stack);
 
@@ -22,4 +22,4 @@ namespace OE1Core
 	}
 }
 
-#endif // !OE1_SCENE_RENDERER_H_
+#endif // !OE1_MESH_RENDERER_H_

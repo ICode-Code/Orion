@@ -13,6 +13,7 @@ namespace OE1Core
 	Shader::Shader(
 		std::string _vert_path, 
 		std::string _frag_path,
+		std::string _vert_proxy_path,
 		std::string _geom_path,
 		std::string _tess_ctr_path,
 		std::string _tess_eva_path)
@@ -23,8 +24,14 @@ namespace OE1Core
 		m_Arg.VertexShaderSource = ReadDiskFile(_vert_path);
 		m_Arg.FragmentShaderSource = ReadDiskFile(_frag_path);
 
+		if (!_vert_proxy_path.empty())
+		{
+			m_Proxy.VertexShaderSource = ReadDiskFile(_vert_proxy_path);
+			m_HasProxy = true;
+		}
+
 		// optional
-		if (_geom_path != "#")
+		if (!_geom_path.empty())
 		{
 			m_Arg.GeometryShaderSource = ReadDiskFile(_geom_path);
 			m_Arg.GeometryShaderSource = ZERO_SHADER;
@@ -36,7 +43,7 @@ namespace OE1Core
 			m_Arg.GeometryShaderSource = ZERO_SHADER;
 		}
 
-		if (_tess_ctr_path != "#")
+		if (!_tess_ctr_path.empty())
 		{
 			m_Arg.TessellationControlShaderSource = ReadDiskFile(_tess_ctr_path);
 			m_Arg.HasTessellationShader = true;
@@ -47,7 +54,7 @@ namespace OE1Core
 			m_Arg.TessellationControlShaderSource = ZERO_SHADER;
 		}
 
-		if (_tess_eva_path != "#")
+		if (!_tess_eva_path.empty())
 		{
 			m_Arg.TessellationEvaluationShaderSource = ReadDiskFile(_tess_eva_path);
 			m_Arg.HasTessellationShader = true;
@@ -69,6 +76,7 @@ namespace OE1Core
 		InitShader();
 	}
 	Shader::Shader(const char* _vert_src, const char* _frag_src,
+		const char* _vert_src_proxy,
 		const char* _geom_src,
 		const char* _tess_ctr_src,
 		const char* _tess_eva_src)
@@ -77,9 +85,15 @@ namespace OE1Core
 
 		ProcessShaderDirective(m_Arg.VertexShaderSource = _vert_src);
 		ProcessShaderDirective(m_Arg.FragmentShaderSource = _frag_src);
+
+		if (_vert_src_proxy)
+		{
+			ProcessShaderDirective(m_Proxy.VertexShaderSource = _vert_src_proxy);
+			m_HasProxy = true;
+		}
 		
 		// optional
-		if (_geom_src != "#")
+		if (_geom_src)
 		{
 			ProcessShaderDirective(m_Arg.GeometryShaderSource = _geom_src);
 			m_Arg.HasGeometryShader = true;
@@ -90,7 +104,7 @@ namespace OE1Core
 			m_Arg.HasGeometryShader = false;
 		}
 
-		if (_tess_ctr_src != "#")
+		if (_tess_ctr_src)
 		{
 			ProcessShaderDirective(m_Arg.TessellationControlShaderSource = _tess_ctr_src);
 			m_Arg.HasTessellationShader = true;
@@ -101,7 +115,7 @@ namespace OE1Core
 			m_Arg.HasTessellationShader = false;
 		}
 
-		if (_tess_eva_src != "#")
+		if (_tess_eva_src)
 		{
 			ProcessShaderDirective(m_Arg.TessellationEvaluationShaderSource = _tess_eva_src);
 			m_Arg.HasTessellationShader = true;
@@ -118,7 +132,18 @@ namespace OE1Core
 	}
 	Shader::~Shader()
 	{
+		glDeleteShader(m_Arg.VertexShader);
+		glDeleteShader(m_Arg.FragmentShader);
 
+		glDeleteProgram(m_Arg.RenderID);
+
+
+		if (m_HasProxy)
+		{
+			glDeleteShader(m_Proxy.VertexShader);
+			glDeleteShader(m_Proxy.FragmentShader);
+			glDeleteProgram(m_Proxy.RenderID);
+		}
 	}
 	void Shader::Recompile()
 	{
@@ -142,6 +167,12 @@ namespace OE1Core
 		{
 			LOG_ERROR("An Error Occurred During the Loading Process. The Operation Has Been Aborted.");
 			return;
+		}
+		if (m_HasProxy)
+		{
+			CreateCompileShader(m_Proxy.VertexShader, m_Proxy.VertexShaderSource, GL_VERTEX_SHADER);
+			CreateCompileShader(m_Proxy.FragmentShader, m_Arg.FragmentShaderSource, GL_FRAGMENT_SHADER);
+
 		}
 		CreateCompileShader(m_Arg.VertexShader, m_Arg.VertexShaderSource,			GL_VERTEX_SHADER);
 		CreateCompileShader(m_Arg.FragmentShader, m_Arg.FragmentShaderSource,		GL_FRAGMENT_SHADER);
@@ -322,6 +353,37 @@ namespace OE1Core
 			glGetProgramInfoLog(m_Arg.RenderID, SHADER_ERROR_LOG_BUFFER_SIZE, NULL, m_Arg.Log);
 			LOG_ERROR(m_Arg.Log);
 		}
+
+
+		if (m_HasProxy)
+		{
+			m_Proxy.RenderID = glCreateProgram();
+			glAttachShader(m_Proxy.RenderID, m_Proxy.VertexShader);
+			if (m_Arg.HasGeometryShader)
+				glAttachShader(m_Proxy.RenderID, m_Arg.GeometryShader);
+
+			if (m_Arg.HasTessellationShader)
+			{
+				glAttachShader(m_Proxy.RenderID, m_Arg.TessellationControlShader);
+				glAttachShader(m_Proxy.RenderID, m_Arg.TessellationEvaluationShader);
+			}
+
+			glAttachShader(m_Proxy.RenderID, m_Arg.FragmentShader);
+
+
+			glLinkProgram(m_Proxy.RenderID);
+
+			glGetProgramiv(m_Proxy.RenderID, GL_LINK_STATUS, &m_Proxy.Linked);
+
+			if (!m_Arg.Linked)
+			{
+
+				glGetProgramInfoLog(m_Proxy.RenderID, SHADER_ERROR_LOG_BUFFER_SIZE, NULL, m_Proxy.Log);
+				LOG_ERROR("PROXY_SHADER");
+				LOG_ERROR(m_Proxy.Log);
+			}
+
+		}
 	}
 
 	void Shader::LinkProgram()
@@ -380,6 +442,7 @@ namespace OE1Core
 		m_Arg.ShaderTextureUnits = _shader->m_Arg.ShaderTextureUnits;
 		AttachTextureUnit();
 	}
+	bool Shader::HasProxy() { return m_HasProxy; }
 	void Shader::AttachTextureUnit()
 	{
 		Attach();
@@ -388,14 +451,32 @@ namespace OE1Core
 			set1i(iter.first, iter.second);
 
 		Detach();
+
+		if (m_HasProxy)
+		{
+			AttachProxy();
+
+			for (auto& iter : m_Arg.ShaderTextureUnits)
+				setProxy1i(iter.first, iter.second);
+
+			Detach();
+		}
 	}
 	unsigned int Shader::GetShader()
 	{
 		return m_Arg.RenderID;
 	}
+	unsigned int Shader::GetShaderProxy()
+	{
+		return m_Proxy.RenderID;
+	}
 	void Shader::Attach()
 	{
 		glUseProgram(m_Arg.RenderID);
+	}
+	void Shader::AttachProxy()
+	{
+		glUseProgram(m_Proxy.RenderID);
 	}
 	void Shader::Detach()
 	{
@@ -465,6 +546,57 @@ namespace OE1Core
 	void Shader::Set4i(std::string _id, glm::ivec4 _val)
 	{
 		glUniform4i(glGetUniformLocation(m_Arg.RenderID, _id.c_str()), _val.x, _val.y, _val.z, _val.w);
+	}
+
+
+	// PROXY
+	void Shader::SetProxyMat4(std::string _id, glm::mat4 _mat4)
+	{
+		glUniformMatrix4fv(
+			glGetUniformLocation(m_Proxy.RenderID, _id.c_str()),
+			1,
+			GL_FALSE,
+			glm::value_ptr(_mat4));
+	}
+	void Shader::SetProxyMat3(std::string _id, glm::mat3 _mat3)
+	{
+		glUniformMatrix3fv(
+			glGetUniformLocation(m_Proxy.RenderID, _id.c_str()),
+			1,
+			GL_FALSE,
+			glm::value_ptr(_mat3));
+	}
+	void Shader::SetProxy1f(std::string _id, float _val)
+	{
+		glUniform1f(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), _val);
+	}
+	void Shader::setProxy2f(std::string _id, glm::vec2 _val)
+	{
+		glUniform2fv(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), 1, glm::value_ptr(_val));
+	}
+	void Shader::setProxy3f(std::string _id, glm::vec3 _val)
+	{
+		glUniform3fv(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), 1, glm::value_ptr(_val));
+	}
+	void Shader::setProxy4f(std::string _id, glm::vec4 _val)
+	{
+		glUniform4fv(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), 1, glm::value_ptr(_val));
+	}
+	void Shader::setProxy1i(std::string _id, int _val)
+	{
+		glUniform1i(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), _val);
+	}
+	void Shader::SetProxy2i(std::string _id, glm::ivec2 _val)
+	{
+		glUniform2i(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), _val.x, _val.y);
+	}
+	void Shader::SetProxy3i(std::string _id, glm::ivec3 _val)
+	{
+		glUniform3i(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), _val.x, _val.y, _val.z);
+	}
+	void Shader::SetProxy4i(std::string _id, glm::ivec4 _val)
+	{
+		glUniform4i(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), _val.x, _val.y, _val.z, _val.w);
 	}
 
 }

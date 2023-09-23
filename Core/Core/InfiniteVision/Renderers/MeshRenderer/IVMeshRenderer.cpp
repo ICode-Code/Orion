@@ -1,20 +1,20 @@
-#include "IVSceneRenderer.h"
+#include "IVMeshRenderer.h"
 
 
 namespace OE1Core
 {
 	namespace Renderer
 	{
-		IVSceneRenderer::IVSceneRenderer()
+		IVMeshRenderer::IVMeshRenderer()
 		{
 			m_OpaqueMeshRenderer = new IVOpaqueMeshRenderer();
 		}
-		IVSceneRenderer::~IVSceneRenderer()
+		IVMeshRenderer::~IVMeshRenderer()
 		{
 			delete m_OpaqueMeshRenderer;
 		}
 
-		void IVSceneRenderer::Render(IVRenderStack* _render_stack)
+		void IVMeshRenderer::Render(IVRenderStack* _render_stack)
 		{
 			m_OpaqueMeshRenderer->Render(_render_stack->s_OpaqueMeshList);
 		}

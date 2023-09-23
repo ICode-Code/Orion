@@ -139,12 +139,13 @@ namespace OE1Core
 
 		// Generate Shader Code based on the provided texture
 		std::string vertex_shader = ShaderGenerator::GetStandardVertexShader();
+		std::string vertex_shader_proxy = ShaderGenerator::GetStandardProxyVertexShader();
 		std::string fragment_shader = ShaderGenerator::GetForwardPixelShader(s_AvialTextures);
 
 		// Generate the Material
 		// This alloacted shader is managed by the material, so it will delete it, no need to worry
-		MasterMaterial* master_material = MaterialManager::RegisterMaterial(_mat_name, new Shader(vertex_shader.c_str(), fragment_shader.c_str()));
-
+		MasterMaterial* master_material = MaterialManager::RegisterMaterial(_mat_name, new Shader(vertex_shader.c_str(), fragment_shader.c_str(), vertex_shader_proxy.c_str()));
+		master_material->SetType(material_type);
 
 		// if the material type is default which means there is no texture we can return here
 		if(material_type == MaterialType::DEFAULT)

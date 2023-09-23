@@ -19,21 +19,25 @@ namespace  OE1Core
 	{
 	public:
 		Shader(std::string _path);
-		Shader(std::string _vert_path, std::string _frag_path,
-			std::string _geom_path		= "#",
-			std::string _tess_ctr_path	= "#",
-			std::string _tess_eva_path	= "#");
+		Shader(std::string _vert_path, std::string _frag_path, 
+			std::string _vert_shader_proxy = std::string(),
+			std::string _geom_path		= std::string(),
+			std::string _tess_ctr_path	= std::string(),
+			std::string _tess_eva_path	= std::string());
 		Shader(const char* _source);
 		Shader(const char* _vert_src, const char* _frag_src,
-			const char* _geom_src = "#",
-			const char* _tess_ctr_src = "#",
-			const char* _tess_eva_src = "#");
+			const char* _vert_src_proxy = nullptr,
+			const char* _geom_src = nullptr,
+			const char* _tess_ctr_src = nullptr,
+			const char* _tess_eva_src = nullptr);
 		~Shader();
 
 
 	public:
 		unsigned int GetShader();
+		unsigned int GetShaderProxy();
 		void Attach();
+		void AttachProxy();
 		void Detach();
 		void Recompile();
 		void RegisterTextureUnit(std::string _texture_unit_id, int _slot);
@@ -43,6 +47,7 @@ namespace  OE1Core
 		/// Do not use this for rendering purpose it won't work
 		/// </summary>
 		void AttachTextureUnit();
+		bool HasProxy();
 
 	public:
 		std::string& VertSource();
@@ -53,6 +58,17 @@ namespace  OE1Core
 
 
 	public:
+		void SetProxyMat4(std::string _id, glm::mat4 _mat4);
+		void SetProxyMat3(std::string _id, glm::mat3 _mat3);
+		void SetProxy1f(std::string _id, float _val);
+		void setProxy2f(std::string _id, glm::vec2 _val);
+		void setProxy3f(std::string _id, glm::vec3 _val);
+		void setProxy4f(std::string _id, glm::vec4 _val);
+		void setProxy1i(std::string _id, int _val);
+		void SetProxy2i(std::string _id, glm::ivec2 _val);
+		void SetProxy3i(std::string _id, glm::ivec3 _val);
+		void SetProxy4i(std::string _id, glm::ivec4 _val);
+
 		void SetMat4(std::string _id, glm::mat4 _mat4);
 		void SetMat3(std::string _id, glm::mat3 _mat3);
 		void Set1f(std::string _id, float _val);
@@ -83,10 +99,11 @@ namespace  OE1Core
 	protected: // util
 		bool IsInValidRange(size_t _index, const std::string& _buffer);
 		size_t GetNextValidIndex(size_t _currrent_index, std::vector<size_t>& _list, const std::string& _buffer);
-		
+		bool m_HasProxy = false;
 
 	protected:
 		ShaderArg m_Arg;
+		ShaderArg m_Proxy;
 		
 	};
 }

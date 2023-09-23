@@ -46,6 +46,7 @@ namespace OE1Core
 			static GLuint GetNextBlockBindingPoint();
 			static void RegisterShaderBlock(Memory::UniformBuffer& _buffer);
 			static void RegisterShaderBlock(Shader* _shader, Memory::UniformBuffer& _buffer);
+			static void RegisterProxyShaderBlock(Shader* _shader, Memory::UniformBuffer& _buffer);
 			static void CreateLinkUniformBuffer(Memory::UniformBuffer& _buffer, size_t _single_mem_block_size, size_t _total_chunk_memory);
 			static void RegisterUniformBuffers();
 			static void LinkUniformBuffers();

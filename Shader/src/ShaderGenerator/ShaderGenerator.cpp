@@ -69,6 +69,71 @@ void main()
 
 		return std::exchange(s_Source, "");
 	}
+	std::string ShaderGenerator::GetStandardProxyVertexShader()
+	{
+		s_Source.clear();
+
+		s_Source += R"(
+#version 400 core
+
+layout (location = 0) in vec3 i_Position;
+layout (location = 1) in vec3 i_Color;
+layout (location = 2) in vec3 i_Normal;
+layout (location = 3) in vec2 i_TexCoord;
+layout (location = 4) in vec3 i_Tangent;
+layout (location = 5) in vec3 i_Bitangent;
+layout (location = 6) in mat4 i_InstanceMatrices;
+layout (location = 10) in int i_RenderID;
+layout (location = 11) in int i_MaterialID;
+
+
+///////////////////////////////////////////////// STANDARD VERTEX SHADER OUTPUT //////////////////////////
+
+out vec2		TexCoord;
+out vec4		FragPosition;
+out vec3		VertNormal;
+out vec3        VertColor;
+out vec3		Tangent;
+out vec3		BiTangent;
+out flat int	MaterialIndex;
+out flat int	RenderID;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////// SCENE TRANSFORM /////////////////////////////////////
+
+#include <../ExternalAsset/Shaders/Header/UniformBlock/scene_transform_uniform_block.h>
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+uniform mat4 Model;
+
+///// Entry
+
+void main() 
+{
+	///////////////////////////////////////// VERETX -> FRAGMENT //////////////////////////
+
+			MaterialIndex   = i_MaterialID;
+			RenderID		= i_RenderID;
+			TexCoord		= i_TexCoord;
+			FragPosition	= Model * vec4(i_Position, 1.0f);
+			Tangent			= i_Tangent;
+			BiTangent		= i_Bitangent;
+			VertNormal		= mat3(transpose(inverse(Model))) * i_Normal;  
+			VertColor 		= i_Color;
+
+	////////////////////////////////////////////////////////////////////////////////////////
+	
+			gl_Position = PV * FragPosition;
+
+}
+        )";
+
+
+		return std::exchange(s_Source, "");
+	}
 	std::string ShaderGenerator::GetDeferredPixelShader(AvailTexture& _texture_set)
 	{
 		return std::string("NOT_READY");

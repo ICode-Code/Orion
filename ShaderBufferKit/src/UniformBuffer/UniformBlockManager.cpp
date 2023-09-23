@@ -48,7 +48,11 @@ namespace OE1Core
 		void UniformBlockManager::LinkShader(Shader* _shader)
 		{
 			for (auto& _iter : s_UniformBuffers)
+			{
 				RegisterShaderBlock(_shader, _iter.second);
+				if(_shader->HasProxy())
+					RegisterProxyShaderBlock(_shader, _iter.second);
+			}
 		}
 		void UniformBlockManager::CreateLinkUniformBuffer(Memory::UniformBuffer& _buffer, size_t _single_mem_block_size, size_t _total_chunk_memory)
 		{
@@ -87,6 +91,14 @@ namespace OE1Core
 
 			int block_index = glGetUniformBlockIndex(_shader->GetShader(), _buffer.Name.c_str());
 			glUniformBlockBinding(_shader->GetShader(), block_index, _buffer.BindingPoint);
+			glBindBufferBase(GL_UNIFORM_BUFFER, _buffer.BindingPoint, _buffer.Buffer);
+		}
+		void UniformBlockManager::RegisterProxyShaderBlock(Shader* _shader, Memory::UniformBuffer& _buffer)
+		{
+			glBindBuffer(GL_UNIFORM_BUFFER, _buffer.Buffer);
+
+			int block_index = glGetUniformBlockIndex(_shader->GetShaderProxy(), _buffer.Name.c_str());
+			glUniformBlockBinding(_shader->GetShaderProxy(), block_index, _buffer.BindingPoint);
 			glBindBufferBase(GL_UNIFORM_BUFFER, _buffer.BindingPoint, _buffer.Buffer);
 		}
 	}

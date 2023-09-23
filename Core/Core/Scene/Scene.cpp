@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Entity.h"
+#include "../ActiveEntity/ActiveEntity.h"
 #include "../InfiniteVision/IVMasterRenderer.h"
 #include "../InfiniteVision/RenderStack/RenderStack.h"
 
@@ -11,6 +12,7 @@ namespace OE1Core
 		m_Grid = new Grid();
 		m_MyRenderer = new Renderer::IVMasterRenderer(m_Window, this);
 		m_RenderStack = new Renderer::IVRenderStack();
+		m_SceneActiveSelection = new ActiveEntity();
 
 	}
 	Scene::~Scene()
@@ -18,6 +20,10 @@ namespace OE1Core
 		delete m_Grid;
 		delete m_MyRenderer;
 		delete m_RenderStack;
+		delete m_SceneActiveSelection;
+
+		for (auto iter : m_StaticMeshRegistry)
+			delete iter.second;
 	}
 
 
@@ -63,6 +69,7 @@ namespace OE1Core
 	{
 		return (m_StaticMeshRegistry.find(_package_id) != m_StaticMeshRegistry.end());
 	}
+	ActiveEntity* Scene::GetActiveEntity() { return m_SceneActiveSelection; }
 	StaticMesh* Scene::RegisterStaticMesh(ModelPkg* _model_pkg)
 	{
 		if (HasStaticMesh(_model_pkg->PackageID))

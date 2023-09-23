@@ -1,6 +1,5 @@
 #include "ActiveEntity.h"
 
-
 namespace OE1Core
 {
 	void ActiveEntity::Grab(bool _grab) { s_HoldEntity = _grab; }

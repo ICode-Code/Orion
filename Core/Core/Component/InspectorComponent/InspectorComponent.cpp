@@ -93,8 +93,8 @@ namespace OE1Core
 					{
 						CustomFrame::UIEditorImage("Preview", 0, { 60, 60 });
 						ImGui::BeginDisabled();
-						static bool has_color_map = package->MeshList[i].Material->HasColorMap();
-						static bool has_non_color_map = package->MeshList[i].Material->HasNonColorMap();
+						bool has_color_map = package->MeshList[i].Material->HasColorMap();
+						bool has_non_color_map = package->MeshList[i].Material->HasNonColorMap();
 						
 						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 2, 2 });
 

@@ -1,5 +1,6 @@
 #include "IVMasterRenderer.h"
 #include "../Scene/Scene.h"
+#include "../ActiveEntity/ActiveEntity.h"
 
 namespace OE1Core
 {
@@ -9,12 +10,14 @@ namespace OE1Core
 			: m_MainPassFramebuffer{ IVFrameSize::R_1k }, m_Scene{ _scene }
 		{
 			m_ModelPreviewRenderer = new IVModelPreviewRenderer(_window);
-			m_SceneRenderer = new IVSceneRenderer();
+			m_MeshRenderer = new IVMeshRenderer();
+			m_OutlineRenderer = new IVOutlineRenderer();
 		}
 		IVMasterRenderer::~IVMasterRenderer()
 		{
 			delete m_ModelPreviewRenderer;
-			delete m_SceneRenderer;
+			delete m_MeshRenderer;
+			delete m_OutlineRenderer;
 		}
 		void IVMasterRenderer::PushToRenderStack(class StaticMesh* _mesh)
 		{
@@ -36,11 +39,13 @@ namespace OE1Core
 		IVForwardMainPassFramebuffer& IVMasterRenderer::GetMainPassFramebuffer() { return m_MainPassFramebuffer; }
 		void IVMasterRenderer::MasterPass()
 		{
+
 			m_MainPassFramebuffer.Attach();
 
+			m_MeshRenderer->Render(m_Scene->m_RenderStack);
 
-			m_SceneRenderer->Render(m_Scene->m_RenderStack);
-
+			
+			m_OutlineRenderer->Render(*m_Scene->GetActiveEntity());
 
 			m_GridRenderer.Render(*m_Scene->m_Grid);
 

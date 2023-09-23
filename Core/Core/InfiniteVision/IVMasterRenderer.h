@@ -6,7 +6,8 @@
 
 #include "Renderers/GridRenderer/IVGridRenderer.h"
 #include "Renderers/ModelPreviewRenderer/IVModelPreviewRenderer.h"
-#include "Renderers/SceneRenderer/IVSceneRenderer.h"
+#include "Renderers/MeshRenderer/IVMeshRenderer.h"
+#include "Renderers/OutlineRenderer/IVOutlineRenderer.h"
 
 // Render Stack
 #include "RenderStack/RenderStack.h"
@@ -30,7 +31,8 @@ namespace OE1Core
 		protected: // Renderer
 			IVGridRenderer m_GridRenderer;
 			IVModelPreviewRenderer* m_ModelPreviewRenderer = nullptr;
-			IVSceneRenderer* m_SceneRenderer = nullptr;
+			IVMeshRenderer* m_MeshRenderer = nullptr;
+			IVOutlineRenderer* m_OutlineRenderer = nullptr;
 
 		protected: // Framebuffer
 			IVForwardMainPassFramebuffer m_MainPassFramebuffer;

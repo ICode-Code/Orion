@@ -13,7 +13,7 @@ namespace OE1Core
 		class IVRenderStack
 		{
 			friend class IVMasterRenderer;
-			friend class IVSceneRenderer;
+			friend class IVMeshRenderer;
 		public:
 			IVRenderStack() = default;
 			~IVRenderStack();

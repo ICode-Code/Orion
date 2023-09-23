@@ -70,7 +70,7 @@ namespace OE1Core
 	}
 	void MasterMaterial::SetNonColorMapTexture(GLuint _non_color)
 	{
-		m_NonColorTexture = true;
+		m_HasNonColorMap = true;
 		m_NonColorTexture = _non_color;
 	}
 	Shader* MasterMaterial::GetShader() const
