@@ -76,7 +76,7 @@
     <IntDir>$(SolutionDir)Build\Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)Build\Bin\</OutDir>
+    <OutDir>$(SolutionDir)Build\Release_x64\Bin\</OutDir>
     <LibraryPath>$(SolutionDir)Build;$(SolutionDir)3rdParty\StaticLib\GL;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)Build\Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
@@ -86,7 +86,7 @@
     <IntDir>$(SolutionDir)Build\Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)Build\Bin\</OutDir>
+    <OutDir>$(SolutionDir)Build\Release_x64\Bin\</OutDir>
     <LibraryPath>$(SolutionDir)Build;$(SolutionDir)3rdParty\StaticLib\GL;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)Build\Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>

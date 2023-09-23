@@ -30,8 +30,8 @@ out vec3		VertNormal;
 out vec3        VertColor;
 out vec3		Tangent;
 out vec3		BiTangent;
-out flat int	MaterialIndex;
-out flat int	RenderID;
+flat out int	MaterialIndex;
+flat out int	RenderID;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -95,8 +95,8 @@ out vec3		VertNormal;
 out vec3        VertColor;
 out vec3		Tangent;
 out vec3		BiTangent;
-out flat int	MaterialIndex;
-out flat int	RenderID;
+flat out int	MaterialIndex;
+flat out int	RenderID;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -220,8 +220,8 @@ in vec3			VertNormal;
 in vec3			VertColor;
 in vec3			Tangent;
 in vec3			BiTangent;
-in flat int		MaterialIndex;
-in flat int		RenderID;
+flat in int		MaterialIndex;
+flat in int		RenderID;
         )";
 	}
 	void ShaderGenerator::FR_RegisterCommonPixelShaderUtility()
@@ -363,7 +363,7 @@ Alpha = texture(t_NoneColorMapTexture, vec3(TexCoord, TextureIndex[MaterialIndex
 	{
 		s_Source += R"(
 
-Emission = texture(t_ColorMapTexture, vec3(TexCoord, TextureIndex[MaterialIndex].Emission)).a;
+Emission = texture(t_ColorMapTexture, vec3(TexCoord, TextureIndex[MaterialIndex].Emission)).rgb;
 
 )";
 	}
