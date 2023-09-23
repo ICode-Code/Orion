@@ -9,6 +9,7 @@
 #include "../InfiniteVision/IVMasterRenderer.h"
 
 #include <Entt/entt.hpp>
+#include "SceneRenderMode.h"
 
 #include <unordered_map>
 #include <functional>
@@ -28,6 +29,7 @@ namespace OE1Core
 		Entity GetEntity(entt::entity _id);
 		Entity GetEntity(uint32_t _id, bool _suppress_warning = false);
 
+		RenderMode& GetRenderMode();
 		StaticMesh* QueryStaticMesh(uint32_t _package_id);
 		StaticMesh* RegisterStaticMesh(ModelPkg* _model_pkg);
 		class ActiveEntity* GetActiveEntity(); 
@@ -59,6 +61,7 @@ namespace OE1Core
 	protected:
 		Renderer::IVMasterRenderer* m_MyRenderer;
 		class ActiveEntity* m_SceneActiveSelection;
+		RenderMode m_RenderMode;
 		
 	};
 }

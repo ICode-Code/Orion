@@ -12,6 +12,25 @@ namespace OE1Core
 		m_ViewportSize = current_size;
 		SceneManager::GetActiveScene()->Update((int)m_ViewportSize.x, (int)m_ViewportSize.y);
 	}
+	void BaseViewport::PrepareGIZMO()
+	{
+		ImGuizmo::SetOrthographic(false);
+		ImGuizmo::SetDrawlist();
+
+		ImVec2 window_size = ImGui::GetWindowSize();
+		ImVec2 bound = ImGui::GetWindowPos();
+
+		window_size.x -= ImGui::GetScrollX();
+		window_size.y -= ImGui::GetScrollY();
+
+		ImGuizmo::SetRect(
+			bound.x,
+			bound.y,
+			window_size.x,
+			window_size.y
+		);
+
+	}
 	void BaseViewport::MousePoseRefToViewport(ImVec2& _viewport)
 	{
 		ImVec2 min_bound = ImGui::GetWindowPos();

@@ -7,6 +7,7 @@ namespace OE1Core
 {
 	class CameraPackage
 	{
+		friend class ActionButtonUtilityGroup;
 	public:
 		CameraPackage(SDL_Window* _window);
 		~CameraPackage();

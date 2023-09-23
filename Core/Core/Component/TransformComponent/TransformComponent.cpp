@@ -55,6 +55,12 @@ namespace OE1Core
 			m_WorldTransform = glm::scale(m_WorldTransform, m_Scale);
 			ExtractTransform(m_WorldTransform);
 		}
+		void TransformComponent::SetRotation(glm::quat _rot)
+		{
+			m_Quaternion = _rot;
+			m_Euler = glm::degrees(glm::eulerAngles(m_Quaternion));
+			m_Dirty = true;
+		}
 
 		glm::mat4 TransformComponent::GetLocalTransform()
 		{

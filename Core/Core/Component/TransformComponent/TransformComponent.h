@@ -39,6 +39,7 @@ namespace OE1Core
 		public:
 			void ExtractTransform(const glm::mat4& _src_transform);
 			void ReadTransform(const btTransform& _src_transform);
+			void SetRotation(glm::quat _rot);
 			glm::vec3 GetFront();
 			glm::vec3 Getback();
 			glm::vec3 GetRight();

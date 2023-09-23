@@ -2,6 +2,10 @@
 #define OE1_MAIN_VIEWPORT_H_
 
 #include "../BaseViewport.h"
+#include "../Util/VPActionButton/ActionButtonTransformGroup.h"
+#include "../Util/VPActionButton/ActionButtonModeGroup.h"
+#include "../Util/VPActionButton/ActionButtonRenderModeGroup.h"
+#include "../Util/VPActionButton/ActionButtonUtilityGroup.h"
 
 namespace OE1Core
 {
@@ -16,8 +20,22 @@ namespace OE1Core
 		void Render() override;
 
 	protected:
+		void HandleActionButton();
 		void HandlePayloadPackage();
 		void HandleClickOverViewport();
+		void HandleGIZMO();
+
+
+	protected:
+		ImGuizmo::OPERATION m_Operation;
+		ImGuizmo::MODE m_Mode;
+		ActionButtonTransformGroup m_TransformGroupButton;
+		ActionButtonModeGroup m_ModeGroup;
+		ActionButtonRenderModeGroup m_RenderModeGroup;
+		ActionButtonUtilityGroup m_UtilityGroup;
+		bool m_EnableSnap = false;
+		bool m_ShowActionButton = true;
+
 	};
 }
 

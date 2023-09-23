@@ -8,7 +8,10 @@
 #include "../MiniWindow/IMiniWin.h"
 #include "../../Common/Shared/ViewportArgs.h"
 #include "../../Core/Scene/SceneManager.h"
+#include <imgui/ImGuizmo.h>
 #include <Gui.h>
+
+#include <glm/gtx/matrix_decompose.hpp>
 
 
 namespace OE1Core
@@ -27,6 +30,7 @@ namespace OE1Core
 		void UpdateViewport();
 		// This will update -m_MousePosition- 
 		void MousePoseRefToViewport(ImVec2& _viewport);
+		void PrepareGIZMO();
 
 	protected:
 		ImGuiWindowFlags m_DefaultViewportFlags =

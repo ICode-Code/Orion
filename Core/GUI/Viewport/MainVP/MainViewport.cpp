@@ -6,7 +6,8 @@ namespace OE1Core
 {
 	MainViewport::MainViewport()
 	{
-
+		m_Operation = ImGuizmo::OPERATION::BOUNDS;
+		m_Mode = ImGuizmo::MODE::LOCAL;
 	}
 	MainViewport::~MainViewport()
 	{
@@ -31,11 +32,96 @@ namespace OE1Core
 		m_Offset = ImGui::GetCursorPos();
 
 		ImGui::Image((ImTextureID)(intptr_t)ViewportArgs::FINAL_FRAME, m_ViewportSize, { 0, 1 }, { 1, 0 });
+		
 
 		HandleClickOverViewport();
 		HandlePayloadPackage();
+		HandleActionButton();
+		HandleGIZMO();
 
 		ImGui::End();
+	}
+	void MainViewport::HandleActionButton()
+	{
+		if (!m_ShowActionButton)
+			return;
+		// Get Aveil Window Size
+		ImVec2 vMin = ImGui::GetWindowContentRegionMin();
+		ImVec2 vMax = ImGui::GetWindowContentRegionMax();
+
+
+		// Set Position to Begain Draw
+		ImGui::SetCursorPos({ (vMax.x / 2.0f) + 90.0f, vMin.y});
+
+		m_TransformGroupButton.Draw(m_Operation);
+		
+		ImGui::SameLine();
+		
+		m_ModeGroup.Draw(m_Mode, m_EnableSnap);
+
+		ImGui::SameLine();
+		
+		m_RenderModeGroup.Draw(SceneManager::GetActiveScene()->GetRenderMode());
+
+		ImGui::SameLine();
+
+		m_UtilityGroup.Draw(m_ShowActionButton, SceneManager::GetActiveScene()->m_CameraPkg);
+	}
+	void MainViewport::HandleGIZMO()
+	{
+		if (!SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+			return;
+		Entity picked_entity = SceneManager::GetActiveScene()->GetActiveEntity()->GetActive();
+		CameraPackage& scene_camera = SceneManager::GetActiveScene()->m_CameraPkg;
+
+		PrepareGIZMO();
+
+		
+		Component::TransformComponent& transform_component = picked_entity.GetComponent<Component::TransformComponent>();
+		glm::mat4 object_transform = transform_component.GetWorldTransform();
+
+		ImGuizmo::Manipulate(
+			glm::value_ptr(scene_camera.GetCamera()->m_View),
+			glm::value_ptr(scene_camera.GetCamera()->m_Projection),
+			m_Operation, m_Mode, glm::value_ptr(object_transform),nullptr, nullptr
+		);
+
+		if (ImGuizmo::IsUsing())
+		{
+			glm::mat4 world_transform = glm::mat4(1.0f);
+			if (transform_component.m_Parent)
+				world_transform = transform_component.m_Parent->GetComponent<Component::TransformComponent>().GetWorldTransform();
+
+			glm::mat4 local_transform = glm::inverse(world_transform) * object_transform;
+
+			glm::vec3 scale, translation, skew;
+			glm::vec4 perspective;
+			glm::quat rotation;
+
+			/// This function is a bit expensive but it is just for manipulating when ever we drag
+			/// so I don't really care if it is that expensive 
+			glm::decompose(local_transform, scale, rotation, translation, skew, perspective);
+
+
+			switch (m_Operation)
+			{
+			case ImGuizmo::TRANSLATE:
+				transform_component.m_Position = translation;
+				break;
+			case ImGuizmo::ROTATE:
+				transform_component.SetRotation(rotation);
+				break;
+			case ImGuizmo::SCALE:
+				transform_component.m_Scale = scale;
+				break;
+			case ImGuizmo::BOUNDS:
+				break;
+			default:
+				break;
+			}
+
+		}
+
 	}
 	void MainViewport::HandleClickOverViewport()
 	{
@@ -43,7 +129,7 @@ namespace OE1Core
 
 		if (ImGui::IsItemHovered())
 		{
-			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				CommandDef::EntitySelectionCommandDef selection_command;
 				selection_command.posX = m_MousePosition.x;

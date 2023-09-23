@@ -5,11 +5,13 @@
 
 namespace OE1Core
 {
+	class ActionButtonUtilityGroup;
 	namespace Component
 	{
 		class FreeLookCameraControllerComponent : public BaseCameraControllerComponent
 		{
 			friend class InspectorComponent;
+			friend class ActionButtonUtilityGroup;
 		public:
 			FreeLookCameraControllerComponent(SDL_Window* _window);
 			~FreeLookCameraControllerComponent() = default;

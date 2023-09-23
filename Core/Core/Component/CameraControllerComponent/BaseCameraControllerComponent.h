@@ -12,11 +12,13 @@
 
 namespace OE1Core
 {
+	class ActionButtonUtilityGroup;
 	namespace Component
 	{
 		class BaseCameraControllerComponent
 		{
 			friend class InspectorComponent;
+			friend class ActionButtonUtilityGroup;
 		public:
 			BaseCameraControllerComponent(SDL_Window* _active_context);
 			virtual ~BaseCameraControllerComponent() = default;

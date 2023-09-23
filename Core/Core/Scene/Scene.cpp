@@ -13,6 +13,7 @@ namespace OE1Core
 		m_MyRenderer = new Renderer::IVMasterRenderer(m_Window, this);
 		m_RenderStack = new Renderer::IVRenderStack();
 		m_SceneActiveSelection = new ActiveEntity();
+		m_RenderMode = RenderMode::LIT;
 
 	}
 	Scene::~Scene()
@@ -83,6 +84,10 @@ namespace OE1Core
 		m_MyRenderer->PushToRenderStack(m_StaticMeshRegistry[_model_pkg->PackageID]);
 
 		return m_StaticMeshRegistry[_model_pkg->PackageID];
+	}
+	RenderMode& Scene::GetRenderMode()
+	{
+		return m_RenderMode;
 	}
 	StaticMesh* Scene::QueryStaticMesh(uint32_t _package_id)
 	{
