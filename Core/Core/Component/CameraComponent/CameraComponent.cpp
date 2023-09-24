@@ -39,6 +39,7 @@ namespace OE1Core
 		{
 			return m_AspectRatio = m_Resolution.x / m_Resolution.y;
 		}
+		glm::vec2 CameraComponent::GetResolution() { return m_Resolution; }
 		void CameraComponent::Update(glm::vec3 _position)
 		{
 			m_Position		= _position;

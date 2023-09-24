@@ -26,6 +26,7 @@ namespace OE1Core
 			void SetPitch(float _pitch);
 			void SetYaw(float _yaw);
 			float GetAspectRatio();
+			glm::vec2 GetResolution();
 
 			float GetPitch() const;
 			float GetYaw() const;

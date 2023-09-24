@@ -76,7 +76,7 @@ namespace OE1Core
 			Scene* active_scene = SceneManager::GetActiveScene();
 			uint32_t entity_id = static_cast<uint32_t>(active_scene->GetRenderer()->GetMainPassFramebuffer().Readi1(1, _command.posX, _command.posY));
 			
-			Entity entity_query = SceneManager::GetActiveScene()->GetEntity(entity_id, false);
+			Entity entity_query = SceneManager::GetActiveScene()->GetEntity(entity_id, true);
 
 			if (entity_query.IsFunctional())
 				active_scene->GetActiveEntity()->Pick(entity_query);

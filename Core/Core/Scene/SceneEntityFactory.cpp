@@ -16,11 +16,11 @@ namespace OE1Core
 	void SceneEntityFactory::RegisterActiveScene(Scene* _scene) { m_Scene = _scene; }
 	Scene* SceneEntityFactory::GetScene() { return m_Scene; }
 
-	Entity SceneEntityFactory::CreateRichMeshEntity(ModelPkg* _model_pkg)
+	Entity SceneEntityFactory::CreateRichMeshEntity(ModelPkg* _model_pkg, glm::vec3 _initial_pos)
 	{
 		Entity my_entity = m_Scene->CreateEntity();
 		AddDefaultComponent(my_entity, _model_pkg->Name);
-		
+		my_entity.GetComponent<Component::TransformComponent>().m_Position = _initial_pos;
 
 		// Create MeshComponent
 		bool scene_has_rich_data = m_Scene->HasStaticMesh(_model_pkg->PackageID);

@@ -129,6 +129,19 @@ namespace OE1Core
 
 		if (ImGui::IsItemHovered())
 		{
+
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)		||
+				ImGui::IsMouseClicked(ImGuiMouseButton_Right)		|| 
+				ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))  
+				SceneManager::GetActiveScene()->GetActiveEntity()->Hold(false);
+
+			if (SceneManager::GetActiveScene()->GetActiveEntity()->IsHold())
+			{
+				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 6.0f) + SceneManager::GetActiveScene()->m_CameraPkg.GetController()->GetCurrentPosition();
+				Entity entity = SceneManager::GetActiveScene()->GetActiveEntity()->GetActive();
+				entity.GetComponent<Component::TransformComponent>().m_Position = position;
+			}
+
 			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				CommandDef::EntitySelectionCommandDef selection_command;
@@ -148,9 +161,10 @@ namespace OE1Core
 			{
 				ModelPkg* package = (ModelPkg*)payload->Data;
 				
-				Entity droped_entity = SceneEntityFactory::CreateRichMeshEntity(package);
-				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(droped_entity);
-
+				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 6.0f) + SceneManager::GetActiveScene()->m_CameraPkg.GetController()->GetCurrentPosition();
+				//printf("X: %.f Y: %.f Z: %.f \n", direction.x, direction.y, direction.z);
+				Entity droped_entity = SceneEntityFactory::CreateRichMeshEntity(package, position);
+				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(droped_entity, true);
 			}
 
 			ImGui::EndDragDropTarget();

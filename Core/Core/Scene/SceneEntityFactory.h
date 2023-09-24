@@ -16,7 +16,7 @@ namespace OE1Core
 		static Scene* GetScene();
 
 		// Entity
-		static Entity CreateRichMeshEntity(ModelPkg* _model_pkg);
+		static Entity CreateRichMeshEntity(ModelPkg* _model_pkg, glm::vec3 _initial_pos = glm::vec3(0.0f));
 		static Entity CreateDefaultCubeEntity();
 		static Entity CreateDefaultPlaneEntity();
 		static Entity CreateEmptyEntity(std::string _name);

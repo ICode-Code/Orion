@@ -2,37 +2,39 @@
 
 namespace OE1Core
 {
-	void ActiveEntity::Grab(bool _grab) { s_HoldEntity = _grab; }
-
-	void ActiveEntity::Pick(Entity _entity) 
+	void ActiveEntity::Hold(bool _val) { m_Hold = _val; }
+	bool ActiveEntity::IsHold() { return m_Hold; }
+	void ActiveEntity::Pick(Entity _entity, bool _hold)
 	{
-		s_EntitySelected = true;
-		s_BatchMode = false;
-		s_ActiveRegistry.clear();
-		s_ActiveRegistry.push_back(_entity);
+		m_Hold = _hold;
+		m_EntitySelected = true;
+		m_BatchMode = false;
+		m_ActiveRegistry.clear();
+		m_ActiveRegistry.push_back(_entity);
 	}
 	void ActiveEntity::PickBatch(Entity _entity)
 	{
-		s_EntitySelected = true;
-		s_BatchMode = true;
-		s_ActiveRegistry.push_back(_entity);
+		m_EntitySelected = true;
+		m_BatchMode = true;
+		m_ActiveRegistry.push_back(_entity);
 	}
 	bool ActiveEntity::IsPicked(Entity _entity)
 	{
-		auto iter = std::find_if(s_ActiveRegistry.begin(), s_ActiveRegistry.end(), [_entity](Entity CEntity)
+		auto iter = std::find_if(m_ActiveRegistry.begin(), m_ActiveRegistry.end(), [_entity](Entity CEntity)
 			{
 				return (uint32_t)CEntity == (uint32_t)_entity;
 			});
-		return iter != s_ActiveRegistry.end();
+		return iter != m_ActiveRegistry.end();
 	}
 	void ActiveEntity::FlushSelection()
 	{
-		s_ActiveRegistry.clear();
-		s_BatchMode = false;
-		s_EntitySelected = false;
+		m_ActiveRegistry.clear();
+		m_Hold = false;
+		m_BatchMode = false;
+		m_EntitySelected = false;
 	}
-	bool ActiveEntity::ValidSelection() { return s_EntitySelected; }
-	Entity ActiveEntity::GetActive() { return s_ActiveRegistry.back(); }
-	std::vector<Entity>& ActiveEntity::GetRegistry() { return s_ActiveRegistry; }
-	bool ActiveEntity::IsBatchMode() { return s_BatchMode; }
+	bool ActiveEntity::ValidSelection() { return m_EntitySelected; }
+	Entity ActiveEntity::GetActive() { return m_ActiveRegistry.back(); }
+	std::vector<Entity>& ActiveEntity::GetRegistry() { return m_ActiveRegistry; }
+	bool ActiveEntity::IsBatchMode() { return m_BatchMode; }
 }

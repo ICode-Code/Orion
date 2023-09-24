@@ -14,7 +14,7 @@ namespace OE1Core
 		m_RenderStack = new Renderer::IVRenderStack();
 		m_SceneActiveSelection = new ActiveEntity();
 		m_RenderMode = RenderMode::LIT;
-
+		m_SceneRay = new Ray(&m_CameraPkg);
 	}
 	Scene::~Scene()
 	{
@@ -22,6 +22,7 @@ namespace OE1Core
 		delete m_MyRenderer;
 		delete m_RenderStack;
 		delete m_SceneActiveSelection;
+		delete m_SceneRay;
 
 		for (auto iter : m_StaticMeshRegistry)
 			delete iter.second;
@@ -103,6 +104,7 @@ namespace OE1Core
 	{
 		m_CameraPkg.OnEvent(e);
 	}
+	Ray* Scene::GetRay() { return m_SceneRay; }
 	void Scene::ResetScene()
 	{
 		ResetPhysics();

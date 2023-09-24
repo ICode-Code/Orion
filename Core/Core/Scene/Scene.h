@@ -7,6 +7,7 @@
 #include "../Grid/Grid.h"
 
 #include "../InfiniteVision/IVMasterRenderer.h"
+#include "../Ray/Ray.h"
 
 #include <Entt/entt.hpp>
 #include "SceneRenderMode.h"
@@ -38,7 +39,7 @@ namespace OE1Core
 		void Update(float dt);
 		void ResetPhysics();
 		void OnEvent(OECore::IEvent& e);
-		
+		Ray* GetRay();
 		/// <summary>
 		/// This include the physics
 		/// </summary>
@@ -62,6 +63,7 @@ namespace OE1Core
 		Renderer::IVMasterRenderer* m_MyRenderer;
 		class ActiveEntity* m_SceneActiveSelection;
 		RenderMode m_RenderMode;
+		Ray* m_SceneRay = nullptr;
 		
 	};
 }

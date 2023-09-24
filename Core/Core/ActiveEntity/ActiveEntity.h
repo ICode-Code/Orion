@@ -13,8 +13,9 @@ namespace OE1Core
 		ActiveEntity() = default;
 		~ActiveEntity() = default;
 
-		void Grab(bool _grab);
-		void Pick(Entity _entity);
+		bool IsHold();
+		void Hold(bool _hold);
+		void Pick(Entity _entity, bool _hold = false);
 		void PickBatch(Entity _entity);
 		bool IsPicked(Entity _entity);
 		void FlushSelection();
@@ -25,10 +26,10 @@ namespace OE1Core
 
 
 	protected:
-		std::vector<Entity> s_ActiveRegistry;
-		bool s_BatchMode = false;
-		bool s_EntitySelected = false;
-		bool s_HoldEntity = false;
+		std::vector<Entity> m_ActiveRegistry;
+		bool m_BatchMode = false;
+		bool m_EntitySelected = false;
+		bool m_Hold = false;
 
 	};
 }
