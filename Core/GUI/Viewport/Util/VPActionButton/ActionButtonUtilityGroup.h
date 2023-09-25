@@ -4,7 +4,6 @@
 
 #include "ActionButtonBase.h"
 #include "../Core/CameraPackage/CameraPackage.h"
-#include "../../../CustomFrame/CustomFrame.h"
 
 
 namespace OE1Core

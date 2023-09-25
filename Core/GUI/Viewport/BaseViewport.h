@@ -8,6 +8,8 @@
 #include "../MiniWindow/IMiniWin.h"
 #include "../../Common/Shared/ViewportArgs.h"
 #include "../../Core/Scene/SceneManager.h"
+#include "IEvent/IEvent.h"
+
 #include <imgui/ImGuizmo.h>
 #include <Gui.h>
 
@@ -23,6 +25,8 @@ namespace OE1Core
 
 		virtual void Update() = 0;
 		virtual void Render() = 0;
+
+		virtual void OnEvent(OECore::IEvent& e) = 0;
 
 
 	protected:

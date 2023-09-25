@@ -14,13 +14,24 @@ namespace OE1Core
 		delete std::get<1>(m_Snap);
 	}
 
-	void ActionButtonModeGroup::Draw(ImGuizmo::MODE& _mode, bool& _snap)
+	void ActionButtonModeGroup::Draw(ImGuizmo::MODE& _mode, bool& _snap, float& _snap_position, float& _snap_rotation)
 	{
 		OpenDefaultActionButtonStyle();
 
 		DrawButton(m_Mode, _mode);
 		ImGui::SameLine();
 		DrawButton(m_Snap, _snap);
+
+		ImGui::SetNextWindowSize(ImVec2(200.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.09f, 0.09f, 0.09f, 1.0f));
+		if (ImGui::BeginPopup("Snap_Value_Setting"))
+		{
+			CustomFrame::UIEditorFloat("Translation", &_snap_position, 1.0f, 128.0f, "%.0f", 0, 100.0f);
+			CustomFrame::UIEditorFloat("Angle", &_snap_rotation, 1.0f, 180.0f, "%.0f", 0, 100.0f);
+
+			ImGui::EndPopup();
+		}
+		ImGui::PopStyleColor();
 
 
 		CloseDefaultActionButtonStyle();
@@ -53,7 +64,10 @@ namespace OE1Core
 
 
 		if (std::get<1>(_button)->Draw())
+		{
 			_snap = !_snap;
+			ImGui::OpenPopup("Snap_Value_Setting");
+		}
 
 		if (type_matched)
 			ImGui::PopStyleColor();

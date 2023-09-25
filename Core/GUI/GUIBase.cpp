@@ -40,6 +40,9 @@ namespace OE1Core
 		for (auto _viewport : s_Viewports)
 			delete _viewport;
 
+		s_Layers.clear();
+		s_MiniWins.clear();
+		s_Viewports.clear();
 		delete s_GUI;
 	}
 	void GUIBase::Update()
@@ -57,7 +60,12 @@ namespace OE1Core
 			s_Viewports[i]->Render();
 
 	}
-	void GUIBase::Attach(SDL_Event* _event)
+	void GUIBase::OnEvent(OECore::IEvent& e)
+	{
+		for (size_t i = 0; i < s_Viewports.size(); i++)
+			s_Viewports[i]->OnEvent(e);
+	}
+	void GUIBase::Attach()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame();

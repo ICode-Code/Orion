@@ -14,8 +14,9 @@ namespace OE1Core
 		GUIBase(SDL_Window* _window, SDL_GLContext* _context);
 		~GUIBase();
 
+		static void OnEvent(OECore::IEvent& e);
 		static void Update();
-		static void Attach(SDL_Event* _event);
+		static void Attach();
 		static void Render(SDL_Window* _window, SDL_GLContext& _context);
 
 

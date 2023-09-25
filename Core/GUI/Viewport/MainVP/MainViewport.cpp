@@ -6,8 +6,16 @@ namespace OE1Core
 {
 	MainViewport::MainViewport()
 	{
-		m_Operation = ImGuizmo::OPERATION::BOUNDS;
-		m_Mode = ImGuizmo::MODE::LOCAL;
+		m_Operation				= ImGuizmo::OPERATION::BOUNDS;
+		m_Mode					= ImGuizmo::MODE::LOCAL;
+
+		m_SnapValue				= glm::vec3(1.0f);
+		m_SnapTranslation		= 1.0f;
+		m_SnapRotation			= 45.0f;
+
+		m_EnableSnap			= false;
+		m_ShowActionButton		= true;
+		m_MouseOverViewport		= false;
 	}
 	MainViewport::~MainViewport()
 	{
@@ -17,6 +25,12 @@ namespace OE1Core
 	void MainViewport::Update()
 	{
 
+	}
+	void MainViewport::OnEvent(OECore::IEvent& e)
+	{
+		OECore::IEventDispatcher dispatcher(e);
+		dispatcher.Dispatch<OECore::KeyReleaseEvent>(std::bind(&MainViewport::HandleKeyRelease, this, std::placeholders::_1));
+		dispatcher.Dispatch<OECore::KeyPressedEvent>(std::bind(&MainViewport::HandleKeyPress, this, std::placeholders::_1));
 	}
 	void MainViewport::Render()
 	{
@@ -57,7 +71,7 @@ namespace OE1Core
 		
 		ImGui::SameLine();
 		
-		m_ModeGroup.Draw(m_Mode, m_EnableSnap);
+		m_ModeGroup.Draw(m_Mode, m_EnableSnap, m_SnapTranslation, m_SnapRotation);
 
 		ImGui::SameLine();
 		
@@ -79,11 +93,13 @@ namespace OE1Core
 		
 		Component::TransformComponent& transform_component = picked_entity.GetComponent<Component::TransformComponent>();
 		glm::mat4 object_transform = transform_component.GetWorldTransform();
-
+		
+		
+		m_SnapValue = glm::vec3(m_Operation == ImGuizmo::OPERATION::ROTATE ? m_SnapRotation : m_SnapTranslation);
 		ImGuizmo::Manipulate(
 			glm::value_ptr(scene_camera.GetCamera()->m_View),
 			glm::value_ptr(scene_camera.GetCamera()->m_Projection),
-			m_Operation, m_Mode, glm::value_ptr(object_transform),nullptr, nullptr
+			m_Operation, m_Mode, glm::value_ptr(object_transform), nullptr, m_EnableSnap ? glm::value_ptr(m_SnapValue) : nullptr
 		);
 
 		if (ImGuizmo::IsUsing())
@@ -127,7 +143,7 @@ namespace OE1Core
 	{
 		MousePoseRefToViewport(m_Offset);
 
-		if (ImGui::IsItemHovered())
+		if (m_MouseOverViewport = ImGui::IsItemHovered())
 		{
 
 			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)		||
@@ -161,13 +177,69 @@ namespace OE1Core
 			{
 				ModelPkg* package = (ModelPkg*)payload->Data;
 				
-				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 6.0f) + SceneManager::GetActiveScene()->m_CameraPkg.GetController()->GetCurrentPosition();
-				//printf("X: %.f Y: %.f Z: %.f \n", direction.x, direction.y, direction.z);
+				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_CameraPkg.GetController()->GetCurrentPosition();
 				Entity droped_entity = SceneEntityFactory::CreateRichMeshEntity(package, position);
 				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(droped_entity, true);
 			}
 
 			ImGui::EndDragDropTarget();
 		}
+	}
+
+
+	bool MainViewport::HandleKeyRelease(OECore::KeyReleaseEvent& e)
+	{
+		if (!m_MouseOverViewport)
+			return false;
+		if (e.GetKeyCode() == SDLK_g)
+		{
+			if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+				SceneManager::GetActiveScene()->GetActiveEntity()->Hold(true);
+			return true;
+		}
+
+		if (e.GetKeyCode() == SDLK_1)
+		{
+			m_Operation = ImGuizmo::OPERATION::BOUNDS;
+			return true;
+		}
+		if (e.GetKeyCode() == SDLK_2)
+		{
+			m_Operation = ImGuizmo::OPERATION::TRANSLATE;
+			return true;
+		}
+		if (e.GetKeyCode() == SDLK_3)
+		{
+			m_Operation = ImGuizmo::OPERATION::ROTATE;
+			return true;
+		}
+		if (e.GetKeyCode() == SDLK_4)
+		{
+			m_Operation = ImGuizmo::OPERATION::SCALE;
+			return true;
+		}
+
+		if (e.GetKeyCode() == SDLK_F1)
+		{
+			m_ShowActionButton = !m_ShowActionButton;
+			return true;
+		}
+
+		if (e.GetKeyCode() == SDLK_f)
+		{
+			if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+			{
+				SceneManager::GetActiveScene()->m_CameraPkg.GetController()->Focus(
+					SceneManager::GetActiveScene()->GetActiveEntity()->GetActive().GetComponent<Component::TransformComponent>().m_Position
+				);
+			}
+			
+		}
+
+		return false;
+	}
+	bool MainViewport::HandleKeyPress(OECore::KeyPressedEvent& e)
+	{
+		return false;
 	}
 }

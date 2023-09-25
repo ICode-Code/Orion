@@ -73,7 +73,7 @@ namespace OE1Core
 			SceneManager::RenderScenes();
 
 
-			s_GuiBase->Attach(&s_Window->GetArg().SDL_Event);
+			s_GuiBase->Attach();
 			s_GuiBase->Update();
 			s_GuiBase->Render(s_Window->GetWin(), s_Window->GetArg().Context);
 
@@ -88,7 +88,7 @@ namespace OE1Core
 
 		// handle close window event right here
 		event_dispatcher.Dispatch<OECore::WindowCloseEvent>(std::bind(&CoreEngine::HandleWindowCloseEvent, this, std::placeholders::_1));
-
+		
 		// Resize Event
 		event_dispatcher.Dispatch<OECore::WindowResizeEvent>(std::bind(&CoreEngine::HandleWindowResizeEvent, this, std::placeholders::_1));
 
@@ -102,8 +102,10 @@ namespace OE1Core
 		// Minimized Event
 		event_dispatcher.Dispatch<OECore::WindowMinimizedEvent>(std::bind(&CoreEngine::HandleWindowMin, this, std::placeholders::_1));
 
-
-		SceneManager::OnEvent(e);
+		if(!e.Handled())
+			s_GuiBase->OnEvent(e);
+		if (!e.Handled())
+			SceneManager::OnEvent(e);
 	}
 	void CoreEngine::CreateDefaultProjectDir()
 	{
@@ -144,18 +146,15 @@ namespace OE1Core
 	}
 	bool CoreEngine::HandleWindowResizeEvent(OECore::WindowResizeEvent& e)
 	{
-
-		return true;
+		return false;
 	}
 	bool CoreEngine::HandleWindowMax(OECore::WindowMaximizedEvent& e)
 	{
-		//s_Window->GetArg().Running = true;
-		return true;
+		return false;
 	}
 	bool CoreEngine::HandleWindowMin(OECore::WindowMinimizedEvent& e)
 	{
-		//s_Window->GetArg().Running = false;
-		return true;
+		return false;
 	}
 	bool CoreEngine::HandleApplicationKeyInput(OECore::KeyPressedEvent& e)
 	{

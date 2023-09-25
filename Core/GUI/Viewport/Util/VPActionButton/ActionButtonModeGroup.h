@@ -11,7 +11,7 @@ namespace OE1Core
 		ActionButtonModeGroup();
 		~ActionButtonModeGroup();
 
-		void Draw(ImGuizmo::MODE& _mode, bool& _snap);
+		void Draw(ImGuizmo::MODE& _mode, bool& _snap, float& _snap_position, float& _snap_rotation);
 
 	protected:
 		void DrawButton(std::pair<ImGuizmo::MODE, VPNavButton*>& _button, ImGuizmo::MODE& _mode);

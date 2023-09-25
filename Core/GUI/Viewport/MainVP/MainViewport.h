@@ -18,6 +18,7 @@ namespace OE1Core
 
 		void Update() override;
 		void Render() override;
+		void OnEvent(OECore::IEvent& e) override;
 
 	protected:
 		void HandleActionButton();
@@ -25,16 +26,24 @@ namespace OE1Core
 		void HandleClickOverViewport();
 		void HandleGIZMO();
 
+	protected: // event
+		bool HandleKeyRelease(OECore::KeyReleaseEvent& e);
+		bool HandleKeyPress(OECore::KeyPressedEvent& e);
+
 
 	protected:
-		ImGuizmo::OPERATION m_Operation;
-		ImGuizmo::MODE m_Mode;
-		ActionButtonTransformGroup m_TransformGroupButton;
-		ActionButtonModeGroup m_ModeGroup;
-		ActionButtonRenderModeGroup m_RenderModeGroup;
-		ActionButtonUtilityGroup m_UtilityGroup;
-		bool m_EnableSnap = false;
-		bool m_ShowActionButton = true;
+		ImGuizmo::OPERATION				m_Operation;
+		ImGuizmo::MODE					m_Mode;
+		float							m_SnapTranslation;
+		float							m_SnapRotation;
+		glm::vec3						m_SnapValue;
+		ActionButtonTransformGroup		m_TransformGroupButton;
+		ActionButtonModeGroup			m_ModeGroup;
+		ActionButtonRenderModeGroup		m_RenderModeGroup;
+		ActionButtonUtilityGroup		m_UtilityGroup;
+		bool							m_EnableSnap;
+		bool							m_ShowActionButton;
+		bool							m_MouseOverViewport;
 
 	};
 }

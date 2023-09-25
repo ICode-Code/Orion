@@ -58,7 +58,7 @@ namespace OE1Core
 		{
 			glm::vec3 target_direction = glm::normalize(_target - m_CurrentPosition);
 
-			m_CurrentPosition = _target - (target_direction * _distance);
+			m_FinalPosition = _target - (target_direction * _distance);
 
 			// Update the camera's pitch and yaw based on the new direction vector
 			m_Camera->m_Pitch = glm::degrees(asin(target_direction.y));

@@ -2,6 +2,7 @@
 #define OE1_ACTION_BUTTON_BASE_H_
 
 #include "VPActionButton.h"
+#include "../../../CustomFrame/CustomFrame.h"
 
 namespace OE1Core
 {
