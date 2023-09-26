@@ -15,6 +15,11 @@ namespace OE1Core
 
 		virtual void Update() override;
 		virtual void Render() override;
+
+
+	protected:
+		ImGuiTreeNodeFlags m_NodeFlags;
+		void DrawEntityNode(Entity& _entity, ActiveEntity* _active_entity);
 	};
 }
 

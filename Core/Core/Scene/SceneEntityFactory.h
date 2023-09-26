@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "../Component/IComponent.h"
+#include "EntityType.h"
 
 namespace OE1Core
 {

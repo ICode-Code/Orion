@@ -46,7 +46,12 @@ namespace OE1Core
 			}
 			return m_Scene->m_EntityRegistry.emplace<T>(m_EntityHandle, std::forward<Args>(_args)...);
 		}
-
+		// Update any existing component that depend on the transform component 
+		// Use internal transform
+		void UpdateTransformBuffer();
+		// Update any existing component that depend on the transform component 
+		// use provided transform
+		void UpdateTransformBuffer(glm::mat4& _transform);
 		void Update();
 		bool IsFunctional();
 		uint64_t GetUUID();

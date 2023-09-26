@@ -92,7 +92,7 @@ namespace OE1Core
 
 		
 		Component::TransformComponent& transform_component = picked_entity.GetComponent<Component::TransformComponent>();
-		glm::mat4 object_transform = transform_component.GetWorldTransform();
+		glm::mat4 object_transform = transform_component.QueryWorldTransform();
 		
 		
 		m_SnapValue = glm::vec3(m_Operation == ImGuizmo::OPERATION::ROTATE ? m_SnapRotation : m_SnapTranslation);
@@ -106,7 +106,7 @@ namespace OE1Core
 		{
 			glm::mat4 world_transform = glm::mat4(1.0f);
 			if (transform_component.m_Parent)
-				world_transform = transform_component.m_Parent->GetComponent<Component::TransformComponent>().GetWorldTransform();
+				world_transform = transform_component.m_Parent->GetComponent<Component::TransformComponent>().QueryWorldTransform();
 
 			glm::mat4 local_transform = glm::inverse(world_transform) * object_transform;
 

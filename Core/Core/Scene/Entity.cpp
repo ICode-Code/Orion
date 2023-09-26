@@ -15,9 +15,21 @@ namespace OE1Core
 	void Entity::Update()
 	{
 		Component::TransformComponent& transform = GetComponent<Component::TransformComponent>();
-		glm::mat4 transfrom_mat = transform.GetWorldTransform();
+		
+		transform.Update();
+
+		UpdateTransformBuffer(transform.QueryWorldTransform());
+		
+	}
+	void Entity::UpdateTransformBuffer()
+	{
+		Component::TransformComponent& transform = GetComponent<Component::TransformComponent>();
+		UpdateTransformBuffer(transform);
+	}
+	void Entity::UpdateTransformBuffer(glm::mat4& _transform)
+	{
 		if (HasComponent<Component::MeshComponent>())
-			GetComponent<Component::MeshComponent>().Update(transfrom_mat);
+			GetComponent<Component::MeshComponent>().Update(_transform);
 	}
 	bool Entity::IsFunctional()
 	{
@@ -25,7 +37,7 @@ namespace OE1Core
 	}
 	uint64_t Entity::GetUUID()
 	{
-		return 1;
+		return GetComponent<Component::TagComponent>().m_UID;
 	}
 	Scene* Entity::GetScene()
 	{

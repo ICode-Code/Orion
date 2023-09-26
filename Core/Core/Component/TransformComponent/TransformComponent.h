@@ -46,9 +46,9 @@ namespace OE1Core
 			glm::vec3 GetUp();
 			bool IsDirty();
 			bool IsLeaf();
-
-			glm::mat4 GetLocalTransform();
-			glm::mat4 GetWorldTransform();
+			void Update();
+			glm::mat4& QueryLocalTransform();
+			glm::mat4& QueryWorldTransform();
 
 			// operators
 			inline operator glm::mat4& () { return m_WorldTransform;  };
@@ -57,6 +57,7 @@ namespace OE1Core
 
 
 			// Scene Hierarchy
+			Entity GetHostEntity();
 			void SetHostEntity(Entity _entity);
 			void SetParent(Entity _entity);
 			void RemoveParent();
@@ -85,6 +86,10 @@ namespace OE1Core
 
 		protected:
 			void __Init(Entity* _owner_entity);
+			void __UpdateHierarchy(Entity* _entity);
+			glm::mat4 __ComputeWorldTransform();
+			glm::mat4 __ComputeLocalTransform();
+			bool __IsDecendent(Entity* _entity);
 		};
 	}
 }

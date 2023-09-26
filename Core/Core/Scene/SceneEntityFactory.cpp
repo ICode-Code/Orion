@@ -20,6 +20,7 @@ namespace OE1Core
 	{
 		Entity my_entity = m_Scene->CreateEntity();
 		AddDefaultComponent(my_entity, _model_pkg->Name);
+		my_entity.GetComponent<Component::TagComponent>().SetType(s_TypeRegistry[EntityType::T_STATIC_MESH]);
 		my_entity.GetComponent<Component::TransformComponent>().m_Position = _initial_pos;
 
 		// Create MeshComponent
@@ -79,7 +80,7 @@ namespace OE1Core
 		_entity.AddComponent<Component::TagComponent>(_name);
 		_entity.GetComponent<Component::InspectorComponent>().SetTagComponent(&_entity.GetComponent<Component::TagComponent>());
 
-		_entity.AddComponent<Component::TransformComponent>();
+		_entity.AddComponent<Component::TransformComponent>(&_entity);
 		_entity.GetComponent<Component::InspectorComponent>().SetTransformComponent(&_entity.GetComponent<Component::TransformComponent>());
 	}
 

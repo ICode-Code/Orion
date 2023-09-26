@@ -29,7 +29,7 @@ namespace OE1Core
 			glStencilMask(0xFF);
 
 
-			glm::mat4 world_transform = transform.GetWorldTransform();
+			glm::mat4 world_transform = transform.QueryWorldTransform();
 
 			for (size_t i = 0; i < model->MeshList.size(); i++)
 			{

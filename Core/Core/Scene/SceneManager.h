@@ -5,6 +5,7 @@
 #include "UniformBuffer/UniformBlockManager.h"
 #include "SceneEntityFactory.h"
 #include "../ActiveEntity/ActiveEntity.h"
+#include "EntityType.h"
 
 #include <Log.h>
 #include <memory>

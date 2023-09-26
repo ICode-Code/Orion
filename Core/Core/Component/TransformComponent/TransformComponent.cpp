@@ -1,5 +1,6 @@
 #include "TransformComponent.h"
 #include "../../Scene/Entity.h"
+#include <imgui/ImGuizmo.h>
 
 
 namespace OE1Core
@@ -38,7 +39,33 @@ namespace OE1Core
 			m_Quaternion = glm::quat(glm::radians(m_Euler));
 			m_RotationFinal = glm::toMat4(m_Quaternion);
 		}
-		
+		void TransformComponent::__UpdateHierarchy(Entity* _entity)
+		{
+			Component::TransformComponent& transform = _entity->GetComponent<Component::TransformComponent>();
+			transform.__ComputeWorldTransform();
+
+			for (size_t i = 0; i < transform.m_Children.size(); i++)
+			{
+				__UpdateHierarchy(transform.m_Children[i]);
+				transform.m_Children[i]->UpdateTransformBuffer();
+			}
+		}
+		glm::mat4 TransformComponent::__ComputeWorldTransform()
+		{
+			if (m_Parent)
+				return m_WorldTransform = m_Parent->GetComponent<TransformComponent>().__ComputeWorldTransform() * __ComputeLocalTransform();
+			else
+				return m_WorldTransform = __ComputeLocalTransform();
+		}
+		glm::mat4 TransformComponent::__ComputeLocalTransform()
+		{
+			m_Dirty = false;
+			m_Quaternion = glm::quat(glm::radians(m_Euler));
+			m_RotationFinal = glm::toMat4(m_Quaternion);
+			return m_LocalTransform = glm::translate(glm::mat4(1.0f), m_Position) *
+				m_RotationFinal *
+				glm::scale(glm::mat4(1.0f), m_Scale);
+		}
 		void TransformComponent::ExtractTransform(const glm::mat4& _src_transform)
 		{
 			// extract
@@ -62,23 +89,12 @@ namespace OE1Core
 			m_Dirty = true;
 		}
 
-		glm::mat4 TransformComponent::GetLocalTransform()
+		glm::mat4& TransformComponent::QueryLocalTransform() { return m_LocalTransform; }
+		glm::mat4& TransformComponent::QueryWorldTransform() { return m_WorldTransform; }
+		void TransformComponent::Update()
 		{
-			m_Dirty = false;
-			m_Quaternion = glm::quat(glm::radians(m_Euler));
-			m_RotationFinal = glm::toMat4(m_Quaternion);
-			return m_LocalTransform =	glm::translate(glm::mat4(1.0f), m_Position) *
-										m_RotationFinal *
-										glm::scale(glm::mat4(1.0f), m_Scale);
+			__UpdateHierarchy(m_HostEntity);
 		}
-		glm::mat4 TransformComponent::GetWorldTransform()
-		{
-			if (m_Parent)
-				return m_WorldTransform = m_Parent->GetComponent<TransformComponent>().GetWorldTransform() * GetLocalTransform();
-			else
-				return m_WorldTransform = GetLocalTransform();
-		}
-
 
 		glm::vec3 TransformComponent::GetFront()	{ return -m_LocalTransform[2]; }
 		glm::vec3 TransformComponent::Getback()		{ return m_LocalTransform[2]; }
@@ -95,6 +111,12 @@ namespace OE1Core
 				m_HostEntity = new Entity(_entity.GetHandle(), _entity.GetScene());
 			} else 
 				m_HostEntity = new Entity(_entity.GetHandle(), _entity.GetScene());
+		}
+		Entity TransformComponent::GetHostEntity()
+		{
+			if (m_HostEntity)
+				return *m_HostEntity;
+			return Entity();
 		}
 
 		void TransformComponent::SetParent(Entity _entity)
@@ -113,14 +135,55 @@ namespace OE1Core
 		void TransformComponent::RemoveParent()
 		{
 			if (m_Parent)
+			{
+				glm::vec3 _Position;
+				glm::vec3 _Scale;
+				glm::vec3 __Rot;
+				
+				ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(QueryWorldTransform()), glm::value_ptr(_Position), glm::value_ptr(__Rot), glm::value_ptr(_Scale));
+
+				m_Position = _Position;
+				m_Scale = _Scale;
+				m_Euler = __Rot;
+
 				m_Parent->GetComponent<TransformComponent>().RemoveChild(*this->m_HostEntity);
+			}
 		}
 		void TransformComponent::AddChild(Entity _entity)
 		{
 			if (!HasChild(_entity))
 			{
+				if (__IsDecendent(&_entity))
+					return;
+				// check entity parent
+				Component::TransformComponent& new_child_transform = _entity.GetComponent<Component::TransformComponent>();
+				if (new_child_transform.m_Parent)
+					new_child_transform.m_Parent->GetComponent<Component::TransformComponent>().RemoveChild(_entity);
+
+
 				m_Children.push_back(new Entity(_entity.GetHandle(), _entity.GetScene()));
 				_entity.GetComponent<Component::TransformComponent>().SetParent(*this->m_HostEntity);
+
+				/// Compute proper transform
+				glm::mat4 inverse_new_parent_transform = glm::inverse(m_WorldTransform);
+				Component::TransformComponent& child_transform = m_Children.back()->GetComponent<Component::TransformComponent>();
+				glm::mat4 _trans = inverse_new_parent_transform * child_transform.QueryWorldTransform();
+
+
+				glm::vec3 _Position;
+				glm::vec3 _Scale;
+				glm::vec3 __Rot;
+
+				ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(_trans), glm::value_ptr(_Position), glm::value_ptr(__Rot), glm::value_ptr(_Scale));
+
+				child_transform.m_Position = _Position;
+				child_transform.m_Scale = _Scale;
+				child_transform.m_Euler = __Rot;
+
+
+
+
+				m_Leaf = false;
 			}
 
 		}
@@ -140,9 +203,12 @@ namespace OE1Core
 
 				if (it != m_Children.end())
 				{
+					delete *it; // Deallocate memory for the child entity
 					m_Children.erase(it);
-					delete* it; // Deallocate memory for the child entity
 				}
+
+				if(m_Children.empty())
+					m_Leaf = true;;
 
 			}
 		}
@@ -170,6 +236,18 @@ namespace OE1Core
 				return true;
 
 			return false;
+		}
+		bool TransformComponent::__IsDecendent(Entity* _entity)
+		{
+			Component::TransformComponent& transform = _entity->GetComponent<Component::TransformComponent>();
+			if (!_entity || !transform.m_Parent)
+				return false;
+
+			if (_entity->GetUUID() == transform.m_Parent->GetUUID())
+				return true;
+
+			// Recursively check the parent of the current entity
+			return __IsDecendent(transform.m_Parent);
 		}
 	}
 }
