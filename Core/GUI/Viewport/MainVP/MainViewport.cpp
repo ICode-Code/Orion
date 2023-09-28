@@ -182,6 +182,8 @@ namespace OE1Core
 				selection_command.posY = m_MousePosition.y;
 				selection_command.FrameID = 0;
 				Command::PushEntitySelectionCommand(selection_command);
+				if(m_Operation == ImGuizmo::OPERATION::BOUNDS)
+					m_Operation = ImGuizmo::OPERATION::TRANSLATE;
 			}
 		}
 	}
