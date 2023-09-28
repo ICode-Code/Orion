@@ -29,6 +29,13 @@ namespace OE1Core
 		static void AddRigidbodyComponent(Entity& _entity);
 		static void AddProjectileComponent(Entity& _entity);
 
+
+		// Operation
+		// return cloned entity
+		static Entity Clone(Entity _src_entity);
+
+		static bool Purge(Entity _entity);
+
 	protected:
 		inline static Scene* m_Scene = nullptr;
 
@@ -39,6 +46,22 @@ namespace OE1Core
 		static uint32_t RegisterInstance(StaticMesh* _mesh, Entity& _entity);
 		// This dude create Mesh component in simple word will tie the static mesh and mesh component
 		static void CreateRichMeshComponent(ModelPkg* _mesh, uint32_t _offset, Entity& _entity);
+
+
+	protected: // Util
+		// IF same anem detected it will add (index)
+		static std::string CheckNameCollision(std::string _name);
+		static bool NameExist(std::string _name);
+
+	protected: // Clone Util
+		static void CloneMeshComponent(Entity _src, Entity _dest);
+		static void CloneTransformComponent(Entity _src, Entity _dest);
+		static void CloneTagComponent(Entity _src, Entity _dest);
+		static void CloneProjectileComponent(Entity _src, Entity _dest);
+		static void CloneAudioComponent(Entity _src, Entity _dest);
+		static void CloneAnimationComponent(Entity _src, Entity _dest);
+		static void CloneRigidBodyComponent(Entity _src, Entity _dest);
+		static void CloneMeshColliderComponent(Entity _src, Entity _dest);
 	};
 }
 

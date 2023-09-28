@@ -13,6 +13,22 @@ namespace OE1Core
 
 	}
 
+	Entity SceneEntityFactory::Clone(Entity _src_entity)
+	{
+		Entity my_new_entity = m_Scene->CreateEntity();
+
+		CloneTagComponent(_src_entity, my_new_entity);
+		CloneTransformComponent(_src_entity, my_new_entity);
+		CloneMeshComponent(_src_entity, my_new_entity);
+
+
+		return my_new_entity;
+	}
+	bool SceneEntityFactory::Purge(Entity _entity)
+	{
+
+		return false;
+	}
 	void SceneEntityFactory::RegisterActiveScene(Scene* _scene) { m_Scene = _scene; }
 	Scene* SceneEntityFactory::GetScene() { return m_Scene; }
 
@@ -77,7 +93,7 @@ namespace OE1Core
 
 	void SceneEntityFactory::AddDefaultComponent(Entity& _entity, std::string _name)
 	{
-		_entity.AddComponent<Component::TagComponent>(_name);
+		_entity.AddComponent<Component::TagComponent>(CheckNameCollision(_name));
 		_entity.GetComponent<Component::InspectorComponent>().SetTagComponent(&_entity.GetComponent<Component::TagComponent>());
 
 		_entity.AddComponent<Component::TransformComponent>(&_entity);
@@ -113,5 +129,128 @@ namespace OE1Core
 			material_offsets
 		);
 		_entity.GetComponent<Component::InspectorComponent>().SetMeshComponent(&_entity.GetComponent<Component::MeshComponent>());
+	}
+
+	std::string SceneEntityFactory::CheckNameCollision(std::string _name)
+	{
+		while (NameExist(_name))
+		{
+			// If the last char is not ) it means this isthe first instance
+			if (_name.back() != ')')
+				_name += "(1)";
+			else
+			{
+				// If the code reach here it means the name is modefied with (index)
+				// so we need to extract this index and increament it
+				size_t last_open_index = _name.find_last_of('(');
+				size_t last_close_index = _name.find_last_of(')');
+
+				size_t index_digit_count = last_close_index - last_open_index;
+				std::string digit = _name.substr(last_open_index + 1, index_digit_count);
+				_name.replace(last_open_index + 1, index_digit_count - 1, std::to_string(std::stoi(digit) + 1));
+			}
+		}
+
+		return _name;
+	}
+	bool SceneEntityFactory::NameExist(std::string _name)
+	{
+		bool exist = false;
+		m_Scene->m_EntityRegistry.each([&](auto _entt)
+			{
+				Entity _entity(_entt, m_Scene);
+
+				if (_entity.HasComponent<Component::TagComponent>())
+				{
+					if(_entity.GetComponent<Component::TagComponent>().m_Identifier == _name)
+					{
+						exist = true;
+						return;
+					}
+				}
+				
+			});
+
+		return exist;
+	}
+
+	//////////////////////// Clone Util
+	void SceneEntityFactory::CloneMeshComponent(Entity _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::MeshComponent>())
+			return;
+
+		Component::MeshComponent& mesh = _src.GetComponent<Component::MeshComponent>();
+
+		// Get the static Mesh
+		StaticMesh* static_mesh = nullptr;
+		static_mesh = m_Scene->QueryStaticMesh(mesh.GetPackageID());
+		if (!static_mesh)
+		{
+			LOG_ERROR("Error Cloning MeshComponent!");
+			return;
+		}
+
+		
+		uint32_t mem_offset = RegisterInstance(static_mesh, _dest);
+		CreateRichMeshComponent(AssetManager::GetGeometry(mesh.GetPackageID()), mem_offset, _dest);
+
+	}
+	void SceneEntityFactory::CloneTransformComponent(Entity _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::TransformComponent>())
+			return;
+
+		_dest.AddComponent<Component::TransformComponent>(&_dest);
+		_dest.GetComponent<Component::InspectorComponent>().SetTransformComponent(&_dest.GetComponent<Component::TransformComponent>());
+
+		Component::TransformComponent& src_transform = _src.GetComponent<Component::TransformComponent>();
+		Component::TransformComponent& dest_transform = _dest.GetComponent<Component::TransformComponent>();
+
+		dest_transform.Update();
+
+		if (src_transform.m_Parent)
+			src_transform.m_Parent->GetComponent<Component::TransformComponent>().AddChild(_dest);
+
+		dest_transform.m_Position		= src_transform.m_Position;
+		dest_transform.m_Euler			= src_transform.m_Euler;
+		dest_transform.m_RotationFinal	= src_transform.m_RotationFinal;
+		dest_transform.m_Quaternion		= src_transform.m_Quaternion;
+		dest_transform.m_Scale			= src_transform.m_Scale;
+	}
+	void SceneEntityFactory::CloneTagComponent(Entity _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::TagComponent>())
+			return;
+
+		_dest.AddComponent<Component::TagComponent>(CheckNameCollision(
+			_src.GetComponent<Component::TagComponent>().m_Identifier
+		));
+		_dest.GetComponent<Component::InspectorComponent>().SetTagComponent(&_dest.GetComponent<Component::TagComponent>());
+		
+		Component::TagComponent& src_tag = _src.GetComponent<Component::TagComponent>();
+		Component::TagComponent& dest_tag = _dest.GetComponent<Component::TagComponent>();
+
+		dest_tag.SetType(src_tag.m_Type);
+	}
+	void SceneEntityFactory::CloneProjectileComponent(Entity _src, Entity _dest)
+	{
+
+	}
+	void SceneEntityFactory::CloneAudioComponent(Entity _src, Entity _dest)
+	{
+
+	}
+	void SceneEntityFactory::CloneAnimationComponent(Entity _src, Entity _dest)
+	{
+
+	}
+	void SceneEntityFactory::CloneRigidBodyComponent(Entity _src, Entity _dest)
+	{
+
+	}
+	void SceneEntityFactory::CloneMeshColliderComponent(Entity _src, Entity _dest)
+	{
+
 	}
 }

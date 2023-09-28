@@ -44,6 +44,8 @@ namespace OE1Core
 		bool							m_EnableSnap;
 		bool							m_ShowActionButton;
 		bool							m_MouseOverViewport;
+		bool							m_IsLeftShitPressed;
+		bool							m_IsCloning;
 
 	};
 }

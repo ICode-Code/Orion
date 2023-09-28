@@ -16,6 +16,9 @@ namespace OE1Core
 		m_EnableSnap			= false;
 		m_ShowActionButton		= true;
 		m_MouseOverViewport		= false;
+
+		m_IsLeftShitPressed		= false;
+		m_IsCloning				= false;
 	}
 	MainViewport::~MainViewport()
 	{
@@ -122,7 +125,17 @@ namespace OE1Core
 			switch (m_Operation)
 			{
 			case ImGuizmo::TRANSLATE:
-				transform_component.m_Position = translation;
+				if (m_IsLeftShitPressed && !m_IsCloning)
+				{
+					m_IsCloning = true;
+					ActiveEntity* active_entity = SceneManager::GetActiveScene()->GetActiveEntity();
+					
+					active_entity->Pick(SceneEntityFactory::Clone(active_entity->GetActive()));
+				}
+				else
+				{
+					transform_component.m_Position = translation;
+				}
 				break;
 			case ImGuizmo::ROTATE:
 				transform_component.SetRotation(rotation);
@@ -136,6 +149,10 @@ namespace OE1Core
 				break;
 			}
 
+		}
+		else
+		{
+			m_IsCloning = false;
 		}
 
 	}
@@ -189,6 +206,9 @@ namespace OE1Core
 
 	bool MainViewport::HandleKeyRelease(OECore::KeyReleaseEvent& e)
 	{
+		if (e.GetKeyCode() == SDLK_LSHIFT)
+			m_IsLeftShitPressed = false;
+
 		if (!m_MouseOverViewport)
 			return false;
 		if (e.GetKeyCode() == SDLK_g)
@@ -240,6 +260,10 @@ namespace OE1Core
 	}
 	bool MainViewport::HandleKeyPress(OECore::KeyPressedEvent& e)
 	{
-		return false;
+		if (e.GetKeyCode() == SDLK_LSHIFT)
+			m_IsLeftShitPressed = true;
+
+
+		return true;
 	}
 }
