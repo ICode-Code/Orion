@@ -28,6 +28,14 @@ namespace OE1Core
 	{
 		if (!m_Scene->m_EntityRegistry.valid(_entity.GetHandle()))
 			return false;
+		Component::TransformComponent& transform = _entity.GetComponent<Component::TransformComponent>();
+		
+		if (transform.m_Parent)
+			transform.m_Parent->GetComponent<Component::TransformComponent>().RemoveChild(_entity);
+
+		while (!transform.IsLeaf())
+			transform.m_Children.front()->GetComponent<Component::TransformComponent>().RemoveParent();
+
 
 		RemoveMeshComponent(_entity);
 		m_Scene->m_EntityRegistry.destroy(_entity.GetHandle());
