@@ -31,6 +31,7 @@ namespace OE1Core
 		Entity GetEntity(uint32_t _id, bool _suppress_warning = false);
 
 		RenderMode& GetRenderMode();
+		bool  PurgeStaticMesh(uint32_t _package_id);
 		StaticMesh* QueryStaticMesh(uint32_t _package_id);
 		StaticMesh* RegisterStaticMesh(ModelPkg* _model_pkg);
 		class ActiveEntity* GetActiveEntity(); 

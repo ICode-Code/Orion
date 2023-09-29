@@ -62,6 +62,10 @@ namespace OE1Core
 		static void CloneAnimationComponent(Entity _src, Entity _dest);
 		static void CloneRigidBodyComponent(Entity _src, Entity _dest);
 		static void CloneMeshColliderComponent(Entity _src, Entity _dest);
+
+
+	protected: // Purge Util/ Some component need more that just like remove
+		static void RemoveMeshComponent(Entity _entity);
 	};
 }
 

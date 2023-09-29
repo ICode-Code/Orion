@@ -26,13 +26,15 @@ namespace OE1Core
 			std::get<1>(s_TransparentMeshList[_type]).push_back(_mesh);
 		}
 
-		void IVRenderStack::RemoveOpaqueMesh(uint32_t _package_id)
+		void IVRenderStack::RemoveOpaqueMesh(MaterialType _type)
 		{
-			// add remove code here
+			if (s_OpaqueMeshList.find(_type) != s_OpaqueMeshList.end())
+				s_OpaqueMeshList.erase(_type);
 		}
-		void IVRenderStack::RemoveTransparentMesh(uint32_t __package_id)
+		void IVRenderStack::RemoveTransparentMesh(MaterialType _type)
 		{
-			// add remove code here
+			if (s_TransparentMeshList.find(_type) != s_TransparentMeshList.end())
+				s_TransparentMeshList.erase(_type);
 		}
 	}
 }

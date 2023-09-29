@@ -109,6 +109,7 @@ namespace OE1Core
 	{
 		if (ImGui::BeginMenu("Edit"))
 		{
+			ImGui::BeginDisabled(!SceneManager::QueryActiveEntity()->ValidSelection());
 
 			if (ImGui::MenuItem(ICON_FA_SCISSORS"   Cut"))
 			{
@@ -124,9 +125,11 @@ namespace OE1Core
 			}
 			if (ImGui::MenuItem(ICON_FA_XMARK"   Delete"))
 			{
-
+				SceneManager::PurgActiveEntity();
 			}
 
+
+			ImGui::EndDisabled();
 
 			ImGui::Separator();
 

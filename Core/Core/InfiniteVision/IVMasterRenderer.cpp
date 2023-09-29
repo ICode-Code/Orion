@@ -32,6 +32,20 @@ namespace OE1Core
 
 			}
 		}
+		void IVMasterRenderer::PurgeFromRenderStack(StaticMesh* _mesh)
+		{
+			auto& mesh_package = _mesh->m_StaticMeshPkg;
+
+			for (size_t i = 0; i < mesh_package.size(); i++)
+			{
+
+				if ((int)mesh_package[i].Material->GetType() & (int)MaterialType::ALPHA)
+					m_Scene->m_RenderStack->RemoveTransparentMesh(mesh_package[i].Material->GetType());
+				else
+					m_Scene->m_RenderStack->RemoveOpaqueMesh(mesh_package[i].Material->GetType());
+
+			}
+		}
 		void IVMasterRenderer::Update(int _width, int _height)
 		{
 			m_MainPassFramebuffer.Update(_width, _height);

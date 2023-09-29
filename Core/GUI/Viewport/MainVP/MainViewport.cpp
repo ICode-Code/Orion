@@ -213,6 +213,11 @@ namespace OE1Core
 
 		if (!m_MouseOverViewport)
 			return false;
+
+
+		if (e.GetKeyCode() == SDLK_DELETE)
+			SceneManager::PurgActiveEntity();
+
 		if (e.GetKeyCode() == SDLK_g)
 		{
 			if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())

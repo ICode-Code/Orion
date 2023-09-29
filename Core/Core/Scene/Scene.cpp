@@ -28,7 +28,17 @@ namespace OE1Core
 			delete iter.second;
 	}
 
+	bool Scene::PurgeStaticMesh(uint32_t _package_id)
+	{
+		if (m_StaticMeshRegistry.find(_package_id) != m_StaticMeshRegistry.end())
+		{
+			m_MyRenderer->PurgeFromRenderStack(m_StaticMeshRegistry[_package_id]);
+			m_StaticMeshRegistry.erase(_package_id);
+			return true;
+		}
 
+		return false;
+	}
 	Entity Scene::CreateEntity()
 	{
 		Entity my_entity(m_EntityRegistry.create(), this);

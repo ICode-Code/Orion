@@ -26,8 +26,12 @@ namespace OE1Core
 	}
 	bool SceneEntityFactory::Purge(Entity _entity)
 	{
+		if (!m_Scene->m_EntityRegistry.valid(_entity.GetHandle()))
+			return false;
 
-		return false;
+		RemoveMeshComponent(_entity);
+		m_Scene->m_EntityRegistry.destroy(_entity.GetHandle());
+		return true;
 	}
 	void SceneEntityFactory::RegisterActiveScene(Scene* _scene) { m_Scene = _scene; }
 	Scene* SceneEntityFactory::GetScene() { return m_Scene; }
@@ -252,5 +256,26 @@ namespace OE1Core
 	void SceneEntityFactory::CloneMeshColliderComponent(Entity _src, Entity _dest)
 	{
 
+	}
+
+
+
+	/////////// PURG
+
+	void SceneEntityFactory::RemoveMeshComponent(Entity _entity)
+	{
+		if (!_entity.HasComponent<Component::MeshComponent>())
+			return;
+		Component::MeshComponent& mesh = _entity.GetComponent<Component::MeshComponent>();
+		if (!m_Scene->HasStaticMesh(mesh.GetPackageID()))
+			return;
+
+		StaticMesh* static_mesh = m_Scene->QueryStaticMesh(mesh.GetPackageID());
+
+		static_mesh->RemoveInstance(_entity, m_Scene);
+
+		// This will remove it from render stack and the static mesh it take care of everything
+		if (static_mesh->GetInstanceCount() == 0)
+			m_Scene->PurgeStaticMesh(static_mesh->GetPackageID());
 	}
 }

@@ -24,10 +24,10 @@ namespace OE1Core
 
 			// This will remove the mesh form the stack comletely regarless of the instance count
 			// do this if the instance count is 0 or if you don't want to NOT render the model
-			void RemoveOpaqueMesh(uint32_t _package_id);
+			void RemoveOpaqueMesh(MaterialType _package_id);
 			// This will remove the mesh form the stack comletely regarless of the instance count
 			// do this if the instance count is 0 or if you don't want to NOT render the model
-			void RemoveTransparentMesh(uint32_t __package_id);
+			void RemoveTransparentMesh(MaterialType __package_id);
 
 
 		protected:

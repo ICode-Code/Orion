@@ -17,6 +17,9 @@ namespace OE1Core
 	protected:
 		~SceneManager();
 	public:
+		// This will remove the active entity from the active scene
+		static ActiveEntity* QueryActiveEntity();
+		static void PurgActiveEntity();
 		static void RegisterScene(std::string _name, Scene* _scene, bool _set_active = false);
 		static void ActivateScene(std::string _name);
 		static Scene* GetActiveScene();

@@ -24,6 +24,7 @@ namespace OE1Core
 			~IVMasterRenderer();
 
 			void PushToRenderStack(StaticMesh* _mesh);
+			void PurgeFromRenderStack(StaticMesh* _mesh);
 			void Update(int _width, int _height);
 			void MasterPass();
 			IVForwardMainPassFramebuffer& GetMainPassFramebuffer();

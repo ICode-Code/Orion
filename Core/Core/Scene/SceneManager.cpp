@@ -34,7 +34,20 @@ namespace OE1Core
 	{
 		s_ActiveScene->Render();
 	}
-
+	ActiveEntity* SceneManager::QueryActiveEntity()
+	{
+		return GetActiveScene()->GetActiveEntity();
+	}
+	void SceneManager::PurgActiveEntity()
+	{
+		if (GetActiveScene()->GetActiveEntity()->ValidSelection())
+		{
+			if (SceneEntityFactory::Purge(GetActiveScene()->GetActiveEntity()->GetActive()))
+				GetActiveScene()->GetActiveEntity()->FlushSelection();
+			else
+				LOG_ERROR("Failed to remove entity due to an unspecified issue.");
+		}
+	}
 	void SceneManager::RegisterScene(std::string _name, Scene* _scene, bool _set_active)
 	{
 		if (s_Scenes.find(_name) == s_Scenes.end())

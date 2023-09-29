@@ -65,18 +65,21 @@ namespace OE1Core
 			return;
 		}
 		m_MeshInstanceData.erase(m_MeshInstanceData.begin() + del_idx);
-		m_MeshInstanceData.pop_back();
 
 		for (size_t i = 0; i < m_MeshInstanceData.size(); i++)
 		{
 			Entity my_entity((entt::entity)m_MeshInstanceData[i], _scene);
-			my_entity.GetComponent<Component::MeshComponent>().SetOffset(StaticMeshInstancePkgSize * i);
+			Component::MeshComponent& my_mesh = my_entity.GetComponent<Component::MeshComponent>();
+			my_mesh.SetOffset(StaticMeshInstancePkgSize * i);
+			my_mesh.Update();
 		}
 		UpdateInstanceCount(ICounter::DECREMENT);
 	}
 
 	void StaticMesh::UpdateInstanceCount(ICounter _update_value)
 	{
+		m_InstanceCount			+= (int)_update_value;
+		m_VisibleInstanceCount	+= (int)_update_value;
 		for (size_t i = 0; i < m_StaticMeshPkg.size(); i++)
 			m_StaticMeshPkg[i].DrawCount += (int)_update_value;
 	}
