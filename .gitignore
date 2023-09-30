@@ -373,3 +373,4 @@ FodyWeavers.xsd
 /Core/Core.vcxproj
 /AssetLoader/AssetLoader.vcxproj
 /AssetLoader/AssetLoader.vcxproj.filters
+/Core/ORI_log.txt

@@ -1,9 +1,0 @@
-[19:31:25] [ECHO] : Renderer: Intel(R) HD Graphics 4000
-[19:31:25] [ECHO] : OpenglVersion: Intel - 4.0.0 - Build 10.18.10.4425
-[19:31:25] [ECHO] : GLSL_Version: 4.00 - Build 10.18.10.4425
-[19:31:25] [ECHO] : GLEW_Version: 2.1.0
-[19:31:25] [ECHO] : 
-
-[19:31:25] [ECHO] : Processing: OES_ModelPreview.shader
-[19:31:25] [ECHO] : Processing: OES_Grid.shader
-[19:31:25] [ECHO] : Processing: OES_ObjectOutline.shader
