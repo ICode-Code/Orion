@@ -11,6 +11,7 @@ namespace OE1Core
 		{
 			int posX;
 			int posY;
+			bool Batch = false;
 			GLuint FrameID;
 		};
 	}

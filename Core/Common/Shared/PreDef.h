@@ -19,10 +19,17 @@ static GLuint MaxUniformBlockSize()
 	return max_uniform_buff;
 }
 
-inline std::wstring ORI_ACTIVE_PROJECT_ROOT = L"";
-inline const std::wstring ORI_PROJECT_ROOT_PATH = L"\\ORion";
+/// <summary>
+/// Active project root directory
+/// </summary>
 inline std::string ORI_ACTIVE_PATH = "##";
 
+/// <summary>
+/// All project root directory
+/// </summary>
+
+inline const std::string ORI_ORION_PROJECT_ROOT_PATH = "\\ORion\\";
+inline const std::string ORI_ENGEIN_METAL_FILE = ".orion_meta.ini";
 
 #define ORI_MAX_INSTANCE_PER_MESH 2048
 #define ORI_MATERIAL_PREFIX "ORMAT_"

@@ -79,7 +79,16 @@ namespace OE1Core
 			Entity entity_query = SceneManager::GetActiveScene()->GetEntity(entity_id, true);
 
 			if (entity_query.IsFunctional())
-				active_scene->GetActiveEntity()->Pick(entity_query);
+			{
+				if (_command.Batch)
+				{
+					active_scene->GetActiveEntity()->PickBatch(entity_query);
+				}
+				else
+				{
+					active_scene->GetActiveEntity()->Pick(entity_query);
+				}
+			}
 			else
 				active_scene->GetActiveEntity()->FlushSelection();
 			

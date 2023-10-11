@@ -59,7 +59,7 @@ namespace OE1Core
 			m_MeshRenderer->Render(m_Scene->m_RenderStack);
 
 			
-			m_OutlineRenderer->Render(*m_Scene->GetActiveEntity());
+			m_OutlineRenderer->Render(m_Scene->GetActiveEntity());
 
 			m_GridRenderer.Render(*m_Scene->m_Grid);
 

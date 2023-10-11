@@ -17,7 +17,7 @@ namespace OE1Core
 	public:
 		LayerBase()
 		{ }
-		~LayerBase()
+		virtual ~LayerBase()
 		{ }
 
 		virtual void Update() = 0;

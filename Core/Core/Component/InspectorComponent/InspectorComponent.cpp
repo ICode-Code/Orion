@@ -1,5 +1,6 @@
 #include "InspectorComponent.h"
 #include "../IComponent.h"
+#include "../Core/Scene/SceneManager.h"
 
 
 namespace OE1Core
@@ -58,18 +59,15 @@ namespace OE1Core
 		{
 			if (!m_TransformComponent)
 				return;
+			/*
+			if (SceneManager::QueryActiveEntity()->IsBatchMode())
+				m_TransformComponent = &SceneManager::QueryActiveEntity()->GetProxyTransform();*/
 
 			if (ImGui::TreeNodeEx("Transform Component", m_TreeNodeFlags | ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				CustomFrame::UIEditorf3<glm::vec3>("Translation", m_TransformComponent->m_Position, 0.0f, 100.0f);
-				if (CustomFrame::UIEditorf3<glm::vec3>("Rotation", m_TransformComponent->m_Euler, 0.0f, 100.0f))
-				{
-					/// Soo wired // but okayy
-				}
-				if (CustomFrame::UIEditorf3<glm::vec3>("Scale", m_TransformComponent->m_Scale, 0.0f, 100.0f))
-				{
-
-				}
+				CustomFrame::UIEditorf3<glm::vec3>("Rotation", m_TransformComponent->m_Euler, 0.0f, 100.0f);
+				CustomFrame::UIEditorf3<glm::vec3>("Scale", m_TransformComponent->m_Scale, 0.0f, 100.0f);
 
 				ImGui::TreePop();
 			}

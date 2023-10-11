@@ -93,6 +93,8 @@ namespace OE1Core
 		glm::mat4& TransformComponent::QueryWorldTransform() { return m_WorldTransform; }
 		void TransformComponent::Update()
 		{
+			// TODO what if the Transform Component does not related to any entity
+			// Host Entity is nullptr
 			__UpdateHierarchy(m_HostEntity);
 		}
 

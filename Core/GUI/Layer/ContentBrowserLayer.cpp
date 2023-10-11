@@ -7,27 +7,19 @@ namespace OE1Core
 		m_FolderIcon = (ImTextureID)(intptr_t)AssetManager::GetTexture("Folder")->GetTexture();
 		m_UnknownFileIcon = (ImTextureID)(intptr_t)AssetManager::GetTexture("Unknown")->GetTexture();
 
-		QueryProjectDir();
+		m_ActiveDirectory = ORI_ACTIVE_PATH;
+
 		SyncDataEntry();
 		ExecutionHandler::RegisterContentBrowserLayerNotifyCallback(std::bind(&ContentBrowserLayer::SyncDataEntry, this));
 	}
 	ContentBrowserLayer::~ContentBrowserLayer()
 	{
-
-	}
-	void ContentBrowserLayer::QueryProjectDir()
-	{
-		PWSTR my_documents_path = nullptr;
-		if (SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &my_documents_path) == S_OK)
-		{
-			std::wstring project_folder_path_wide = my_documents_path;
-			CoTaskMemFree(my_documents_path);
-			std::string project_folder_path = WideStrToNarrowStr(project_folder_path_wide);
-			project_folder_path += m_RootDirectory;
-			m_RootDirectory = project_folder_path;
-			m_ActiveDirectory = m_RootDirectory;
-			ORI_ACTIVE_PATH = m_ActiveDirectory.string();
-		}
+		m_DirEntry.clear();
+		m_MusicEntry.clear();
+		m_AssetEntry.clear();
+		m_MaterialEntry.clear();
+		m_ScriptEntry.clear();
+		m_UnknownFileEntry.clear();
 	}
 	void ContentBrowserLayer::ContentBrowserMiniOptionPopup()
 	{
@@ -84,7 +76,7 @@ namespace OE1Core
 		ImGui::Text(ICON_FA_LEFT_LONG);
 		if (ImGui::IsItemClicked())
 		{
-			if (m_ActiveDirectory != m_RootDirectory)
+			if (m_ActiveDirectory != ORI_ACTIVE_PATH)
 			{
 				m_ActiveDirectory = m_ActiveDirectory.parent_path();
 				SyncDataEntry();
@@ -177,7 +169,6 @@ namespace OE1Core
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				m_ActiveDirectory = m_DirEntry[i].first.Path;
-				ORI_ACTIVE_PATH = m_ActiveDirectory.string();
 				SyncDataEntry();
 				break;
 			}

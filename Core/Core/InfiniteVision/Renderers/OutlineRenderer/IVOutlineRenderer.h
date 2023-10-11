@@ -6,6 +6,7 @@
 
 namespace OE1Core
 {
+	class Entity;
 	class ActiveEntity;
 	namespace Renderer
 	{
@@ -15,7 +16,12 @@ namespace OE1Core
 			IVOutlineRenderer();
 			~IVOutlineRenderer();
 
-			void Render(ActiveEntity _active_entity);
+			void Render(ActiveEntity* _active_entity);
+
+
+		protected:
+			void IssueProxyRender(Entity _entity);
+			void IssueSolidOutLineRender(Entity _entity);
 		};
 	}
 }

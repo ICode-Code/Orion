@@ -14,19 +14,39 @@ namespace OE1Core
 
 		}
 
-		void IVOutlineRenderer::Render(ActiveEntity _active_entity)
+		void IVOutlineRenderer::Render(ActiveEntity* _active_entity)
 		{
-			if (!_active_entity.ValidSelection())
+			if (!_active_entity->ValidSelection())
 				return;
-
-			Entity active_entity = _active_entity.GetActive();
-			Component::MeshComponent& mesh = active_entity.GetComponent<Component::MeshComponent>();
-			Component::TransformComponent& transform = active_entity.GetComponent<Component::TransformComponent>();
-			
-			ModelPkg* model = AssetManager::GetGeometry(mesh.GetPackageID());
-
+		
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
+
+
+			for (size_t i = 0; i < _active_entity->GetRegistry().size(); i++)
+				IssueProxyRender(_active_entity->GetRegistry()[i]);
+
+			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+			glStencilMask(0x00);
+			glDisable(GL_DEPTH_TEST);
+
+			m_Shader->Attach();
+			for (size_t i = 0; i < _active_entity->GetRegistry().size(); i++)
+				IssueSolidOutLineRender(_active_entity->GetRegistry()[i]);
+			m_Shader->Detach();
+
+			glStencilMask(0xFF);
+			glStencilFunc(GL_ALWAYS, 0, 0xFF);
+			glEnable(GL_DEPTH_TEST);
+		}
+
+		void IVOutlineRenderer::IssueProxyRender(Entity _entity)
+		{
+
+			Component::MeshComponent& mesh = _entity.GetComponent<Component::MeshComponent>();
+			ModelPkg* model = AssetManager::GetGeometry(mesh.GetPackageID());
+
+			Component::TransformComponent& transform = _entity.GetComponent<Component::TransformComponent>();
 
 
 			glm::mat4 world_transform = transform.QueryWorldTransform();
@@ -44,23 +64,21 @@ namespace OE1Core
 
 				model->MeshList[i].Material->GetShader()->Detach();
 			}
+		}
+		void IVOutlineRenderer::IssueSolidOutLineRender(Entity _entity)
+		{
+			Component::MeshComponent& mesh = _entity.GetComponent<Component::MeshComponent>();
+			ModelPkg* model = AssetManager::GetGeometry(mesh.GetPackageID());
 
-			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-			glStencilMask(0x00);
-			glDisable(GL_DEPTH_TEST);
+			Component::TransformComponent& transform = _entity.GetComponent<Component::TransformComponent>();
+			glm::mat4 world_transform = transform.QueryWorldTransform();
 
-			m_Shader->Attach();
 			m_Shader->SetMat4("Model", world_transform);
 			for (size_t i = 0; i < model->MeshList.size(); i++)
 			{
 				glBindVertexArray(model->MeshList[i].VAO);
 				glDrawElements(GL_TRIANGLES, model->MeshList[i].IndiceCount, GL_UNSIGNED_INT, 0);
 			}
-			m_Shader->Detach();
-
-			glStencilMask(0xFF);
-			glStencilFunc(GL_ALWAYS, 0, 0xFF);
-			glEnable(GL_DEPTH_TEST);
 		}
 	}
 }

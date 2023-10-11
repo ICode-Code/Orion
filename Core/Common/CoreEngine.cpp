@@ -6,7 +6,8 @@ namespace OE1Core
 	{
 
 		///////////////////////// ORDER MATTER HERE SO DON'T FUCK IT UP ///////////////////////////
-		CreateDefaultProjectDir();
+		
+		s_ProjectManager = new ProjectManager();
 
 		// Init Window System
 		s_Window = OE1Core::WindowManager::RegisterWindow(ENGINE_MAIN_WINDOW);
@@ -40,13 +41,11 @@ namespace OE1Core
 		// Create Master Scene
 		SceneManager::RegisterScene("MasterScene", new Scene(s_Window->GetWin()), true);
 
-		CleanVirtualAsset(ORI_ACTIVE_PATH);
 	}
 
 	CoreEngine::~CoreEngine()
 	{
-		CleanVirtualAsset(ORI_ACTIVE_PATH);
-
+		delete s_ProjectManager;
 		delete s_GuiBase;
 		delete s_CoreSystem;
 		delete s_SceneSystem;
@@ -107,38 +106,6 @@ namespace OE1Core
 		if (!e.Handled())
 			SceneManager::OnEvent(e);
 	}
-	void CoreEngine::CreateDefaultProjectDir()
-	{
-		PWSTR my_documents_path = nullptr;
-		if (SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &my_documents_path) == S_OK)
-		{
-			std::wstring project_folder_path = my_documents_path;
-			CoTaskMemFree(my_documents_path);
-
-			project_folder_path += ORI_PROJECT_ROOT_PATH;
-
-			if (!PathFileExists(project_folder_path.c_str()))
-			{
-				if (!CreateDirectoryW(project_folder_path.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
-				{
-					LOG_ERROR("Failed to create ROOT folder");
-				}
-			}
-
-			// Create Project folder
-			project_folder_path += L"\\PRJ_Pilot";
-			if (!PathFileExists(project_folder_path.c_str()))
-			{
-				if (!CreateDirectoryW(project_folder_path.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
-				{
-					LOG_ERROR("Failed to create PROJECT folder");
-				}
-			}
-			ORI_ACTIVE_PROJECT_ROOT = project_folder_path;
-			std::string _root = WideStrToNarrowStr(ORI_ACTIVE_PROJECT_ROOT);
-			InitializeDirectoryHierarchy(_root + "\\");
-		}
-	}
 	bool CoreEngine::HandleWindowCloseEvent(OECore::WindowCloseEvent& e)
 	{
 		CloseWin::s_ShouldOpen = !CloseWin::s_ShouldOpen;
@@ -174,44 +141,5 @@ namespace OE1Core
 		}
 
 		return false;
-	}
-	void CoreEngine::InitializeDirectoryHierarchy(std::string _root)
-	{
-		std::filesystem::create_directories(_root + "Assets");
-		std::filesystem::create_directories(_root + "Assets\\Meshes");
-		std::filesystem::create_directories(_root + "Assets\\Meshes\\Characters");
-		std::filesystem::create_directories(_root + "Assets\\Meshes\\Environment");
-		std::filesystem::create_directories(_root + "Assets\\Meshes\\Weapons");
-		std::filesystem::create_directories(_root + "Assets\\Audio");
-		std::filesystem::create_directories(_root + "Assets\\Audio\\Music");
-		std::filesystem::create_directories(_root + "Assets\\Audio\\SoundFX");
-		std::filesystem::create_directories(_root + "Assets\\Textures");
-		std::filesystem::create_directories(_root + "Assets\\Textures\\Characters");
-		std::filesystem::create_directories(_root + "Assets\\Textures\\Environment");
-		std::filesystem::create_directories(_root + "Assets\\Textures\\UI");
-		std::filesystem::create_directories(_root + "Assets\\Scripts");
-		std::filesystem::create_directories(_root + "Assets\\Scripts\\AI");
-		std::filesystem::create_directories(_root + "Assets\\Scripts\\Gameplay");
-		std::filesystem::create_directories(_root + "Assets\\Scripts\\UI");
-		std::filesystem::create_directories(_root + "Assets\\Prefabs");
-		std::filesystem::create_directories(_root + "Assets\\Materials");
-		std::filesystem::create_directories(_root + "Assets\\Shaders");
-		std::filesystem::create_directories(_root + "Scenes");
-		std::filesystem::create_directories(_root + "Scripts");
-		std::filesystem::create_directories(_root + "Plugins");
-		std::filesystem::create_directories(_root + "Build");
-	}
-	void CoreEngine::CleanVirtualAsset(std::string _dir)
-	{
-		for (auto iter : std::filesystem::directory_iterator(_dir))
-		{
-			if (iter.is_directory())
-				CleanVirtualAsset(_dir + "\\" + iter.path().stem().string());
-
-			std::filesystem::remove_all(iter.path());
-		}
-
-
-		InitializeDirectoryHierarchy(WideStrToNarrowStr(ORI_ACTIVE_PROJECT_ROOT) + "\\");
 	}
 }

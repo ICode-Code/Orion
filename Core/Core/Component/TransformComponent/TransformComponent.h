@@ -19,6 +19,7 @@
 namespace OE1Core
 {
 	class Entity;
+	class ProxyTransform;
 	namespace Component
 	{
 		/// <summary>
@@ -28,6 +29,7 @@ namespace OE1Core
 		/// </summary>
 		class TransformComponent
 		{
+			friend class ProxyTransform;
 			friend class InspectorComponent;
 		public:
 			TransformComponent(Entity* _owner_entity = nullptr);

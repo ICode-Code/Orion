@@ -5,6 +5,8 @@
 #include <Shlwapi.h> // For PathFileExists
 #include <direct.h>
 
+#include "../Core/ProjectManager/ProjectManager.h"
+
 //#pragma comment(lib, "Shlwapi.lib")
 
 #include "../Platform/Win/WindowManager.h"
@@ -38,17 +40,12 @@ namespace OE1Core
 		void OnEvent(OECore::IEvent& e);
 
 
-	protected:
-		void CreateDefaultProjectDir();
-
 	protected: // Event Handle
 		bool HandleWindowCloseEvent(OECore::WindowCloseEvent& e);
 		bool HandleWindowResizeEvent(OECore::WindowResizeEvent& e);
 		bool HandleWindowMax(OECore::WindowMaximizedEvent& e);
 		bool HandleWindowMin(OECore::WindowMinimizedEvent& e);
 		bool HandleApplicationKeyInput(OECore::KeyPressedEvent& e);
-		void CleanVirtualAsset(std::string _dir);
-		void InitializeDirectoryHierarchy(std::string _root);
 
 	protected:
 		inline static OE1Core::CoreSystem* s_CoreSystem = nullptr;
@@ -60,6 +57,7 @@ namespace OE1Core
 		inline static OE1Core::ShaderManager* s_ShaderManager = nullptr;
 		inline static OE1Core::Memory::UniformBlockManager* s_MemeoryManager = nullptr;
 		inline static OE1Core::ResourceInitializer* s_ResourceInitializer = nullptr;
+		inline static OE1Core::ProjectManager* s_ProjectManager = nullptr;
 		
 	};
 }

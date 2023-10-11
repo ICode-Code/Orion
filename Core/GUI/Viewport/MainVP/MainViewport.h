@@ -25,6 +25,8 @@ namespace OE1Core
 		void HandlePayloadPackage();
 		void HandleClickOverViewport();
 		void HandleGIZMO();
+		void HandleTransformOperationSingle(Component::TransformComponent& _transform, glm::mat4& _world, glm::mat4& _local);
+		void HandleEntityManipulation(Entity _entity);
 
 	protected: // event
 		bool HandleKeyRelease(OECore::KeyReleaseEvent& e);
@@ -45,6 +47,7 @@ namespace OE1Core
 		bool							m_ShowActionButton;
 		bool							m_MouseOverViewport;
 		bool							m_IsLeftShitPressed;
+		bool							m_IsLeftCtrPressed;
 		bool							m_IsCloning;
 
 	};

@@ -26,7 +26,7 @@ namespace OE1Core
 		}
 		else
 		{
-			ImGui::Text("Select item in the viewport to see entity property!");
+			ImGui::Text("Click on an item in the viewport to view its entity properties");
 		}
 
 		ImGui::End();

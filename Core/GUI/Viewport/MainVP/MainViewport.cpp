@@ -18,6 +18,7 @@ namespace OE1Core
 		m_MouseOverViewport		= false;
 
 		m_IsLeftShitPressed		= false;
+		m_IsLeftCtrPressed		= false;
 		m_IsCloning				= false;
 	}
 	MainViewport::~MainViewport()
@@ -88,14 +89,18 @@ namespace OE1Core
 	{
 		if (!SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
 			return;
-		Entity picked_entity = SceneManager::GetActiveScene()->GetActiveEntity()->GetActive();
-		CameraPackage& scene_camera = SceneManager::GetActiveScene()->m_CameraPkg;
 
+		ActiveEntity* active = SceneManager::GetActiveScene()->GetActiveEntity();
+
+
+		Component::TransformComponent& transform_component = active->GetActive().GetComponent<Component::TransformComponent>();
+		
+		glm::mat4 object_transform = transform_component.QueryWorldTransform();
+		
+		CameraPackage& scene_camera = SceneManager::GetActiveScene()->m_CameraPkg;
+		
 		PrepareGIZMO();
 
-		
-		Component::TransformComponent& transform_component = picked_entity.GetComponent<Component::TransformComponent>();
-		glm::mat4 object_transform = transform_component.QueryWorldTransform();
 		
 		
 		m_SnapValue = glm::vec3(m_Operation == ImGuizmo::OPERATION::ROTATE ? m_SnapRotation : m_SnapTranslation);
@@ -107,53 +112,67 @@ namespace OE1Core
 
 		if (ImGuizmo::IsUsing())
 		{
+
+
 			glm::mat4 world_transform = glm::mat4(1.0f);
 			if (transform_component.m_Parent)
 				world_transform = transform_component.m_Parent->GetComponent<Component::TransformComponent>().QueryWorldTransform();
 
-			glm::mat4 local_transform = glm::inverse(world_transform) * object_transform;
-
-			glm::vec3 scale, translation, skew;
-			glm::vec4 perspective;
-			glm::quat rotation;
-
-			/// This function is a bit expensive but it is just for manipulating when ever we drag
-			/// so I don't really care if it is that expensive 
-			glm::decompose(local_transform, scale, rotation, translation, skew, perspective);
-
-
-			switch (m_Operation)
-			{
-			case ImGuizmo::TRANSLATE:
-				if (m_IsLeftShitPressed && !m_IsCloning)
-				{
-					m_IsCloning = true;
-					ActiveEntity* active_entity = SceneManager::GetActiveScene()->GetActiveEntity();
-					
-					active_entity->Pick(SceneEntityFactory::Clone(active_entity->GetActive()));
-				}
-				else
-				{
-					transform_component.m_Position = translation;
-				}
-				break;
-			case ImGuizmo::ROTATE:
-				transform_component.SetRotation(rotation);
-				break;
-			case ImGuizmo::SCALE:
-				transform_component.m_Scale = scale;
-				break;
-			case ImGuizmo::BOUNDS:
-				break;
-			default:
-				break;
-			}
+			HandleTransformOperationSingle(transform_component, world_transform, object_transform);
 
 		}
 		else
 		{
 			m_IsCloning = false;
 		}
+
+	}
+	void MainViewport::HandleTransformOperationSingle(Component::TransformComponent& _transform, glm::mat4& _world, glm::mat4& _local)
+	{
+
+		glm::mat4 local_transform = glm::inverse(_world) * _local;
+
+		glm::vec3 scale, translation, skew;
+		glm::vec4 perspective;
+		glm::quat rotation;
+
+		/// This function is a bit expensive but it is just for manipulating when ever we drag
+		/// so I don't really care if it is that expensive 
+		glm::decompose(local_transform, scale, rotation, translation, skew, perspective);
+
+
+
+		if (m_Operation == ImGuizmo::OPERATION::TRANSLATE)
+		{
+			if (m_IsLeftShitPressed && !m_IsCloning)
+			{
+				m_IsCloning = true;
+
+				SceneManager::QueryActiveEntity()->Pick(
+					SceneEntityFactory::Clone(
+						SceneManager::QueryActiveEntity()->GetActive()
+					)
+				);
+			}
+			else
+				_transform.m_Position = translation;
+		}
+		else if (m_Operation == ImGuizmo::OPERATION::ROTATE)
+		{
+
+			_transform.SetRotation(rotation);
+
+		}
+		else if (m_Operation == ImGuizmo::OPERATION::SCALE)
+		{
+
+			_transform.m_Scale = scale;
+
+		} else  { }
+
+	}
+	void MainViewport::HandleEntityManipulation(Entity _entity)
+	{
 
 	}
 	void MainViewport::HandleClickOverViewport()
@@ -180,8 +199,14 @@ namespace OE1Core
 				CommandDef::EntitySelectionCommandDef selection_command;
 				selection_command.posX = m_MousePosition.x;
 				selection_command.posY = m_MousePosition.y;
+
 				selection_command.FrameID = 0;
+
+				if (m_IsLeftCtrPressed)
+					selection_command.Batch = true;
+
 				Command::PushEntitySelectionCommand(selection_command);
+
 				if(m_Operation == ImGuizmo::OPERATION::BOUNDS)
 					m_Operation = ImGuizmo::OPERATION::TRANSLATE;
 			}
@@ -210,6 +235,9 @@ namespace OE1Core
 	{
 		if (e.GetKeyCode() == SDLK_LSHIFT)
 			m_IsLeftShitPressed = false;
+		
+		if (e.GetKeyCode() == SDLK_LCTRL)
+			m_IsLeftCtrPressed = false;
 
 		if (!m_MouseOverViewport)
 			return false;
@@ -269,6 +297,9 @@ namespace OE1Core
 	{
 		if (e.GetKeyCode() == SDLK_LSHIFT)
 			m_IsLeftShitPressed = true;
+
+		if (e.GetKeyCode() == SDLK_LCTRL)
+			m_IsLeftCtrPressed = true;
 
 
 		return true;

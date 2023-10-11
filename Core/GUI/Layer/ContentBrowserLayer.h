@@ -34,7 +34,6 @@ namespace OE1Core
 	private: // Util functions
 		void PushPanalItemStyle();
 		void PopPanalItemStyle();
-		void QueryProjectDir();
 		void DrawHeader();
 		void PathIterator();
 		void SyncDataEntry();
@@ -45,9 +44,8 @@ namespace OE1Core
 
 
 	private: // Directory
-		std::string m_RootDirectory = "\\ORion\\PRJ_Pilot";
 		std::filesystem::path m_CurrentDirectory;
-		std::filesystem::path m_ActiveDirectory = m_RootDirectory;
+		std::filesystem::path m_ActiveDirectory;
 
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_DirEntry;
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_MusicEntry;

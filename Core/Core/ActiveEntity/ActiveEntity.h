@@ -10,8 +10,8 @@ namespace OE1Core
 	class ActiveEntity
 	{
 	public:
-		ActiveEntity() = default;
-		~ActiveEntity() = default;
+		ActiveEntity();
+		~ActiveEntity();
 
 		bool IsHold();
 		void Hold(bool _hold);
@@ -23,8 +23,7 @@ namespace OE1Core
 		Entity GetActive();
 		std::vector<Entity>& GetRegistry();
 		bool IsBatchMode();
-
-
+		
 	protected:
 		std::vector<Entity> m_ActiveRegistry;
 		bool m_BatchMode = false;
