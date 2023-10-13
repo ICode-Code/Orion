@@ -31,6 +31,7 @@ inline std::string ORI_ACTIVE_PATH = "##";
 inline const std::string ORI_ORION_PROJECT_ROOT_PATH = "\\ORion\\";
 inline const std::string ORI_ENGEIN_METAL_FILE = ".orion_meta.ini";
 
+#define ORI_MATERIAL_WINDOW_ALLOCATION_THRESHOLD 10
 #define ORI_MAX_INSTANCE_PER_MESH 2048
 #define ORI_MATERIAL_PREFIX "ORMAT_"
 #define ORI_ASSET_POSTFIX ".ORIASSET"

@@ -60,6 +60,18 @@ namespace OE1Core
 		for (size_t i = 0; i < s_Viewports.size(); i++)
 			s_Viewports[i]->Render();
 
+		auto material_view = MaterialManager::GetMaterialView();
+		for (auto& view : material_view)
+		{
+			view.second->Update();
+			view.second->Render();
+
+			if (!view.second->IsOpen())
+				MaterialManager::RemoveMaterialView(view.second->GetMaterial());
+		}
+
+		
+
 	}
 	void GUIBase::OnEvent(OECore::IEvent& e)
 	{

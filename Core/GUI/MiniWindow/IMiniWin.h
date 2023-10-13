@@ -6,5 +6,6 @@
 #include "3DAssetLoaderWin.h"
 #include "ProjectCreatorWin.h"
 #include "RenameWin.h"
+#include "MaterialViewWin.h"
 
 #endif // !OE1_I_MINI_WIN_H_

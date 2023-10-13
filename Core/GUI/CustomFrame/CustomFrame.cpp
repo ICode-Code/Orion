@@ -165,6 +165,36 @@ void OE1Core::CustomFrame::UIEditorTextValue(const char* label, const char* valu
 	ImGui::Columns(1);
 }
 
+bool OE1Core::CustomFrame::UIEditorPushButton(const char* label, const char* button_name, const ImVec2& size, float width)
+{
+	ImGui::Columns(2);
+	ImGui::SetColumnWidth(0, width);
+	UIEditorLabel(label);
+
+	ImGui::NextColumn();
+	std::string _lab = "##";
+	_lab.append(label);
+	bool clicked = ImGui::Button(button_name,size);
+	ImGui::Columns(1);
+
+	return clicked;
+}
+
+bool OE1Core::CustomFrame::UIEditorImageButton(const char* lable, ImTextureID user_texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col, float width)
+{
+	ImGui::Columns(2);
+	ImGui::SetColumnWidth(0, width);
+	UIEditorLabel(lable);
+
+	ImGui::NextColumn();
+	std::string _lab = "##";
+	_lab.append(lable);
+	bool clicked = ImGui::ImageButton(user_texture_id, size, uv0, uv1, frame_padding, bg_col, tint_col);
+	ImGui::Columns(1);
+
+	return clicked;
+}
+
 void OE1Core::CustomFrame::UIEditorImage(const char* label, ImTextureID user_texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& tint_col, const ImVec4& border_col, float width)
 {
 	ImGui::Columns(2);

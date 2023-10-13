@@ -45,4 +45,20 @@ namespace OE1Core
 
 		return nullptr;
 	}
+
+	void MaterialManager::RegisterMaterialView(MasterMaterial* _material)
+	{
+		if (m_MaterialEditorWindow.find(_material->GetName()) != m_MaterialEditorWindow.end())
+			return;
+
+		m_MaterialEditorWindow.insert(std::make_pair(_material->GetName(), new MaterialViewWin(_material)));
+	}
+	void MaterialManager::RemoveMaterialView(MasterMaterial* _material)
+	{
+		if (m_MaterialEditorWindow.find(_material->GetName()) == m_MaterialEditorWindow.end())
+			return;
+
+		delete m_MaterialEditorWindow[_material->GetName()];
+		m_MaterialEditorWindow.erase(_material->GetName());
+	}
 }

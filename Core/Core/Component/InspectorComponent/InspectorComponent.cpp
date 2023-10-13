@@ -102,6 +102,24 @@ namespace OE1Core
 						ImGui::PopStyleVar();
 
 						ImGui::EndDisabled();
+
+						ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.0f });
+						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.0f, 0.0f, 0.0f, 0.0f });
+
+						if (CustomFrame::UIEditorPushButton("Detail", ICON_FA_ELLIPSIS))
+						{
+							if (MaterialManager::GetMaterialView().size() < ORI_MATERIAL_WINDOW_ALLOCATION_THRESHOLD)
+							{
+								MaterialManager::RegisterMaterialView(package->MeshList[i].Material);
+							}
+							else
+							{
+								LOG_ERROR("Unable to open a new material window. Please close any existing material windows, as the allocation threshold has reached maximum capacity.");
+							}
+						}
+
+						ImGui::PopStyleColor(2);
+
 						ImGui::TreePop();
 					}
 					ImGui::Indent(-16.0f);
