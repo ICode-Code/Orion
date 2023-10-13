@@ -234,17 +234,44 @@ namespace OE1Core
 	bool MainViewport::HandleKeyRelease(OECore::KeyReleaseEvent& e)
 	{
 		if (e.GetKeyCode() == SDLK_LSHIFT)
+		{
 			m_IsLeftShitPressed = false;
+			return true;
+		}
 		
 		if (e.GetKeyCode() == SDLK_LCTRL)
+		{
 			m_IsLeftCtrPressed = false;
+
+			return true;
+		}
 
 		if (!m_MouseOverViewport)
 			return false;
 
 
 		if (e.GetKeyCode() == SDLK_DELETE)
+		{
 			SceneManager::PurgActiveEntity();
+			return true;
+		}
+
+		if (e.GetKeyCode() == SDLK_F2)
+		{
+			if (SceneManager::QueryActiveEntity()->ValidSelection())
+			{
+				Entity active = SceneManager::QueryActiveEntity()->GetActive();
+				
+				if (active.HasComponent<Component::TagComponent>())
+				{
+					RenameWin::Open(
+						active.GetComponent<Component::TagComponent>()
+					);
+				}
+			}
+
+			return true;
+		}
 
 		if (e.GetKeyCode() == SDLK_g)
 		{
@@ -289,6 +316,7 @@ namespace OE1Core
 				);
 			}
 			
+			return true;
 		}
 
 		return false;

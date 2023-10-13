@@ -19,6 +19,9 @@ namespace OE1Core
 			if (!_active_entity->ValidSelection())
 				return;
 		
+			if (!ValidEntityToOutline(_active_entity->GetActive().GetComponent<Component::TagComponent>().GetType()))
+				return;
+
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
 
@@ -42,6 +45,7 @@ namespace OE1Core
 
 		void IVOutlineRenderer::IssueProxyRender(Entity _entity)
 		{
+			Component::TagComponent& tag = _entity.GetComponent<Component::TagComponent>();
 
 			Component::MeshComponent& mesh = _entity.GetComponent<Component::MeshComponent>();
 			ModelPkg* model = AssetManager::GetGeometry(mesh.GetPackageID());
@@ -79,6 +83,15 @@ namespace OE1Core
 				glBindVertexArray(model->MeshList[i].VAO);
 				glDrawElements(GL_TRIANGLES, model->MeshList[i].IndiceCount, GL_UNSIGNED_INT, 0);
 			}
+		}
+
+		bool IVOutlineRenderer::ValidEntityToOutline(EntityType _type)
+		{
+			
+			return 
+			(_type != EntityType::T_WRAPPER)	&&
+			(_type != EntityType::T_EMPTY)		&&
+			(_type != EntityType::T_CAMERA);
 		}
 	}
 }

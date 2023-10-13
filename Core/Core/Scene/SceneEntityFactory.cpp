@@ -48,7 +48,7 @@ namespace OE1Core
 	{
 		Entity my_entity = m_Scene->CreateEntity();
 		AddDefaultComponent(my_entity, _model_pkg->Name);
-		my_entity.GetComponent<Component::TagComponent>().SetType(s_TypeRegistry[EntityType::T_STATIC_MESH]);
+		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_STATIC_MESH);
 		my_entity.GetComponent<Component::TransformComponent>().m_Position = _initial_pos;
 
 		// Create MeshComponent
@@ -79,6 +79,16 @@ namespace OE1Core
 	Entity SceneEntityFactory::CreateEmptyEntity(std::string _name)
 	{
 		return Entity();
+	}
+	Entity SceneEntityFactory::CreateFolderEntity(std::string _name)
+	{
+		Entity my_entity = m_Scene->CreateEntity();
+
+		AddDefaultComponent(my_entity, _name);
+		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_WRAPPER);
+		my_entity.GetComponent<Component::TransformComponent>().m_Position = glm::vec3(0.0f);
+
+		return my_entity;
 	}
 
 
@@ -243,7 +253,7 @@ namespace OE1Core
 		Component::TagComponent& src_tag = _src.GetComponent<Component::TagComponent>();
 		Component::TagComponent& dest_tag = _dest.GetComponent<Component::TagComponent>();
 
-		dest_tag.SetType(src_tag.m_Type);
+		dest_tag.SetType(src_tag.GetType());
 	}
 	void SceneEntityFactory::CloneProjectileComponent(Entity _src, Entity _dest)
 	{

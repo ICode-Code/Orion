@@ -19,7 +19,14 @@ namespace OE1Core
 
 	protected:
 		ImGuiTreeNodeFlags m_NodeFlags;
+		float m_EntityMiniPopupMenuButtonWidth = 200.0f;
+		std::string m_PopUpID = "";
+		uint64_t m_OpenedPopupEntityID = 0;
+		bool m_OpenEntityMiniPopupMenuPopup = false;
 		void DrawEntityNode(Entity& _entity, ActiveEntity* _active_entity);
+
+	private:
+		void EntityMiniPopupMenu();
 	};
 }
 

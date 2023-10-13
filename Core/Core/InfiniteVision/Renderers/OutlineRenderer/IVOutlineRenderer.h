@@ -3,6 +3,7 @@
 
 
 #include "../IVBaseRenderer.h"
+#include "EntityType.h"
 
 namespace OE1Core
 {
@@ -22,6 +23,9 @@ namespace OE1Core
 		protected:
 			void IssueProxyRender(Entity _entity);
 			void IssueSolidOutLineRender(Entity _entity);
+
+		protected: // Util
+			bool ValidEntityToOutline(EntityType _type);
 		};
 	}
 }

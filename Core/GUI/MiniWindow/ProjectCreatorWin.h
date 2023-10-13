@@ -32,7 +32,6 @@ namespace OE1Core
 		inline static ImVec2 s_LocalWinSize = { 1000.0f, 500.0f };
 
 	protected:
-		void ShowError();
 		bool ProjectImageButton(ProjectType _type, ImTextureID& _image, const ImVec2& _size = { 300, 200 });
 	};
 }

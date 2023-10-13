@@ -127,6 +127,17 @@ namespace OE1Core
 			{
 				SceneManager::PurgActiveEntity();
 			}
+			if (ImGui::MenuItem(ICON_FA_I_CURSOR"	Rename"))
+			{
+				Entity active = SceneManager::QueryActiveEntity()->GetActive();
+
+				if (active.HasComponent<Component::TagComponent>())
+				{
+					RenameWin::Open(
+						active.GetComponent<Component::TagComponent>()
+					);
+				}
+			}
 
 
 			ImGui::EndDisabled();

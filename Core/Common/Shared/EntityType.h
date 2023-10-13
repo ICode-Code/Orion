@@ -30,7 +30,8 @@ namespace OE1Core
 		T_DOOR					= 0x12,
 		T_AUDIO_SOURCE			= 0x13,
 		T_AUDIO_LISTENER		= 0x14,
-		T_UNIDENTIFIED			= 0x15
+		T_UNIDENTIFIED			= 0x15,
+		T_WRAPPER				= 0x16
 	};
 	static std::unordered_map < EntityType, std::pair < std::string, std::string >> s_TypeRegistry
 	{
@@ -54,7 +55,8 @@ namespace OE1Core
 		{ EntityType::T_DOOR,				std::make_pair<std::string, std::string>("Door",				ICON_FA_DOOR_CLOSED) },
 		{ EntityType::T_AUDIO_SOURCE,		std::make_pair<std::string, std::string>("AudioSource",			ICON_FA_VOLUME_HIGH) },
 		{ EntityType::T_AUDIO_LISTENER,		std::make_pair<std::string, std::string>("AudioListener",		ICON_FA_HEADPHONES) },
-		{ EntityType::T_UNIDENTIFIED,		std::make_pair<std::string, std::string>("Unidentified",		ICON_FA_QUESTION) }
+		{ EntityType::T_UNIDENTIFIED,		std::make_pair<std::string, std::string>("Unidentified",		ICON_FA_QUESTION) },
+		{ EntityType::T_WRAPPER,			std::make_pair<std::string, std::string>("Wrapper",				ICON_FA_FOLDER_OPEN) },
 	};
 }
 

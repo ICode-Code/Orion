@@ -24,6 +24,7 @@ namespace OE1Core
 		s_MiniWins.push_back(new PreferenceWin());
 		s_MiniWins.push_back(new Asset3DLoaderWin());
 		s_MiniWins.push_back(new ProjectCreatorWin());
+		s_MiniWins.push_back(new RenameWin());
 
 
 		/// Viewport

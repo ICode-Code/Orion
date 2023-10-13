@@ -52,6 +52,7 @@ namespace OE1Core
 			}
 
 			ImGui::PopStyleVar();
+
 			ImGui::EndPopup();
 		}
 

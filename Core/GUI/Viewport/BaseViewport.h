@@ -21,7 +21,7 @@ namespace OE1Core
 	class BaseViewport
 	{
 	public:
-		virtual ~BaseViewport() = default;
+		virtual ~BaseViewport() {};
 
 		virtual void Update() = 0;
 		virtual void Render() = 0;

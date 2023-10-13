@@ -5,9 +5,10 @@ namespace OE1Core
 {
 	namespace Component
 	{
-		TagComponent::TagComponent(std::string _tag, std::pair<std::string, std::string> _type)
+		TagComponent::TagComponent(std::string _tag, EntityType _type_id)
 		{
-			m_Type = _type;
+			m_Type = s_TypeRegistry[_type_id];
+			m_EnumType = _type_id;
 			m_Identifier = _tag;
 			m_RootFullName = m_Identifier;
 			if (!m_Type.first.empty() && !m_Type.second.empty())
@@ -16,13 +17,16 @@ namespace OE1Core
 		TagComponent::~TagComponent()
 		{
 		}
-		void TagComponent::SetType(std::pair<std::string, std::string> _type) 
+		void TagComponent::SetType(EntityType _type_id)
 		{ 
-			m_Type = _type; 
+			m_Type = s_TypeRegistry[_type_id];
+			m_EnumType = _type_id;
 			RefreshRootName();
 		};
 		std::string TagComponent::GetTypeName() { return std::get<0>(m_Type); }
 		std::string TagComponent::GetTypeIcon() { return std::get<1>(m_Type); };
+		EntityType TagComponent::GetType() const { return m_EnumType; };
+
 		void TagComponent::RefreshRootName()
 		{
 			std::string temp = GetTypeIcon() + "\t" + m_Identifier;

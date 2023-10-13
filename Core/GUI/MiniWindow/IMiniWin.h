@@ -5,5 +5,6 @@
 #include "PreferenceWin.h"
 #include "3DAssetLoaderWin.h"
 #include "ProjectCreatorWin.h"
+#include "RenameWin.h"
 
 #endif // !OE1_I_MINI_WIN_H_

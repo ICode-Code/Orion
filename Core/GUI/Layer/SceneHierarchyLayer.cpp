@@ -26,7 +26,10 @@ namespace OE1Core
 		ImGui::PushStyleColor(ImGuiCol_Header, { 0.0f, 0.439f, 0.878f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.0f, 0.439f, 0.878f, 1.0f });
 
-
+		/*if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
+		{
+			SceneEntityFactory::CreateFolderEntity("folder");
+		}*/
 
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -99,6 +102,20 @@ namespace OE1Core
 		{
 			SceneManager::GetActiveScene()->GetActiveEntity()->Pick(_entity);
 		}
+		if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
+		{
+			SceneManager::GetActiveScene()->GetActiveEntity()->Pick(_entity);
+			//ImGui::BeginPopupContextItem();
+
+			m_PopUpID = std::to_string(_entity.GetUUID());
+			ImGui::OpenPopup(m_PopUpID.c_str());
+			m_OpenedPopupEntityID = _entity.GetUUID();
+			m_OpenEntityMiniPopupMenuPopup = true;
+
+		}
+
+		if(m_OpenedPopupEntityID == _entity.GetUUID())
+			EntityMiniPopupMenu();
 
 		if (is_node_open)
 		{
@@ -112,6 +129,68 @@ namespace OE1Core
 
 			ImGui::TreePop();
 		}
+	}
+
+
+	void SceneHierarchyLayer::EntityMiniPopupMenu()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 10, 6 });
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 20, 3 });
+		ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.05f, 0.5f });
+
+		if (ImGui::BeginPopupContextItem(m_PopUpID.c_str()))
+		{
+
+			if (ImGui::Button("New Folder", { m_EntityMiniPopupMenuButtonWidth, 0.0f }))
+			{
+				SceneEntityFactory::CreateFolderEntity("New Folder");
+
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::Button("Add Empty", { m_EntityMiniPopupMenuButtonWidth, 0.0f }))
+			{
+				SceneEntityFactory::CreateEmptyEntity("Empty");
+
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::Button("Rename", { m_EntityMiniPopupMenuButtonWidth, 0.0f }))
+			{
+				Entity active = SceneManager::QueryActiveEntity()->GetActive();
+
+				if (active.HasComponent<Component::TagComponent>())
+					RenameWin::Open(active.GetComponent<Component::TagComponent>());
+				
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::Button("Copy", { m_EntityMiniPopupMenuButtonWidth, 0.0f }))
+			{
+
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::Button("Purge", { m_EntityMiniPopupMenuButtonWidth, 0.0f }))
+			{
+
+
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (SceneManager::QueryActiveEntity()->GetActive().HasComponent<Component::MeshComponent>())
+			{
+				if (ImGui::Button("Open with MeshEditor", { m_EntityMiniPopupMenuButtonWidth, 0.0f }))
+				{
+					
+
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
+
+			ImGui::EndPopup();
+		}
+
+
+		ImGui::PopStyleVar(4);
 	}
 
 }

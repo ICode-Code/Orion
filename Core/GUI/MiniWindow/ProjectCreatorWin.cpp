@@ -82,7 +82,7 @@ namespace OE1Core
 		
 		if (s_EmptyTextError)
 		{
-			ShowError();
+			ShowEmptyInputError();
 			ImGui::SameLine();
 		}
 
@@ -110,12 +110,6 @@ namespace OE1Core
 
 		ImGui::End();
 		ImGui::PopStyleVar();
-		ImGui::PopStyleColor();
-	}
-	void ProjectCreatorWin::ShowError()
-	{
-		ImGui::PushStyleColor(ImGuiCol_Text, { 1.0f, 0.5f, 0.5f, 1.0f });
-		ImGui::Text(ICON_FA_TRIANGLE_EXCLAMATION);
 		ImGui::PopStyleColor();
 	}
 	bool ProjectCreatorWin::ProjectImageButton(ProjectType _type, ImTextureID& _image, const ImVec2& _size)

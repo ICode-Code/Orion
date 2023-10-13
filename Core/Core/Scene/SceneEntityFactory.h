@@ -13,6 +13,9 @@ namespace OE1Core
 		SceneEntityFactory(Scene* _scene = nullptr);
 		~SceneEntityFactory();
 
+		// IF same anem detected it will add (index)
+		static std::string CheckNameCollision(std::string _name);
+
 		static void RegisterActiveScene(Scene* _scene);
 		static Scene* GetScene();
 
@@ -21,6 +24,7 @@ namespace OE1Core
 		static Entity CreateDefaultCubeEntity();
 		static Entity CreateDefaultPlaneEntity();
 		static Entity CreateEmptyEntity(std::string _name);
+		static Entity CreateFolderEntity(std::string _name);
 
 
 		// Component
@@ -49,8 +53,6 @@ namespace OE1Core
 
 
 	protected: // Util
-		// IF same anem detected it will add (index)
-		static std::string CheckNameCollision(std::string _name);
 		static bool NameExist(std::string _name);
 
 	protected: // Clone Util
