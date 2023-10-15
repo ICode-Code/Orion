@@ -20,6 +20,7 @@ namespace OE1Core
 		AddShaderFromDefaultPath("OES_ModelPreview.shader", ShaderID::MODEL_PREVIEW);
 		AddShaderFromDefaultPath("OES_Grid.shader", ShaderID::INIF_GRID);
 		AddShaderFromDefaultPath("OES_ObjectOutline.shader", ShaderID::OBJECT_OUTLINE);
+		AddShaderFromDefaultPath("OES_2DTextureArrayExtract.shader", ShaderID::TEXTURE_2D_ARRAY_EXTRACTOR);
 	}
 	void ShaderManager::AddShader(std::string _path, ShaderID _id, std::string _name)
 	{

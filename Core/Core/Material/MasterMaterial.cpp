@@ -27,7 +27,7 @@ namespace OE1Core
 	{
 		m_Shader = _shader;
 		m_Shader->RegisterTextureUnit("t_ColorMapTexture", 0);
-		m_Shader->RegisterTextureUnit("t_NonColorMapTexture", 1);
+		m_Shader->RegisterTextureUnit("t_NoneColorMapTexture", 1);
 		m_Shader->AttachTextureUnit();
 
 	}
@@ -87,7 +87,8 @@ namespace OE1Core
 	void MasterMaterial::SetAlphaMaskIndex(int _idx) {		m_TAI.AlphaMask			= _idx; }
 	void MasterMaterial::Update()
 	{
-		Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::MATERIAL_REGISTRY)->Update(Memory::s_MaterialPropertiesBufferSize, m_Offset, &m_Parameter);
+		Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::MATERIAL_REGISTRY)->Update(Memory::s_MaterialPropertiesBufferSize, m_Offset * Memory::s_MaterialPropertiesBufferSize, &m_Parameter);
+		Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::TAI_REGISTRY)->Update(Memory::s_TextureAccessIndexBufferSize, m_Offset * Memory::s_TextureAccessIndexBufferSize, &m_TAI);
 	}
 	void MasterMaterial::Attach()
 	{

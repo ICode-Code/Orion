@@ -102,16 +102,16 @@ namespace OE1Core
 		struct TextureAccessIndex
 		{
 			/// Color Texture
-			int Color;
-			int Emission;
+			int Color				= -1;
+			int Emission			= -1;
 
 			/// Non-Color Texture
-			int Normal;
-			int Roughness;
-			int Metal;
-			int RoughnessMetal;
-			int AmbientOcclusion;
-			int AlphaMask;
+			int Normal				= -1;
+			int Roughness			= -1;
+			int Metal				= -1;
+			int RoughnessMetal		= -1;
+			int AmbientOcclusion	= -1;
+			int AlphaMask			= -1;
 		};
 		inline static constexpr size_t s_TextureAccessIndexBufferSize = sizeof(TextureAccessIndex);
 

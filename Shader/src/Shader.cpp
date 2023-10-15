@@ -428,7 +428,9 @@ namespace OE1Core
 	void Shader::RegisterTextureUnit(std::string _texture_unit_id, int _slot)
 	{
 		if (m_Arg.ShaderTextureUnits.find(_texture_unit_id) != m_Arg.ShaderTextureUnits.end())
-			LOG_WARRNING("Texture Unit updated!");
+		{
+			LOG_WARRNING("Texture Unit updated FROM [{0} = {1}]  TO  [{2} = {3}]", _texture_unit_id, m_Arg.ShaderTextureUnits[_texture_unit_id], _texture_unit_id, _slot);
+		}
 		m_Arg.ShaderTextureUnits[_texture_unit_id] = _slot;
 	}
 	void Shader::PurgTextureUnit(std::string _texture_unit_id)

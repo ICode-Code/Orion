@@ -1,4 +1,5 @@
 #include "ExecutionHandler.h"
+#include "../Core/InfiniteVision/Renderers/2DTextureArrayExtractQuadRenderer/IV2DTextureArrayExtractQuadRenderer.h"
 
 namespace OE1Core
 {
@@ -16,8 +17,58 @@ namespace OE1Core
 		ProcessAsset();
 
 		ProcessSelectionCommand();
+		ProcessMaterialTextureExtractionCommand();
 	}
+	void ExecutionHandler::ProcessMaterialTextureExtractionCommand()
+	{
+		while (!Command::s_MaterialTextureExtractionCommands.empty())
+		{
+			auto& command = Command::s_MaterialTextureExtractionCommands.front();
 
+			MasterMaterial* master_material = command.Material;
+			MaterialViewWin* material_view = command.MaterialView;
+
+			// Init Renderer 
+			Renderer::IV2DTextureArrayExtractQuadRenderer* renderer = new Renderer::IV2DTextureArrayExtractQuadRenderer();
+
+			GLint viewport[4];
+			glGetIntegerv(GL_VIEWPORT, viewport);
+
+			// Init Internal Framebuffer
+			material_view->m_Framebuffer = new Renderer::IV2DTextureArrayExtractorFramebuffer(Renderer::IVFrameSize::R_640_480, FilterMaterialTexture(master_material));
+			Renderer::CheckMatPreviewTexture has_texture = material_view->m_Framebuffer->GetCheckMaterialTextureX();
+			
+			material_view->m_Framebuffer->Attach();
+			
+			glViewport(0, 0, material_view->m_Framebuffer->GetWidth(), material_view->m_Framebuffer->GetHeight());
+			
+			renderer->GetShader()->Attach();
+			
+			renderer->GetShader()->set1i("t_ColorMapTexture", 0);;
+			renderer->GetShader()->set1i("t_NoneColorMapTexture", 1);;
+
+			renderer->GetShader()->set1i("HasColor",			has_texture.HasColor);
+			renderer->GetShader()->set1i("HasNormal",			has_texture.HasNormal);
+			renderer->GetShader()->set1i("HasMetal",			has_texture.HasMetal);
+			renderer->GetShader()->set1i("HasRoughness",		has_texture.HasRoughness);
+			renderer->GetShader()->set1i("HasMetalRougness",	has_texture.HasMetalRougness);
+			renderer->GetShader()->set1i("HasEmission",			has_texture.HasEmission);
+			renderer->GetShader()->set1i("HasAlpha",			has_texture.HasAlpha);
+			renderer->GetShader()->set1i("HasAO",				has_texture.HasAO);
+			renderer->GetShader()->set1i("material_index",		master_material->GetOffset());
+
+			master_material->Attach();
+
+			renderer->RenderX();
+
+			material_view->m_Framebuffer->Detach();
+
+
+			delete renderer;
+			Command::s_MaterialTextureExtractionCommands.pop();
+			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+		}
+	}
 	void ExecutionHandler::ProcessAssetLoadCommand()
 	{
 		while (!Command::s_Load3DAssetCommands.empty() && !s_3DAssetLoaderThread.IsRunning)
@@ -94,5 +145,38 @@ namespace OE1Core
 			
 			Command::s_EntitySelectionCommands.pop();
 		}
+	}
+	Renderer::CheckMatPreviewTexture ExecutionHandler::FilterMaterialTexture(MasterMaterial* _material)
+	{
+		Renderer::CheckMatPreviewTexture data;
+
+		Memory::TextureAccessIndex texture_idx = _material->GetTAI();
+
+		if (texture_idx.Color != -1)
+			data.HasColor = true;
+
+		if (texture_idx.Emission != -1)
+			data.HasEmission = true;
+
+		if (texture_idx.Normal != -1)
+			data.HasNormal = true;
+
+		if (texture_idx.Roughness != -1)
+			data.HasRoughness = true;
+
+		if (texture_idx.Metal != -1)
+			data.HasMetal = true;
+
+		if (texture_idx.RoughnessMetal != -1)
+			data.HasMetalRougness = true;
+
+		if (texture_idx.AmbientOcclusion != -1)
+			data.HasAO = true;
+
+		if (texture_idx.AlphaMask != -1)
+			data.HasAlpha = true;
+
+		return data;
+
 	}
 }

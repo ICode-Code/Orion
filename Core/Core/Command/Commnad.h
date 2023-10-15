@@ -18,10 +18,11 @@ namespace OE1Core
 	public:
 		static void PushAssetLoadCommand(Loader::LoadArgs _args);	
 		static void PushEntitySelectionCommand(CommandDef::EntitySelectionCommandDef _command);
-
+		static void PushMaterialTextureExtractionCommand(CommandDef::MaterialTextureExtractionDef _command);
 	private:
 		inline static std::queue<Loader::LoadArgs> s_Load3DAssetCommands;
 		inline static std::queue<CommandDef::EntitySelectionCommandDef> s_EntitySelectionCommands;
+		inline static std::queue<CommandDef::MaterialTextureExtractionDef> s_MaterialTextureExtractionCommands;
 	};
 }
 

@@ -22,13 +22,11 @@ namespace OE1Core
 		if (s_MaterialRegistry.find(_name) != s_MaterialRegistry.end())
 			_name = HandleNameDuplication(_name);
 
-		Memory::UniformBlockManager::LinkShader(_shader);
 		s_MaterialIDTranslator.insert(std::make_pair((uint32_t)s_MaterialRegistry.size(), _name));
 		s_MaterialRegistry.insert(std::make_pair(_name, new MasterMaterial(_shader, _name, (int)s_MaterialRegistry.size())));
 
 		MasterMaterial* master_material = s_MaterialRegistry[_name];
-		Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::MATERIAL_REGISTRY)->Update(Memory::s_MaterialPropertiesBufferSize, master_material->GetOffset(), &master_material->m_Parameter);
-		Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::TAI_REGISTRY)->Update(Memory::s_TextureAccessIndexBufferSize, master_material->GetOffset(), &master_material->m_TAI);
+		Memory::UniformBlockManager::LinkShader(_shader);
 		return s_MaterialRegistry[_name];
 	}
 	MasterMaterial* MaterialManager::GetMaterial(std::string _name)
@@ -52,6 +50,16 @@ namespace OE1Core
 			return;
 
 		m_MaterialEditorWindow.insert(std::make_pair(_material->GetName(), new MaterialViewWin(_material)));
+		
+		// Create Command
+		CommandDef::MaterialTextureExtractionDef command;
+
+		// Load Command
+		command.Material = _material;
+		command.MaterialView = m_MaterialEditorWindow[_material->GetName()];
+
+		// Queue Command
+		Command::PushMaterialTextureExtractionCommand(command);
 	}
 	void MaterialManager::RemoveMaterialView(MasterMaterial* _material)
 	{

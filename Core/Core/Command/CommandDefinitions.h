@@ -5,6 +5,9 @@
 
 namespace OE1Core
 {
+	class MaterialViewWin;
+	class MasterMaterial;
+
 	namespace CommandDef 
 	{
 		struct EntitySelectionCommandDef
@@ -13,6 +16,12 @@ namespace OE1Core
 			int posY;
 			bool Batch = false;
 			GLuint FrameID;
+		};
+
+		struct MaterialTextureExtractionDef
+		{
+			MaterialViewWin*	MaterialView = nullptr;
+			MasterMaterial*	Material = nullptr;
 		};
 	}
 }

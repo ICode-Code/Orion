@@ -16,9 +16,13 @@ namespace OE1Core
 
 		void IVModelPreviewRenderer::Render(ModelPkg& _model_package)
 		{
+			GLint viewport[4];
+			glGetIntegerv(GL_VIEWPORT, viewport);
+
 			IVModelPreviewFramebuffer _frame(_model_package.SnapShot);
 			_frame.SetClearColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 			_frame.Attach();
+			glViewport(0, 0, _frame.GetWidth(), _frame.GetHeight());
 			s_LocalShader->Attach();
 
 			s_CameraPackage->GetCamera()->SetResolution(glm::vec2(1280, 1024));
@@ -51,6 +55,8 @@ namespace OE1Core
 
 			s_LocalShader->Detach();
 			_frame.Detach();
+
+			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 		}
 	}
 }

@@ -13,4 +13,8 @@ namespace OE1Core
 	{
 		s_EntitySelectionCommands.push(_command);
 	}
+	void Command::PushMaterialTextureExtractionCommand(CommandDef::MaterialTextureExtractionDef _command)
+	{
+		s_MaterialTextureExtractionCommands.push(_command);
+	}
 }

@@ -148,8 +148,11 @@ namespace OE1Core
 		master_material->SetType(material_type);
 
 		// if the material type is default which means there is no texture we can return here
-		if(material_type == MaterialType::DEFAULT)
+		if (material_type == MaterialType::DEFAULT)
+		{
+			master_material->Update();
 			return master_material->GetOffset();
+		}
 
 		// other wise we can start processing textures
 
@@ -261,8 +264,7 @@ namespace OE1Core
 				taidx.AmbientOcclusion = non_color_texture_index++;
 			}
 		}
-
-
+		master_material->Update();
 		return master_material->GetOffset();
 	}
 	void AssetParser::ReadTextureData(const DataBlock::Image2D& _image, int _layer, std::string _mat_name)

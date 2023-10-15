@@ -265,7 +265,7 @@ Reflectivity = Materials[MaterialIndex].BaseReflectivityPadding.r;
 	void ShaderGenerator::FR_ReadAlbedoRaw()
 	{
 		s_Source += R"(
-Color = VertColor;
+Color = Materials[MaterialIndex].Color.rgb;
 
 )";
 	}
@@ -273,7 +273,7 @@ Color = VertColor;
 	{
 		s_Source += R"(
 
-vec4 albedo_all = texture(t_ColorMapTexture, vec3(TexCoord, TextureIndex[MaterialIndex].Color));
+vec4 albedo_all = texture(t_ColorMapTexture, vec3(TexCoord,   TextureIndex[MaterialIndex].Color));
 Color = albedo_all.rgb;
 Alpha = albedo_all.a;
 

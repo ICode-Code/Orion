@@ -110,7 +110,7 @@ namespace OE1Core
 						{
 							if (MaterialManager::GetMaterialView().size() < ORI_MATERIAL_WINDOW_ALLOCATION_THRESHOLD)
 							{
-								MaterialManager::RegisterMaterialView(package->MeshList[i].Material);
+								MaterialManager::RegisterMaterialView(MaterialManager::GetMaterial(package->MeshList[i].MaterialID));
 							}
 							else
 							{

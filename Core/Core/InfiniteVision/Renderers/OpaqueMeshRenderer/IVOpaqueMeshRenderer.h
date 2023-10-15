@@ -14,9 +14,6 @@ namespace OE1Core
 			~IVOpaqueMeshRenderer();
 
 			void Render(IVRenderStack::IVDrawData& _list);
-
-		protected:
-
 		};
 	}
 }
