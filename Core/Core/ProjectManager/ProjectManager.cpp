@@ -105,7 +105,7 @@ namespace OE1Core
 
 		if (project_config.is_open())
 		{
-			LOG_INFO("Project Confiuration loaded succesfully!");
+			LOG_INFO("Project configuration loaded succesfully!");
 			project_config.close();
 		}
 		else
@@ -113,13 +113,13 @@ namespace OE1Core
 			std::ofstream meta_out(ORI_ENGEIN_METAL_FILE);
 			if (meta_out.is_open())
 			{
-				LOG_INFO("Project Confiuration created succesfully!");
+				LOG_INFO("Project configuration created succesfully!");
 				Serilize(meta_out);
 				meta_out.close();
 			}
 			else
 			{
-				LOG_ERROR("Failed to create Confiuration file!");
+				LOG_ERROR("Failed to create configuration file!");
 			}
 		}
 	}
@@ -145,7 +145,7 @@ namespace OE1Core
 		}
 		else
 		{
-			LOG_ERROR("Failed to read project config file");
+			LOG_ERROR("Failed to read project configuration file");
 		}
 
 		project_config.close();

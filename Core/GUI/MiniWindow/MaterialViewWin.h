@@ -24,6 +24,8 @@ namespace OE1Core
 		std::string m_WinName = "";
 		bool m_Open = false;
 		Renderer::IV2DTextureArrayExtractorFramebuffer* m_Framebuffer = nullptr;
+		ImVec2 m_TextureSize;
+		ImVec2 m_TextureSizeZoom;
 
 
 
@@ -32,6 +34,7 @@ namespace OE1Core
 		void PushTextureViewStyle();
 		void PopTextureViewStyle();
 		void PrintTextureName(const char* _name);
+		void PaintTexture(GLuint& _texture, const char* _name);
 		
 	};
 }

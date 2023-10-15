@@ -56,29 +56,29 @@ namespace OE1Core
 			glViewport(0, 0, m_Width, m_Height);
 
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Color));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			
 
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Normal));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Metal));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Roughness));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.MetalRougness));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Emission));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Alpha));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.AO));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
@@ -96,42 +96,42 @@ namespace OE1Core
 
 			glGenTextures(1, &std::get<0>(m_Textures.Color));
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Color));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			DefaultTextureFilter();
 
 			glGenTextures(1, &std::get<0>(m_Textures.Normal));
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Normal));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			DefaultTextureFilter();
 
 			glGenTextures(1, &std::get<0>(m_Textures.Metal));
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Metal));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			DefaultTextureFilter();
 
 			glGenTextures(1, &std::get<0>(m_Textures.Roughness));
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Roughness));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			DefaultTextureFilter();
 
 			glGenTextures(1, &std::get<0>(m_Textures.MetalRougness));
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.MetalRougness));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			DefaultTextureFilter();
 
 			glGenTextures(1, &std::get<0>(m_Textures.Emission));
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Emission));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			DefaultTextureFilter();
 
 			glGenTextures(1, &std::get<0>(m_Textures.Alpha));
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.Alpha));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			DefaultTextureFilter();
 
 			glGenTextures(1, &std::get<0>(m_Textures.AO));
 			glBindTexture(GL_TEXTURE_2D, std::get<0>(m_Textures.AO));
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 			DefaultTextureFilter();
 
 			// Depth

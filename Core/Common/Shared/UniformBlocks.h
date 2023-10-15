@@ -94,7 +94,7 @@ namespace OE1Core
 			glm::vec4 EmissionColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			glm::vec4 AmbientOcclusion = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			glm::vec4 MetalRoughEmissionAlpha = glm::vec4(0.0f, 0.5f, 0.0f, 1.0f); // m_Metal, m_Roughness, m_EmissionStength, m_Alpha
-			glm::vec4 BaseReflectivityPadding = glm::vec4(0.02f, 0.0f, 0.0f, 0.0f); // m_BaseReflectivity, padding, padding, padding
+			glm::vec4 BaseReflectivity_RF_MF = glm::vec4(0.02f, 1.0f, 1.0f, 1.0f); // m_BaseReflectivity, Roughness Factor, Metalic Factor, padding
 		};
 		inline static constexpr size_t s_MaterialPropertiesBufferSize = sizeof(MaterialProperties);
 

@@ -5,6 +5,8 @@ namespace OE1Core
 {
 	MaterialViewWin::MaterialViewWin(MasterMaterial* _material)
 	{
+		m_TextureSize = { 100, 100 };
+		m_TextureSizeZoom = { 300, 250 };
 		m_Material = _material;
 		m_WinName = ICON_FA_CIRCLE_HALF_STROKE"\tMaterial: ";
 		m_WinName.append(m_Material->GetName());
@@ -28,65 +30,56 @@ namespace OE1Core
 		// If framebuffer is ready
 		if (m_Framebuffer)
 		{
-			ImVec2 text_size = { 100, 100 };
 			tex = m_Framebuffer->GetCheckMaterialTextureX();
 
 			ImGui::Columns(4, "innerList", false);
 			PushTextureViewStyle();
 			if (tex.HasColor)
 			{
-				ImGui::ImageButton((ImTextureID)(uintptr_t)m_Framebuffer->GetTextureAttachment().Color.first, text_size);
-				PrintTextureName("Albedo");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Color.first, "Color");
 				ImGui::NextColumn();
 			}
 			
 			if (tex.HasNormal)
 			{
-				ImGui::ImageButton((ImTextureID)(uintptr_t)m_Framebuffer->GetTextureAttachment().Normal.first, text_size);
-				PrintTextureName("Normal");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Normal.first, "Normal");
 				ImGui::NextColumn();
 			}
 
 
 			if (tex.HasMetal)
 			{
-				ImGui::ImageButton((ImTextureID)(uintptr_t)m_Framebuffer->GetTextureAttachment().Metal.first, text_size);
-				PrintTextureName("Metal");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Metal.first, "Metal");
 				ImGui::NextColumn();
 			}
 
 			if (tex.HasRoughness)
 			{
-				ImGui::ImageButton((ImTextureID)(uintptr_t)m_Framebuffer->GetTextureAttachment().Roughness.first, text_size);
-				PrintTextureName("Roughness");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Roughness.first, "Roughness");
 				ImGui::NextColumn();
 			}
 
 			if (tex.HasMetalRougness)
 			{
-				ImGui::ImageButton((ImTextureID)(uintptr_t)m_Framebuffer->GetTextureAttachment().MetalRougness.first, text_size);
-				PrintTextureName("Roughness Metal");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().MetalRougness.first, "Roughness & Metal");
 				ImGui::NextColumn();
 			}
 
 			if (tex.HasAO)
 			{
-				ImGui::ImageButton((ImTextureID)(uintptr_t)m_Framebuffer->GetTextureAttachment().AO.first, text_size);
-				PrintTextureName("AO");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().AO.first, "AO");
 				ImGui::NextColumn();
 			}
 
 			if (tex.HasEmission)
 			{
-				ImGui::ImageButton((ImTextureID)(uintptr_t)m_Framebuffer->GetTextureAttachment().Emission.first, text_size);
-				PrintTextureName("Emission");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Emission.first, "Emission");
 				ImGui::NextColumn();
 			}
 
 			if (tex.HasAlpha)
 			{
-				ImGui::ImageButton((ImTextureID)(uintptr_t)m_Framebuffer->GetTextureAttachment().Alpha.first, text_size);
-				PrintTextureName("Alpha");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Alpha.first, "Alpha");
 				ImGui::NextColumn();
 			}
 
@@ -96,8 +89,88 @@ namespace OE1Core
 
 			ImGui::Columns(1);
 
-			static glm::vec3 color = glm::vec3(1.0f);
-			static float val = 0.5f;
+			ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
+			ImGui::PushStyleColor(ImGuiCol_Button, OE1Core::Gui::s_ThemeColor);
+			if (ImGui::Button(ICON_FA_FILE_IMAGE"\tNew Texture", {100, 0}))
+				ImGui::OpenPopup("texture_list_popup");
+			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
+			
+			if (ImGui::BeginPopup("texture_list_popup"))
+			{
+				ImVec2 button_size = { 150, 0 };
+
+				ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, {0.0f, 0.5f});
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {1.0f, 1.0f});
+
+				std::string albedo_bt_name = "Albedo";
+				tex.HasColor ? albedo_bt_name.append(" [overwrite]") : "";
+
+				if (ImGui::Button(albedo_bt_name.c_str(), button_size))
+				{
+
+				}
+
+				std::string normal_bt_name = "Normal";
+				tex.HasNormal ? normal_bt_name.append(" [overwrite]") : "";
+
+				if (ImGui::Button(normal_bt_name.c_str(), button_size))
+				{
+
+				}
+
+				std::string metal_bt_name = "Metal";
+				tex.HasMetal ? metal_bt_name.append(" [overwrite]") : "";
+
+				if (ImGui::Button(metal_bt_name.c_str(), button_size))
+				{
+
+				}
+
+				std::string Roughness_bt_name = "Roughness";
+				tex.HasRoughness ? Roughness_bt_name.append(" [overwrite]") : "";
+
+				if (ImGui::Button(Roughness_bt_name.c_str(), button_size))
+				{
+
+				}
+
+				std::string Roughness_metal_bt_name = "Roughness-Metal";
+				tex.HasMetalRougness ? Roughness_metal_bt_name.append(" [overwrite]") : "";
+
+				if (ImGui::Button(Roughness_metal_bt_name.c_str(), button_size))
+				{
+
+				}
+
+				std::string ambient_occlu_bt_name = "Ambient Occlusion";
+				tex.HasAO ? ambient_occlu_bt_name.append(" [overwrite]") : "";
+
+				if (ImGui::Button(ambient_occlu_bt_name.c_str(), button_size))
+				{
+
+				}
+
+				std::string emission_bt_name = "Emission";
+				tex.HasEmission ? emission_bt_name.append(" [overwrite]") : "";
+
+				if (ImGui::Button(emission_bt_name.c_str(), button_size))
+				{
+
+				}
+
+				std::string alpha_bt_name = "Alpha Mask";
+				tex.HasAlpha ? alpha_bt_name.append(" [overwrite]") : "";
+
+				if (ImGui::Button(alpha_bt_name.c_str(), button_size))
+				{
+
+				}
+
+				ImGui::PopStyleVar(2);
+
+				ImGui::EndPopup();
+			}
 		}
 
 	
@@ -107,6 +180,7 @@ namespace OE1Core
 			ImGui::BeginChild("childL", { ImGui::GetContentRegionAvail().x * 0.5f, 0 }, true);
 
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1.0f, 3.0f });
+			ImGui::PushStyleColor(ImGuiCol_SliderGrab, OE1Core::Gui::s_ThemeColor);
 
 			if (!tex.HasColor)
 				CustomFrame::UIEditorColor4("Color", glm::value_ptr(m_Material->GetParameter().Color));
@@ -114,20 +188,34 @@ namespace OE1Core
 			if (!tex.HasMetalRougness)
 			{
 				if (!tex.HasRoughness)
-					CustomFrame::UIEditorFloatDrag("Roughness", &m_Material->GetParameter().MetalRoughEmissionAlpha.g, 0.001f, 0.0f, 1.0f);
+					CustomFrame::UIEditorFloat("Roughness", &m_Material->GetParameter().MetalRoughEmissionAlpha.g, 0.0f, 1.0f);
 				if (!tex.HasMetal)
-					CustomFrame::UIEditorFloatDrag("Metal", &m_Material->GetParameter().MetalRoughEmissionAlpha.r, 0.001f, 0.0f, 1.0f);
+					CustomFrame::UIEditorFloat("Metal", &m_Material->GetParameter().MetalRoughEmissionAlpha.r, 0.0f, 1.0f);
 			}
 			
-			CustomFrame::UIEditorFloatDrag("Emission Strength", &m_Material->GetParameter().MetalRoughEmissionAlpha.b, 0.001f, 0.0f, 128.0f);
+			CustomFrame::UIEditorFloat("Emission Strength", &m_Material->GetParameter().MetalRoughEmissionAlpha.b, 0.0f, 128.0f);
 			
 			CustomFrame::UIEditorColor4("Emission Color", glm::value_ptr(m_Material->GetParameter().EmissionColor));
 			
 			if (!tex.HasAlpha)
-				CustomFrame::UIEditorFloatDrag("Alpha", &m_Material->GetParameter().MetalRoughEmissionAlpha.a, 0.01f, 0.0f, 1.0f);
+				CustomFrame::UIEditorFloat("Alpha", &m_Material->GetParameter().MetalRoughEmissionAlpha.a, 0.0f, 1.0f);
 			
-			CustomFrame::UIEditorFloatDrag("Base Reflectivity", &m_Material->GetParameter().BaseReflectivityPadding.r, 0.001f, 0.0f, 1.0f, "%.3f");
+			CustomFrame::UIEditorFloat("Base Reflectivity", &m_Material->GetParameter().BaseReflectivity_RF_MF.r, 0.0f, 1.0f, "%.3f");
+			
 
+			CustomFrame::UIEditorFloat("Roughness Factor", &m_Material->GetParameter().BaseReflectivity_RF_MF.g, 0.0f, 1.0f, "%.3f");
+			ImGui::SameLine();
+			ImGui::Text(ICON_FA_QUESTION);
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Indicates the overall strength of a material's roughness");
+
+			CustomFrame::UIEditorFloat("Metallic Factor", &m_Material->GetParameter().BaseReflectivity_RF_MF.b, 0.0f, 1.0f, "%.3f");
+			ImGui::SameLine();
+			ImGui::Text(ICON_FA_QUESTION);
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Indicates the overall strength of a material's metalness");
+
+			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
 
 			ImGui::EndChild(); // End Sub-Left Child
@@ -153,7 +241,7 @@ namespace OE1Core
 	}
 	void MaterialViewWin::Update()
 	{
-		ImGui::SetWindowSize({700,400});
+		ImGui::SetWindowSize({700,450});
 	}
 	void MaterialViewWin::PrepareMaterialView()
 	{
@@ -179,5 +267,16 @@ namespace OE1Core
 		float offset = (columnWidth - textWidth) * 0.5f;
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
 		ImGui::TextWrapped(_name);
+	}
+	void MaterialViewWin::PaintTexture(GLuint& _texture, const char* _name)
+	{
+		ImGui::ImageButton((ImTextureID)(uintptr_t)_texture, m_TextureSize);
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::Image((ImTextureID)(uintptr_t)_texture, m_TextureSizeZoom);
+			ImGui::EndTooltip();
+		}
+		PrintTextureName(_name);
 	}
 }
