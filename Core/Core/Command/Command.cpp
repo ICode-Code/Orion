@@ -17,4 +17,8 @@ namespace OE1Core
 	{
 		s_MaterialTextureExtractionCommands.push(_command);
 	}
+	void Command::PushTextureLoadCommand(CommandDef::TextureLoadCommandDef _command)
+	{
+		s_TextureLoadCommands.push(_command);
+	}
 }

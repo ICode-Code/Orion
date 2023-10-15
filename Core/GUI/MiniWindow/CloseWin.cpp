@@ -5,7 +5,7 @@ namespace OE1Core
 {
 	CloseWin::CloseWin()
 	{
-		m_LogoutTexture = (ImTextureID)(intptr_t)AssetManager::GetTexture("Question")->GetTexture();
+		m_LogoutTexture = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Question")->GetTexture();
 	}
 	CloseWin::~CloseWin()
 	{

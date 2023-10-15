@@ -6,9 +6,9 @@ namespace OE1Core
 {
 	ProjectCreatorWin::ProjectCreatorWin()
 	{
-		m_EmptyProjectIcon = (ImTextureID)(uintptr_t)AssetManager::GetTexture("EmptyProject")->GetTexture();
-		m_PBRTestProjectIcon = (ImTextureID)(uintptr_t)AssetManager::GetTexture("PBRTestProject")->GetTexture();
-		m_FPSTestProjectIcon = (ImTextureID)(uintptr_t)AssetManager::GetTexture("FPSTestProject")->GetTexture();
+		m_EmptyProjectIcon = (ImTextureID)(uintptr_t)AssetManager::GetInternalTexture("EmptyProject")->GetTexture();
+		m_PBRTestProjectIcon = (ImTextureID)(uintptr_t)AssetManager::GetInternalTexture("PBRTestProject")->GetTexture();
+		m_FPSTestProjectIcon = (ImTextureID)(uintptr_t)AssetManager::GetInternalTexture("FPSTestProject")->GetTexture();
 	}
 	ProjectCreatorWin::~ProjectCreatorWin()
 	{

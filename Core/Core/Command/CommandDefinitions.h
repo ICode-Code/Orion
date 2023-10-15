@@ -17,6 +17,11 @@ namespace OE1Core
 			bool Batch = false;
 			GLuint FrameID;
 		};
+		struct TextureLoadCommandDef
+		{
+			std::string Name;
+			std::string Path;
+		};
 
 		struct MaterialTextureExtractionDef
 		{

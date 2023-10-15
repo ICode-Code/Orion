@@ -39,6 +39,7 @@ namespace OE1Core
 	protected:
 		static void ProcessSelectionCommand();
 		static void ProcessAssetLoadCommand();
+		static void ProcessTextureLoadCommand();
 		static void ProcessMaterialTextureExtractionCommand();
 		static void ProcessAsset();
 		static void WriteBinary(std::ofstream& _file, std::string _data);

@@ -15,13 +15,13 @@ namespace OE1Core
 
 	void ResourceInitializer::InitTexture()
 	{
-		AssetManager::RegisterImage(s_DefaultTexturePath + "Folder.png",			"Folder");
-		AssetManager::RegisterImage(s_DefaultTexturePath + "Question.png",			"Question");
-		AssetManager::RegisterImage(s_DefaultTexturePath + "Play.png",				"Play");
-		AssetManager::RegisterImage(s_DefaultTexturePath + "Unknown.png",			"Unknown");
-		AssetManager::RegisterImage(s_DefaultTexturePath + "EmptyProject.png",		"EmptyProject");
-		AssetManager::RegisterImage(s_DefaultTexturePath + "FPSTestProject.png",	"FPSTestProject");
-		AssetManager::RegisterImage(s_DefaultTexturePath + "PBRTestProject.png",	"PBRTestProject");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Folder.png",				"Folder");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Question.png",			"Question");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Play.png",				"Play");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Unknown.png",				"Unknown");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "EmptyProject.png",		"EmptyProject");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "FPSTestProject.png",		"FPSTestProject");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "PBRTestProject.png",		"PBRTestProject");
 	}
 	void ResourceInitializer::InitBaseMesh()
 	{

@@ -89,6 +89,17 @@ namespace OE1Core
 					//Command::PushLoadCommand(loaded_file);
 				}
 			}
+			if (ImGui::MenuItem(ICON_FA_IMAGE"   Import Texture..."))
+			{
+				std::string file_path = WindowFileDialog::LoadFile("Png and Jpg Files (*.png;*.jpg;)\0*.png;*.jpg\0", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin(), "Load Textures");
+				if (!file_path.empty())
+				{
+					CommandDef::TextureLoadCommandDef command;
+					command.Name = Loader::NameHandle::FilterFileName(file_path);
+					command.Path = file_path;
+					Command::PushTextureLoadCommand(command);
+				}
+			}
 			if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK"   Save", "  Ctr + S"))
 			{
 

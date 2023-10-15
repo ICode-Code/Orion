@@ -52,6 +52,7 @@ namespace OE1Core
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_AssetEntry;
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_MaterialEntry;
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_ScriptEntry;
+		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_TextureEntry;
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_UnknownFileEntry;
 
 	private: // Spacing and Size

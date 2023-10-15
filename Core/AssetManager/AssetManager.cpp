@@ -12,7 +12,7 @@ namespace OE1Core
 		for (auto iter : s_TextureRegistry)
 			delete iter.second;
 	}
-	void AssetManager::RegisterImage(std::string _path, std::string _name)
+	void AssetManager::RegisterTexture(std::string _path, std::string _name)
 	{
 		DataBlock::Image2D image_raw = Loader::TextureLoader::OELoadImage(_path);
 		if (!image_raw.Valid)
@@ -27,7 +27,22 @@ namespace OE1Core
 
 		s_TextureRegistry.insert(std::make_pair(_name, new Texture(image_raw)));
 	}
-	void AssetManager::RegisterHDRIImage(std::string _path, std::string _name)
+	void AssetManager::RegisterInternalTexture(std::string _path, std::string _name)
+	{
+		DataBlock::Image2D image_raw = Loader::TextureLoader::OELoadImage(_path);
+		if (!image_raw.Valid)
+			return;
+		// make sure this image or at least another image with the same name
+		bool name_exist = (s_TextureInternalRegistry.find(_name) != s_TextureInternalRegistry.end());
+		if (name_exist)
+		{
+			stbi_image_free(image_raw.Data);
+			return; // Just ignore it for now
+		}
+
+		s_TextureInternalRegistry.insert(std::make_pair(_name, new Texture(image_raw)));
+	}
+	void AssetManager::RegisterHDRITexture(std::string _path, std::string _name)
 	{
 		DataBlock::ImageHDRI image_raw_hdri = Loader::TextureLoader::OELoadHDRI(_path);
 		if (!image_raw_hdri.Valid)
@@ -49,7 +64,14 @@ namespace OE1Core
 
 		return s_TextureRegistry[_name];
 	}
-	Texture* AssetManager::GetTextureHDRI(std::string _name)
+	Texture* AssetManager::GetInternalTexture(std::string _name)
+	{
+		if (auto iter = s_TextureInternalRegistry.find(_name) == s_TextureInternalRegistry.end())
+			return nullptr;
+
+		return s_TextureInternalRegistry[_name];
+	}
+	Texture* AssetManager::GetHDRITexture(std::string _name)
 	{
 		if (auto iter = s_TextureHDRIRegistry.find(_name) == s_TextureHDRIRegistry.end())
 			return nullptr;

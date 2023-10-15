@@ -17,11 +17,16 @@ namespace OE1Core
 		~AssetManager();
 
 		// make sure it is not nullptr before using
+		static Texture* GetInternalTexture(std::string _name);
+
+		// make sure it is not nullptr before using
 		static Texture* GetTexture(std::string _name);
 		// make sure it is not nullptr before using
-		static Texture* GetTextureHDRI(std::string _name);
-		static void RegisterHDRIImage(std::string _path, std::string _name);
-		static void RegisterImage(std::string _path, std::string _name);
+		static Texture* GetHDRITexture(std::string _name);
+		static void RegisterHDRITexture(std::string _path, std::string _name);
+		static void RegisterTexture(std::string _path, std::string _name);
+
+		static void RegisterInternalTexture(std::string _path, std::string _name);
 
 		static ModelPkg* GetGeometry(uint32_t _model_id);
 		static ModelPkg* GetGeometry(std::string _name);
@@ -31,6 +36,8 @@ namespace OE1Core
 	protected:
 		inline static std::unordered_map<std::string, Texture*> s_TextureRegistry;
 		inline static std::unordered_map<std::string, Texture*> s_TextureHDRIRegistry;
+
+		inline static std::unordered_map<std::string, Texture*> s_TextureInternalRegistry;
 		inline static std::unordered_map<std::string, ModelPkg> s_RenderableGeometry;
 		inline static std::unordered_map<uint32_t, std::string> s_RenderableGeometryIDTranslator;
 

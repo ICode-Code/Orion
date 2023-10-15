@@ -4,8 +4,8 @@ namespace OE1Core
 {
 	ContentBrowserLayer::ContentBrowserLayer()
 	{
-		m_FolderIcon = (ImTextureID)(intptr_t)AssetManager::GetTexture("Folder")->GetTexture();
-		m_UnknownFileIcon = (ImTextureID)(intptr_t)AssetManager::GetTexture("Unknown")->GetTexture();
+		m_FolderIcon = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Folder")->GetTexture();
+		m_UnknownFileIcon = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Unknown")->GetTexture();
 
 		m_ActiveDirectory = ORI_ACTIVE_PATH;
 
@@ -19,6 +19,7 @@ namespace OE1Core
 		m_AssetEntry.clear();
 		m_MaterialEntry.clear();
 		m_ScriptEntry.clear();
+		m_TextureEntry.clear();
 		m_UnknownFileEntry.clear();
 	}
 	void ContentBrowserLayer::ContentBrowserMiniOptionPopup()
@@ -200,6 +201,21 @@ namespace OE1Core
 			ImGui::NextColumn();
 
 			ImGui::PopID();
+		}
+
+		for (auto iter = AssetManager::s_TextureRegistry.begin(); iter != AssetManager::s_TextureRegistry.end(); iter++)
+		{
+			PushPanalItemStyle();
+			ImGui::ImageButton((ImTextureID)(intptr_t)iter->second->GetTexture(), { m_ThumbnailSize, m_ThumbnailSize });
+			PopPanalItemStyle();
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+
+			}
+
+			PrintName(iter->second->GetName().c_str());
+			ImGui::NextColumn();
 		}
 
 		

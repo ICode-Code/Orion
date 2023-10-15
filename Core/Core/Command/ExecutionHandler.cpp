@@ -18,6 +18,7 @@ namespace OE1Core
 
 		ProcessSelectionCommand();
 		ProcessMaterialTextureExtractionCommand();
+		ProcessTextureLoadCommand();
 	}
 	void ExecutionHandler::ProcessMaterialTextureExtractionCommand()
 	{
@@ -178,5 +179,17 @@ namespace OE1Core
 
 		return data;
 
+	}
+
+	void ExecutionHandler::ProcessTextureLoadCommand()
+	{
+		while (!Command::s_TextureLoadCommands.empty())
+		{
+			auto& command = Command::s_TextureLoadCommands.front();
+
+			AssetManager::RegisterTexture(command.Path, command.Name);
+
+			Command::s_TextureLoadCommands.pop();
+		}
 	}
 }
