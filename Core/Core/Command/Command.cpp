@@ -21,4 +21,8 @@ namespace OE1Core
 	{
 		s_TextureLoadCommands.push(_command);
 	}
+	void Command::PushTextureLoadCommand(DataBlock::Image2D _data)
+	{
+		s_TextureLoadRawDataCommands.push(_data);
+	}
 }

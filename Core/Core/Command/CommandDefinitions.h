@@ -21,6 +21,7 @@ namespace OE1Core
 		{
 			std::string Name;
 			std::string Path;
+			std::string Destination;
 		};
 
 		struct MaterialTextureExtractionDef

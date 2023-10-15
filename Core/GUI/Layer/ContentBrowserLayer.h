@@ -68,7 +68,12 @@ namespace OE1Core
 		ImTextureID m_UnknownFileIcon	= 0;
 		ImTextureID m_AudioIcon			= 0;
 		ImTextureID m_AnimationIcon		= 0;
-		inline static int s_DRAG_ID = 0;
+
+		inline static int s_ASSET_DRAG_ID = 0;
+		inline static int s_TEXTURE_DRAG_ID = 0;
+		inline static int s_MATERIAL_DRAG_ID = 0;
+		inline static int s_FOLDER_DRAG_ID = 0;
+		inline static int s_MUSIC_DRAG_ID = 0;
 	};
 }
 

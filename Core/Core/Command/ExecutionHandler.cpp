@@ -19,6 +19,7 @@ namespace OE1Core
 		ProcessSelectionCommand();
 		ProcessMaterialTextureExtractionCommand();
 		ProcessTextureLoadCommand();
+		ProcessTextureRawDataLoadCommand();
 	}
 	void ExecutionHandler::ProcessMaterialTextureExtractionCommand()
 	{
@@ -186,10 +187,44 @@ namespace OE1Core
 		while (!Command::s_TextureLoadCommands.empty())
 		{
 			auto& command = Command::s_TextureLoadCommands.front();
-
+			std::string full_address = command.Destination + "\\" + command.Name + ORI_TEXTURE_POSTFIX;
 			AssetManager::RegisterTexture(command.Path, command.Name);
+			Texture* _texture = AssetManager::GetTexture(command.Name);
+
+			std::ofstream file_texture(full_address, std::ios::out | std::ios::binary);
+			WriteBinary(file_texture, "-- ORION ENGINE TEXTURE -- \n\n\n");
+			WriteBinary(file_texture, "Name:				" + command.Name + "\n");
+			WriteBinary(file_texture, "Dest:		" + command.Destination + "\n");
+			std::string res_value = "[" + std::to_string(_texture->GetWidth()) + " X " + std::to_string(_texture->GetWidth()) + "]";
+			WriteBinary(file_texture, "Resolution:		" + res_value + "\n");
+			WriteBinary(file_texture, "--	--	--	--	\n");
+			file_texture.close();
+
 
 			Command::s_TextureLoadCommands.pop();
+			s_ContentBrowserLayerNotifyCallback();
+		}
+	}
+	void ExecutionHandler::ProcessTextureRawDataLoadCommand()
+	{
+		while (!Command::s_TextureLoadRawDataCommands.empty())
+		{
+			auto& command = Command::s_TextureLoadRawDataCommands.front();
+			std::string full_address = ORI_PROJECT_HOT_DIRECTORY + "\\" + command.Name + ORI_TEXTURE_POSTFIX;
+
+			std::ofstream file_texture(full_address, std::ios::out | std::ios::binary);
+			WriteBinary(file_texture, "-- ORION ENGINE TEXTURE -- \n\n\n");
+			WriteBinary(file_texture, "Name:				" + command.Name + "\n");
+			WriteBinary(file_texture, "Dest:		" + ORI_PROJECT_HOT_DIRECTORY + "\n");
+			std::string res_value = "[" + std::to_string(command.Width) + " X " + std::to_string(command.Height) + "]";
+			WriteBinary(file_texture, "Resolution:		" + res_value + "\n");
+			WriteBinary(file_texture, "--	--	--	--	\n");
+			file_texture.close();
+
+			AssetManager::RegisterTexture(command);
+
+			Command::s_TextureLoadRawDataCommands.pop();
+			s_ContentBrowserLayerNotifyCallback();
 		}
 	}
 }

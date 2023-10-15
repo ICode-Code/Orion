@@ -8,6 +8,7 @@ namespace OE1Core
 		m_UnknownFileIcon = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Unknown")->GetTexture();
 
 		m_ActiveDirectory = ORI_ACTIVE_PATH;
+		ORI_PROJECT_HOT_DIRECTORY = ORI_ACTIVE_PATH;
 
 		SyncDataEntry();
 		ExecutionHandler::RegisterContentBrowserLayerNotifyCallback(std::bind(&ContentBrowserLayer::SyncDataEntry, this));
@@ -80,6 +81,7 @@ namespace OE1Core
 			if (m_ActiveDirectory != ORI_ACTIVE_PATH)
 			{
 				m_ActiveDirectory = m_ActiveDirectory.parent_path();
+				ORI_PROJECT_HOT_DIRECTORY = m_ActiveDirectory.string();
 				SyncDataEntry();
 			}
 		}
@@ -130,6 +132,7 @@ namespace OE1Core
 		m_AssetEntry.clear();
 		m_MaterialEntry.clear();
 		m_ScriptEntry.clear();
+		m_TextureEntry.clear();
 		m_UnknownFileEntry.clear();
 
 		for (auto& data_iter : std::filesystem::directory_iterator(m_ActiveDirectory))
@@ -144,6 +147,8 @@ namespace OE1Core
 				m_DirEntry.push_back(std::make_pair(info, data_iter));
 			else if (ext == ORI_ASSET_POSTFIX)
 				m_AssetEntry.push_back(std::make_pair(info, data_iter));
+			else if (ext == ORI_TEXTURE_POSTFIX)
+				m_TextureEntry.push_back(std::make_pair(info, data_iter));
 			else if (ext == ".wav" || ext == ".mp3")
 				m_MusicEntry.push_back(std::make_pair(info, data_iter));
 			else 
@@ -159,7 +164,8 @@ namespace OE1Core
 		ImGui::BeginChild("#dir_itrator");
 		ImGui::Columns(m_ColumnCount, "innerList", false);
 
-		s_DRAG_ID = 0;
+		s_ASSET_DRAG_ID = 0;
+		s_TEXTURE_DRAG_ID = 100;
 
 		for (size_t i = 0; i < m_DirEntry.size(); i++)
 		{
@@ -170,6 +176,7 @@ namespace OE1Core
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				m_ActiveDirectory = m_DirEntry[i].first.Path;
+				ORI_PROJECT_HOT_DIRECTORY = m_ActiveDirectory.string();
 				SyncDataEntry();
 				break;
 			}
@@ -180,7 +187,7 @@ namespace OE1Core
 
 		for (size_t i = 0; i < m_AssetEntry.size(); i++)
 		{
-			ImGui::PushID(s_DRAG_ID++);
+			ImGui::PushID(s_ASSET_DRAG_ID++);
 
 			PushPanalItemStyle();
 			
@@ -203,19 +210,19 @@ namespace OE1Core
 			ImGui::PopID();
 		}
 
-		for (auto iter = AssetManager::s_TextureRegistry.begin(); iter != AssetManager::s_TextureRegistry.end(); iter++)
+		for (size_t i = 0; i < m_TextureEntry.size(); i++)
 		{
+			ImGui::PushID(s_TEXTURE_DRAG_ID++);
+
 			PushPanalItemStyle();
-			ImGui::ImageButton((ImTextureID)(intptr_t)iter->second->GetTexture(), { m_ThumbnailSize, m_ThumbnailSize });
+
+			ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_TextureRegistry[m_TextureEntry[i].first.Name]->GetTexture(), {m_ThumbnailSize, m_ThumbnailSize}, {0, 1}, {1, 0});
+
 			PopPanalItemStyle();
 
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-
-			}
-
-			PrintName(iter->second->GetName().c_str());
+			PrintName(m_TextureEntry[i].first.Name.c_str());
 			ImGui::NextColumn();
+			ImGui::PopID();
 		}
 
 		

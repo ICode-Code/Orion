@@ -24,7 +24,11 @@ namespace OE1Core
 		// make sure it is not nullptr before using
 		static Texture* GetHDRITexture(std::string _name);
 		static void RegisterHDRITexture(std::string _path, std::string _name);
+
 		static void RegisterTexture(std::string _path, std::string _name);
+
+		// This function call stbi_image_free(..) indirectly
+		static void RegisterTexture(DataBlock::Image2D& _image);
 
 		static void RegisterInternalTexture(std::string _path, std::string _name);
 

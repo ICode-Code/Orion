@@ -188,6 +188,7 @@ namespace OE1Core
 			available_texture_count--;
 			ReadTextureData(std::get<1>(_texture_set[DataBlock::TextureType::EMISSIVE]), 1, _mat_name);
 			taidx.Emission = 1;
+
 		}
 		else if (s_AvialTextures.HasDiffuse && !s_AvialTextures.HasEmission)
 		{
@@ -267,12 +268,12 @@ namespace OE1Core
 		master_material->Update();
 		return master_material->GetOffset();
 	}
-	void AssetParser::ReadTextureData(const DataBlock::Image2D& _image, int _layer, std::string _mat_name)
+	void AssetParser::ReadTextureData(DataBlock::Image2D& _image, int _layer, std::string _mat_name)
 	{
 		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, _layer, _image.Width, _image.Height, 1, GL_RGBA, GL_UNSIGNED_BYTE, _image.Data);
 		Texture2DFilter();
 		// Clean memory
-		stbi_image_free(_image.Data);
+		Command::PushTextureLoadCommand(_image);
 	}
 	glm::vec2 AssetParser::GrabTextureSize(Loader::StaticGeometryLoader::TextureSet& _texture_set)
 	{

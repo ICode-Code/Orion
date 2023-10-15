@@ -5,6 +5,7 @@
 #include <queue>
 #include "Util/LoadArgs.h"
 #include "CommandDefinitions.h"
+#include "Util/DataBlock.h"
 
 namespace OE1Core
 {
@@ -17,6 +18,7 @@ namespace OE1Core
 		friend class ExecutionHandler;
 	public:
 		static void PushTextureLoadCommand(CommandDef::TextureLoadCommandDef _command);
+		static void PushTextureLoadCommand(DataBlock::Image2D _data);
 		static void PushAssetLoadCommand(Loader::LoadArgs _args);	
 		static void PushEntitySelectionCommand(CommandDef::EntitySelectionCommandDef _command);
 		static void PushMaterialTextureExtractionCommand(CommandDef::MaterialTextureExtractionDef _command);
@@ -24,7 +26,8 @@ namespace OE1Core
 		inline static std::queue<Loader::LoadArgs> s_Load3DAssetCommands;
 		inline static std::queue<CommandDef::EntitySelectionCommandDef> s_EntitySelectionCommands;
 		inline static std::queue<CommandDef::MaterialTextureExtractionDef> s_MaterialTextureExtractionCommands;
-		inline static std::queue<CommandDef::TextureLoadCommandDef> s_TextureLoadCommands;;
+		inline static std::queue<CommandDef::TextureLoadCommandDef> s_TextureLoadCommands;
+		inline static std::queue<DataBlock::Image2D> s_TextureLoadRawDataCommands;
 		
 	};
 }

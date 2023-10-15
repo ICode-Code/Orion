@@ -20,6 +20,7 @@ namespace OE1Core
 
 		protected:
 			static bool PrimaryPathFilter(std::string _path);
+			inline static char s_CheckChar;
 		};
 	}
 }

@@ -25,6 +25,12 @@ static GLuint MaxUniformBlockSize()
 inline std::string ORI_ACTIVE_PATH = "##";
 
 /// <summary>
+/// Active project director, in which dir is the contain browser looking
+/// right now
+/// </summary>
+inline std::string ORI_PROJECT_HOT_DIRECTORY = "##";
+
+/// <summary>
 /// All project root directory
 /// </summary>
 
@@ -35,6 +41,7 @@ inline const std::string ORI_ENGEIN_METAL_FILE = ".orion_meta.ini";
 #define ORI_MAX_INSTANCE_PER_MESH 2048
 #define ORI_MATERIAL_PREFIX "ORMAT_"
 #define ORI_ASSET_POSTFIX ".ORIASSET"
+#define ORI_TEXTURE_POSTFIX ".ORITEXTURE"
 #define ORI_UNIFORM_BLOCK_MEMORY_STRESS 256
 #define ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK ((MaxUniformBlockSize() / Memory::s_MaterialPropertiesBufferSize) - ORI_UNIFORM_BLOCK_MEMORY_STRESS)
 

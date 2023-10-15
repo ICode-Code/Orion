@@ -20,24 +20,25 @@ namespace OE1Core
 			if (!PrimaryPathFilter(_path))
 				return _path;
 
-			return _path.substr(_path.find_last_of('/') + 1, (_path.find_last_of('.') - _path.find_last_of('/')) - 1);
+			return _path.substr(_path.find_last_of(s_CheckChar) + 1, (_path.find_last_of('.') - _path.find_last_of(s_CheckChar)) - 1);
 		}
 		std::string NameHandle::FilterFileNameExt(std::string _path)
 		{
 			if (!PrimaryPathFilter(_path))
 				return _path;
 
-			return _path.substr(_path.find_last_of('/') + 1, (_path.size() - _path.find_last_of('/')) - 1);
+			return _path.substr(_path.find_last_of(s_CheckChar) + 1, (_path.size() - _path.find_last_of(s_CheckChar)) - 1);
 		}
 		std::string NameHandle::FilterPath(std::string _path)
 		{
 			if (!PrimaryPathFilter(_path))
 				return _path;
-			return _path.substr(0, _path.find_last_of('/') + 1);
+			return _path.substr(0, _path.find_last_of(s_CheckChar) + 1);
 		}
 
 		bool NameHandle::PrimaryPathFilter(std::string _path)
 		{
+
 			if (_path.empty())
 				return false;
 
@@ -46,13 +47,21 @@ namespace OE1Core
 			if (_path[last_index] == '/')
 				return false;
 
-			if (_path.find('/') == std::string::npos)
-				return false;
-
 			if (_path.find('.') == std::string::npos)
 				return false;
 
-			return true;
+			if (_path.find('/') != std::string::npos)
+			{
+				s_CheckChar = '/';
+				return true;
+			}
+			else if (_path.find('\\') != std::string::npos)
+			{
+				s_CheckChar = '\\';
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

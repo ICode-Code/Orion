@@ -70,8 +70,8 @@ namespace OE1Core
 				return dest_image_data;
 			}
 
-			dest_image_data.Path = _embd->mFilename.C_Str();
-			dest_image_data.Name = dest_image_data.Path;
+			dest_image_data.Path = NameHandle::FilterPath(std::string(_embd->mFilename.C_Str()));
+			dest_image_data.Name = NameHandle::FilterFileNameExt(_embd->mFilename.C_Str());
 			dest_image_data.Valid = true;
 			
 			return dest_image_data;

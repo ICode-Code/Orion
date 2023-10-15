@@ -102,7 +102,7 @@ namespace OE1Core
 		{
 			s_LoadArgs.SourcePath = s_AssetPath;
 			
-			s_LoadArgs.DestinationPath = ORI_ACTIVE_PATH;
+			s_LoadArgs.DestinationPath = ORI_PROJECT_HOT_DIRECTORY;
 
 			size_t input_length = strlen(s_DirectoryNameBuffer);
 			if (input_length > 0 && input_length < s_DirectoryNameBufferSize)

@@ -11,6 +11,15 @@ namespace OE1Core
 	{
 		for (auto iter : s_TextureRegistry)
 			delete iter.second;
+		s_TextureRegistry.clear();
+
+		for (auto iter : s_TextureHDRIRegistry)
+			delete iter.second;
+		s_TextureHDRIRegistry.clear();
+
+		for (auto iter : s_TextureInternalRegistry)
+			delete iter.second;
+		s_TextureInternalRegistry.clear();
 	}
 	void AssetManager::RegisterTexture(std::string _path, std::string _name)
 	{
@@ -26,6 +35,18 @@ namespace OE1Core
 		}
 
 		s_TextureRegistry.insert(std::make_pair(_name, new Texture(image_raw)));
+	}
+	void AssetManager::RegisterTexture(DataBlock::Image2D& _image)
+	{
+		// make sure this image or at least another image with the same name
+		bool name_exist = (s_TextureRegistry.find(_image.Name) != s_TextureRegistry.end());
+		if (name_exist)
+		{
+			stbi_image_free(_image.Data);
+			return; // Just ignore it for now
+		}
+
+		s_TextureRegistry.insert(std::make_pair(_image.Name, new Texture(_image)));
 	}
 	void AssetManager::RegisterInternalTexture(std::string _path, std::string _name)
 	{

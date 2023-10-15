@@ -26,7 +26,7 @@ namespace OE1Core
 	protected:
 		static void ReadModelInfo(ModelPkg& model_package);
 		static glm::vec2 GrabTextureSize(Loader::StaticGeometryLoader::TextureSet& _texture);
-		static void ReadTextureData(const DataBlock::Image2D& _image, int _layer, std::string _mat_name);
+		static void ReadTextureData(DataBlock::Image2D& _image, int _layer, std::string _mat_name);
 		static void Texture2DFilter();
 		static uint32_t CreateMaterial(Loader::StaticGeometryLoader::TextureSet& _texture, std::string _name);
 		static void BufferIntilization(CoreStaticMeshPkg& _core_mesh);
