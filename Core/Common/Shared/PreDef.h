@@ -52,5 +52,6 @@ inline const std::string ORI_ENGEIN_METAL_FILE = ".orion_meta.ini";
 #define ORI_DYNAMIC_MESH_PACKAGE_PAYLOAD		"Dynamic_Mesh_Package_Payload"
 #define ORI_ENTITY_REPARENT_PACKAGE_PAYLOAD		"Entity_Re-Parent_Package_Payload"
 #define ORI_MATERIAL_PACKAGE_PAYLOAD			"Material_Package_Payload"
+#define ORI_TEXTURE_PACKAGE_PAYLOAD				"Texture_Package_Payload"
 
 #endif // !OE1_PRE_DEF_H_

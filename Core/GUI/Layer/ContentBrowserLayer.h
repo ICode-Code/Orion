@@ -32,7 +32,7 @@ namespace OE1Core
 
 
 	private: // Util functions
-		void PushPanalItemStyle();
+		void PushPanalItemStyle(ImVec4 _col = { 0.15f, 0.15f, 0.15f, 1.0f});
 		void PopPanalItemStyle();
 		void DrawHeader();
 		void PathIterator();

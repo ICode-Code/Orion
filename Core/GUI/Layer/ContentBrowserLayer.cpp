@@ -220,6 +220,15 @@ namespace OE1Core
 
 			PopPanalItemStyle();
 
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				Texture* package_payload = AssetManager::s_TextureRegistry[m_TextureEntry[i].first.Name];
+
+				ImGui::SetDragDropPayload(ORI_TEXTURE_PACKAGE_PAYLOAD, package_payload, sizeof(ModelPkg));
+
+				ImGui::EndDragDropSource();
+			}
+
 			PrintName(m_TextureEntry[i].first.Name.c_str());
 			ImGui::NextColumn();
 			ImGui::PopID();
@@ -240,9 +249,9 @@ namespace OE1Core
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
 		ImGui::TextWrapped(_name);
 	}
-	void ContentBrowserLayer::PushPanalItemStyle()
+	void ContentBrowserLayer::PushPanalItemStyle(ImVec4 _col)
 	{
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Button, _col);
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.10f, 0.10f, 0.10f, 1.0f });
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 1 });
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });

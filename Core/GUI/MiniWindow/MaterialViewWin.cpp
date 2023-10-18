@@ -277,6 +277,37 @@ namespace OE1Core
 			ImGui::Image((ImTextureID)(uintptr_t)_texture, m_TextureSizeZoom);
 			ImGui::EndTooltip();
 		}
+
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ORI_TEXTURE_PACKAGE_PAYLOAD))
+			{
+				Texture* package = (Texture*)payload->Data;
+				
+				printf(package->GetName().c_str());
+				printf("\n");
+
+				// todo 
+				// Create some command and queue the texture update section to someware since this is 
+				// ImGui section it is better to not bind and unbnd engine related texture here
+				/*glBindTexture(GL_TEXTURE_2D_ARRAY, yourTextureArrayID);
+				* int layer = 0;  // Replace with the layer you want to update
+				int level = 0;  // Mipmap level, usually 0 for base level
+				int xoffset = 0; // X offset within the layer
+				int yoffset = 0; // Y offset within the layer
+				int width =  // Width of the update region
+				int height =  // Height of the update region
+				glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+				glTexSubImage3D(GL_TEXTURE_2D_ARRAY, level, xoffset, yoffset, layer, width, height, 1, format, type, data);
+				*/
+				
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
 		PrintTextureName(_name);
 	}
 }
