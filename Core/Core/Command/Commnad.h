@@ -21,6 +21,7 @@ namespace OE1Core
 		static void PushTextureLoadCommand(DataBlock::Image2D _data);
 		static void PushAssetLoadCommand(Loader::LoadArgs _args);	
 		static void PushEntitySelectionCommand(CommandDef::EntitySelectionCommandDef _command);
+		static void PushMaterialTextureUpdateCommand(CommandDef::MaterialtextureUpdateCommandDef _command);
 		static void PushMaterialTextureExtractionCommand(CommandDef::MaterialTextureExtractionDef _command);
 	private:
 		inline static std::queue<Loader::LoadArgs> s_Load3DAssetCommands;
@@ -28,6 +29,7 @@ namespace OE1Core
 		inline static std::queue<CommandDef::MaterialTextureExtractionDef> s_MaterialTextureExtractionCommands;
 		inline static std::queue<CommandDef::TextureLoadCommandDef> s_TextureLoadCommands;
 		inline static std::queue<DataBlock::Image2D> s_TextureLoadRawDataCommands;
+		inline static std::queue<CommandDef::MaterialtextureUpdateCommandDef> s_MaterialTextureUpdateCommands;
 		
 	};
 }

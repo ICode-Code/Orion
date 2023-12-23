@@ -36,50 +36,50 @@ namespace OE1Core
 			PushTextureViewStyle();
 			if (tex.HasColor)
 			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Color.first, "Color");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Color.first, "Color", MaterialType::DIFFUSE);
 				ImGui::NextColumn();
 			}
 			
 			if (tex.HasNormal)
 			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Normal.first, "Normal");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Normal.first, "Normal", MaterialType::NORMAL);
 				ImGui::NextColumn();
 			}
 
 
 			if (tex.HasMetal)
 			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Metal.first, "Metal");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Metal.first, "Metal", MaterialType::METAL);
 				ImGui::NextColumn();
 			}
 
 			if (tex.HasRoughness)
 			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Roughness.first, "Roughness");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Roughness.first, "Roughness", MaterialType::ROUGHNESS);
 				ImGui::NextColumn();
 			}
 
 			if (tex.HasMetalRougness)
 			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().MetalRougness.first, "Roughness & Metal");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().MetalRougness.first, "Roughness & Metal", MaterialType::METAL_ROUGHNESS);
 				ImGui::NextColumn();
 			}
 
 			if (tex.HasAO)
 			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().AO.first, "AO");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().AO.first, "AO", MaterialType::AO);
 				ImGui::NextColumn();
 			}
 
 			if (tex.HasEmission)
 			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Emission.first, "Emission");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Emission.first, "Emission", MaterialType::EMISSIVE);
 				ImGui::NextColumn();
 			}
 
 			if (tex.HasAlpha)
 			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Alpha.first, "Alpha");
+				PaintTexture(m_Framebuffer->GetTextureAttachment().Alpha.first, "Alpha", MaterialType::ALPHA);
 				ImGui::NextColumn();
 			}
 
@@ -268,7 +268,7 @@ namespace OE1Core
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
 		ImGui::TextWrapped(_name);
 	}
-	void MaterialViewWin::PaintTexture(GLuint& _texture, const char* _name)
+	void MaterialViewWin::PaintTexture(GLuint& _texture, const char* _name, const MaterialType _type)
 	{
 		ImGui::ImageButton((ImTextureID)(uintptr_t)_texture, m_TextureSize);
 		if (ImGui::IsItemHovered())
@@ -284,24 +284,18 @@ namespace OE1Core
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ORI_TEXTURE_PACKAGE_PAYLOAD))
 			{
 				Texture* package = (Texture*)payload->Data;
-				
+			
 				printf(package->GetName().c_str());
 				printf("\n");
 
-				// todo 
-				// Create some command and queue the texture update section to someware since this is 
-				// ImGui section it is better to not bind and unbnd engine related texture here
-				/*glBindTexture(GL_TEXTURE_2D_ARRAY, yourTextureArrayID);
-				* int layer = 0;  // Replace with the layer you want to update
-				int level = 0;  // Mipmap level, usually 0 for base level
-				int xoffset = 0; // X offset within the layer
-				int yoffset = 0; // Y offset within the layer
-				int width =  // Width of the update region
-				int height =  // Height of the update region
-				glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-
-				glTexSubImage3D(GL_TEXTURE_2D_ARRAY, level, xoffset, yoffset, layer, width, height, 1, format, type, data);
-				*/
+				CommandDef::MaterialtextureUpdateCommandDef command;
+				command.Material = m_Material;
+				command.TextureType = _type;
+				command.NewTexture = AssetManager::GetTexture(Loader::NameHandle::FilterFileName(package->GetName()));
+				command.IsColor = ((_type == MaterialType::DIFFUSE) || (_type == MaterialType::EMISSIVE));
+				
+				Command::PushMaterialTextureUpdateCommand(command);
+				
 				
 			}
 

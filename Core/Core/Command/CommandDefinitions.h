@@ -2,11 +2,13 @@
 #define OE1_COMMAND_DEFINATIONS_H_
 
 #include <GL/glew.h>
+#include "MaterialType.h"
 
 namespace OE1Core
 {
 	class MaterialViewWin;
 	class MasterMaterial;
+	class Texture;
 
 	namespace CommandDef 
 	{
@@ -28,6 +30,21 @@ namespace OE1Core
 		{
 			MaterialViewWin*	MaterialView = nullptr;
 			MasterMaterial*	Material = nullptr;
+		};
+
+
+		struct MaterialtextureUpdateCommandDef
+		{
+			// Which Texture
+			MaterialType TextureType;
+			// To which material
+			MasterMaterial* Material = nullptr;
+
+			Texture* NewTexture = nullptr;
+
+			bool IsColor = false;
+
+			int Layer = -1;
 		};
 	}
 }

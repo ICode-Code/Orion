@@ -123,14 +123,17 @@ namespace OE1Core
 
 		// Which Texture exist which does not
 
-		s_AvialTextures.HasDiffuse				= _texture_set.find(DataBlock::TextureType::DIFFUSE)			!= _texture_set.end();
-		s_AvialTextures.HasNormal				= _texture_set.find(DataBlock::TextureType::NORMAL)				!= _texture_set.end();
-		s_AvialTextures.HasRoughness			= _texture_set.find(DataBlock::TextureType::ROUGHNESS)			!= _texture_set.end();
-		s_AvialTextures.HasMetal				= _texture_set.find(DataBlock::TextureType::METAL)				!= _texture_set.end();
-		s_AvialTextures.HasRoughness_Metal		= _texture_set.find(DataBlock::TextureType::METAL_ROUGHNESS)	!= _texture_set.end();
-		s_AvialTextures.HasAlphaMask			= _texture_set.find(DataBlock::TextureType::OPACITY)			!= _texture_set.end();
-		s_AvialTextures.HasEmission				= _texture_set.find(DataBlock::TextureType::EMISSIVE)			!= _texture_set.end();
-		s_AvialTextures.HasAo					= _texture_set.find(DataBlock::TextureType::AO)					!= _texture_set.end();
+		MaterialTextureAvailFlags texture_avial_flag;
+		MaterialTextureLayerIndex texture_layer_index;
+
+		texture_avial_flag.HasColor				=	s_AvialTextures.HasDiffuse				= _texture_set.find(DataBlock::TextureType::DIFFUSE)			!= _texture_set.end();
+		texture_avial_flag.HasNormal			=	s_AvialTextures.HasNormal				= _texture_set.find(DataBlock::TextureType::NORMAL)				!= _texture_set.end();
+		texture_avial_flag.HasRoughness			=	s_AvialTextures.HasRoughness			= _texture_set.find(DataBlock::TextureType::ROUGHNESS)			!= _texture_set.end();
+		texture_avial_flag.HasMetal				=	s_AvialTextures.HasMetal				= _texture_set.find(DataBlock::TextureType::METAL)				!= _texture_set.end();
+		texture_avial_flag.HasMetalRoughness	=	s_AvialTextures.HasRoughness_Metal		= _texture_set.find(DataBlock::TextureType::METAL_ROUGHNESS)	!= _texture_set.end();
+		texture_avial_flag.HasAlpha				=	s_AvialTextures.HasAlphaMask			= _texture_set.find(DataBlock::TextureType::OPACITY)			!= _texture_set.end();
+		texture_avial_flag.HasEmission			=	s_AvialTextures.HasEmission				= _texture_set.find(DataBlock::TextureType::EMISSIVE)			!= _texture_set.end();
+		texture_avial_flag.HasAO				=	s_AvialTextures.HasAo					= _texture_set.find(DataBlock::TextureType::AO)					!= _texture_set.end();
 
 
 		// Decide Material type based on the provided texture
@@ -145,6 +148,8 @@ namespace OE1Core
 		// Generate the Material
 		// This alloacted shader is managed by the material, so it will delete it, no need to worry
 		MasterMaterial* master_material = MaterialManager::RegisterMaterial(_mat_name, new Shader(vertex_shader.c_str(), fragment_shader.c_str(), vertex_shader_proxy.c_str()));
+		master_material->m_TextureAvailFlag = texture_avial_flag;
+		master_material->m_TextureLayerIndex.CountAvialTexture(master_material->m_TextureAvailFlag);
 		master_material->SetType(material_type);
 
 		// if the material type is default which means there is no texture we can return here

@@ -20,6 +20,50 @@ namespace OE1Core
 		ProcessMaterialTextureExtractionCommand();
 		ProcessTextureLoadCommand();
 		ProcessTextureRawDataLoadCommand();
+		ProcessMaterialTextureUpdateCommand();
+	}
+	void ExecutionHandler::ProcessMaterialTextureUpdateCommand()
+	{
+		while (!Command::s_MaterialTextureUpdateCommands.empty())
+		{
+			auto& command = Command::s_MaterialTextureUpdateCommands.front();
+
+			std::vector<GLbyte> pixels(command.NewTexture->GetWidth() * command.NewTexture->GetHeight() * 4);
+			glBindTexture(GL_TEXTURE_2D, command.NewTexture->GetTexture());
+			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+			if (command.IsColor)
+			{
+				if (command.Material->HasColorMap())
+				{
+					glBindTexture(GL_TEXTURE_2D_ARRAY, command.Material->GetColorTextures());
+
+					if (command.TextureType == MaterialType::DIFFUSE)
+					{
+						// update color
+						glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, command.NewTexture->GetWidth(), command.NewTexture->GetHeight(), 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+						glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY, 2);
+					}
+					else if (command.TextureType == MaterialType::EMISSIVE)
+					{
+						// Update Emissive
+					}
+
+					glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+				}
+			}
+			else
+			{
+
+			}
+
+
+			Command::s_MaterialTextureUpdateCommands.pop();
+		}
 	}
 	void ExecutionHandler::ProcessMaterialTextureExtractionCommand()
 	{

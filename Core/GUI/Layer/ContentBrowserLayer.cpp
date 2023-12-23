@@ -127,6 +127,9 @@ namespace OE1Core
 	}
 	void ContentBrowserLayer::SyncDataEntry()
 	{
+		if (!std::filesystem::exists(m_ActiveDirectory))
+			return;
+
 		m_DirEntry.clear();
 		m_MusicEntry.clear();
 		m_AssetEntry.clear();

@@ -13,6 +13,7 @@ namespace OE1Core
 	class MasterMaterial
 	{
 		friend class MaterialManager;
+		friend class AssetParser;
 	public:
 		MasterMaterial(Shader* _shade = nullptr, std::string _name = "Untitled", int _offset = 0);
 		/// <summary>
@@ -50,6 +51,10 @@ namespace OE1Core
 		void SetType(MaterialType _type);
 		MaterialType GetType() const;
 
+		MaterialTextureAvailFlags GetTextureAvailFlags() const;
+		MaterialTextureLayerIndex GetTextureLayerIndexs() const;
+		
+
 		Memory::MaterialProperties& GetParameter();
 		Memory::TextureAccessIndex& GetTAI();
 
@@ -70,6 +75,8 @@ namespace OE1Core
 
 	protected:
 		MaterialType m_Type;
+		MaterialTextureAvailFlags m_TextureAvailFlag;
+		MaterialTextureLayerIndex m_TextureLayerIndex;
 		GLuint m_ColorTexture;
 		GLuint m_NonColorTexture;
 		int m_Offset;

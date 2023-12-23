@@ -47,7 +47,7 @@ namespace OE1Core
 			}
 
 			image_data.Path = NameHandle::FilterPath(_path);
-			image_data.Name = NameHandle::FilterFileNameExt(_path);
+			image_data.Name = NameHandle::FilterFileName(_path);
 			image_data.Valid = true;
 			return image_data;
 
@@ -71,7 +71,7 @@ namespace OE1Core
 			}
 
 			dest_image_data.Path = NameHandle::FilterPath(std::string(_embd->mFilename.C_Str()));
-			dest_image_data.Name = NameHandle::FilterFileNameExt(_embd->mFilename.C_Str());
+			dest_image_data.Name = NameHandle::FilterFileName(_embd->mFilename.C_Str());
 			dest_image_data.Valid = true;
 			
 			return dest_image_data;
@@ -125,7 +125,7 @@ namespace OE1Core
 			}
 
 			image_hdri.Path = NameHandle::FilterPath(_path);
-			image_hdri.Path = NameHandle::FilterFileNameExt(_path);
+			image_hdri.Path = NameHandle::FilterFileName(_path);
 			image_hdri.Valid = true;
 
 			return image_hdri;

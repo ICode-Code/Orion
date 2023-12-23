@@ -34,7 +34,7 @@ namespace OE1Core
 		void PushTextureViewStyle();
 		void PopTextureViewStyle();
 		void PrintTextureName(const char* _name);
-		void PaintTexture(GLuint& _texture, const char* _name);
+		void PaintTexture(GLuint& _texture, const char* _name, const MaterialType _type);
 		
 	};
 }

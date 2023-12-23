@@ -42,6 +42,7 @@ namespace OE1Core
 		static void ProcessTextureLoadCommand();
 		static void ProcessTextureRawDataLoadCommand();
 		static void ProcessMaterialTextureExtractionCommand();
+		static void ProcessMaterialTextureUpdateCommand();
 		static void ProcessAsset();
 		static void WriteBinary(std::ofstream& _file, std::string _data);
 		static Renderer::CheckMatPreviewTexture FilterMaterialTexture(MasterMaterial* _material);

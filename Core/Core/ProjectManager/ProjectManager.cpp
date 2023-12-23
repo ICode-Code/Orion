@@ -7,16 +7,41 @@ namespace OE1Core
 	{
 		QueryRootProjectPath();
 
-		InitlizeMetaData();
-		ReadProjectConfig();
+		if (ReadMetaData())
+		{
+			ReadProjectConfig();
 
-		if (s_ProjectConfig.empty())
+			if (!s_ProjectConfig.empty())
+			{
+				ORI_ACTIVE_PATH += s_ProjectConfig.at("Pilot").Name;
+
+				// In case if the user remove the directory structure
+				if (!std::filesystem::exists(ORI_ACTIVE_PATH))
+				{
+					std::filesystem::create_directories(ORI_ACTIVE_PATH);
+					InitializeDirectoryHierarchy(ORI_ACTIVE_PATH + "\\");
+				}
+			}
+			else
+			{
+				LOG_ERROR("It seems project file is loaded, but empty!");
+			}
+			
+			
+		}
+		else
+		{
+			// If there is no meta data it means there is no priore project
+			// os create one
+
+			// Create Project
 			CreateProject("Pilot");
+			InitlizeMetaData();
+		}
 
 		s_ActiveProject = s_ProjectConfig.at("Pilot");
 
 
-		ORI_ACTIVE_PATH += s_ActiveProject.Name;
 		CleanVirtualAsset(ORI_ACTIVE_PATH);
 
 	}
@@ -31,37 +56,22 @@ namespace OE1Core
 	}
 	void ProjectManager::CreateProjectDirStrcture(std::wstring _project_root)
 	{
-		PWSTR my_documents_path = nullptr;
-		if (SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &my_documents_path) == S_OK)
+
+		std::wstring project_folder_path = std::wstring(ORI_ACTIVE_PATH.begin(), ORI_ACTIVE_PATH.end());
+		project_folder_path += _project_root;
+
+		if (!std::filesystem::exists(project_folder_path))
 		{
-			std::wstring project_folder_path = my_documents_path;
-			CoTaskMemFree(my_documents_path);
-
-			project_folder_path += _project_root;
-
-			if (!PathFileExists(project_folder_path.c_str()))
-			{
-				if (!CreateDirectoryW(project_folder_path.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
-				{
-					LOG_ERROR("Failed to create ROOT folder");
-				}
-			}
-
-			// Create Project folder
-			project_folder_path += L"\\" + std::wstring(s_ActiveProject.Name.begin(), s_ActiveProject.Name.end());
-			if (!PathFileExists(project_folder_path.c_str()))
-			{
-				if (!CreateDirectoryW(project_folder_path.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
-				{
-					LOG_ERROR("Failed to create PROJECT folder");
-				}
-			}
-			ORI_ACTIVE_PATH = WideStrToNarrowStr(project_folder_path);
-			InitializeDirectoryHierarchy(ORI_ACTIVE_PATH + "\\");
+			std::filesystem::create_directories(project_folder_path);
 		}
+
+		ORI_ACTIVE_PATH = WideStrToNarrowStr(project_folder_path);
+		InitializeDirectoryHierarchy(ORI_ACTIVE_PATH + "\\");
 	}
 	void ProjectManager::CleanVirtualAsset(std::string _path)
 	{
+		if (!std::filesystem::exists(_path))
+			return;
 		for (auto iter : std::filesystem::directory_iterator(_path))
 		{
 			if (iter.is_directory())
@@ -99,7 +109,27 @@ namespace OE1Core
 		std::filesystem::create_directories(_root + "Plugins");
 		std::filesystem::create_directories(_root + "Build");
 	}
-	void ProjectManager::InitlizeMetaData()
+	bool ProjectManager::InitlizeMetaData()
+	{
+		LOG_INFO("No configuration file found!");
+		LOG_INFO("Creating new configuration file...");
+		std::ofstream meta_out(ORI_ENGEIN_METAL_FILE);
+		if (meta_out.is_open())
+		{
+			LOG_INFO("Project configuration file created succesfully!");
+			Serilize(meta_out);
+			meta_out.close();
+
+			return true;
+		}
+		else
+		{
+			LOG_ERROR("Failed to create configuration file!");
+		}
+
+		return false;
+	}
+	bool ProjectManager::ReadMetaData()
 	{
 		std::ifstream project_config(ORI_ENGEIN_METAL_FILE);
 
@@ -107,21 +137,11 @@ namespace OE1Core
 		{
 			LOG_INFO("Project configuration loaded succesfully!");
 			project_config.close();
+
+			return true;
 		}
-		else
-		{
-			std::ofstream meta_out(ORI_ENGEIN_METAL_FILE);
-			if (meta_out.is_open())
-			{
-				LOG_INFO("Project configuration created succesfully!");
-				Serilize(meta_out);
-				meta_out.close();
-			}
-			else
-			{
-				LOG_ERROR("Failed to create configuration file!");
-			}
-		}
+
+		return false;
 	}
 	void ProjectManager::Serilize(std::ofstream& _file)
 	{
@@ -162,9 +182,14 @@ namespace OE1Core
 			std::string project_folder_path = WideStrToNarrowStr(project_folder_path_wide);
 			ORI_ACTIVE_PATH = project_folder_path + ORI_ORION_PROJECT_ROOT_PATH;
 		}
+		else
+		{
+			LOG_ERROR("Failed to locate local user Document path!");
+		}
 	}
 	void ProjectManager::CreateProject(std::string _name)
 	{
+
 		ProjectConfig config;
 		config.ActiveRenderer = "InfiniteVision";
 		config.API = "OpenGL";
@@ -175,5 +200,7 @@ namespace OE1Core
 		config.Version = "1.0.0";
 
 		s_ProjectConfig.insert(std::make_pair(config.Name, config));
+		std::wstring _local_project_root = std::wstring(_name.begin(), _name.end());
+		CreateProjectDirStrcture(_local_project_root);
 	}
 }

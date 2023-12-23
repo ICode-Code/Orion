@@ -34,7 +34,11 @@ namespace OE1Core
 		static void InitializeDirectoryHierarchy(std::string _root);
 
 	protected:
-		static void InitlizeMetaData();
+		// This function return true if it find and proper project
+		// meta data
+		static bool ReadMetaData();
+		// This dude will create project meta data
+		static bool InitlizeMetaData();
 		static void Serilize(std::ofstream& _file);
 		static void ReadProjectConfig();
 
