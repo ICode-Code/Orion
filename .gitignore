@@ -377,3 +377,5 @@ FodyWeavers.xsd
 /Core/libboost_serialization-vc143-mt-gd-x64-1_83.lib
 /Core/.orion_meta.ini
 /Core/orion_log.txt
+/LocalAsset/Model
+/LocalAsset
