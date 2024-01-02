@@ -14,7 +14,7 @@ namespace OE1Core
 	{
 	public:
 		ProjectCreatorWin();
-		~ProjectCreatorWin();
+		virtual ~ProjectCreatorWin();
 
 		virtual void Render() override;
 		virtual void Update() override;

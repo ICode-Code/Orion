@@ -108,7 +108,7 @@ namespace OE1Core
 
 				if (ImGui::Button(albedo_bt_name.c_str(), button_size))
 				{
-
+					MinTextureFilterWin::Open();
 				}
 
 				std::string normal_bt_name = "Normal";

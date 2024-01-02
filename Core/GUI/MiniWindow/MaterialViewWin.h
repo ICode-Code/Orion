@@ -3,6 +3,7 @@
 
 
 #include "BaseMiniWindw.h"
+#include "MinTextureFilterWin.h"
 #include "../Core/InfiniteVision/DisplayCanavs/IV2DTextureArrayExtractorFramebuffer.h"
 
 namespace OE1Core

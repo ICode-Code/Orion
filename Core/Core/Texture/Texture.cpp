@@ -9,10 +9,11 @@ namespace OE1Core
 		m_Height = _image_raw.Height;
 		m_Name = _image_raw.Name;
 		m_LoadedWithGamma = _correct_gamma;
-
+		m_SizeMB = 0.0f;
 
 		glGenTextures(1, &m_Texture);
 		glBindTexture(GL_TEXTURE_2D, m_Texture);
+
 
 		glTexImage2D(
 			GL_TEXTURE_2D, 0,
@@ -37,6 +38,7 @@ namespace OE1Core
 		m_Height	= _image_raw_hdri.Height;
 		m_Name		= _image_raw_hdri.Name;
 		m_LoadedWithGamma = false;
+		m_SizeMB = 0.0f;
 
 		glGenTextures(1, &m_Texture);
 		glBindTexture(GL_TEXTURE_2D, m_Texture);
@@ -62,7 +64,10 @@ namespace OE1Core
 	{
 		glDeleteTextures(1, &m_Texture);
 	}
-
+	float Texture::GetSizeMB() const
+	{
+		return m_SizeMB;
+	}
 	GLuint Texture::GetTexture() const
 	{
 		return m_Texture;

@@ -307,6 +307,15 @@ namespace OE1Core
 			return true;
 		}
 
+		if (m_IsLeftCtrPressed && e.GetKeyCode() == SDLK_t)
+		{
+			if (MinTextureFilterWin::IsOpen())
+				MinTextureFilterWin::Close();
+			else
+				MinTextureFilterWin::Open();
+			return true;
+		}
+
 		if (e.GetKeyCode() == SDLK_f)
 		{
 			if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())

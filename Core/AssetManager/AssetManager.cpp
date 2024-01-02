@@ -123,4 +123,13 @@ namespace OE1Core
 		s_RenderableGeometryIDTranslator.insert(std::make_pair(model_id, model_name));
 		s_RenderableGeometry.insert(std::make_pair(model_name, _model));
 	}
+
+	std::unordered_map<std::string, Texture*>& AssetManager::GetTextureRegistry()
+	{
+		return s_TextureRegistry;
+	}
+	std::unordered_map<std::string, Texture*>& AssetManager::GetTextureInternalRegistry()
+	{
+		return s_TextureInternalRegistry;
+	}
 }

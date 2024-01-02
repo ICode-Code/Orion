@@ -21,11 +21,13 @@ namespace OE1Core
 		std::string GetName() const;
 		int GetWidth() const;
 		int GetHeight() const;
+		float GetSizeMB() const;
 
 	protected:
 		GLuint m_Texture;
 		int m_Width;
 		int m_Height;
+		float m_SizeMB;
 		bool m_LoadedWithGamma;
 		std::string m_Name;
 	};

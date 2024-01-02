@@ -36,6 +36,9 @@ namespace OE1Core
 		static ModelPkg* GetGeometry(std::string _name);
 		static void RegisterGeometry(ModelPkg _model);
 
+		static std::unordered_map<std::string, Texture*>& GetTextureRegistry();
+		static std::unordered_map<std::string, Texture*>& GetTextureInternalRegistry();
+
 
 	protected:
 		inline static std::unordered_map<std::string, Texture*> s_TextureRegistry;
