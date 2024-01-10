@@ -56,15 +56,23 @@ namespace  OE1Core
 		std::string& TessCtrSource();
 		std::string& TessEvaSource();
 
+	public:
+		void UpdateVertexShader(std::string _vert_shader = std::string());
+		void UpdateFragmentShader(std::string _frag_shader = std::string());
+		void UpdateGeomShader(std::string _geom_Shader = std::string());
+		void UpdateTessShader(std::string _tess_ctr_shader = std::string(), std::string _tess_eva_shader = std::string());
+
+
+
 
 	public:
 		void SetProxyMat4(std::string _id, glm::mat4 _mat4);
 		void SetProxyMat3(std::string _id, glm::mat3 _mat3);
 		void SetProxy1f(std::string _id, float _val);
-		void setProxy2f(std::string _id, glm::vec2 _val);
-		void setProxy3f(std::string _id, glm::vec3 _val);
-		void setProxy4f(std::string _id, glm::vec4 _val);
-		void setProxy1i(std::string _id, int _val);
+		void SetProxy2f(std::string _id, glm::vec2 _val);
+		void SetProxy3f(std::string _id, glm::vec3 _val);
+		void SetProxy4f(std::string _id, glm::vec4 _val);
+		void SetProxy1i(std::string _id, int _val);
 		void SetProxy2i(std::string _id, glm::ivec2 _val);
 		void SetProxy3i(std::string _id, glm::ivec3 _val);
 		void SetProxy4i(std::string _id, glm::ivec4 _val);
@@ -72,10 +80,10 @@ namespace  OE1Core
 		void SetMat4(std::string _id, glm::mat4 _mat4);
 		void SetMat3(std::string _id, glm::mat3 _mat3);
 		void Set1f(std::string _id, float _val);
-		void set2f(std::string _id, glm::vec2 _val);
-		void set3f(std::string _id, glm::vec3 _val);
-		void set4f(std::string _id, glm::vec4 _val);
-		void set1i(std::string _id, int _val);
+		void Set2f(std::string _id, glm::vec2 _val);
+		void Set3f(std::string _id, glm::vec3 _val);
+		void Set4f(std::string _id, glm::vec4 _val);
+		void Set1i(std::string _id, int _val);
 		void Set2i(std::string _id, glm::ivec2 _val);
 		void Set3i(std::string _id, glm::ivec3 _val);
 		void Set4i(std::string _id, glm::ivec4 _val);
@@ -91,8 +99,13 @@ namespace  OE1Core
 		void ProcessShaderDirective(std::string& _shader_source);
 		std::string ReadDiskFile(std::string _path);
 		void InitShader();
-		void CreateCompileShader(unsigned int& _shader_id, std::string& _source, GLenum _shader_type);
+		void CreateCompileShader(unsigned int& _shader_id, std::string& _source, std::string& _normalized_shader, GLenum _shader_type);
 		void CreateLinkProgram();
+
+
+		void UpdateShaderSource(GLuint _shader_id, std::string _shader_name_text, std::string _new_source, std::string& _base_source, std::string& _normalized_source);
+		void UpdateShaderLinkage();
+
 
 		void CompileShader(unsigned int& _shader_id, std::string& _source);
 		void LinkProgram();

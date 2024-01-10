@@ -46,6 +46,7 @@ namespace OE1Core
 
 	void MaterialManager::RegisterMaterialView(MasterMaterial* _material)
 	{
+		// Make sure this material editor window isn't open already
 		if (m_MaterialEditorWindow.find(_material->GetName()) != m_MaterialEditorWindow.end())
 			return;
 

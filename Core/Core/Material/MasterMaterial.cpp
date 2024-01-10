@@ -51,7 +51,7 @@ namespace OE1Core
 		m_Type = _type;
 	}
 	MaterialTextureAvailFlags MasterMaterial::GetTextureAvailFlags() const { return m_TextureAvailFlag; };
-	MaterialTextureLayerIndex MasterMaterial::GetTextureLayerIndexs() const { return m_TextureLayerIndex; };
+	MaterialTextureCount MasterMaterial::GetTextureLayerIndexs() const { return m_MaterialTextureCount; };
 	MaterialType MasterMaterial::GetType() const { return m_Type; }
 	Memory::MaterialProperties& MasterMaterial::GetParameter() { return m_Parameter; }
 	Memory::TextureAccessIndex& MasterMaterial::GetTAI() { return m_TAI; }
@@ -109,5 +109,254 @@ namespace OE1Core
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, m_NonColorTexture);
+	}
+
+	void MasterMaterial::SetAnisotropicLevel(int _val)
+	{
+		if (_val > 0 && _val <= 4)
+			m_MaxAnisotropic = _val;
+	}
+	int MasterMaterial::GetAnisotropicLevel() const { return m_MaxAnisotropic; }
+
+	std::vector<GLbyte> MasterMaterial::FetchTexturePixelData(OE1Core::Texture* _texture)
+	{
+		if (!_texture)
+			return std::vector<GLbyte>();
+
+		std::vector<GLbyte> _texture_pixel_data(_texture->GetWidth() * _texture->GetHeight() * 4);
+		glBindTexture(GL_TEXTURE_2D, _texture->GetTexture());
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, _texture_pixel_data.data());
+
+		return _texture_pixel_data;
+	}
+
+	void MasterMaterial::ApplyMapFilter()
+	{
+		glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY, m_MaxAnisotropic);
+	}
+	void MasterMaterial::ReallocateTexture2DArrayTextureBuffer(GLuint _texture_buffer_id, size_t _current_size, size_t _new_Size, bool _use_alpha)
+	{
+		// Improvising for OPENGL
+
+		std::vector<DynamicTextureReadbackBuffer> _image_buffer;
+
+		glBindTexture(GL_TEXTURE_2D_ARRAY, _texture_buffer_id);
+		for (int i = 0; i < _current_size; i++)
+		{
+			DynamicTextureReadbackBuffer readBackBuf;
+
+			// Query Texture Size
+			glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, i, GL_TEXTURE_WIDTH, &readBackBuf.WIDTH);
+			glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, i, GL_TEXTURE_HEIGHT, &readBackBuf.HEIGHT);
+
+			// Resize the vector
+			readBackBuf.BUFFER.resize(readBackBuf.WIDTH * readBackBuf.HEIGHT * readBackBuf.HEIGHT);
+
+			// Read image
+			glGetTexImage(GL_TEXTURE_2D_ARRAY, i, GL_RGBA, GL_UNSIGNED_BYTE, readBackBuf.BUFFER.data());
+
+			// Push back
+			_image_buffer.push_back(readBackBuf);
+		}
+
+
+		// if this vector is empty something is not right/ meaning this function shouldn't be called at the first time
+		if (_image_buffer.empty())
+		{
+			printf("Texture readback buffer is empty, should return here");
+		}
+
+		// Set the first image width and hight as the layer size
+		int layer_width = _image_buffer[0].WIDTH;
+		int layer_height = _image_buffer[0].HEIGHT;
+
+		// Select if it is color ot not
+		GLint INTERNAL_FORMAT = _use_alpha ? GL_SRGB_ALPHA : GL_RGBA;
+
+
+		// Resize the original texture buffer
+		glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, INTERNAL_FORMAT, layer_width, layer_height, (GLsizei)_new_Size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+		// After allocating read back the prev image in there order
+		for(size_t i = 0; i < _image_buffer.size(); i++)
+		{
+			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, (GLint)i, (GLsizei)_image_buffer[i].WIDTH, (GLsizei)_image_buffer[i].HEIGHT, 1, GL_RGBA, GL_UNSIGNED_BYTE, _image_buffer[i].BUFFER.data());
+			ApplyMapFilter();
+		}
+	}
+	bool MasterMaterial::UpdateTextureCore(bool& _has_texture, int& _tai, bool& _has_req_map, GLuint* _texture_id, bool is_color, OE1Core::Texture* _texture)
+	{
+		// This function purpose is to reduce the code repition and stuff
+
+		bool default_return = false;
+
+		// Get Texture Pixel Data
+		auto TexturePixel = FetchTexturePixelData(_texture);
+
+		
+		if (_has_req_map)
+		{
+			if (_has_texture)
+			{
+				glBindTexture(GL_TEXTURE_2D_ARRAY, *_texture_id);
+				// Update texture
+				glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, _tai, _texture->GetWidth(), _texture->GetHeight(), 1, GL_RGBA, GL_UNSIGNED_BYTE, TexturePixel.data());
+
+				// Apply Filter
+				this->ApplyMapFilter();
+
+				// Done
+				default_return = true; // easy pizzy
+			}
+			else
+			{
+				// If the code reach here the tricky part
+				// we have other non-color texture it could be rouhgness or metal or whatever we have some non color material
+				// and we need to apped this normal map
+
+				// let's get the number of non color texture, At least we know that :)
+				int AvialTextureCount = is_color ? m_MaterialTextureCount.GetColorTextureCount() : m_MaterialTextureCount.GetNonColorTextureCount();
+
+				// ScaleUp texture buffer
+				ReallocateTexture2DArrayTextureBuffer(*_texture_id, AvialTextureCount, AvialTextureCount + 1, is_color);
+
+				// Get Index for normal map 
+				// Which is basically (CurrentNumberOfNonColorTextureCount + 1) but we do it in the correct way I think
+				int MapIdx = is_color ? m_MaterialTextureCount.GetNextColorIndex() : m_MaterialTextureCount.GetNextNonColorIndex();
+
+				//Register Index for callback
+				_tai = MapIdx; 
+				_has_texture = true;
+
+				// And Finally Write
+				glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, _tai, _texture->GetWidth(), _texture->GetHeight(), 1, GL_RGBA, GL_UNSIGNED_BYTE, TexturePixel.data());
+				this->ApplyMapFilter();
+
+				// we that we are done
+				default_return = true;
+			}
+		}
+		else
+		{
+			// If we are here it means there is no Non-Color map texture
+			// So let's have one
+
+			glGenTextures(1, _texture_id);
+			glBindTexture(GL_TEXTURE_2D_ARRAY, *_texture_id);
+
+			// Now we have Non-Color Texture
+			_has_req_map = true;
+
+			// After getting initial texture buffer
+			GLint INTERNAL_FORMAT = is_color ? GL_SRGB_ALPHA : GL_RGBA;
+			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, INTERNAL_FORMAT, _texture->GetWidth(), _texture->GetHeight(), 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+
+			int MapIdx = is_color ? m_MaterialTextureCount.GetNextColorIndex() : m_MaterialTextureCount.GetNextNonColorIndex();
+
+			_tai = MapIdx; 
+			_has_texture = true;
+
+			// we can write our data
+			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, _tai, _texture->GetWidth(), _texture->GetHeight(), 1, GL_RGBA, GL_UNSIGNED_BYTE, TexturePixel.data());
+			this->ApplyMapFilter();
+
+			default_return = true;
+		}
+
+		this->Update();
+
+		return default_return;
+	}
+
+	bool MasterMaterial::RegisterAlbedoMap(OE1Core::Texture* _texture)
+	{
+		if (!_texture)
+			return false;
+
+		bool _need_Shader_update = !m_TextureAvailFlag.HasColor;
+
+		bool _state = UpdateTextureCore(
+
+			m_TextureAvailFlag.HasColor,
+			m_TAI.Color,
+			m_HasNonColorMap,
+			&m_ColorTexture,
+			true,
+			_texture
+
+		);
+
+		// if the texture is new update shader
+		if (_need_Shader_update && _state)
+		{
+			AvailTexture _flags(m_TextureAvailFlag);
+			m_Type = _flags.GetMaterialType();
+			std::string _new_frag_shader = ShaderGenerator::GetForwardPixelShader(_flags);
+			m_Shader->UpdateFragmentShader(_new_frag_shader);
+			Memory::UniformBlockManager::LinkShader(m_Shader);
+			
+		}
+
+		return _state;
+		
+	}
+	bool MasterMaterial::RegisterEmissionMap(OE1Core::Texture* _texture)
+	{
+		if (!_texture)
+			return false;
+
+		return UpdateTextureCore(
+
+			m_TextureAvailFlag.HasEmission,
+			m_TAI.Emission,
+			m_HasNonColorMap,
+			&m_ColorTexture,
+			true,
+			_texture
+
+		);
+	}
+	bool MasterMaterial::RegisterNormalMap(OE1Core::Texture* _texture)
+	{
+		if (!_texture)
+			return false;
+
+		return UpdateTextureCore(
+
+			m_TextureAvailFlag.HasNormal, 
+			m_TAI.Normal, 
+			m_HasNonColorMap,
+			&m_NonColorTexture,
+			false,
+			_texture
+
+		);
+	}
+
+	bool MasterMaterial::RegisterMetalMap(OE1Core::Texture* _texture)
+	{
+		return false;
+	}
+	bool MasterMaterial::RegisterRoughnessMap(OE1Core::Texture* _texture)
+	{
+		return false;
+	}
+	bool MasterMaterial::RegisterMetalRoughnessMap(OE1Core::Texture* _texture)
+	{
+		return false;
+	}
+	bool MasterMaterial::RegisterAlphaMap(OE1Core::Texture* _texture)
+	{
+		return false;
+	}
+	bool MasterMaterial::RegisterAOMap(OE1Core::Texture* _texture)
+	{
+		return false;
 	}
 }

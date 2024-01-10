@@ -34,57 +34,17 @@ namespace OE1Core
 
 			ImGui::Columns(4, "innerList", false);
 			PushTextureViewStyle();
-			if (tex.HasColor)
-			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Color.first, "Color", MaterialType::DIFFUSE);
-				ImGui::NextColumn();
-			}
 			
-			if (tex.HasNormal)
-			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Normal.first, "Normal", MaterialType::NORMAL);
-				ImGui::NextColumn();
-			}
-
-
-			if (tex.HasMetal)
-			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Metal.first, "Metal", MaterialType::METAL);
-				ImGui::NextColumn();
-			}
-
-			if (tex.HasRoughness)
-			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Roughness.first, "Roughness", MaterialType::ROUGHNESS);
-				ImGui::NextColumn();
-			}
-
-			if (tex.HasMetalRougness)
-			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().MetalRougness.first, "Roughness & Metal", MaterialType::METAL_ROUGHNESS);
-				ImGui::NextColumn();
-			}
-
-			if (tex.HasAO)
-			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().AO.first, "AO", MaterialType::AO);
-				ImGui::NextColumn();
-			}
-
-			if (tex.HasEmission)
-			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Emission.first, "Emission", MaterialType::EMISSIVE);
-				ImGui::NextColumn();
-			}
-
-			if (tex.HasAlpha)
-			{
-				PaintTexture(m_Framebuffer->GetTextureAttachment().Alpha.first, "Alpha", MaterialType::ALPHA);
-				ImGui::NextColumn();
-			}
-
+			TexturePreviewPainter(m_Framebuffer->GetTextureAttachment().Color.first,			"Color",				MaterialType::DIFFUSE,			tex.HasColor);
+			TexturePreviewPainter(m_Framebuffer->GetTextureAttachment().Normal.first,			"Normal",				MaterialType::NORMAL,			tex.HasNormal);
+			TexturePreviewPainter(m_Framebuffer->GetTextureAttachment().Metal.first,			"Metal",				MaterialType::METAL,			tex.HasMetal);
+			TexturePreviewPainter(m_Framebuffer->GetTextureAttachment().Roughness.first,		"Roughness",			MaterialType::ROUGHNESS,		tex.HasRoughness);
+			TexturePreviewPainter(m_Framebuffer->GetTextureAttachment().MetalRougness.first,	"Roughness & Metal",	MaterialType::METAL_ROUGHNESS,	tex.HasMetalRougness);
+			TexturePreviewPainter(m_Framebuffer->GetTextureAttachment().AO.first,				"AO",					MaterialType::AO,				tex.HasAO);
+			TexturePreviewPainter(m_Framebuffer->GetTextureAttachment().Emission.first,			"Emission",				MaterialType::EMISSIVE,			tex.HasEmission);
+			TexturePreviewPainter(m_Framebuffer->GetTextureAttachment().Alpha.first,			"Alpha",				MaterialType::ALPHA,			tex.HasAlpha);
 			
-
+			
 			PopTextureViewStyle();
 
 			ImGui::Columns(1);
@@ -103,71 +63,35 @@ namespace OE1Core
 				ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, {0.0f, 0.5f});
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {1.0f, 1.0f});
 
-				std::string albedo_bt_name = "Albedo";
-				tex.HasColor ? albedo_bt_name.append(" [overwrite]") : "";
-
-				if (ImGui::Button(albedo_bt_name.c_str(), button_size))
-				{
-					MinTextureFilterWin::Open();
-				}
-
-				std::string normal_bt_name = "Normal";
-				tex.HasNormal ? normal_bt_name.append(" [overwrite]") : "";
-
-				if (ImGui::Button(normal_bt_name.c_str(), button_size))
-				{
-
-				}
-
-				std::string metal_bt_name = "Metal";
-				tex.HasMetal ? metal_bt_name.append(" [overwrite]") : "";
-
-				if (ImGui::Button(metal_bt_name.c_str(), button_size))
-				{
-
-				}
-
-				std::string Roughness_bt_name = "Roughness";
-				tex.HasRoughness ? Roughness_bt_name.append(" [overwrite]") : "";
-
-				if (ImGui::Button(Roughness_bt_name.c_str(), button_size))
-				{
-
-				}
-
-				std::string Roughness_metal_bt_name = "Roughness-Metal";
-				tex.HasMetalRougness ? Roughness_metal_bt_name.append(" [overwrite]") : "";
-
-				if (ImGui::Button(Roughness_metal_bt_name.c_str(), button_size))
-				{
-
-				}
-
-				std::string ambient_occlu_bt_name = "Ambient Occlusion";
-				tex.HasAO ? ambient_occlu_bt_name.append(" [overwrite]") : "";
-
-				if (ImGui::Button(ambient_occlu_bt_name.c_str(), button_size))
-				{
-
-				}
-
-				std::string emission_bt_name = "Emission";
-				tex.HasEmission ? emission_bt_name.append(" [overwrite]") : "";
-
-				if (ImGui::Button(emission_bt_name.c_str(), button_size))
-				{
-
-				}
-
-				std::string alpha_bt_name = "Alpha Mask";
-				tex.HasAlpha ? alpha_bt_name.append(" [overwrite]") : "";
-
-				if (ImGui::Button(alpha_bt_name.c_str(), button_size))
-				{
-
-				}
+				TextureListButton("Albedo",				MaterialType::DIFFUSE,			tex.HasColor,			button_size, m_TextureIssueFlag.ColorMapIssued);
+				TextureListButton("Normal",				MaterialType::NORMAL,			tex.HasNormal,			button_size, m_TextureIssueFlag.NormalMapIssued);
+				TextureListButton("Metal",				MaterialType::METAL,			tex.HasMetal,			button_size, m_TextureIssueFlag.MetalMapIssued);
+				TextureListButton("Roughness",			MaterialType::ROUGHNESS,		tex.HasRoughness,		button_size, m_TextureIssueFlag.RoughnessMapIssued);
+				TextureListButton("Roughness-Metal",	MaterialType::METAL_ROUGHNESS,	tex.HasMetalRougness,	button_size, m_TextureIssueFlag.MetalRougnessMapIssued);
+				TextureListButton("Ambient Occlusion",	MaterialType::AO,				tex.HasAO,				button_size, m_TextureIssueFlag.AOMapIssued);
+				TextureListButton("Emission",			MaterialType::EMISSIVE,			tex.HasEmission,		button_size, m_TextureIssueFlag.EmissionMapIssued);
+				TextureListButton("Alpha Mask",			MaterialType::ALPHA,			tex.HasAlpha,			button_size, m_TextureIssueFlag.AlphaMapIssued);
+				
 
 				ImGui::PopStyleVar(2);
+				 
+
+				if (ImGui::BeginPopup("texture_buffer_mini_selector"))
+				{
+
+					auto& _texture_list = AssetManager::GetTextureRegistry();
+					for (auto iter = _texture_list.begin(); iter != _texture_list.end(); iter++)
+					{
+						if (ImageWithName(iter->second->GetTexture(), iter->second->GetName(), iter->second->GetSizeMB()))
+						{
+							m_TempTextureMemPtr = iter->second;
+							AnalizeTextureSelectionFlag(iter->second, m_TempTexType);
+							ImGui::CloseCurrentPopup();
+						}
+					}
+
+					ImGui::EndPopup();
+				}
 
 				ImGui::EndPopup();
 			}
@@ -239,6 +163,49 @@ namespace OE1Core
 		
 		m_Material->Update();
 	}
+	void MaterialViewWin::TextureListButton(std::string _name, MaterialType _type, bool _has_texture, ImVec2 _size, bool& _issue_flag)
+	{
+		_has_texture ? _name.append(" [overwrite]") : "";
+		if (ImGui::Button(_name.c_str(), _size))
+		{
+			m_TextureIssueFlag.Reset();
+			m_TempTexType = _type;
+			ImGui::OpenPopup("texture_buffer_mini_selector");
+			_issue_flag = true;
+		}
+	}
+	bool MaterialViewWin::ImageWithName(GLuint _image, std::string _name, float _size)
+	{
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0, 0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 2 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0 });
+
+
+		ImGui::PushStyleColor(ImGuiCol_Button, { 0.1f, 0.1f, 0.1f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.15f, 0.15f, 0.15f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.15f, 0.15f, 0.15f, 1.0f });
+
+		ImGui::Image((ImTextureID)(uintptr_t)_image, { 20, 23 }, { 0, 1 }, { 1, 0 });
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::Image((ImTextureID)(uintptr_t)_image, { 350, 300 });
+			ImGui::EndTooltip();
+		}
+		ImGui::SameLine();
+
+		std::string file_name = _name + " [";
+		file_name += std::to_string(_size);
+		file_name += " Mib]";
+		bool _is_clicked = ImGui::Button(file_name.c_str(), { 250, 0 });
+
+		ImGui::PopStyleColor(3);
+		ImGui::PopStyleVar(3);
+
+
+		return _is_clicked;
+	}
 	void MaterialViewWin::Update()
 	{
 		ImGui::SetWindowSize({700,450});
@@ -295,7 +262,8 @@ namespace OE1Core
 				command.IsColor = ((_type == MaterialType::DIFFUSE) || (_type == MaterialType::EMISSIVE));
 				
 				Command::PushMaterialTextureUpdateCommand(command);
-				
+
+				this->PushUpdateViewCommand();
 				
 			}
 
@@ -303,5 +271,40 @@ namespace OE1Core
 		}
 
 		PrintTextureName(_name);
+	} 
+
+	void MaterialViewWin::AnalizeTextureSelectionFlag(OE1Core::Texture* _texture, OE1Core::MaterialType _type)
+	{
+		// Construct a command 
+		CommandDef::MaterialtextureUpdateCommandDef command;
+
+
+		command.Material = m_Material;
+		command.TextureType = _type;
+		command.NewTexture = AssetManager::GetTexture(Loader::NameHandle::FilterFileName(_texture->GetName()));
+		command.IsColor = true; // we don't care
+
+		Command::PushMaterialTextureUpdateCommand(command);
+
+		this->PushUpdateViewCommand();
+
+		m_TextureIssueFlag.Reset();
+	}
+
+	void MaterialViewWin::TexturePreviewPainter(GLuint _index, std::string _name, MaterialType _type, bool _has_texture)
+	{
+		if (!_has_texture)
+			return;
+		PaintTexture(_index, _name.c_str(), _type);
+		ImGui::NextColumn();
+	}
+	void MaterialViewWin::PushUpdateViewCommand()
+	{
+		// Update View
+		CommandDef::MaterialTextureExtractionDef mat_view_update_command;
+		mat_view_update_command.Material = m_Material;
+		mat_view_update_command.MaterialView = this;
+		// Queue command
+		Command::PushMaterialTextureExtractionCommand(mat_view_update_command);
 	}
 }

@@ -124,7 +124,6 @@ namespace OE1Core
 		// Which Texture exist which does not
 
 		MaterialTextureAvailFlags texture_avial_flag;
-		MaterialTextureLayerIndex texture_layer_index;
 
 		texture_avial_flag.HasColor				=	s_AvialTextures.HasDiffuse				= _texture_set.find(DataBlock::TextureType::DIFFUSE)			!= _texture_set.end();
 		texture_avial_flag.HasNormal			=	s_AvialTextures.HasNormal				= _texture_set.find(DataBlock::TextureType::NORMAL)				!= _texture_set.end();
@@ -149,7 +148,7 @@ namespace OE1Core
 		// This alloacted shader is managed by the material, so it will delete it, no need to worry
 		MasterMaterial* master_material = MaterialManager::RegisterMaterial(_mat_name, new Shader(vertex_shader.c_str(), fragment_shader.c_str(), vertex_shader_proxy.c_str()));
 		master_material->m_TextureAvailFlag = texture_avial_flag;
-		master_material->m_TextureLayerIndex.CountAvialTexture(master_material->m_TextureAvailFlag);
+		master_material->m_MaterialTextureCount.CountAvialTexture(master_material->m_TextureAvailFlag);
 		master_material->SetType(material_type);
 
 		// if the material type is default which means there is no texture we can return here
@@ -166,6 +165,7 @@ namespace OE1Core
 		GLuint color_map_texture;
 		GLuint non_color_map_texture;
 
+
 		if (s_AvialTextures.HasDiffuse || s_AvialTextures.HasEmission)
 		{
 			glGenTextures(1, &color_map_texture);
@@ -181,7 +181,9 @@ namespace OE1Core
 		if (s_AvialTextures.HasDiffuse && s_AvialTextures.HasEmission)
 		{
 			auto& diffuse_texture = std::get<1>(_texture_set[DataBlock::TextureType::DIFFUSE]);
-			
+			OE1Core::Texture* _texture =  AssetManager::GetTexture(diffuse_texture.Name);
+			if (_texture)
+				printf("We are cool");
 			// Allocate memory
 			glBindTexture(GL_TEXTURE_2D_ARRAY, color_map_texture);
 			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_SRGB_ALPHA, diffuse_texture.Width, diffuse_texture.Height, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);

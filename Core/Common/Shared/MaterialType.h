@@ -28,21 +28,11 @@ namespace OE1Core
 		bool HasAO				= false;
 	};
 
-	struct MaterialTextureLayerIndex
+	struct MaterialTextureCount
 	{
 	public:
-		int Color = -1;
-		int Normal = -1;
-		int Metal = -1;
-		int Roughness = -1;
-		int MetalRoughness = -1;
-		int Alpha = -1;
-		int Emission = -1;
-		int AO = -1;
-
-		int NumberOfColorTexture = 0;
-		int NumberNonColorTexture = 0;
-
+		int GetColorTextureCount() const { return NumberOfColorTexture; }
+		int GetNonColorTextureCount() const { return NumberNonColorTexture; }
 
 		void CountAvialTexture(MaterialTextureAvailFlags& _avial_texture)
 		{
@@ -69,12 +59,14 @@ namespace OE1Core
 			if (_avial_texture.HasAO)
 				NumberNonColorTexture++;
 		}
-		int GetNextColorIndex() { return ColorTextureLayerIdx++; }
-		int GetNextNonColorIndex() { return NonColorTextureLayerIdx++; }
+		// This call will increase texture count
+		int GetNextColorIndex() { return NumberOfColorTexture++; }
+		// This call will increase texture count
+		int GetNextNonColorIndex() { return NumberNonColorTexture++; }
 
 	private:
-		int ColorTextureLayerIdx = 0;
-		int NonColorTextureLayerIdx = 0;
+		int NumberOfColorTexture = 0;
+		int NumberNonColorTexture = 0;
 	};
 }
 

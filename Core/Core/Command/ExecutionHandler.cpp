@@ -17,10 +17,10 @@ namespace OE1Core
 		ProcessAsset();
 
 		ProcessSelectionCommand();
-		ProcessMaterialTextureExtractionCommand();
 		ProcessTextureLoadCommand();
 		ProcessTextureRawDataLoadCommand();
 		ProcessMaterialTextureUpdateCommand();
+		ProcessMaterialTextureExtractionCommand();
 	}
 	void ExecutionHandler::ProcessMaterialTextureUpdateCommand()
 	{
@@ -28,38 +28,75 @@ namespace OE1Core
 		{
 			auto& command = Command::s_MaterialTextureUpdateCommands.front();
 
-			std::vector<GLbyte> pixels(command.NewTexture->GetWidth() * command.NewTexture->GetHeight() * 4);
-			glBindTexture(GL_TEXTURE_2D, command.NewTexture->GetTexture());
-			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-			if (command.IsColor)
+			
+			switch (command.TextureType)
 			{
-				if (command.Material->HasColorMap())
-				{
-					glBindTexture(GL_TEXTURE_2D_ARRAY, command.Material->GetColorTextures());
-
-					if (command.TextureType == MaterialType::DIFFUSE)
-					{
-						// update color
-						glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, command.NewTexture->GetWidth(), command.NewTexture->GetHeight(), 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-						glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
-						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
-						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
-						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY, 2);
-					}
-					else if (command.TextureType == MaterialType::EMISSIVE)
-					{
-						// Update Emissive
-					}
-
-					glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-				}
+			case MaterialType::DIFFUSE:
+				command.Material->RegisterAlbedoMap(command.NewTexture);
+				break;
+			case MaterialType::EMISSIVE:
+				command.Material->RegisterEmissionMap(command.NewTexture);
+				break;
+			default:
+				break;
 			}
-			else
-			{
 
-			}
+			//std::vector<GLbyte> pixels(command.NewTexture->GetWidth() * command.NewTexture->GetHeight() * 4);
+			//glBindTexture(GL_TEXTURE_2D, command.NewTexture->GetTexture());
+			//glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+
+			//// If the selected item is color map
+			//if (command.IsColor)
+			//{
+
+			//	// Now if the material already have a colormap find and replace  
+			//	if (command.Material->HasColorMap())
+			//	{
+			//		glBindTexture(GL_TEXTURE_2D_ARRAY, command.Material->GetColorTextures());
+
+			//		if (command.TextureType == MaterialType::DIFFUSE)
+			//		{
+			//			// update color
+			//			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, command.NewTexture->GetWidth(), command.NewTexture->GetHeight(), 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+			//			glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+			//			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			//			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			//			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			//			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			//			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY, 2);
+			//		}
+			//		else if (((int)(command.TextureType) & (int)MaterialType::EMISSIVE) != 0)
+			//		{
+			//			// Update Emissive
+			//		}
+
+			//		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+			//	}
+			//	else
+			//	{
+			//		// If the code reach here it means the selected mesh does not have a color map
+			//		// and we need to create one
+			//		
+			//		// First which color map did we just receive
+			//		if ((int)command.TextureType & (int)MaterialType::DIFFUSE)
+			//		{
+			//			// Create Color Map
+			//		}
+			//		else if ((int)command.TextureType & (int)MaterialType::EMISSIVE)
+			//		{
+			//			// Create Emission Map
+			//		}
+			//	}
+			//}
+			//else
+			//{
+			//	// Here means the we are trying to update of create non-color map like normal, roughness....
+			//	if (command.Material->HasNonColorMap())
+			//	{
+
+			//	}
+
+			//}
 
 
 			Command::s_MaterialTextureUpdateCommands.pop();
@@ -80,6 +117,11 @@ namespace OE1Core
 			GLint viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
 
+
+			// Make sure framebuffer is null since this call maybe intiate from the inside
+			if (!material_view->m_Framebuffer)
+				delete  material_view->m_Framebuffer;
+
 			// Init Internal Framebuffer
 			material_view->m_Framebuffer = new Renderer::IV2DTextureArrayExtractorFramebuffer(Renderer::IVFrameSize::R_640_480, FilterMaterialTexture(master_material));
 			Renderer::CheckMatPreviewTexture has_texture = material_view->m_Framebuffer->GetCheckMaterialTextureX();
@@ -90,18 +132,18 @@ namespace OE1Core
 			
 			renderer->GetShader()->Attach();
 			
-			renderer->GetShader()->set1i("t_ColorMapTexture", 0);;
-			renderer->GetShader()->set1i("t_NoneColorMapTexture", 1);;
+			renderer->GetShader()->Set1i("t_ColorMapTexture", 0);;
+			renderer->GetShader()->Set1i("t_NoneColorMapTexture", 1);;
 
-			renderer->GetShader()->set1i("HasColor",			has_texture.HasColor);
-			renderer->GetShader()->set1i("HasNormal",			has_texture.HasNormal);
-			renderer->GetShader()->set1i("HasMetal",			has_texture.HasMetal);
-			renderer->GetShader()->set1i("HasRoughness",		has_texture.HasRoughness);
-			renderer->GetShader()->set1i("HasMetalRougness",	has_texture.HasMetalRougness);
-			renderer->GetShader()->set1i("HasEmission",			has_texture.HasEmission);
-			renderer->GetShader()->set1i("HasAlpha",			has_texture.HasAlpha);
-			renderer->GetShader()->set1i("HasAO",				has_texture.HasAO);
-			renderer->GetShader()->set1i("material_index",		master_material->GetOffset());
+			renderer->GetShader()->Set1i("HasColor",			has_texture.HasColor);
+			renderer->GetShader()->Set1i("HasNormal",			has_texture.HasNormal);
+			renderer->GetShader()->Set1i("HasMetal",			has_texture.HasMetal);
+			renderer->GetShader()->Set1i("HasRoughness",		has_texture.HasRoughness);
+			renderer->GetShader()->Set1i("HasMetalRougness",	has_texture.HasMetalRougness);
+			renderer->GetShader()->Set1i("HasEmission",			has_texture.HasEmission);
+			renderer->GetShader()->Set1i("HasAlpha",			has_texture.HasAlpha);
+			renderer->GetShader()->Set1i("HasAO",				has_texture.HasAO);
+			renderer->GetShader()->Set1i("material_index",		master_material->GetOffset());
 
 			master_material->Attach();
 

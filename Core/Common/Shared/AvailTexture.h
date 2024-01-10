@@ -9,6 +9,17 @@ namespace OE1Core
 	{
 	public:
 		AvailTexture() = default;
+		AvailTexture(MaterialTextureAvailFlags& _flags)
+		{
+			HasDiffuse = _flags.HasColor;
+			HasNormal = _flags.HasNormal;
+			HasRoughness = _flags.HasRoughness;
+			HasMetal = _flags.HasMetal;
+			HasRoughness_Metal = _flags.HasMetalRoughness;
+			HasAlphaMask = _flags.HasAlpha;
+			HasEmission = _flags.HasEmission;
+			HasAo = _flags.HasAO;
+		}
 		~AvailTexture() = default;
 		void Reset()
 		{

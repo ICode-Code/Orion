@@ -170,20 +170,20 @@ namespace OE1Core
 		}
 		if (m_HasProxy)
 		{
-			CreateCompileShader(m_Proxy.VertexShader, m_Proxy.VertexShaderSource, GL_VERTEX_SHADER);
-			CreateCompileShader(m_Proxy.FragmentShader, m_Arg.FragmentShaderSource, GL_FRAGMENT_SHADER);
+			CreateCompileShader(m_Proxy.VertexShader, m_Proxy.VertexShaderSource, m_Proxy.VertexShaderSourceNormalized, GL_VERTEX_SHADER);
+			CreateCompileShader(m_Proxy.FragmentShader, m_Arg.FragmentShaderSource, m_Arg.FragmentShaderSourceNormalized, GL_FRAGMENT_SHADER);
 
 		}
-		CreateCompileShader(m_Arg.VertexShader, m_Arg.VertexShaderSource,			GL_VERTEX_SHADER);
-		CreateCompileShader(m_Arg.FragmentShader, m_Arg.FragmentShaderSource,		GL_FRAGMENT_SHADER);
+		CreateCompileShader(m_Arg.VertexShader, m_Arg.VertexShaderSource, m_Arg.VertexShaderSourceNormalized,			GL_VERTEX_SHADER);
+		CreateCompileShader(m_Arg.FragmentShader, m_Arg.FragmentShaderSource, m_Arg.FragmentShaderSourceNormalized,		GL_FRAGMENT_SHADER);
 		
 		if(m_Arg.HasGeometryShader)
-			CreateCompileShader(m_Arg.GeometryShader, m_Arg.GeometryShaderSource,	GL_GEOMETRY_SHADER);
+			CreateCompileShader(m_Arg.GeometryShader, m_Arg.GeometryShaderSource, m_Arg.GeometryShaderSourceNormalized,	GL_GEOMETRY_SHADER);
 		
 		if (m_Arg.HasTessellationShader)
 		{
-			CreateCompileShader(m_Arg.TessellationControlShader, m_Arg.TessellationControlShaderSource, GL_TESS_CONTROL_SHADER);
-			CreateCompileShader(m_Arg.TessellationEvaluationShader, m_Arg.TessellationEvaluationShaderSource, GL_TESS_EVALUATION_SHADER);
+			CreateCompileShader(m_Arg.TessellationControlShader, m_Arg.TessellationControlShaderSource, m_Arg.TessellationControlShaderSourceNormalized, GL_TESS_CONTROL_SHADER);
+			CreateCompileShader(m_Arg.TessellationEvaluationShader, m_Arg.TessellationEvaluationShaderSource, m_Arg.TessellationEvaluationShaderSourceNormalized, GL_TESS_EVALUATION_SHADER);
 		}
 
 		CreateLinkProgram();
@@ -313,8 +313,152 @@ namespace OE1Core
 
 		return shader_source;
 	}
+	void Shader::UpdateVertexShader(std::string _vert_shader)
+	{
+		ProcessShaderDirective(_vert_shader);
+		UpdateShaderSource(
+			m_Arg.VertexShader,
+			"Vertex",
+			_vert_shader,
+			m_Arg.VertexShaderSource,
+			m_Arg.VertexShaderSourceNormalized
+		);
 
-	void Shader::CreateCompileShader(unsigned int& _shader_id, std::string& _source, GLenum _shader_type)
+		this->UpdateShaderLinkage();
+
+	}
+	void Shader::UpdateFragmentShader(std::string _frag_shader)
+	{
+		ProcessShaderDirective(_frag_shader);
+		UpdateShaderSource(
+			m_Arg.FragmentShader,
+			"Fragment",
+			_frag_shader,
+			m_Arg.FragmentShaderSource,
+			m_Arg.FragmentShaderSourceNormalized
+		);
+
+		this->UpdateShaderLinkage();
+
+	}
+	void Shader::UpdateGeomShader(std::string _geom_shader)
+	{
+		ProcessShaderDirective(_geom_shader);
+		if (m_Arg.HasGeometryShader)
+		{
+			UpdateShaderSource(
+				m_Arg.GeometryShader,
+				"Geometry",
+				_geom_shader,
+				m_Arg.GeometryShaderSource,
+				m_Arg.GeometryShaderSourceNormalized
+			);
+
+			this->UpdateShaderLinkage();
+
+		}
+	}
+	void Shader::UpdateTessShader(std::string _tess_ctr_shader, std::string _tess_eva_shader)
+	{
+		ProcessShaderDirective(_tess_ctr_shader);
+		ProcessShaderDirective(_tess_eva_shader);
+		if (m_Arg.HasTessellationShader)
+		{
+			UpdateShaderSource(
+				m_Arg.TessellationControlShader,
+				"Tessellation Control",
+				_tess_ctr_shader,
+				m_Arg.TessellationControlShaderSource,
+				m_Arg.TessellationControlShaderSourceNormalized
+			);
+
+			UpdateShaderSource(
+				m_Arg.TessellationEvaluationShader,
+				"Tessellation Evaluation",
+				_tess_eva_shader,
+				m_Arg.TessellationEvaluationShaderSource,
+				m_Arg.TessellationEvaluationShaderSourceNormalized
+			);
+
+			
+			this->UpdateShaderLinkage();
+
+		}
+	}
+
+	void Shader::UpdateShaderSource(GLuint _shader_id, std::string _shader_name_text, std::string _new_source, std::string& _base_source, std::string& _normalized_source)
+	{
+		std::string _active_shader_source = _new_source.empty() ? _base_source : _new_source;
+		const char* _source_code = _active_shader_source.c_str();
+
+		glShaderSource(_shader_id, 1, &_source_code, NULL);
+		glCompileShader(_shader_id);
+
+		glGetShaderiv(_shader_id, GL_COMPILE_STATUS, &m_Arg.Compiled);
+		if (!m_Arg.Compiled)
+		{
+			glGetShaderInfoLog(m_Arg.VertexShader, SHADER_ERROR_LOG_BUFFER_SIZE, NULL, m_Arg.Log);
+			LOG_ERROR("An Error occured when trying to update and compile {0} shader...", _shader_name_text);
+			LOG_ERROR(m_Arg.Log);
+			LOG_WARRNING("Trying to revert back to the last successfully compilation....");
+
+			if (_normalized_source.empty())
+			{
+				LOG_ERROR("Normalized shader not found! Failed to revert shader!");
+			}
+			else
+			{
+				const char* _last_success_source = _normalized_source.c_str();
+
+				glShaderSource(_shader_id, 1, &_last_success_source, NULL);
+				glCompileShader(_shader_id);
+
+				glGetShaderiv(_shader_id, GL_COMPILE_STATUS, &m_Arg.Compiled);
+
+				if (!m_Arg.Compiled)
+				{
+					glGetShaderInfoLog(_shader_id, SHADER_ERROR_LOG_BUFFER_SIZE, NULL, m_Arg.Log);
+					LOG_ERROR("Error found in the last successfully compilation of a shader...");
+					LOG_ERROR(m_Arg.Log);
+				}
+			}
+		}
+		else
+		{
+			_base_source = _active_shader_source;
+			_normalized_source = _active_shader_source;
+		}
+	}
+	void Shader::UpdateShaderLinkage()
+	{
+		glAttachShader(m_Arg.RenderID, m_Arg.VertexShader);
+		glAttachShader(m_Arg.RenderID, m_Arg.FragmentShader);
+
+		if (m_Arg.HasGeometryShader)
+			glAttachShader(m_Arg.RenderID, m_Arg.GeometryShader);
+
+		if (m_Arg.HasTessellationShader)
+		{
+			glAttachShader(m_Arg.RenderID, m_Arg.TessellationControlShader);
+			glAttachShader(m_Arg.RenderID, m_Arg.TessellationEvaluationShader);
+		}
+
+		glLinkProgram(m_Arg.RenderID);
+		glGetProgramiv(m_Arg.RenderID, GL_LINK_STATUS, &m_Arg.Linked);
+
+		if (!m_Arg.Linked)
+		{
+			glGetProgramInfoLog(m_Arg.RenderID, SHADER_ERROR_LOG_BUFFER_SIZE, NULL, m_Arg.Log);
+			LOG_ERROR("Failed to link updated shader...");
+			LOG_ERROR(m_Arg.Log);
+		}
+		else
+		{
+			LOG_INFO("Shader update was successfull!");
+		}
+	}
+
+	void Shader::CreateCompileShader(unsigned int& _shader_id, std::string& _source, std::string& _normalized_shader, GLenum _shader_type)
 	{
 		_shader_id = glCreateShader(_shader_type);
 		const char* source_code = _source.c_str();
@@ -327,6 +471,8 @@ namespace OE1Core
 			glGetShaderInfoLog(_shader_id, SHADER_ERROR_LOG_BUFFER_SIZE, NULL, m_Arg.Log);
 			LOG_ERROR(m_Arg.Log);
 		}
+		else
+			_normalized_shader = _source;
 	}
 	void Shader::CreateLinkProgram()
 	{
@@ -450,7 +596,7 @@ namespace OE1Core
 		Attach();
 
 		for (auto& iter : m_Arg.ShaderTextureUnits)
-			set1i(iter.first, iter.second);
+			Set1i(iter.first, iter.second);
 
 		Detach();
 
@@ -459,7 +605,7 @@ namespace OE1Core
 			AttachProxy();
 
 			for (auto& iter : m_Arg.ShaderTextureUnits)
-				setProxy1i(iter.first, iter.second);
+				SetProxy1i(iter.first, iter.second);
 
 			Detach();
 		}
@@ -521,19 +667,19 @@ namespace OE1Core
 	{
 		glUniform1f(glGetUniformLocation(m_Arg.RenderID, _id.c_str()), _val);
 	}
-	void Shader::set2f(std::string _id, glm::vec2 _val)
+	void Shader::Set2f(std::string _id, glm::vec2 _val)
 	{
 		glUniform2fv(glGetUniformLocation(m_Arg.RenderID, _id.c_str()), 1, glm::value_ptr(_val));
 	}
-	void Shader::set3f(std::string _id, glm::vec3 _val)
+	void Shader::Set3f(std::string _id, glm::vec3 _val)
 	{
 		glUniform3fv(glGetUniformLocation(m_Arg.RenderID, _id.c_str()), 1, glm::value_ptr(_val));
 	}
-	void Shader::set4f(std::string _id, glm::vec4 _val)
+	void Shader::Set4f(std::string _id, glm::vec4 _val)
 	{
 		glUniform4fv(glGetUniformLocation(m_Arg.RenderID, _id.c_str()), 1, glm::value_ptr(_val));
 	}
-	void Shader::set1i(std::string _id, int _val)
+	void Shader::Set1i(std::string _id, int _val)
 	{
 		glUniform1i(glGetUniformLocation(m_Arg.RenderID, _id.c_str()), _val);
 	}
@@ -572,19 +718,19 @@ namespace OE1Core
 	{
 		glUniform1f(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), _val);
 	}
-	void Shader::setProxy2f(std::string _id, glm::vec2 _val)
+	void Shader::SetProxy2f(std::string _id, glm::vec2 _val)
 	{
 		glUniform2fv(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), 1, glm::value_ptr(_val));
 	}
-	void Shader::setProxy3f(std::string _id, glm::vec3 _val)
+	void Shader::SetProxy3f(std::string _id, glm::vec3 _val)
 	{
 		glUniform3fv(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), 1, glm::value_ptr(_val));
 	}
-	void Shader::setProxy4f(std::string _id, glm::vec4 _val)
+	void Shader::SetProxy4f(std::string _id, glm::vec4 _val)
 	{
 		glUniform4fv(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), 1, glm::value_ptr(_val));
 	}
-	void Shader::setProxy1i(std::string _id, int _val)
+	void Shader::SetProxy1i(std::string _id, int _val)
 	{
 		glUniform1i(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), _val);
 	}
@@ -600,5 +746,6 @@ namespace OE1Core
 	{
 		glUniform4i(glGetUniformLocation(m_Proxy.RenderID, _id.c_str()), _val.x, _val.y, _val.z, _val.w);
 	}
+
 
 }

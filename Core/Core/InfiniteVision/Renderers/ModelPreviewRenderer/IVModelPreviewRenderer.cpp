@@ -41,11 +41,11 @@ namespace OE1Core
 			{
 
 				int id = _model_package.MeshList[i].MaterialID;
-				s_LocalShader->set1i("matIndex", id);
-				s_LocalShader->set1i("hasTexture", true);
+				s_LocalShader->Set1i("matIndex", id);
+				s_LocalShader->Set1i("hasTexture", true);
 				MasterMaterial* mat = MaterialManager::GetMaterial(id);
 				if(!mat->HasColorMap())
-					s_LocalShader->set1i("hasTexture", false);
+					s_LocalShader->Set1i("hasTexture", false);
 
 				mat->Attach();
 

@@ -51,6 +51,13 @@ namespace OE1Core
 		std::string TessellationEvaluationShaderSource;
 		std::string GeometryShaderSource;
 
+		// Normalize Source
+		std::string VertexShaderSourceNormalized;
+		std::string FragmentShaderSourceNormalized;
+		std::string TessellationControlShaderSourceNormalized;
+		std::string TessellationEvaluationShaderSourceNormalized;
+		std::string GeometryShaderSourceNormalized;
+
 		// flag
 		bool HasTessellationShader	= false;
 		bool HasGeometryShader		= false;
