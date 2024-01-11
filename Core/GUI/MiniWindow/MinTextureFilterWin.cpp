@@ -37,9 +37,15 @@ namespace OE1Core
 		auto& _texture_list = AssetManager::GetTextureRegistry();
 		for (auto iter = _texture_list.begin(); iter != _texture_list.end(); iter++)
 		{
-			if (ImageWithName(iter->second->GetTexture(), iter->second->GetName()))
-			{
+			ImageWithName(iter->second->GetTexture(), iter->second->GetName());
 
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				Texture* package_payload = iter->second;
+
+				ImGui::SetDragDropPayload(ORI_TEXTURE_PACKAGE_PAYLOAD, package_payload, sizeof(ModelPkg));
+
+				ImGui::EndDragDropSource(); 
 			}
 		}
 

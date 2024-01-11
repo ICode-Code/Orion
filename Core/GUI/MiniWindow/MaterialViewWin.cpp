@@ -252,9 +252,6 @@ namespace OE1Core
 			{
 				Texture* package = (Texture*)payload->Data;
 			
-				printf(package->GetName().c_str());
-				printf("\n");
-
 				CommandDef::MaterialtextureUpdateCommandDef command;
 				command.Material = m_Material;
 				command.TextureType = _type;
