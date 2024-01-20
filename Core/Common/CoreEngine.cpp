@@ -66,7 +66,7 @@ namespace OE1Core
 			s_Window->PullEvent();
 
 			// any queued command will be executed here
-			ExecutionHandler::ProcessQueueCommands();
+			ExecutionHandler::ProcessQueueCommands(SceneManager::GetActiveScene());
 			
 			SceneManager::UpdateScene(s_Window->GetArg().DeltaTime);
 			SceneManager::RenderScenes();

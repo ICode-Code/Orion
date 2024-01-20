@@ -11,15 +11,31 @@ namespace OE1Core
 	{
 		s_ThreadInfoLayerNotifyCallback = _callback;
 	}
-	void ExecutionHandler::ProcessQueueCommands()
+	void ExecutionHandler::ProcessQueueCommands(Scene* _scene)
 	{
+		// If there is anything to load?
 		ProcessAssetLoadCommand();
+
+		// Is anything that are loaded which need processing?
 		ProcessAsset();
 
-		ProcessSelectionCommand();
+		// Any Texture load request?
 		ProcessTextureLoadCommand();
+
+		// Any Texture Parsing request?
 		ProcessTextureRawDataLoadCommand();
+
+		// Any Material update request?
 		ProcessMaterialTextureUpdateCommand();
+
+
+		// Is any entity selection request?
+		ProcessSelectionCommand();
+
+		//Any MasterRenderer Material update request?
+		ProcessMasterRendererMaterialRefershCommand(_scene);
+
+		// any Material Texture extraction command?
 		ProcessMaterialTextureExtractionCommand();
 	}
 	void ExecutionHandler::ProcessMaterialTextureUpdateCommand()
@@ -31,73 +47,15 @@ namespace OE1Core
 			
 			switch (command.TextureType)
 			{
-			case MaterialType::DIFFUSE:
-				command.Material->RegisterAlbedoMap(command.NewTexture);
-				break;
-			case MaterialType::EMISSIVE:
-				command.Material->RegisterEmissionMap(command.NewTexture);
-				break;
-			default:
-				break;
+				case MaterialType::DIFFUSE:
+					command.Material->RegisterAlbedoMap(command.NewTexture);
+					break;
+				case MaterialType::EMISSIVE:
+					command.Material->RegisterEmissionMap(command.NewTexture);
+					break;
+				default:
+					break;
 			}
-
-			//std::vector<GLbyte> pixels(command.NewTexture->GetWidth() * command.NewTexture->GetHeight() * 4);
-			//glBindTexture(GL_TEXTURE_2D, command.NewTexture->GetTexture());
-			//glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-
-			//// If the selected item is color map
-			//if (command.IsColor)
-			//{
-
-			//	// Now if the material already have a colormap find and replace  
-			//	if (command.Material->HasColorMap())
-			//	{
-			//		glBindTexture(GL_TEXTURE_2D_ARRAY, command.Material->GetColorTextures());
-
-			//		if (command.TextureType == MaterialType::DIFFUSE)
-			//		{
-			//			// update color
-			//			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, command.NewTexture->GetWidth(), command.NewTexture->GetHeight(), 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-			//			glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
-			//			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			//			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			//			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			//			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			//			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY, 2);
-			//		}
-			//		else if (((int)(command.TextureType) & (int)MaterialType::EMISSIVE) != 0)
-			//		{
-			//			// Update Emissive
-			//		}
-
-			//		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-			//	}
-			//	else
-			//	{
-			//		// If the code reach here it means the selected mesh does not have a color map
-			//		// and we need to create one
-			//		
-			//		// First which color map did we just receive
-			//		if ((int)command.TextureType & (int)MaterialType::DIFFUSE)
-			//		{
-			//			// Create Color Map
-			//		}
-			//		else if ((int)command.TextureType & (int)MaterialType::EMISSIVE)
-			//		{
-			//			// Create Emission Map
-			//		}
-			//	}
-			//}
-			//else
-			//{
-			//	// Here means the we are trying to update of create non-color map like normal, roughness....
-			//	if (command.Material->HasNonColorMap())
-			//	{
-
-			//	}
-
-			//}
-
 
 			Command::s_MaterialTextureUpdateCommands.pop();
 		}
@@ -311,6 +269,19 @@ namespace OE1Core
 
 			Command::s_TextureLoadRawDataCommands.pop();
 			s_ContentBrowserLayerNotifyCallback();
+		}
+	}
+	void ExecutionHandler::ProcessMasterRendererMaterialRefershCommand(Scene* _scene)
+	{
+		while (!Command::s_MasterRendererMaterialRefreshCommands.empty())
+		{
+			auto& commandX = Command::s_MasterRendererMaterialRefreshCommands.front();
+
+			// Process
+			_scene->GetRenderer()->ReEvaluateRenderStackMaterial(commandX.OldMaterialType, commandX.Material);
+
+
+			Command::s_MasterRendererMaterialRefreshCommands.pop();
 		}
 	}
 }

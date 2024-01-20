@@ -36,5 +36,37 @@ namespace OE1Core
 			if (s_TransparentMeshList.find(_type) != s_TransparentMeshList.end())
 				s_TransparentMeshList.erase(_type);
 		}
+
+		IVRenderStack::IVDrawList* IVRenderStack::GetDrawList(MaterialType _type, bool _start_with_opaque)
+		{
+			if (_start_with_opaque)
+			{
+				if (this->s_OpaqueMeshList.find(_type) != this->s_OpaqueMeshList.end())
+					return &s_OpaqueMeshList[_type];
+
+				if (this->s_TransparentMeshList.find(_type) != this->s_TransparentMeshList.end())
+					return &s_TransparentMeshList[_type];
+			}
+			else
+			{
+				if (this->s_TransparentMeshList.find(_type) != this->s_TransparentMeshList.end())
+					return &s_TransparentMeshList[_type];
+
+				if (this->s_OpaqueMeshList.find(_type) != this->s_OpaqueMeshList.end())
+					return &s_OpaqueMeshList[_type];
+			}
+
+			return nullptr;
+		}
+		void IVRenderStack::SearchAndDestroy(MaterialType _type)
+		{
+			if (this->s_OpaqueMeshList.find(_type) != this->s_OpaqueMeshList.end())
+				s_OpaqueMeshList.erase(_type);
+
+			if (this->s_TransparentMeshList.find(_type) != this->s_TransparentMeshList.end())
+			{
+				s_TransparentMeshList.erase(_type);
+			}
+		}
 	}
 }

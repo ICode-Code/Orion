@@ -12,6 +12,9 @@ namespace OE1Core
 
 	namespace CommandDef 
 	{
+		/// <summary>
+		/// This command is intitated and queued when ever we select an entity
+		/// </summary>
 		struct EntitySelectionCommandDef
 		{
 			int posX;
@@ -19,6 +22,10 @@ namespace OE1Core
 			bool Batch = false;
 			GLuint FrameID;
 		};
+
+		/// <summary>
+		/// This command is queued when we import texture from drive
+		/// </summary>
 		struct TextureLoadCommandDef
 		{
 			std::string Name;
@@ -26,6 +33,10 @@ namespace OE1Core
 			std::string Destination;
 		};
 
+		/// <summary>
+		/// This command is queued when we click on material detail it prepare the texture 
+		/// for preview purpose
+		/// </summary>
 		struct MaterialTextureExtractionDef
 		{
 			MaterialViewWin*	MaterialView = nullptr;
@@ -33,18 +44,33 @@ namespace OE1Core
 		};
 
 
+		/// <summary>
+		/// This command is queued when a material get updated
+		/// and the master renderer needs to know so it can update the buffer
+		/// and perform render with proper material
+		/// </summary>
+		struct MasterRendererMaterialRefreshCommandDef 
+		{
+			MaterialType OldMaterialType;
+			MasterMaterial* Material;
+			std::string Name;
+			int Offset;
+		};
+
+
+		/// <summary>
+		/// This command is queued when we add or update texture of a material
+		/// when we drag and drop into the material view or add new
+		/// </summary>
 		struct MaterialtextureUpdateCommandDef
 		{
 			// Which Texture
 			MaterialType TextureType;
+
 			// To which material
 			MasterMaterial* Material = nullptr;
 
 			Texture* NewTexture = nullptr;
-
-			bool IsColor = false;
-
-			int Layer = -1;
 		};
 	}
 }

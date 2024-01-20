@@ -32,11 +32,12 @@ namespace OE1Core
 	class ExecutionHandler
 	{
 	public:
-		static void ProcessQueueCommands();
+		static void ProcessQueueCommands(Scene* _scene);
 		static void RegisterContentBrowserLayerNotifyCallback(const ContentBrowserLayerNotifyCallback& _callback);
 		static void RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback);
 
 	protected:
+		static void ProcessMasterRendererMaterialRefershCommand(Scene* _scene);
 		static void ProcessSelectionCommand();
 		static void ProcessAssetLoadCommand();
 		static void ProcessTextureLoadCommand();

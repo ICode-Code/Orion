@@ -256,7 +256,6 @@ namespace OE1Core
 				command.Material = m_Material;
 				command.TextureType = _type;
 				command.NewTexture = AssetManager::GetTexture(Loader::NameHandle::FilterFileName(package->GetName()));
-				command.IsColor = ((_type == MaterialType::DIFFUSE) || (_type == MaterialType::EMISSIVE));
 				
 				Command::PushMaterialTextureUpdateCommand(command);
 
@@ -279,7 +278,6 @@ namespace OE1Core
 		command.Material = m_Material;
 		command.TextureType = _type;
 		command.NewTexture = AssetManager::GetTexture(Loader::NameHandle::FilterFileName(_texture->GetName()));
-		command.IsColor = true; // we don't care
 
 		Command::PushMaterialTextureUpdateCommand(command);
 

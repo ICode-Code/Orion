@@ -295,12 +295,22 @@ namespace OE1Core
 		// if the texture is new update shader
 		if (_need_Shader_update && _state)
 		{
+			MaterialType _mat_type_before_change = m_Type;
+
 			AvailTexture _flags(m_TextureAvailFlag);
 			m_Type = _flags.GetMaterialType();
 			std::string _new_frag_shader = ShaderGenerator::GetForwardPixelShader(_flags);
 			m_Shader->UpdateFragmentShader(_new_frag_shader);
 			Memory::UniformBlockManager::LinkShader(m_Shader);
-			
+
+			CommandDef::MasterRendererMaterialRefreshCommandDef commandX;
+
+			commandX.Name = this->m_Name;
+			commandX.Offset = this->m_Offset;
+			commandX.OldMaterialType = _mat_type_before_change;
+			commandX.Material = this;
+
+			Command::PushMasterRendererMaterialRefresh(commandX);
 		}
 
 		return _state;

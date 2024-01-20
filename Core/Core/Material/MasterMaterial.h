@@ -8,6 +8,7 @@
 #include "ShaderManager/ShaderManager.h"
 #include "../../Common/Shared/MaterialType.h"
 #include "../../Common/Shared/PreDef.h"
+#include "../Command/Commnad.h"
 #include <glm/glm.hpp>
 
 namespace OE1Core

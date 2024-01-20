@@ -15,6 +15,7 @@ namespace OE1Core
 		inline static bool s_ShouldOpen = false;
 	private:
 		virtual void Update() override;
+
 	};
 }
 

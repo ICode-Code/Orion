@@ -22,7 +22,7 @@ namespace OE1Core
 		static void PushAssetLoadCommand(Loader::LoadArgs _args);	
 		static void PushEntitySelectionCommand(CommandDef::EntitySelectionCommandDef _command);
 		static void PushMaterialTextureUpdateCommand(CommandDef::MaterialtextureUpdateCommandDef _command);
-		
+		static void PushMasterRendererMaterialRefresh(CommandDef::MasterRendererMaterialRefreshCommandDef _command);
 		/// <summary>
 		/// This Command processed at the end
 		/// </summary>
@@ -35,6 +35,7 @@ namespace OE1Core
 		inline static std::queue<CommandDef::TextureLoadCommandDef> s_TextureLoadCommands;
 		inline static std::queue<DataBlock::Image2D> s_TextureLoadRawDataCommands;
 		inline static std::queue<CommandDef::MaterialtextureUpdateCommandDef> s_MaterialTextureUpdateCommands;
+		inline static std::queue<CommandDef::MasterRendererMaterialRefreshCommandDef> s_MasterRendererMaterialRefreshCommands;
 		
 	};
 }

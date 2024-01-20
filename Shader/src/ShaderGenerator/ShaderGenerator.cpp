@@ -378,7 +378,7 @@ Emission = Materials[MaterialIndex].EmissionColor.rgb;
 	void ShaderGenerator::FR_ComputeFinalPixel()
 	{
 		s_Source += R"(
-PixelColor = vec4(Color, 1.0f);
+PixelColor = vec4(pow(Color, vec3(1.0)/2.2f), 1.0f);
 UID = RenderID;
 
 )";

@@ -17,6 +17,10 @@ namespace OE1Core
 	{
 		s_MaterialTextureUpdateCommands.push(_command);
 	}
+	void Command::PushMasterRendererMaterialRefresh(CommandDef::MasterRendererMaterialRefreshCommandDef _command)
+	{
+		s_MasterRendererMaterialRefreshCommands.push(_command);
+	}
 	void Command::PushMaterialTextureExtractionCommand(CommandDef::MaterialTextureExtractionDef _command)
 	{
 		s_MaterialTextureExtractionCommands.push(_command);
