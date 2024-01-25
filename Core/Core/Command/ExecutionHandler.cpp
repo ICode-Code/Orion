@@ -44,7 +44,9 @@ namespace OE1Core
 		{
 			auto& command = Command::s_MaterialTextureUpdateCommands.front();
 
-			
+			// Note here since one of them only run on a call
+			// It is okay to check and use the dirty flag after the swicth
+
 			switch (command.TextureType)
 			{
 				case MaterialType::DIFFUSE:
@@ -53,8 +55,48 @@ namespace OE1Core
 				case MaterialType::EMISSIVE:
 					command.Material->RegisterEmissionMap(command.NewTexture);
 					break;
+				case MaterialType::NORMAL:
+					command.Material->RegisterNormalMap(command.NewTexture);
+					break;
+				case MaterialType::METAL:
+					command.Material->RegisterMetalMap(command.NewTexture);
+					break;
+				case MaterialType::METAL_ROUGHNESS:
+					command.Material->RegisterMetalRoughnessMap(command.NewTexture);
+					break;
+				case MaterialType::ROUGHNESS:
+					command.Material->RegisterRoughnessMap(command.NewTexture);
+					break;
+				case MaterialType::ALPHA:
+					command.Material->RegisterAlphaMap(command.NewTexture);
+					break;
+				case MaterialType::AO:
+					command.Material->RegisterAOMap(command.NewTexture);
+					break;
 				default:
 					break;
+			}
+
+			if (command.Material->IsDirty())
+			{
+				MaterialType _mat_type_before_change = command.Material->m_Type;
+
+				AvailTexture _flags(command.Material->m_TextureAvailFlag);
+				command.Material->m_Type = _flags.GetMaterialType();
+				std::string _new_frag_shader = ShaderGenerator::GetForwardPixelShader(_flags);
+				command.Material->m_Shader->UpdateFragmentShader(_new_frag_shader);
+				Memory::UniformBlockManager::LinkShader(command.Material->m_Shader);
+
+				CommandDef::MasterRendererMaterialRefreshCommandDef commandX;
+
+				commandX.Name = command.Material->m_Name;
+				commandX.Offset = command.Material->m_Offset;
+				commandX.OldMaterialType = _mat_type_before_change;
+				commandX.Material = command.Material;
+				commandX.StaticMeshID = command.StaticMeshID;
+
+				Command::PushMasterRendererMaterialRefresh(commandX);
+				command.Material->FlipDirtyFlag();
 			}
 
 			Command::s_MaterialTextureUpdateCommands.pop();
@@ -68,7 +110,7 @@ namespace OE1Core
 
 			MasterMaterial* master_material = command.Material;
 			MaterialViewWin* material_view = command.MaterialView;
-
+			material_view->SetPrimaryMeshID(command.StaticMeshID);
 			// Init Renderer 
 			Renderer::IV2DTextureArrayExtractQuadRenderer* renderer = new Renderer::IV2DTextureArrayExtractQuadRenderer();
 
@@ -278,7 +320,12 @@ namespace OE1Core
 			auto& commandX = Command::s_MasterRendererMaterialRefreshCommands.front();
 
 			// Process
-			_scene->GetRenderer()->ReEvaluateRenderStackMaterial(commandX.OldMaterialType, commandX.Material);
+			_scene->GetRenderer()->ReEvaluateRenderStackMaterial(
+				commandX.OldMaterialType, 
+				commandX.Material,
+				commandX.StaticMeshID
+			);
+			
 
 
 			Command::s_MasterRendererMaterialRefreshCommands.pop();

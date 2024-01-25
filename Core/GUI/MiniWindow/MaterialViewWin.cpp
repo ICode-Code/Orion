@@ -206,6 +206,11 @@ namespace OE1Core
 
 		return _is_clicked;
 	}
+	void MaterialViewWin::SetPrimaryMeshID(uint32_t _id)
+	{
+		m_PrimaryMeshID = _id;
+	}
+	uint32_t MaterialViewWin::GetPrimaryMeshID() const { return m_PrimaryMeshID; }
 	void MaterialViewWin::Update()
 	{
 		ImGui::SetWindowSize({700,450});
@@ -253,7 +258,7 @@ namespace OE1Core
 				Texture* package = (Texture*)payload->Data;
 			
 				CommandDef::MaterialtextureUpdateCommandDef command;
-				command.Material = m_Material;
+				command.Material = m_Material; 
 				command.TextureType = _type;
 				command.NewTexture = AssetManager::GetTexture(Loader::NameHandle::FilterFileName(package->GetName()));
 				
@@ -274,7 +279,7 @@ namespace OE1Core
 		// Construct a command 
 		CommandDef::MaterialtextureUpdateCommandDef command;
 
-
+		command.StaticMeshID = m_PrimaryMeshID;
 		command.Material = m_Material;
 		command.TextureType = _type;
 		command.NewTexture = AssetManager::GetTexture(Loader::NameHandle::FilterFileName(_texture->GetName()));

@@ -11,61 +11,99 @@ namespace OE1Core
 		}
 
 
-		void IVRenderStack::RegisterOpaqueMesh(lwStaticMeshPkg* _mesh, MaterialType _type)
+		void IVRenderStack::RegisterOpaqueMesh(lwStaticMeshPkg* _mesh, uint32_t _id)
 		{
-			if (s_OpaqueMeshList.find(_type) == s_OpaqueMeshList.end())
-				s_OpaqueMeshList.insert(std::make_pair(_type, std::make_pair(_mesh->Material->GetShader(), std::vector<lwStaticMeshPkg*>())));
+			if (s_OpaqueMeshList.find(_id) == s_OpaqueMeshList.end())
+				s_OpaqueMeshList.insert(std::make_pair(_id, std::make_pair(_mesh->Material->GetShader(), std::vector<lwStaticMeshPkg*>())));
 
-			std::get<1>(s_OpaqueMeshList[_type]).push_back(_mesh);
+			std::get<1>(s_OpaqueMeshList[_id]).push_back(_mesh);
 		}
-		void IVRenderStack::RegisterTransparentMesh(lwStaticMeshPkg* _mesh, MaterialType _type)
+		void IVRenderStack::RegisterTransparentMesh(lwStaticMeshPkg* _mesh, uint32_t _id)
 		{
-			if (s_TransparentMeshList.find(_type) == s_TransparentMeshList.end())
-				s_TransparentMeshList.insert(std::make_pair(_type, std::make_pair(_mesh->Material->GetShader(), std::vector<lwStaticMeshPkg*>())));
+			if (s_TransparentMeshList.find(_id) == s_TransparentMeshList.end())
+				s_TransparentMeshList.insert(std::make_pair(_id, std::make_pair(_mesh->Material->GetShader(), std::vector<lwStaticMeshPkg*>())));
 
-			std::get<1>(s_TransparentMeshList[_type]).push_back(_mesh);
+			std::get<1>(s_TransparentMeshList[_id]).push_back(_mesh);
 		}
+		void IVRenderStack::RegisterFlatMaterialMesh(lwStaticMeshPkg* _mesh, uint32_t _id)
+		{
 
-		void IVRenderStack::RemoveOpaqueMesh(MaterialType _type)
-		{
-			if (s_OpaqueMeshList.find(_type) != s_OpaqueMeshList.end())
-				s_OpaqueMeshList.erase(_type);
-		}
-		void IVRenderStack::RemoveTransparentMesh(MaterialType _type)
-		{
-			if (s_TransparentMeshList.find(_type) != s_TransparentMeshList.end())
-				s_TransparentMeshList.erase(_type);
-		}
+			if (s_FlatMaterialMeshList.find(_id) == s_FlatMaterialMeshList.end())
+				s_FlatMaterialMeshList.insert(std::make_pair(_id, std::make_pair(_mesh->Material->GetShader(), std::vector<lwStaticMeshPkg*>())));
 
-		IVRenderStack::IVDrawList* IVRenderStack::GetDrawList(MaterialType _type, bool _start_with_opaque)
+			std::get<1>(s_FlatMaterialMeshList[_id]).push_back(_mesh);
+		}
+		void IVRenderStack::PurgeFromStack(uint32_t _id)
 		{
-			if (_start_with_opaque)
+			this->PurgeFromMeshList(s_OpaqueMeshList, _id);
+			this->PurgeFromMeshList(s_TransparentMeshList, _id);
+			this->PurgeFromMeshList(s_FlatMaterialMeshList, _id);
+		}
+		std::vector<lwStaticMeshPkg*> IVRenderStack::QueryLWStaticMesh(uint32_t _id, bool _clear_existing)
+		{
+
+			std::vector<lwStaticMeshPkg*> _mesh_frag_buffer;
+
+			if (_clear_existing)
 			{
-				if (this->s_OpaqueMeshList.find(_type) != this->s_OpaqueMeshList.end())
-					return &s_OpaqueMeshList[_type];
-
-				if (this->s_TransparentMeshList.find(_type) != this->s_TransparentMeshList.end())
-					return &s_TransparentMeshList[_type];
+				ClearCollectLWMesh(s_OpaqueMeshList, _mesh_frag_buffer, _id);
+				ClearCollectLWMesh(s_TransparentMeshList, _mesh_frag_buffer, _id);
+				ClearCollectLWMesh(s_FlatMaterialMeshList, _mesh_frag_buffer, _id);
 			}
 			else
 			{
-				if (this->s_TransparentMeshList.find(_type) != this->s_TransparentMeshList.end())
-					return &s_TransparentMeshList[_type];
-
-				if (this->s_OpaqueMeshList.find(_type) != this->s_OpaqueMeshList.end())
-					return &s_OpaqueMeshList[_type];
+				CollectLWMesh(s_OpaqueMeshList, _mesh_frag_buffer, _id);
+				CollectLWMesh(s_TransparentMeshList, _mesh_frag_buffer, _id);
+				CollectLWMesh(s_FlatMaterialMeshList, _mesh_frag_buffer, _id);
 			}
 
-			return nullptr;
-		}
-		void IVRenderStack::SearchAndDestroy(MaterialType _type)
-		{
-			if (this->s_OpaqueMeshList.find(_type) != this->s_OpaqueMeshList.end())
-				s_OpaqueMeshList.erase(_type);
+			return _mesh_frag_buffer;
 
-			if (this->s_TransparentMeshList.find(_type) != this->s_TransparentMeshList.end())
+		}
+		void IVRenderStack::CollectLWMesh(IVRenderStack::IVDrawData& _mem, std::vector<lwStaticMeshPkg*>& _buffer, uint32_t _id)
+		{
+			if (_mem.find(_id) != _mem.end())
 			{
-				s_TransparentMeshList.erase(_type);
+				for (size_t i = 0; i < _mem[_id].second.size(); i++)
+					_buffer.push_back(_mem[_id].second[i]);
+			}
+		}
+		void IVRenderStack::ClearCollectLWMesh(IVRenderStack::IVDrawData& _mem, std::vector<lwStaticMeshPkg*>& _buffer, uint32_t _id)
+		{
+			if (_mem.find(_id) != _mem.end())
+			{
+				for (size_t i = 0; i < _mem[_id].second.size(); i++)
+					_buffer.push_back(_mem[_id].second[i]);
+
+				_mem[_id].second.clear();
+				_mem.erase(_id);
+			}
+		}
+		void IVRenderStack::PurgeFromMeshList(IVRenderStack::IVDrawData& buffer, uint32_t _id)
+		{
+			if (buffer.find(_id) != buffer.end())
+			{
+				auto& instance = buffer[_id];
+
+				std::vector<lwStaticMeshPkg*> _filtered_list;
+
+				for (size_t i = 0; i < instance.second.size(); i++)
+				{
+					//instance.second[i]->DrawCount--;
+					if (instance.second[i]->DrawCount > 0)
+						_filtered_list.push_back(instance.second[i]); 
+				}
+
+				if (_filtered_list.empty())
+				{
+					// If all instance in count is 0
+					buffer.erase(_id); // remove from the draw list
+				}
+				else
+				{
+					// Update the list
+					buffer[_id].second = _filtered_list;
+				}
 			}
 		}
 	}

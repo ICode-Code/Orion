@@ -41,6 +41,7 @@ namespace OE1Core
 		{
 			MaterialViewWin*	MaterialView = nullptr;
 			MasterMaterial*	Material = nullptr;
+			uint32_t StaticMeshID = -1;
 		};
 
 
@@ -55,6 +56,7 @@ namespace OE1Core
 			MasterMaterial* Material;
 			std::string Name;
 			int Offset;
+			uint32_t StaticMeshID = -1;
 		};
 
 
@@ -71,6 +73,8 @@ namespace OE1Core
 			MasterMaterial* Material = nullptr;
 
 			Texture* NewTexture = nullptr;
+
+			uint32_t StaticMeshID = -1;
 		};
 	}
 }

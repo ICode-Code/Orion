@@ -96,6 +96,9 @@ namespace OE1Core
 		void SetAOIndex(int _idx);
 		void SetAlphaMaskIndex(int _idx);
 
+		void FlipDirtyFlag();
+		bool IsDirty() const;
+
 	protected:
 		MaterialType m_Type;
 		MaterialTextureAvailFlags m_TextureAvailFlag;
@@ -188,6 +191,7 @@ namespace OE1Core
 	private: // some flags
 		bool m_HasColorMap = false;
 		bool m_HasNonColorMap = false;
+		bool m_Dirty = false;
 		
 
 	};

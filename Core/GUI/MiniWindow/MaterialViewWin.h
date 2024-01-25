@@ -54,6 +54,8 @@ namespace OE1Core
 		inline MasterMaterial* GetMaterial() { return m_Material; }
 		inline bool IsOpen() const { return m_Open; }
 
+		void SetPrimaryMeshID(uint32_t _id);
+		uint32_t GetPrimaryMeshID() const;
 	protected: // data
 		MaterialTextureIssueFlag m_TextureIssueFlag;
 
@@ -68,6 +70,7 @@ namespace OE1Core
 		Renderer::IV2DTextureArrayExtractorFramebuffer* m_Framebuffer = nullptr;
 		ImVec2 m_TextureSize;
 		ImVec2 m_TextureSizeZoom;
+		uint32_t m_PrimaryMeshID = -1;
 		 
 
 

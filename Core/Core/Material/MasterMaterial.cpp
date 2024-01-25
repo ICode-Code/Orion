@@ -75,6 +75,11 @@ namespace OE1Core
 		m_HasNonColorMap = true;
 		m_NonColorTexture = _non_color;
 	}
+	void MasterMaterial::FlipDirtyFlag()
+	{
+		m_Dirty = !m_Dirty;
+	}
+	bool MasterMaterial::IsDirty() const { return m_Dirty; }
 	Shader* MasterMaterial::GetShader() const
 	{
 		return m_Shader;
@@ -293,7 +298,8 @@ namespace OE1Core
 		);
 
 		// if the texture is new update shader
-		if (_need_Shader_update && _state)
+		m_Dirty = _need_Shader_update && _state;
+		/*if (_need_Shader_update && _state) 
 		{
 			MaterialType _mat_type_before_change = m_Type;
 
@@ -311,7 +317,7 @@ namespace OE1Core
 			commandX.Material = this;
 
 			Command::PushMasterRendererMaterialRefresh(commandX);
-		}
+		}*/
 
 		return _state;
 		

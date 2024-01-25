@@ -19,31 +19,33 @@ namespace OE1Core
 			~IVRenderStack();
 			
 			using IVDrawList = std::pair<Shader*, std::vector<lwStaticMeshPkg*>>;
-			using IVDrawData = std::unordered_map<MaterialType, IVDrawList>;
-			void RegisterOpaqueMesh(lwStaticMeshPkg* _mesh, MaterialType _type);
-			void RegisterTransparentMesh(lwStaticMeshPkg* _mesh, MaterialType _type);
+			using IVDrawData = std::unordered_map<uint32_t, IVDrawList>;
+			void RegisterOpaqueMesh(lwStaticMeshPkg* _mesh, uint32_t _id);
+			void RegisterTransparentMesh(lwStaticMeshPkg* _mesh, uint32_t _id);
+			void RegisterFlatMaterialMesh(lwStaticMeshPkg* _mesh, uint32_t _id);
 
-			// This will remove the mesh form the stack comletely regarless of the instance count
-			// do this if the instance count is 0 or if you don't want to NOT render the model
-			void RemoveOpaqueMesh(MaterialType _package_id);
-			// This will remove the mesh form the stack comletely regarless of the instance count
-			// do this if the instance count is 0 or if you don't want to NOT render the model
-			void RemoveTransparentMesh(MaterialType __package_id);
-
-
+			
 			/// <summary>
-			/// This dud find and return draw list based on the material type
-			/// Start With Opaque Mesh, You can use the optional parameter to change this
+			/// Since we do not have access to indiviual instance
+			/// this will decreament instance count and if the instance count is 0
+			/// it will remove it completely
 			/// </summary>
-			/// <param name="_type">Which type of material this draw list uses</param>
-			/// <param name="_start_with_opaque">set it false if you want to start searching from transparent and move to opaque</param>
-			/// <returns></returns>
-			IVDrawList* GetDrawList(MaterialType _type, bool _start_with_opaque = true);
-			void SearchAndDestroy(MaterialType _type);
+			/// <param name="_id"></param>
+			void PurgeFromStack(uint32_t _id);
+			std::vector<lwStaticMeshPkg*> QueryLWStaticMesh(uint32_t _id, bool _clear_existing);
 
 		protected:
+			IVRenderStack::IVDrawData s_FlatMaterialMeshList; // to Avoid binding non existing material
 			IVRenderStack::IVDrawData s_OpaqueMeshList;
 			IVRenderStack::IVDrawData s_TransparentMeshList;
+
+
+		private:
+			void PurgeFromMeshList(IVRenderStack::IVDrawData& buffer, uint32_t _id);
+			void CollectLWMesh(IVRenderStack::IVDrawData& _mem, std::vector<lwStaticMeshPkg*>& _buffer, uint32_t _id);
+
+			// This will remove the existing and return the value
+			void ClearCollectLWMesh(IVRenderStack::IVDrawData& _mem, std::vector<lwStaticMeshPkg*>& _buffer, uint32_t _id);
 
 		};
 	}

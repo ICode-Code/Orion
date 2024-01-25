@@ -17,7 +17,9 @@ namespace OE1Core
 			void Render(IVRenderStack* _render_stack);
 
 		protected:
-			IVOpaqueMeshRenderer* m_OpaqueMeshRenderer;
+			IVOpaqueMeshRenderer* m_OpaqueMeshRenderer = nullptr;
+			IVTransparentMeshRenderer* m_TransparentMeshRenderer = nullptr;
+			IVFlatMaterialMeshRenderer* m_FlatMaterialMeshRenderer = nullptr;
 		};
 	}
 }

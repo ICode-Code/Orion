@@ -24,52 +24,47 @@ namespace OE1Core
 			auto& mesh_package = _mesh->m_StaticMeshPkg;
 			for (size_t i = 0; i < mesh_package.size(); i++)
 			{
-
-				if ((int)mesh_package[i].Material->GetType() & (int)MaterialType::ALPHA)
-					m_Scene->m_RenderStack->RegisterTransparentMesh(&mesh_package[i], mesh_package[i].Material->GetType());
-				else 
-					m_Scene->m_RenderStack->RegisterOpaqueMesh(&mesh_package[i], mesh_package[i].Material->GetType());
-
-				
-
+				if (mesh_package[i].Material->GetType() == MaterialType::ALPHA)
+					m_Scene->m_RenderStack->RegisterTransparentMesh(&mesh_package[i], _mesh->GetPackageID());
+				else if (mesh_package[i].Material->GetType() == MaterialType::DEFAULT)
+					m_Scene->m_RenderStack->RegisterFlatMaterialMesh(&mesh_package[i], _mesh->GetPackageID());
+				else
+					m_Scene->m_RenderStack->RegisterOpaqueMesh(&mesh_package[i], _mesh->GetPackageID());
 			}
 		}
 		void IVMasterRenderer::PurgeFromRenderStack(StaticMesh* _mesh)
 		{
-			auto& mesh_package = _mesh->m_StaticMeshPkg;
-
-			for (size_t i = 0; i < mesh_package.size(); i++)
-			{
-
-				if ((int)mesh_package[i].Material->GetType() & (int)MaterialType::ALPHA)
-					m_Scene->m_RenderStack->RemoveTransparentMesh(mesh_package[i].Material->GetType());
-				else
-					m_Scene->m_RenderStack->RemoveOpaqueMesh(mesh_package[i].Material->GetType());
-
-			}
+			m_Scene->m_RenderStack->PurgeFromStack(_mesh->GetPackageID());
 		}
-		void IVMasterRenderer::ReEvaluateRenderStackMaterial(MaterialType _prev_mat_type, MasterMaterial* _new_material)
+		void IVMasterRenderer::ReEvaluateRenderStackMaterial(MaterialType _prev_mat_type, MasterMaterial* _new_material, uint32_t _mesh_id)
 		{
-			// Let's get the mesh list which use this material type
-			auto _Draw_list = m_Scene->m_RenderStack->GetDrawList(_prev_mat_type);
-			if (!_Draw_list)
-				return;
-			std::unordered_map<uint32_t, StaticMesh*> _all_mesh_parent;
-			
-			for (size_t i = 0; i < _Draw_list->second.size(); i++)
+			if (_mesh_id < 0)
 			{
-				if (_all_mesh_parent.find(_Draw_list->second[i]->PackageID) == _all_mesh_parent.end())
-					_all_mesh_parent.insert(std::make_pair(_Draw_list->second[i]->PackageID, m_Scene->m_StaticMeshRegistry[_Draw_list->second[i]->PackageID]));
-				
+				LOG_ERROR("Invalid StaticMesh ID master material re-evaluation process fail!");
+				return;
+			}
+			
+			//StaticMesh* _mesh = m_Scene->m_StaticMeshRegistry[_mesh_id];
+			
+			std::vector<lwStaticMeshPkg*> re_evalutaion_buffer = m_Scene->m_RenderStack->QueryLWStaticMesh(_mesh_id, true);
+
+			if (re_evalutaion_buffer.empty())
+			{
+				LOG_WARRNING("Re-Evaluation buffer is empty! nothing got updated!");
+				return;
 			}
 
-			// Since we gonne re add theme, first we gonne remobve them all
-			m_Scene->m_RenderStack->SearchAndDestroy(_prev_mat_type);
+			// Re-populate the buffer
 
-			// Now add them now doing this will perform the re-evaluation
-			for (auto iter = _all_mesh_parent.begin(); iter != _all_mesh_parent.end(); iter++)
-				PushToRenderStack(iter->second);
-
+			for (size_t i = 0; i < re_evalutaion_buffer.size(); i++)
+			{
+				if (re_evalutaion_buffer[i]->Material->GetType() == MaterialType::ALPHA)
+					m_Scene->m_RenderStack->RegisterTransparentMesh(re_evalutaion_buffer[i], _mesh_id);
+				else if (re_evalutaion_buffer[i]->Material->GetType() == MaterialType::DEFAULT)
+					m_Scene->m_RenderStack->RegisterFlatMaterialMesh(re_evalutaion_buffer[i], _mesh_id);
+				else
+					m_Scene->m_RenderStack->RegisterOpaqueMesh(re_evalutaion_buffer[i], _mesh_id);
+			}
 		}
 		void IVMasterRenderer::Update(int _width, int _height)
 		{
