@@ -2,6 +2,8 @@
 #include "../Scene/Scene.h"
 #include "../ActiveEntity/ActiveEntity.h"
 
+#include "LogUI.h"
+
 namespace OE1Core
 {
 	namespace Renderer
@@ -50,7 +52,7 @@ namespace OE1Core
 
 			if (re_evalutaion_buffer.empty())
 			{
-				LOG_WARRNING("Re-Evaluation buffer is empty! nothing got updated!");
+				LOG_WARRNING(LogLayer::Pipe("Material Re-Evaluation Buffer is zero, no switch in static mesh occurred.", OELog::WARNING));
 				return;
 			}
 

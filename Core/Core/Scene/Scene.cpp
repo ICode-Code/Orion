@@ -4,6 +4,7 @@
 #include "../InfiniteVision/IVMasterRenderer.h"
 #include "../InfiniteVision/RenderStack/RenderStack.h"
 
+
 namespace OE1Core
 {
 	Scene::Scene(SDL_Window* _window)

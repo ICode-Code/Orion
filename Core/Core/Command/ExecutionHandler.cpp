@@ -197,6 +197,7 @@ namespace OE1Core
 			Loader::GeometryLoader::s_MeshSets.pop();
 			// update info
 			s_ContentBrowserLayerNotifyCallback();
+			LogLayer::Pipe("Asset Loaded " + load_args.SourcePath, OELog::INFO);
 			Loader::StaticGeometryLoader::PROGRESS_INFO = "Job Done.";
 			s_ThreadInfoLayerNotifyCallback(false);
 		}
@@ -286,7 +287,7 @@ namespace OE1Core
 			WriteBinary(file_texture, "--	--	--	--	\n");
 			file_texture.close();
 
-
+			LogLayer::Pipe("Texture Loaded " + command.Name, OELog::INFO);
 			Command::s_TextureLoadCommands.pop();
 			s_ContentBrowserLayerNotifyCallback();
 		}

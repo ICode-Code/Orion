@@ -1,5 +1,5 @@
 #include "MasterMaterial.h"
-
+#include "LogUI.h"
 
 namespace OE1Core
 {
@@ -173,7 +173,7 @@ namespace OE1Core
 		// if this vector is empty something is not right/ meaning this function shouldn't be called at the first time
 		if (_image_buffer.empty())
 		{
-			printf("Texture readback buffer is empty, should return here");
+			LOG_ERROR(LogLayer::Pipe("Texture readback buffer is empty!", OELog::CRITICAL));
 		}
 
 		// Set the first image width and hight as the layer size
@@ -290,7 +290,7 @@ namespace OE1Core
 
 			m_TextureAvailFlag.HasColor,
 			m_TAI.Color,
-			m_HasNonColorMap,
+			m_HasColorMap,
 			&m_ColorTexture,
 			true,
 			_texture
@@ -299,25 +299,6 @@ namespace OE1Core
 
 		// if the texture is new update shader
 		m_Dirty = _need_Shader_update && _state;
-		/*if (_need_Shader_update && _state) 
-		{
-			MaterialType _mat_type_before_change = m_Type;
-
-			AvailTexture _flags(m_TextureAvailFlag);
-			m_Type = _flags.GetMaterialType();
-			std::string _new_frag_shader = ShaderGenerator::GetForwardPixelShader(_flags);
-			m_Shader->UpdateFragmentShader(_new_frag_shader);
-			Memory::UniformBlockManager::LinkShader(m_Shader);
-
-			CommandDef::MasterRendererMaterialRefreshCommandDef commandX;
-
-			commandX.Name = this->m_Name;
-			commandX.Offset = this->m_Offset;
-			commandX.OldMaterialType = _mat_type_before_change;
-			commandX.Material = this;
-
-			Command::PushMasterRendererMaterialRefresh(commandX);
-		}*/
 
 		return _state;
 		
@@ -327,23 +308,29 @@ namespace OE1Core
 		if (!_texture)
 			return false;
 
-		return UpdateTextureCore(
+		bool _need_Shader_update = !m_TextureAvailFlag.HasEmission;
+
+		bool _state = UpdateTextureCore(
 
 			m_TextureAvailFlag.HasEmission,
 			m_TAI.Emission,
-			m_HasNonColorMap,
+			m_HasColorMap,
 			&m_ColorTexture,
 			true,
 			_texture
-
 		);
+
+		m_Dirty = _need_Shader_update && _state;;
+		return _state;
 	}
 	bool MasterMaterial::RegisterNormalMap(OE1Core::Texture* _texture)
 	{
 		if (!_texture)
 			return false;
 
-		return UpdateTextureCore(
+		bool _need_Shader_update = !m_TextureAvailFlag.HasNormal;
+
+		bool _state = UpdateTextureCore(
 
 			m_TextureAvailFlag.HasNormal, 
 			m_TAI.Normal, 
@@ -353,26 +340,115 @@ namespace OE1Core
 			_texture
 
 		);
+
+		m_Dirty = _need_Shader_update && _state;;
+		return _state;
 	}
 
 	bool MasterMaterial::RegisterMetalMap(OE1Core::Texture* _texture)
 	{
-		return false;
+		if (!_texture)
+			return false;
+
+		bool _need_Shader_update = !m_TextureAvailFlag.HasMetal;
+
+		bool _state = UpdateTextureCore(
+
+			m_TextureAvailFlag.HasMetal,
+			m_TAI.Metal,
+			m_HasNonColorMap,
+			&m_NonColorTexture,
+			false,
+			_texture
+
+		);
+
+		m_Dirty = _need_Shader_update && _state;;
+		return _state;
 	}
 	bool MasterMaterial::RegisterRoughnessMap(OE1Core::Texture* _texture)
 	{
-		return false;
+		if (!_texture)
+			return false;
+
+		bool _need_Shader_update = !m_TextureAvailFlag.HasMetalRoughness;
+
+		bool _state = UpdateTextureCore(
+
+			m_TextureAvailFlag.HasMetalRoughness,
+			m_TAI.RoughnessMetal,
+			m_HasNonColorMap,
+			&m_NonColorTexture,
+			false,
+			_texture
+
+		);
+
+		m_Dirty = _need_Shader_update && _state;;
+		return _state;
 	}
 	bool MasterMaterial::RegisterMetalRoughnessMap(OE1Core::Texture* _texture)
 	{
-		return false;
+		if (!_texture)
+			return false;
+
+		bool _need_Shader_update = !m_TextureAvailFlag.HasRoughness;
+
+		bool _state = UpdateTextureCore(
+
+			m_TextureAvailFlag.HasRoughness,
+			m_TAI.Roughness,
+			m_HasNonColorMap,
+			&m_NonColorTexture,
+			false,
+			_texture
+
+		);
+
+		m_Dirty = _need_Shader_update && _state;;
+		return _state;
 	}
 	bool MasterMaterial::RegisterAlphaMap(OE1Core::Texture* _texture)
 	{
-		return false;
+		if (!_texture)
+			return false;
+
+		bool _need_Shader_update = !m_TextureAvailFlag.HasAlpha;
+		
+		bool _state = UpdateTextureCore(
+
+			m_TextureAvailFlag.HasAlpha,
+			m_TAI.AlphaMask,
+			m_HasNonColorMap,
+			&m_NonColorTexture,
+			false,
+			_texture
+
+		);
+
+		m_Dirty = _need_Shader_update && _state;;
+		return _state;
 	}
 	bool MasterMaterial::RegisterAOMap(OE1Core::Texture* _texture)
 	{
-		return false;
+		if (!_texture)
+			return false;
+
+		bool _need_Shader_update = !m_TextureAvailFlag.HasAO;
+		
+
+		bool _state = UpdateTextureCore(
+
+			m_TextureAvailFlag.HasAO,
+			m_TAI.AmbientOcclusion,
+			m_HasNonColorMap,
+			&m_NonColorTexture,
+			false,
+			_texture
+
+		);
+
+		m_Dirty = _need_Shader_update && _state;;
+		return _state;
 	}
 }
