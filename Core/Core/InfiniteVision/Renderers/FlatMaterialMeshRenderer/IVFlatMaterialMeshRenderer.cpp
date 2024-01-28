@@ -16,6 +16,7 @@ namespace OE1Core
 			{
 				std::pair<Shader*, std::vector<lwStaticMeshPkg*>>& draw_data = iter->second;
 				draw_data.first->Attach();
+				glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 				for (size_t i = 0; i < draw_data.second.size(); i++)
 				{
 					if (!draw_data.second[i]->DrawCount)

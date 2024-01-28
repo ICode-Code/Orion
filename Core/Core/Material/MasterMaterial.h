@@ -99,11 +99,14 @@ namespace OE1Core
 		void FlipDirtyFlag();
 		bool IsDirty() const;
 
+		GLuint& GetPreviewRef();
+
 	protected:
 		MaterialType m_Type;
 		MaterialTextureAvailFlags m_TextureAvailFlag;
 		MaterialTextureCount m_MaterialTextureCount;
 
+		GLuint m_Preview;
 		/// <summary>
 		/// Texture Arrays of color map
 		/// we store all texture in array separating them color and non-color

@@ -7,6 +7,7 @@ namespace OE1Core
 	{
 		InitTexture();
 		InitBaseMesh();
+		InitInternalUsageMesh();
 	}
 	ResourceInitializer::~ResourceInitializer()
 	{
@@ -26,5 +27,9 @@ namespace OE1Core
 	void ResourceInitializer::InitBaseMesh()
 	{
 
+	}
+	void ResourceInitializer::InitInternalUsageMesh()
+	{
+		AssetManager::RegisterGeometryI(DAC::GeometryCreator::GetSphere());
 	}
 }

@@ -20,8 +20,8 @@ namespace OE1Core
 
 		void IVMeshRenderer::Render(IVRenderStack* _render_stack)
 		{
-			m_OpaqueMeshRenderer->Render(_render_stack->s_OpaqueMeshList);
 			m_FlatMaterialMeshRenderer->Render(_render_stack->s_FlatMaterialMeshList);
+			m_OpaqueMeshRenderer->Render(_render_stack->s_OpaqueMeshList);
 			m_TransparentMeshRenderer->Render(_render_stack->s_TransparentMeshList);
 		}
 	}

@@ -21,6 +21,7 @@ namespace OE1Core
 			if (!LoadToMemory(_path))
 			{
 				s_Importer.FreeScene();
+				PROGRESS_INFO = "Failed to load asset!"; PROGRESS_LEVEL = 1.0f;
 				return;
 			}
 			PROGRESS_INFO = "Unpacking Scene..."; PROGRESS_LEVEL = 0.1f;

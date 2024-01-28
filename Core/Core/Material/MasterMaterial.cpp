@@ -79,6 +79,7 @@ namespace OE1Core
 	{
 		m_Dirty = !m_Dirty;
 	}
+	GLuint& MasterMaterial::GetPreviewRef() { return m_Preview; }
 	bool MasterMaterial::IsDirty() const { return m_Dirty; }
 	Shader* MasterMaterial::GetShader() const
 	{

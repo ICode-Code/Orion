@@ -13,7 +13,7 @@
 #include <fstream>
 #include <thread>
 #include <Log.h>
-#include "LogUI.h"
+
 
 
 using namespace std::chrono_literals;

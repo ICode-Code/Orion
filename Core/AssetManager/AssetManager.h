@@ -36,18 +36,28 @@ namespace OE1Core
 		static ModelPkg* GetGeometry(std::string _name);
 		static void RegisterGeometry(ModelPkg _model);
 
+		// Internal Geometry
+		static ModelPkg* GetGeometryI(uint32_t _model_id);
+		static ModelPkg* GetGeometryI(std::string _name);
+		static void RegisterGeometryI(ModelPkg _model);
+
 		static std::unordered_map<std::string, Texture*>& GetTextureRegistry();
 		static std::unordered_map<std::string, Texture*>& GetTextureInternalRegistry();
+
+		
 
 
 	protected:
 		inline static std::unordered_map<std::string, Texture*> s_TextureRegistry;
 		inline static std::unordered_map<std::string, Texture*> s_TextureHDRIRegistry;
 
-		inline static std::unordered_map<std::string, Texture*> s_TextureInternalRegistry;
 		inline static std::unordered_map<std::string, ModelPkg> s_RenderableGeometry;
 		inline static std::unordered_map<uint32_t, std::string> s_RenderableGeometryIDTranslator;
 
+		inline static std::unordered_map<std::string, ModelPkg> s_InternalPurposeGeometry;
+		inline static std::unordered_map<uint32_t, std::string> s_InternalPurposeGeometryIDTranslator;
+
+		inline static std::unordered_map<std::string, Texture*> s_TextureInternalRegistry;
 	};
 }
 

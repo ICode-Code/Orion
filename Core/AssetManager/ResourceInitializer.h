@@ -2,6 +2,7 @@
 #define OE1_RESOURCE_INITIALIZER_H_
 
 #include "AssetManager.h"
+#include "DynamicAssetCreator/DynamicAssetCreator.h"
 
 namespace OE1Core
 {
@@ -11,8 +12,11 @@ namespace OE1Core
 		ResourceInitializer();
 		~ResourceInitializer();
 
+
+	private:
 		void InitTexture();
 		void InitBaseMesh();
+		void InitInternalUsageMesh();
 
 
 	private:

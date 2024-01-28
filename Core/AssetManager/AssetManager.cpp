@@ -123,6 +123,28 @@ namespace OE1Core
 		s_RenderableGeometryIDTranslator.insert(std::make_pair(model_id, model_name));
 		s_RenderableGeometry.insert(std::make_pair(model_name, _model));
 	}
+	ModelPkg* AssetManager::GetGeometryI(uint32_t _model_id)
+	{
+		if (s_InternalPurposeGeometryIDTranslator.find(_model_id) == s_InternalPurposeGeometryIDTranslator.end())
+			return nullptr;
+		return &s_InternalPurposeGeometry[s_InternalPurposeGeometryIDTranslator[_model_id]];
+	}
+	ModelPkg* AssetManager::GetGeometryI(std::string _name)
+	{
+		if (s_InternalPurposeGeometry.find(_name) == s_InternalPurposeGeometry.end())
+			return nullptr;
+		return &s_InternalPurposeGeometry[_name];
+	}
+	void AssetManager::RegisterGeometryI(ModelPkg _model)
+	{
+		uint32_t model_id = _model.PackageID;
+		std::string model_name = _model.Name;
+
+		if (s_InternalPurposeGeometry.find(model_name) != s_InternalPurposeGeometry.end())
+			return;
+		s_InternalPurposeGeometryIDTranslator.insert(std::make_pair(model_id, model_name));
+		s_InternalPurposeGeometry.insert(std::make_pair(model_name, _model));
+	}
 
 	std::unordered_map<std::string, Texture*>& AssetManager::GetTextureRegistry()
 	{

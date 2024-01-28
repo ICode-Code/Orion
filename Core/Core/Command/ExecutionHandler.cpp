@@ -1,6 +1,6 @@
 #include "ExecutionHandler.h"
 #include "../Core/InfiniteVision/Renderers/2DTextureArrayExtractQuadRenderer/IV2DTextureArrayExtractQuadRenderer.h"
-
+#include "LogUI.h"
 namespace OE1Core
 {
 	void ExecutionHandler::RegisterContentBrowserLayerNotifyCallback(const ContentBrowserLayerNotifyCallback& _callback)
