@@ -14,12 +14,14 @@ namespace OE1Core
 			m_ModelPreviewRenderer = new IVModelPreviewRenderer(_window);
 			m_MeshRenderer = new IVMeshRenderer();
 			m_OutlineRenderer = new IVOutlineRenderer();
+			m_ViewportBillboardRenderer = new IVViewportBillboardIconRenderer();
 		}
 		IVMasterRenderer::~IVMasterRenderer()
 		{
 			delete m_ModelPreviewRenderer;
 			delete m_MeshRenderer;
 			delete m_OutlineRenderer;
+			delete m_ViewportBillboardRenderer;
 		}
 		void IVMasterRenderer::PushToRenderStack(class StaticMesh* _mesh)
 		{
@@ -83,7 +85,10 @@ namespace OE1Core
 			
 			m_OutlineRenderer->Render(m_Scene->GetActiveEntity());
 
+			m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon);
+
 			m_GridRenderer.Render(*m_Scene->m_Grid);
+
 
 			m_MainPassFramebuffer.Detach();
 

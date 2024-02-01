@@ -1,0 +1,18 @@
+#ifndef OE1_VIEWPORT_BILLBOARD_ICON_TYPE_H_
+#define OE1_VIEWPORT_BILLBOARD_ICON_TYPE_H_
+
+
+
+namespace OE1Core
+{
+	enum ViewportIconBillboardType
+	{
+		POINT_LIGHT,
+		DIRECTIONAL_LIGHT,
+		SPOT_LIGHT,
+		REFELCTION_SPHERE,
+		CAMERA
+	};
+}
+
+#endif // !OE1_VIEWPORT_BILLBOARD_ICON_TYPE_H_

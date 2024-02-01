@@ -5,5 +5,6 @@
 #include "FlatMaterialMeshRenderer/IVFlatMaterialMeshRenderer.h"
 #include "TransparentMeshRenderer/IVTransparentMeshRenderer.h"
 #include "OutlineRenderer/IVOutlineRenderer.h"
+#include "ViewportBillboardIconRenderer/IVViewportBillboardIconRenderer.h"
 
 #endif // !OE1_IIV_RENDERER_H_

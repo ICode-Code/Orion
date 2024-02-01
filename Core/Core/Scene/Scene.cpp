@@ -16,6 +16,11 @@ namespace OE1Core
 		m_SceneActiveSelection = new ActiveEntity();
 		m_RenderMode = RenderMode::LIT;
 		m_SceneRay = new Ray(&m_CameraPkg);
+
+		// Init Icons
+		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::POINT_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("PointLight"))));
+		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::DIRECTIONAL_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("Sun"))));
+		
 	}
 	Scene::~Scene()
 	{
@@ -26,6 +31,9 @@ namespace OE1Core
 		delete m_SceneRay;
 
 		for (auto iter : m_StaticMeshRegistry)
+			delete iter.second;
+
+		for (auto iter : m_SceneBillboardIcon)
 			delete iter.second;
 	}
 
@@ -73,6 +81,19 @@ namespace OE1Core
 	void Scene::Update(float dt)
 	{
 		m_CameraPkg.Update(dt);
+		HotComponentUpdate();
+	}
+	void Scene::HotComponentUpdate()
+	{
+		auto BillboatdCompView = m_EntityRegistry.view<Component::ViewportBillboardComponent>();
+		for (auto ent : BillboatdCompView)
+		{
+			Component::ViewportBillboardComponent& billboard = BillboatdCompView.get<Component::ViewportBillboardComponent>(ent);
+			Component::TransformComponent& transform = m_EntityRegistry.get<Component::TransformComponent>(ent);
+
+			// Update the billboard
+			billboard.Update(transform, m_CameraPkg.GetCamera()->m_View);
+		}
 	}
 	void Scene::ResetPhysics()
 	{
@@ -96,6 +117,31 @@ namespace OE1Core
 		m_MyRenderer->PushToRenderStack(m_StaticMeshRegistry[_model_pkg->PackageID]);
 
 		return m_StaticMeshRegistry[_model_pkg->PackageID];
+	}
+	ViewportBillboardIcon* Scene::GetBillboardIcon(ViewportIconBillboardType _type)
+	{
+		if (m_SceneBillboardIcon.find(_type) == m_SceneBillboardIcon.end())
+			return nullptr;
+
+		return m_SceneBillboardIcon[_type];
+	}
+	bool Scene::HasBillboardType(ViewportIconBillboardType _type)
+	{
+		return m_SceneBillboardIcon.find(_type) != m_SceneBillboardIcon.end();
+	}
+	void Scene::RegisterBillboardIcon(ViewportIconBillboardType _type, std::string _texture_name)
+	{
+		if (m_SceneBillboardIcon.find(_type) != m_SceneBillboardIcon.end())
+			return; // Already Exist
+
+		m_SceneBillboardIcon.insert(std::make_pair(_type, new ViewportBillboardIcon(AssetManager::GetInternalTexture(_texture_name))));
+	}
+	bool Scene::PurgeBillboardIcon(ViewportIconBillboardType _type)
+	{
+		if (!HasBillboardType(_type))
+			return false;
+
+		m_SceneBillboardIcon.erase(_type);
 	}
 	RenderMode& Scene::GetRenderMode()
 	{

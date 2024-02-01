@@ -1,5 +1,6 @@
 #include "AssetManager.h"
 #include <STBI/stb_image.h>
+#include "LogUI.h"
 
 namespace OE1Core
 {
@@ -123,27 +124,20 @@ namespace OE1Core
 		s_RenderableGeometryIDTranslator.insert(std::make_pair(model_id, model_name));
 		s_RenderableGeometry.insert(std::make_pair(model_name, _model));
 	}
-	ModelPkg* AssetManager::GetGeometryI(uint32_t _model_id)
+	ModelPkg* AssetManager::GetGeometryI(DynamicAssetType _type)
 	{
-		if (s_InternalPurposeGeometryIDTranslator.find(_model_id) == s_InternalPurposeGeometryIDTranslator.end())
+		if (s_InternalPurposeGeometry.find(_type) == s_InternalPurposeGeometry.end())
 			return nullptr;
-		return &s_InternalPurposeGeometry[s_InternalPurposeGeometryIDTranslator[_model_id]];
+		return &s_InternalPurposeGeometry[_type];
 	}
-	ModelPkg* AssetManager::GetGeometryI(std::string _name)
+	void AssetManager::RegisterGeometryI(ModelPkg _model, DynamicAssetType _type)
 	{
-		if (s_InternalPurposeGeometry.find(_name) == s_InternalPurposeGeometry.end())
-			return nullptr;
-		return &s_InternalPurposeGeometry[_name];
-	}
-	void AssetManager::RegisterGeometryI(ModelPkg _model)
-	{
-		uint32_t model_id = _model.PackageID;
-		std::string model_name = _model.Name;
-
-		if (s_InternalPurposeGeometry.find(model_name) != s_InternalPurposeGeometry.end())
+		if (s_InternalPurposeGeometry.find(_type) != s_InternalPurposeGeometry.end())
+		{
+			LOG_ERROR(LogLayer::Pipe("Dynamic Asset already exist!", OELog::WARNING));
 			return;
-		s_InternalPurposeGeometryIDTranslator.insert(std::make_pair(model_id, model_name));
-		s_InternalPurposeGeometry.insert(std::make_pair(model_name, _model));
+		}
+		s_InternalPurposeGeometry.insert(std::make_pair(_type, _model));
 	}
 
 	std::unordered_map<std::string, Texture*>& AssetManager::GetTextureRegistry()

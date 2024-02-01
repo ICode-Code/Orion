@@ -214,7 +214,7 @@ namespace OE1Core
 			//ImGui::BeginDisabled(mRenderLayer->m_ActiveScene->GetSceneState() == LandscapeTopologyEdit || mRenderLayer->m_ActiveScene->GetSceneState() == LandscapeMaterialEdit);
 			if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Point Light", "        GameObject        "))
 			{
-
+				
 			}
 			if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Directional Light", "        GameObject        "))
 			{
@@ -244,7 +244,10 @@ namespace OE1Core
 			ImGui::Separator();
 			if (ImGui::MenuItem(ICON_FA_VIDEO"   Camera", "        GameObject        "))
 			{
+				if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::CAMERA))
+					SceneEntityFactory::GetScene()->RegisterBillboardIcon(ViewportIconBillboardType::CAMERA, "Camera");
 
+				SceneEntityFactory::CreateSceneCamera();
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem(ICON_FA_MOUNTAIN"   Landscape Tool", "        GameObject        "))

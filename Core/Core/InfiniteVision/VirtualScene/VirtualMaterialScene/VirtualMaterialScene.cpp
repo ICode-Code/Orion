@@ -7,7 +7,7 @@ namespace OE1Core
 	VirtualMaterialScene::VirtualMaterialScene(SDL_Window* _win)
 		: VirtualScene{ _win }
 	{
-		m_VirtualRenderMesh = AssetManager::GetGeometryI("DGA_SPHERE_ORI");
+		m_VirtualRenderMesh = AssetManager::GetGeometryI(DynamicAssetType::SPHERE);
 	}
 	VirtualMaterialScene::~VirtualMaterialScene()
 	{

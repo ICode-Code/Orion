@@ -25,6 +25,7 @@ namespace OE1Core
 		static Entity CreateDefaultPlaneEntity();
 		static Entity CreateEmptyEntity(std::string _name);
 		static Entity CreateFolderEntity(std::string _name);
+		static Entity CreateSceneCamera(std::string _name = "Scene Camera");
 
 
 		// Component
@@ -64,10 +65,12 @@ namespace OE1Core
 		static void CloneAnimationComponent(Entity _src, Entity _dest);
 		static void CloneRigidBodyComponent(Entity _src, Entity _dest);
 		static void CloneMeshColliderComponent(Entity _src, Entity _dest);
+		static void CloneBillboardComponent(Entity _src, Entity _dest);
 
 
 	protected: // Purge Util/ Some component need more that just like remove
 		static void RemoveMeshComponent(Entity _entity);
+		static void RemoveBillboardComponent(Entity _entity);
 	};
 }
 

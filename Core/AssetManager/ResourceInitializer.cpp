@@ -20,6 +20,12 @@ namespace OE1Core
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Question.png",			"Question");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Play.png",				"Play");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Unknown.png",				"Unknown");
+
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "PointLight.png",			"PointLight");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Sun.png",					"Sun");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Camera.png",				"Camera");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Scene.png",				"SceneIco");
+
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "EmptyProject.png",		"EmptyProject");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "FPSTestProject.png",		"FPSTestProject");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "PBRTestProject.png",		"PBRTestProject");
@@ -30,6 +36,7 @@ namespace OE1Core
 	}
 	void ResourceInitializer::InitInternalUsageMesh()
 	{
-		AssetManager::RegisterGeometryI(DAC::GeometryCreator::GetSphere());
+		AssetManager::RegisterGeometryI(DAC::GeometryCreator::GetSphere(), DynamicAssetType::SPHERE);
+
 	}
 }

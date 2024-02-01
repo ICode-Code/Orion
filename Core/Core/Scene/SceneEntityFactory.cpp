@@ -20,6 +20,7 @@ namespace OE1Core
 		CloneTagComponent(_src_entity, my_new_entity);
 		CloneTransformComponent(_src_entity, my_new_entity);
 		CloneMeshComponent(_src_entity, my_new_entity);
+		CloneBillboardComponent(_src_entity, my_new_entity);
 
 
 		return my_new_entity;
@@ -36,7 +37,7 @@ namespace OE1Core
 		while (!transform.IsLeaf())
 			transform.m_Children.front()->GetComponent<Component::TransformComponent>().RemoveParent();
 
-
+		RemoveBillboardComponent(_entity);
 		RemoveMeshComponent(_entity);
 		m_Scene->m_EntityRegistry.destroy(_entity.GetHandle());
 		return true;
@@ -79,6 +80,20 @@ namespace OE1Core
 	Entity SceneEntityFactory::CreateEmptyEntity(std::string _name)
 	{
 		return Entity();
+	}
+	Entity SceneEntityFactory::CreateSceneCamera(std::string _name)
+	{
+		Entity my_entity = m_Scene->CreateEntity();
+		AddDefaultComponent(my_entity, _name);
+		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_CAMERA);
+		Component::TransformComponent& transform = my_entity.GetComponent<Component::TransformComponent>();
+		transform.m_Position = glm::vec3(0.0f, 2.0f, 0.0f);
+		transform.Update();
+
+		Component::ViewportBillboardComponent& billboard = my_entity.AddComponent<Component::ViewportBillboardComponent>(m_Scene->GetBillboardIcon(ViewportIconBillboardType::CAMERA), (uint32_t)my_entity, ViewportIconBillboardType::CAMERA);
+		billboard.Update(transform, m_Scene->m_CameraPkg.GetCamera()->m_View);
+
+		return my_entity;
 	}
 	Entity SceneEntityFactory::CreateFolderEntity(std::string _name)
 	{
@@ -275,6 +290,14 @@ namespace OE1Core
 	{
 
 	}
+	void SceneEntityFactory::CloneBillboardComponent(Entity _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::ViewportBillboardComponent>())
+			return;
+
+		Component::ViewportBillboardComponent& src_billboard = _src.GetComponent<Component::ViewportBillboardComponent>();
+		_dest.AddComponent<Component::ViewportBillboardComponent>(src_billboard, (uint32_t)_dest);
+	}
 
 
 
@@ -295,5 +318,17 @@ namespace OE1Core
 		// This will remove it from render stack and the static mesh it take care of everything
 		if (static_mesh->GetInstanceCount() == 0)
 			m_Scene->PurgeStaticMesh(static_mesh->GetPackageID());
+	}
+	void SceneEntityFactory::RemoveBillboardComponent(Entity _entity)
+	{
+		if (!_entity.HasComponent<Component::ViewportBillboardComponent>())
+			return;
+
+		Component::ViewportBillboardComponent& BillboardComponent = _entity.GetComponent<Component::ViewportBillboardComponent>();
+		ViewportBillboardIcon* Sprite = m_Scene->GetBillboardIcon(BillboardComponent.GetType());
+		Sprite->PurgeInstance(_entity, m_Scene);
+		
+		if (Sprite->GetInstanceCount() <= 0)
+			m_Scene->PurgeBillboardIcon(BillboardComponent.GetType());
 	}
 }
