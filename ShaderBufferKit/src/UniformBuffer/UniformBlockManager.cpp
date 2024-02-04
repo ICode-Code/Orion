@@ -9,7 +9,7 @@ namespace OE1Core
 			s_ShaderInterface =  _shader_interface;
 			RegisterUniformBuffers();
 			LinkUniformBuffers();
-
+			 
 
 			s_SceneTransformBuffer = &s_UniformBuffers[Memory::UniformBufferID::SCENE_TRANSFORM];
 		}
@@ -31,14 +31,14 @@ namespace OE1Core
 		void UniformBlockManager::RegisterUniformBuffers()
 		{
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::INFIN_GRID,				Memory::UniformBuffer("InfiniteGrid")));
-			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::SCENE_TRANSFORM,		Memory::UniformBuffer("SceneTransform")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::SCENE_TRANSFORM,		Memory::UniformBuffer("SceneCameraTransform")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::MATERIAL_REGISTRY,		Memory::UniformBuffer("MaterialProperties")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::TAI_REGISTRY,			Memory::UniformBuffer("TextureAccessIndex")));
 		}
 		void UniformBlockManager::LinkUniformBuffers()
 		{
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::INFIN_GRID],			Memory::s_InfiniteGridBufferSize,	1);
-			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::SCENE_TRANSFORM],		Memory::s_SceneTransformBufferSize, 1);
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::SCENE_TRANSFORM],		Memory::s_SceneTransformBufferSize, ORI_MAX_SCENE_CAMERA);
 
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::MATERIAL_REGISTRY],	Memory::s_MaterialPropertiesBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::TAI_REGISTRY],		Memory::s_TextureAccessIndexBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);

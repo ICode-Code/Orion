@@ -10,12 +10,13 @@ namespace OE1Core
 
 		}
 
-		void IVTransparentMeshRenderer::Render(IVRenderStack::IVDrawData& _data)
+		void IVTransparentMeshRenderer::Render(IVRenderStack::IVDrawData& _data, int _camera_idx)
 		{
 			for (auto iter = _data.begin(); iter != _data.end(); iter++)
 			{
 				std::pair<Shader*, std::vector<lwStaticMeshPkg*>>& draw_data = iter->second;
 				draw_data.first->Attach();
+				draw_data.first->Set1i("ActiveCameraIndex", _camera_idx);
 				for (size_t i = 0; i < draw_data.second.size(); i++)
 				{
 					if (!draw_data.second[i]->DrawCount)

@@ -2,7 +2,7 @@
 #define OE1_SCENE_H_
 
 
-#include "../CameraPackage/CameraPackage.h"
+#include "SceneCameraManager/SceneCameraManager.h"
 #include "../Mesh/StaticMesh/StaticMesh.h"
 #include "../Grid/Grid.h"
 
@@ -70,15 +70,21 @@ namespace OE1Core
 
 
 		// Scene Renderer stuff
+		SceneCameraManager* GetCameraManager() const;
 		void Render();
 		Renderer::IVMasterRenderer* GetRenderer();
+
+
 
 
 	public:
 		class Renderer::IVRenderStack* m_RenderStack = nullptr;
 		Grid* m_Grid = nullptr;
 		SDL_Window* m_Window;
-		CameraPackage m_CameraPkg;
+
+		SceneCameraManager* m_CameraManager = nullptr;
+		CameraPackage* m_MasterCamera = nullptr;
+
 		entt::registry m_EntityRegistry;
 		std::unordered_map<uint32_t, StaticMesh*> m_StaticMeshRegistry;
 		std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*> m_SceneBillboardIcon;
@@ -91,6 +97,7 @@ namespace OE1Core
 
 	private:
 		void HotComponentUpdate();
+		void UpdateAllSceneCameraTransforms(float _dt);
 		
 	};
 }

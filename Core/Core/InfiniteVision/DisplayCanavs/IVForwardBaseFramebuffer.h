@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <Log.h>
 
+#include "../IVRendererPolicy.h"
 #include "FrameSize.h"
 #include <vector>
 

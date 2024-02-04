@@ -91,7 +91,7 @@ namespace OE1Core
 		transform.Update();
 
 		Component::ViewportBillboardComponent& billboard = my_entity.AddComponent<Component::ViewportBillboardComponent>(m_Scene->GetBillboardIcon(ViewportIconBillboardType::CAMERA), (uint32_t)my_entity, ViewportIconBillboardType::CAMERA);
-		billboard.Update(transform, m_Scene->m_CameraPkg.GetCamera()->m_View);
+		billboard.Update(transform, m_Scene->m_MasterCamera->GetCamera()->m_View);
 
 		return my_entity;
 	}

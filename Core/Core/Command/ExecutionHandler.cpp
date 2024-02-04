@@ -214,7 +214,7 @@ namespace OE1Core
 		{
 			CommandDef::EntitySelectionCommandDef& _command = Command::s_EntitySelectionCommands.back();
 			Scene* active_scene = SceneManager::GetActiveScene();
-			uint32_t entity_id = static_cast<uint32_t>(active_scene->GetRenderer()->GetMainPassFramebuffer().Readi1(1, _command.posX, _command.posY));
+			uint32_t entity_id = static_cast<uint32_t>(active_scene->m_MasterCamera->GetMainPassFramebuffer()->Readi1(1, _command.posX, _command.posY));
 			
 			Entity entity_query = SceneManager::GetActiveScene()->GetEntity(entity_id, true);
 

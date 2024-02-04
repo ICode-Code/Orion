@@ -75,26 +75,39 @@ namespace OE1Core
 			m_MainPassFramebuffer.Update(_width, _height);
 		}
 		IVForwardMainPassFramebuffer& IVMasterRenderer::GetMainPassFramebuffer() { return m_MainPassFramebuffer; }
-		void IVMasterRenderer::MasterPass()
+		void IVMasterRenderer::MasterPass(std::unordered_map<std::string, CameraParameters>& _cameras)
 		{
 
-			m_MainPassFramebuffer.Attach();
+			for (auto cam = _cameras.begin(); cam != _cameras.end(); cam++)
+			{
+				if (!cam->second.Camera->IsPowerOn())
+					continue;
 
-			m_MeshRenderer->Render(m_Scene->m_RenderStack);
+				cam->second.Camera->AttachFramebuffer();
 
-			
-			m_OutlineRenderer->Render(m_Scene->GetActiveEntity());
+				int ActiveCameraIdx = cam->second.Offset;
 
-			m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon);
-
-			m_GridRenderer.Render(*m_Scene->m_Grid);
+				m_MeshRenderer->Render(m_Scene->m_RenderStack, ActiveCameraIdx);
 
 
-			m_MainPassFramebuffer.Detach();
+				m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), ActiveCameraIdx);
+
+				m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, ActiveCameraIdx);
+
+				m_GridRenderer.Render(*m_Scene->m_Grid, ActiveCameraIdx);
+
+				cam->second.Camera->DetachFramebuffer();
+			}
+
 
 
 			// Update Frame
 			ViewportArgs::FINAL_FRAME = m_MainPassFramebuffer.GetAttachment(0);
+		}
+
+		void IVMasterRenderer::CleanGamePass(int32_t id)
+		{
+
 		}
 	}
 }

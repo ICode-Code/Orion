@@ -17,12 +17,12 @@ namespace OE1Core
 			IVOutlineRenderer();
 			~IVOutlineRenderer();
 
-			void Render(ActiveEntity* _active_entity);
+			void Render(ActiveEntity* _active_entity, int _camera_idx);
 
 
 		protected:
-			void IssueProxyRender(Entity _entity);
-			void IssueSolidOutLineRender(Entity _entity);
+			void IssueProxyRender(Entity _entity, int _camera_idx);
+			void IssueSolidOutLineRender(Entity _entity, int _camera_idx);
 
 		protected: // Util
 			bool ValidEntityToOutline(EntityType _type);

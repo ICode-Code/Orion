@@ -14,7 +14,7 @@ namespace OE1Core
 			IVMeshRenderer();
 			~IVMeshRenderer();
 
-			void Render(IVRenderStack* _render_stack);
+			void Render(IVRenderStack* _render_stack, int _camera_idx);
 
 		protected:
 			IVOpaqueMeshRenderer* m_OpaqueMeshRenderer = nullptr;

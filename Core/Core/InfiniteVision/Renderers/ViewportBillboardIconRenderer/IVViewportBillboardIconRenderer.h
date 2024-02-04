@@ -14,7 +14,7 @@ namespace OE1Core
 			IVViewportBillboardIconRenderer();
 			~IVViewportBillboardIconRenderer();
 
-			void Render(std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*>& _sprite_list);
+			void Render(std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*>& _sprite_list, int _camera_idx);
 		};
 	}
 }

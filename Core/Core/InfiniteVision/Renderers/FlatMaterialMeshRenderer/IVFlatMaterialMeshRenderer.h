@@ -15,7 +15,7 @@ namespace OE1Core
 			IVFlatMaterialMeshRenderer() = default;
 			~IVFlatMaterialMeshRenderer();
 
-			void Render(IVRenderStack::IVDrawData& _data);
+			void Render(IVRenderStack::IVDrawData& _data, int _camera_idx);
 		};
 	}
 }

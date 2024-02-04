@@ -10,12 +10,13 @@ namespace OE1Core
 
 		}
 
-		void IVFlatMaterialMeshRenderer::Render(IVRenderStack::IVDrawData& _data)
+		void IVFlatMaterialMeshRenderer::Render(IVRenderStack::IVDrawData& _data, int _camera_idx)
 		{
 			for (auto iter = _data.begin(); iter != _data.end(); iter++)
 			{
 				std::pair<Shader*, std::vector<lwStaticMeshPkg*>>& draw_data = iter->second;
 				draw_data.first->Attach();
+				draw_data.first->Set1i("ActiveCameraIndex", _camera_idx);
 				glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 				for (size_t i = 0; i < draw_data.second.size(); i++)
 				{

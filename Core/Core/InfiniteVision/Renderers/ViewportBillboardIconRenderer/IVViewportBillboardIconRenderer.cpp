@@ -14,10 +14,10 @@ namespace OE1Core
 
 		}
 
-		void IVViewportBillboardIconRenderer::Render(std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*>& _sprite_list)
+		void IVViewportBillboardIconRenderer::Render(std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*>& _sprite_list, int _camera_idx)
 		{
 			m_Shader->Attach();
-
+			m_Shader->Set1i("ActiveCameraIndex", _camera_idx);
 			for (auto iter = _sprite_list.begin(); iter != _sprite_list.end(); iter++)
 			{
 				if (iter->second->m_ActiveInstanceCount <= 0)

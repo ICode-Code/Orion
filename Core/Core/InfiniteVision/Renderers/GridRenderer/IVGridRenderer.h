@@ -14,7 +14,7 @@ namespace OE1Core
 			IVGridRenderer();
 			~IVGridRenderer();
 
-			void Render(const Grid& _grid);
+			void Render(const Grid& _grid, int _camera_idx);
 		};
 	}
 }

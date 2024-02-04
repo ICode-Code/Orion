@@ -61,7 +61,7 @@ void main()
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	
-			gl_Position = PV * FragPosition;
+			gl_Position = SceneCameraTransformBuffer[ActiveCameraIndex].PV * FragPosition;
 
 }
         )";
@@ -126,7 +126,7 @@ void main()
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	
-			gl_Position = PV * FragPosition;
+			gl_Position = SceneCameraTransformBuffer[ActiveCameraIndex].PV * FragPosition;
 
 }
         )";

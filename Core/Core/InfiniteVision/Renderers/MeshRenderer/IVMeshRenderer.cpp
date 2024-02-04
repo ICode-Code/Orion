@@ -18,11 +18,11 @@ namespace OE1Core
 			delete m_TransparentMeshRenderer;
 		}
 
-		void IVMeshRenderer::Render(IVRenderStack* _render_stack)
+		void IVMeshRenderer::Render(IVRenderStack* _render_stack, int _camera_idx)
 		{
-			m_FlatMaterialMeshRenderer->Render(_render_stack->s_FlatMaterialMeshList);
-			m_OpaqueMeshRenderer->Render(_render_stack->s_OpaqueMeshList);
-			m_TransparentMeshRenderer->Render(_render_stack->s_TransparentMeshList);
+			m_FlatMaterialMeshRenderer->Render(_render_stack->s_FlatMaterialMeshList, _camera_idx);
+			m_OpaqueMeshRenderer->Render(_render_stack->s_OpaqueMeshList, _camera_idx);
+			m_TransparentMeshRenderer->Render(_render_stack->s_TransparentMeshList, _camera_idx);
 		}
 	}
 }

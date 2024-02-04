@@ -8,14 +8,20 @@
 namespace OE1Core
 {
 	Scene::Scene(SDL_Window* _window)
-		: m_Window{_window}, m_CameraPkg{ _window }
+		: m_Window{_window}
 	{
+		m_CameraManager = new SceneCameraManager(_window);
+		m_MasterCamera = m_CameraManager->GetCamera("MasterCamera");
+
+		m_CameraManager->RegisterCamera("Sec")->PowerOn();
+		m_MasterCamera->PowerOn();
+
 		m_Grid = new Grid();
 		m_MyRenderer = new Renderer::IVMasterRenderer(m_Window, this);
 		m_RenderStack = new Renderer::IVRenderStack();
 		m_SceneActiveSelection = new ActiveEntity();
 		m_RenderMode = RenderMode::LIT;
-		m_SceneRay = new Ray(&m_CameraPkg);
+		m_SceneRay = new Ray(m_MasterCamera);
 
 		// Init Icons
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::POINT_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("PointLight"))));
@@ -35,6 +41,8 @@ namespace OE1Core
 
 		for (auto iter : m_SceneBillboardIcon)
 			delete iter.second;
+
+		delete m_CameraManager;
 	}
 
 	bool Scene::PurgeStaticMesh(uint32_t _package_id)
@@ -76,11 +84,12 @@ namespace OE1Core
 	void Scene::Update(int _width, int _height)
 	{
 		m_MyRenderer->Update(_width, _height);
-		m_CameraPkg.GetCamera()->SetResolution(glm::vec2((float)_width, (float)_height));
+		m_MasterCamera->Update(_width, _height);
+		
 	}
 	void Scene::Update(float dt)
 	{
-		m_CameraPkg.Update(dt);
+		UpdateAllSceneCameraTransforms(dt);
 		HotComponentUpdate();
 	}
 	void Scene::HotComponentUpdate()
@@ -92,7 +101,21 @@ namespace OE1Core
 			Component::TransformComponent& transform = m_EntityRegistry.get<Component::TransformComponent>(ent);
 
 			// Update the billboard
-			billboard.Update(transform, m_CameraPkg.GetCamera()->m_View);
+			billboard.Update(transform, m_MasterCamera->GetCamera()->m_View);
+		}
+	}
+	void Scene::UpdateAllSceneCameraTransforms(float _dt)
+	{
+		auto& CameraColl = m_CameraManager->GetCameraList();
+		for (auto cam = CameraColl.begin(); cam != CameraColl.end(); cam++)
+		{
+			if (!cam->second.Camera->IsPowerOn())
+				continue;
+
+			cam->second.Camera->Update(_dt);
+			Memory::UniformBlockManager::UseBuffer(
+				Memory::UniformBufferID::SCENE_TRANSFORM)->Update(
+					Memory::s_SceneTransformBufferSize, cam->second.Offset * Memory::s_SceneTransformBufferSize, &cam->second.Camera->GetSceneTransform());
 		}
 	}
 	void Scene::ResetPhysics()
@@ -142,6 +165,7 @@ namespace OE1Core
 			return false;
 
 		m_SceneBillboardIcon.erase(_type);
+		return true;
 	}
 	RenderMode& Scene::GetRenderMode()
 	{
@@ -159,17 +183,20 @@ namespace OE1Core
 	}
 	void Scene::OnEvent(OECore::IEvent& e)
 	{
-		m_CameraPkg.OnEvent(e);
+		m_MasterCamera->OnEvent(e);
 	}
 	Ray* Scene::GetRay() { return m_SceneRay; }
 	void Scene::ResetScene()
 	{
 		ResetPhysics();
 	}
-
+	SceneCameraManager* Scene::GetCameraManager() const
+	{
+		return m_CameraManager;
+	}
 	void Scene::Render()
 	{
-		m_MyRenderer->MasterPass();
+		m_MyRenderer->MasterPass(m_CameraManager->GetCameraList());
 	}
 	Renderer::IVMasterRenderer* Scene::GetRenderer()
 	{

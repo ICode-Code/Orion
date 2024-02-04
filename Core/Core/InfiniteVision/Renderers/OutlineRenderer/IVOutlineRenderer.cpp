@@ -14,7 +14,7 @@ namespace OE1Core
 
 		}
 
-		void IVOutlineRenderer::Render(ActiveEntity* _active_entity)
+		void IVOutlineRenderer::Render(ActiveEntity* _active_entity, int _camera_idx)
 		{
 			if (!_active_entity->ValidSelection())
 				return;
@@ -27,15 +27,16 @@ namespace OE1Core
 
 
 			for (size_t i = 0; i < _active_entity->GetRegistry().size(); i++)
-				IssueProxyRender(_active_entity->GetRegistry()[i]);
+				IssueProxyRender(_active_entity->GetRegistry()[i], _camera_idx);
 
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
 			glDisable(GL_DEPTH_TEST);
 
 			m_Shader->Attach();
+			m_Shader->Set1i("ActiveCameraIndex", _camera_idx);
 			for (size_t i = 0; i < _active_entity->GetRegistry().size(); i++)
-				IssueSolidOutLineRender(_active_entity->GetRegistry()[i]);
+				IssueSolidOutLineRender(_active_entity->GetRegistry()[i], _camera_idx);
 			m_Shader->Detach();
 
 			glStencilMask(0xFF);
@@ -43,7 +44,7 @@ namespace OE1Core
 			glEnable(GL_DEPTH_TEST);
 		}
 
-		void IVOutlineRenderer::IssueProxyRender(Entity _entity)
+		void IVOutlineRenderer::IssueProxyRender(Entity _entity, int _camera_idx)
 		{
 			Component::TagComponent& tag = _entity.GetComponent<Component::TagComponent>();
 
@@ -69,7 +70,7 @@ namespace OE1Core
 				model->MeshList[i].Material->GetShader()->Detach();
 			}
 		}
-		void IVOutlineRenderer::IssueSolidOutLineRender(Entity _entity)
+		void IVOutlineRenderer::IssueSolidOutLineRender(Entity _entity, int _camera_idx)
 		{
 			Component::MeshComponent& mesh = _entity.GetComponent<Component::MeshComponent>();
 			ModelPkg* model = AssetManager::GetGeometry(mesh.GetPackageID());
