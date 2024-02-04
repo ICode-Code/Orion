@@ -10,6 +10,7 @@
 #include "MeshComponent/MeshComponent.h"
 #include "InspectorComponent/InspectorComponent.h"
 #include "ViewportBillboardComponent/ViewportBillboardComponent.h"
+#include "CameraPackageComponent/CameraPackageComponent.h"
 
 #endif // !OE1_ICOMPONENT_H_
  

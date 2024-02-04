@@ -32,7 +32,7 @@ namespace OE1Core
 
 		CameraParameters _params;
 
-		_params.Camera = new CameraPackage(m_Context);
+		_params.Camera = new CameraPackage(m_Context, _name);
 		_params.Offset = static_cast<uint32_t>(m_CameraList.size());
 
 		m_CameraList.insert(std::make_pair(_name, _params));
@@ -45,6 +45,17 @@ namespace OE1Core
 			return m_CameraList[_name].Camera;
 
 		return nullptr;
+	}
+	void SceneCameraManager::EngagePilotMode(std::string _name)
+	{
+		if (!HasCamera(_name))
+			return;
+
+		// Set all camera in rest mode
+		for (auto cam = m_CameraList.begin(); cam != m_CameraList.end(); cam++)
+			cam->second.Camera->DeactivatePilotMode();
+
+		m_CameraList[_name].Camera->ActivatePilotCamera();
 	}
 	CameraParameters& SceneCameraManager::GetCameraWithParameters(std::string _name)
 	{

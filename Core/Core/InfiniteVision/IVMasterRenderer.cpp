@@ -2,7 +2,7 @@
 #include "../Scene/Scene.h"
 #include "../ActiveEntity/ActiveEntity.h"
 
-#include "LogUI.h"
+#include "LogUI.h" 
 
 namespace OE1Core
 {
@@ -77,26 +77,16 @@ namespace OE1Core
 		IVForwardMainPassFramebuffer& IVMasterRenderer::GetMainPassFramebuffer() { return m_MainPassFramebuffer; }
 		void IVMasterRenderer::MasterPass(std::unordered_map<std::string, CameraParameters>& _cameras)
 		{
+			 
+			MainViewportPass(m_Scene->m_MasterCamera, 0);
 
-			for (auto cam = _cameras.begin(); cam != _cameras.end(); cam++)
+			auto cam_iteration_alpha = std::next(_cameras.begin());
+			for (auto cam = cam_iteration_alpha; cam != _cameras.end(); cam++)
 			{
 				if (!cam->second.Camera->IsPowerOn())
 					continue;
 
-				cam->second.Camera->AttachFramebuffer();
-
-				int ActiveCameraIdx = cam->second.Offset;
-
-				m_MeshRenderer->Render(m_Scene->m_RenderStack, ActiveCameraIdx);
-
-
-				m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), ActiveCameraIdx);
-
-				m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, ActiveCameraIdx);
-
-				m_GridRenderer.Render(*m_Scene->m_Grid, ActiveCameraIdx);
-
-				cam->second.Camera->DetachFramebuffer();
+				CleanGamePass(cam->second.Camera, cam->second.Offset);
 			}
 
 
@@ -105,9 +95,39 @@ namespace OE1Core
 			ViewportArgs::FINAL_FRAME = m_MainPassFramebuffer.GetAttachment(0);
 		}
 
-		void IVMasterRenderer::CleanGamePass(int32_t id)
+		void IVMasterRenderer::CleanGamePass(CameraPackage* _dynamic_camera, int _offset)
 		{
+			_dynamic_camera->AttachFramebuffer();
 
+			int ActiveCameraIdx = _offset;
+
+			m_MeshRenderer->Render(m_Scene->m_RenderStack, ActiveCameraIdx);
+
+
+			//m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), ActiveCameraIdx);
+
+			//m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, ActiveCameraIdx);
+
+			m_GridRenderer.Render(*m_Scene->m_Grid, ActiveCameraIdx);
+
+			_dynamic_camera->DetachFramebuffer();
+		}
+		void IVMasterRenderer::MainViewportPass(CameraPackage* _master_camera, int _offset)
+		{
+			_master_camera->AttachFramebuffer();
+
+			int ActiveCameraIdx = _offset;
+
+			m_MeshRenderer->Render(m_Scene->m_RenderStack, ActiveCameraIdx);
+
+
+			m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), ActiveCameraIdx);
+
+			m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, ActiveCameraIdx);
+
+			m_GridRenderer.Render(*m_Scene->m_Grid, ActiveCameraIdx);
+
+			_master_camera->DetachFramebuffer();
 		}
 	}
 }

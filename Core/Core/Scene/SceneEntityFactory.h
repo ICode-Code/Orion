@@ -66,6 +66,7 @@ namespace OE1Core
 		static void CloneRigidBodyComponent(Entity _src, Entity _dest);
 		static void CloneMeshColliderComponent(Entity _src, Entity _dest);
 		static void CloneBillboardComponent(Entity _src, Entity _dest);
+		static void CloneCameraPackageComponent(Entity& _src, Entity _dest);
 
 
 	protected: // Purge Util/ Some component need more that just like remove

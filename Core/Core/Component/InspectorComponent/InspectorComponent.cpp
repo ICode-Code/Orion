@@ -27,11 +27,12 @@ namespace OE1Core
 			ICamController();
 			ICamera();
 			IMesh();
+			ICameraPackage();
 
 			ImGui::PopStyleColor(7);
 			ImGui::PopStyleVar(3);
 		}
-
+		void InspectorComponent::SetCameraPackageComponent(class CameraPackageComponent* _camera_package_component) { m_CameraPackageComponent = _camera_package_component;}
 		void InspectorComponent::SetTagComponent(class TagComponent* _tag_component) { m_TagComponent = _tag_component; }
 		void InspectorComponent::SetTransformComponent(class TransformComponent* _transform) { m_TransformComponent = _transform; };
 		void InspectorComponent::SetMeshComponent(class MeshComponent* _mesh) { m_MeshComponent = _mesh; }
@@ -141,6 +142,24 @@ namespace OE1Core
 
 
 				ImGui::PopStyleVar();
+
+				ImGui::TreePop();
+			}
+
+		}
+		void InspectorComponent::ICameraPackage()
+		{
+			if (!m_CameraPackageComponent)
+				return;
+
+			if (ImGui::TreeNodeEx("Camera View Point", m_TreeNodeFlags))
+			{
+				CameraPackage* _camera_package = m_CameraPackageComponent->GetCameraPackage();
+
+				if (CustomFrame::UIEditorf3<glm::vec3>("Position", _camera_package->m_Controller->m_FinalPosition, 0.0f, 100.0f))
+					m_TransformComponent->m_Position = _camera_package->m_Controller->m_FinalPosition;
+				
+				//ImGui::Image((ImTextureID)(intptr_t)_camera_package->GetRenderedScene(), {200, 200}, { 0, 1 }, { 1, 0 });
 
 				ImGui::TreePop();
 			}

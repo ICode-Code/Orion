@@ -12,8 +12,8 @@ namespace OE1Core
 	{
 		m_CameraManager = new SceneCameraManager(_window);
 		m_MasterCamera = m_CameraManager->GetCamera("MasterCamera");
+		m_CameraManager->EngagePilotMode("MasterCamera");
 
-		m_CameraManager->RegisterCamera("Sec")->PowerOn();
 		m_MasterCamera->PowerOn();
 
 		m_Grid = new Grid();
@@ -183,7 +183,12 @@ namespace OE1Core
 	}
 	void Scene::OnEvent(OECore::IEvent& e)
 	{
-		m_MasterCamera->OnEvent(e);
+		auto& CameraColl = m_CameraManager->GetCameraList();
+		for (auto cam = CameraColl.begin(); cam != CameraColl.end(); cam++)
+		{
+			if (cam->second.Camera->IsPowerOn() && cam->second.Camera->IsPilotMode())
+				cam->second.Camera->OnEvent(e);
+		}
 	}
 	Ray* Scene::GetRay() { return m_SceneRay; }
 	void Scene::ResetScene()

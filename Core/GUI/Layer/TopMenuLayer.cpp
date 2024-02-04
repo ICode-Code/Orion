@@ -1,5 +1,5 @@
 #include "TopMenuLayer.h"
-
+#include "../Viewport/DynamicViewportManager/DynamicViewportManager.h"
 
 namespace OE1Core
 {
@@ -191,6 +191,29 @@ namespace OE1Core
 			{
 
 			}
+
+			ImGui::Separator();
+
+			if (ImGui::BeginMenu("Viewport"))
+			{
+				auto& cameraList = SceneManager::GetActiveScene()->GetCameraManager()->GetCameraList();
+				if (cameraList.size() > 1)
+				{
+					auto begin = std::next(cameraList.begin());
+					for (auto cam = begin; cam != cameraList.end(); cam++)
+					{
+						std::string _name = ICON_FA_VIDEO"		";
+						_name.append(cam->first);
+						if (ImGui::MenuItem(_name.c_str(), "    "))
+						{
+							DynamicViewportManager::RegisterDynamicViewport(cam->first, cam->second.Camera);
+						}
+					}
+				}
+
+				ImGui::EndMenu();
+			}
+
 
 			ImGui::Separator();
 

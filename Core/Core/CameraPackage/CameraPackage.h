@@ -8,11 +8,13 @@
 
 namespace OE1Core
 {
+	namespace Component { class InspectorComponent; };
 	class CameraPackage
 	{
+		friend class Component::InspectorComponent;
 		friend class ActionButtonUtilityGroup;
 	public:
-		CameraPackage(SDL_Window* _window);
+		CameraPackage(SDL_Window* _window, std::string _name);
 		~CameraPackage();
 
 		Component::CameraComponent* GetCamera();
@@ -23,10 +25,15 @@ namespace OE1Core
 		Memory::SceneTransfrom& GetSceneTransform();
 
 		Renderer::IVForwardMainPassFramebuffer* GetMainPassFramebuffer();
+		std::string GetName();
 		GLuint GetRenderedScene();
 		void PowerOn();
 		void PowerOff();
 		bool IsPowerOn();
+
+		void ActivatePilotCamera();
+		void DeactivatePilotMode();
+		bool IsPilotMode();
 		CameraState::Power GetPowerState();
 
 
@@ -46,8 +53,10 @@ namespace OE1Core
 		Component::FreeLookCameraControllerComponent* m_Controller;
 
 		CameraState::Power m_PowerState = CameraState::Power::OFF;
+		CameraState::FlightState m_FlightState = CameraState::FlightState::REST;
 		GLintptr m_BufferOffset = -1;
 		uint32_t m_CameraID = 0;
+		std::string m_Name = "";
 
 	private:
 		Renderer::IVForwardMainPassFramebuffer* m_MainPassFramebuffer = nullptr;

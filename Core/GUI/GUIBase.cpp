@@ -42,6 +42,7 @@ namespace OE1Core
 		for (auto _viewport : s_Viewports)
 			delete _viewport;
 
+
 		s_Layers.clear();
 		s_MiniWins.clear();
 		s_Viewports.clear();
@@ -61,7 +62,9 @@ namespace OE1Core
 		for (size_t i = 0; i < s_Viewports.size(); i++)
 			s_Viewports[i]->Render();
 
+
 		auto material_view = MaterialManager::GetMaterialView();
+
 		for (auto& view : material_view)
 		{
 			view.second->Update();
@@ -71,6 +74,9 @@ namespace OE1Core
 				MaterialManager::RemoveMaterialView(view.second->GetMaterial());
 		}
 
+		// Render Additional Viewport
+		for (auto& _dynamic_view_port : DynamicViewportManager::s_DynamicViewport)
+			_dynamic_view_port.second->Render();
 		
 
 	}

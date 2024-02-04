@@ -31,6 +31,7 @@ namespace OE1Core
 	protected: // event
 		bool HandleKeyRelease(OECore::KeyReleaseEvent& e);
 		bool HandleKeyPress(OECore::KeyPressedEvent& e);
+		bool HandlMouseClick(OECore::MouseButtonPressedEvent& e);
 
 
 	protected:

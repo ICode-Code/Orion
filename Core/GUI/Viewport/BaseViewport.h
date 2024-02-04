@@ -31,7 +31,7 @@ namespace OE1Core
 
 	protected:
 		// Call this inside Begin()  - End() UI call
-		void UpdateViewport();
+		virtual void UpdateViewport();
 		// This will update -m_MousePosition- 
 		void MousePoseRefToViewport(ImVec2& _viewport);
 		void PrepareGIZMO();

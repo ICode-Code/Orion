@@ -4,6 +4,7 @@
 #include "Layer/ILayer.h"
 #include "Viewport/IViewport.h"
 #include "MiniWindow/IMiniWin.h"
+#include "Viewport/DynamicViewportManager/DynamicViewportManager.h"
 
 #include <vector>
 #include <unordered_map>

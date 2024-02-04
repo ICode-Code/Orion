@@ -31,6 +31,7 @@ namespace OE1Core
 		void IVForwardBaseFramebuffer::Attach(bool _clean_buffer, GLenum _usage)
 		{
 			glBindFramebuffer(_usage, m_Framebuffer);
+			glViewport(0, 0, m_Width, m_Height);
 			if (_clean_buffer)
 				Clean(m_CleanMask);
 		}

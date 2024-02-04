@@ -21,6 +21,7 @@ namespace OE1Core
 		CloneTransformComponent(_src_entity, my_new_entity);
 		CloneMeshComponent(_src_entity, my_new_entity);
 		CloneBillboardComponent(_src_entity, my_new_entity);
+		CloneCameraPackageComponent(_src_entity, my_new_entity);
 
 
 		return my_new_entity;
@@ -92,6 +93,18 @@ namespace OE1Core
 
 		Component::ViewportBillboardComponent& billboard = my_entity.AddComponent<Component::ViewportBillboardComponent>(m_Scene->GetBillboardIcon(ViewportIconBillboardType::CAMERA), (uint32_t)my_entity, ViewportIconBillboardType::CAMERA);
 		billboard.Update(transform, m_Scene->m_MasterCamera->GetCamera()->m_View);
+
+
+		// Create Component
+		Component::TagComponent& tag = my_entity.GetComponent<Component::TagComponent>();
+		CameraPackage* camera = m_Scene->GetCameraManager()->RegisterCamera(tag.m_Identifier);
+		camera->PowerOn();
+		my_entity.AddComponent<Component::CameraPackageComponent>(camera, tag.m_Identifier);
+
+		// Register Inspector
+		my_entity.GetComponent<Component::InspectorComponent>().SetCameraPackageComponent(
+			&my_entity.GetComponent<Component::CameraPackageComponent>()
+		);
 
 		return my_entity;
 	}
@@ -297,6 +310,24 @@ namespace OE1Core
 
 		Component::ViewportBillboardComponent& src_billboard = _src.GetComponent<Component::ViewportBillboardComponent>();
 		_dest.AddComponent<Component::ViewportBillboardComponent>(src_billboard, (uint32_t)_dest);
+	}
+	void SceneEntityFactory::CloneCameraPackageComponent(Entity& _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::CameraPackageComponent>())
+			return;
+
+
+		// Create Component
+		Component::TagComponent& tag = _dest.GetComponent<Component::TagComponent>();
+		CameraPackage* camera = m_Scene->GetCameraManager()->RegisterCamera(tag.m_Identifier);
+
+		_dest.AddComponent<Component::CameraPackageComponent>(camera, tag.m_Identifier);
+
+		// Register Inspector
+		_dest.GetComponent<Component::InspectorComponent>().SetCameraPackageComponent(
+			&_dest.GetComponent<Component::CameraPackageComponent>()
+		);
+
 	}
 
 

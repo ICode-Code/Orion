@@ -6,7 +6,7 @@ namespace OE1Core
 	{
 		IVModelPreviewRenderer::IVModelPreviewRenderer(SDL_Window* _window)
 		{
-			s_CameraPackage = new CameraPackage(_window);
+			s_CameraPackage = new CameraPackage(_window, " ");
 			s_LocalShader = ShaderManager::GetShader(ShaderID::MODEL_PREVIEW);
 		}
 		IVModelPreviewRenderer::~IVModelPreviewRenderer()

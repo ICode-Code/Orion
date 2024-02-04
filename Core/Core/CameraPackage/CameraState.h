@@ -10,6 +10,12 @@ namespace OE1Core
 			ON,
 			OFF
 		};
+
+		enum class FlightState
+		{
+			PILOT,
+			REST
+		};
 	}
 }
 

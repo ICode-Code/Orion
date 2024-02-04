@@ -19,7 +19,7 @@ namespace OE1Core
 		float m_Rounding = 1.3f;
 		float m_SpacingBetween = 1.0f;
 
-	protected:
+	public:
 		void OpenDefaultActionButtonStyle();
 		void CloseDefaultActionButtonStyle();
 	};

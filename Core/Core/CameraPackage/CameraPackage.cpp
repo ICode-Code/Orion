@@ -2,8 +2,9 @@
 
 namespace OE1Core
 {
-	CameraPackage::CameraPackage(SDL_Window* _window)
+	CameraPackage::CameraPackage(SDL_Window* _window, std::string _name)
 	{
+		m_Name = _name;
 		m_Camera = new Component::CameraComponent();
 		m_Controller = new Component::FreeLookCameraControllerComponent(_window);
 		m_Controller->SetCameraComponent(m_Camera);
@@ -21,7 +22,8 @@ namespace OE1Core
 	Component::FreeLookCameraControllerComponent* CameraPackage::GetController() { return m_Controller; }
 	void CameraPackage::Update(float _dt)
 	{ 
-		m_Controller->UpdateInput(_dt); 
+		if(IsPilotMode())
+			m_Controller->UpdateInput(_dt); 
 
 		m_SceneTransform.CameraPosition = m_Camera->GetPosition();
 		m_SceneTransform.Projection = m_Camera->m_Projection;
@@ -55,6 +57,7 @@ namespace OE1Core
 	}
 	void CameraPackage::OnEvent(OECore::IEvent& e) { m_Controller->OnEvent(e); }
 	GLuint CameraPackage::GetRenderedScene() { return m_MainPassFramebuffer->GetAttachment(0); }
+	std::string CameraPackage::GetName() { return m_Name; }
 	Renderer::IVForwardMainPassFramebuffer* CameraPackage::GetMainPassFramebuffer()
 	{
 		return m_MainPassFramebuffer;
@@ -63,4 +66,8 @@ namespace OE1Core
 	void CameraPackage::PowerOff() { m_PowerState = CameraState::Power::OFF; }
 	CameraState::Power CameraPackage::GetPowerState() { return m_PowerState; }
 	bool CameraPackage::IsPowerOn() { return m_PowerState == CameraState::Power::ON; }
+
+	void CameraPackage::ActivatePilotCamera() { m_FlightState = CameraState::FlightState::PILOT; }
+	void CameraPackage::DeactivatePilotMode() { m_FlightState = CameraState::FlightState::REST; }
+	bool CameraPackage::IsPilotMode() { return m_FlightState == CameraState::FlightState::PILOT;};
 }

@@ -42,7 +42,7 @@ namespace OE1Core
 			void Update(int _width, int _height);
 			void MasterPass(std::unordered_map<std::string, CameraParameters>& _cameras);
 			IVForwardMainPassFramebuffer& GetMainPassFramebuffer();
-			inline IVGridRenderer& GetGridRenderer() { return m_GridRenderer; };
+			inline IVGridRenderer& GetGridRenderer() { return m_GridRenderer; }; 
 		protected: // Renderer
 			IVGridRenderer m_GridRenderer;
 			IVModelPreviewRenderer* m_ModelPreviewRenderer = nullptr;
@@ -56,7 +56,8 @@ namespace OE1Core
 
 
 		protected: // Pass
-			void CleanGamePass(int32_t id);
+			void CleanGamePass(CameraPackage* _dynamic_camera, int _offset);
+			void MainViewportPass(CameraPackage* _master_camera, int _offset);
 		};
 	}
 }

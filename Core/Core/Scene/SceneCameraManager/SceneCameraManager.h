@@ -19,6 +19,8 @@ namespace OE1Core
 
 		CameraPackage* GetCamera(std::string _name);
 
+		void EngagePilotMode(std::string _name);
+
 		
 		/// <summary>
 		/// Make sure it exist before calling this

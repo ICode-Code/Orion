@@ -16,6 +16,7 @@ namespace OE1Core
 			~InspectorComponent() = default;
 			void Inspect();
 
+			void SetCameraPackageComponent(class CameraPackageComponent* _camera_package_component);
 			void SetTagComponent(class TagComponent* _tag_component);
 			void SetTransformComponent(class TransformComponent* _transform);
 			void SetMeshComponent(class MeshComponent* _mesh);
@@ -28,6 +29,7 @@ namespace OE1Core
 			class MeshComponent* m_MeshComponent = nullptr;
 			class BaseCameraControllerComponent* m_BaseCameraControllerComponent = nullptr;
 			class CameraComponent* m_CameraComponent = nullptr;
+			class CameraPackageComponent* m_CameraPackageComponent = nullptr;
 
 		protected: // flag
 			ImGuiTreeNodeFlags m_TreeNodeFlags = ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding;
@@ -38,6 +40,7 @@ namespace OE1Core
 			void IMesh();
 			void ICamController();
 			void ICamera();
+			void ICameraPackage();
 
 		};
 	}

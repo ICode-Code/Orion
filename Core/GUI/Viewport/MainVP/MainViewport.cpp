@@ -35,6 +35,7 @@ namespace OE1Core
 		OECore::IEventDispatcher dispatcher(e);
 		dispatcher.Dispatch<OECore::KeyReleaseEvent>(std::bind(&MainViewport::HandleKeyRelease, this, std::placeholders::_1));
 		dispatcher.Dispatch<OECore::KeyPressedEvent>(std::bind(&MainViewport::HandleKeyPress, this, std::placeholders::_1));
+		dispatcher.Dispatch<OECore::MouseButtonPressedEvent>(std::bind(&MainViewport::HandlMouseClick, this, std::placeholders::_1));
 	}
 	void MainViewport::Render()
 	{
@@ -230,7 +231,19 @@ namespace OE1Core
 		}
 	}
 
+	bool MainViewport::HandlMouseClick(OECore::MouseButtonPressedEvent& e)
+	{
 
+		if (m_MouseOverViewport && (e.GetButton() == SDL_BUTTON_RIGHT) && !SceneManager::GetActiveScene()->m_MasterCamera->IsPilotMode())
+		{
+			SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(
+				SceneManager::GetActiveScene()->m_MasterCamera->GetName()
+			);
+		}
+		
+
+		return false;
+	}
 	bool MainViewport::HandleKeyRelease(OECore::KeyReleaseEvent& e)
 	{
 		if (e.GetKeyCode() == SDLK_LSHIFT)
