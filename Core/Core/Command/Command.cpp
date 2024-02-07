@@ -33,4 +33,8 @@ namespace OE1Core
 	{
 		s_TextureLoadRawDataCommands.push(_data);
 	}
+	void Command::PushDynamicViewportPurgeCommand(CommandDef::PurgeDynamicViewportCommandDef _command)
+	{
+		s_DyanmicViewportPurgeCommands.push(_command);
+	}
 }

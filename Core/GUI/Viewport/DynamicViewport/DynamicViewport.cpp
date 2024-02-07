@@ -4,8 +4,12 @@
 
 namespace OE1Core
 {
-	DynamicViewport::DynamicViewport(CameraPackage* _camera, std::string _name)
+	DynamicViewport::DynamicViewport(CameraPackage* _camera, std::string _name, Entity _entity)
 	{
+		m_Entity = _entity;
+		m_CameraPackageComponent = &m_Entity.GetComponent<Component::CameraPackageComponent>();
+		m_TransformComponent = &m_Entity.GetComponent<Component::TransformComponent>();
+
 		m_Camera = _camera;
 		m_Name = ICON_FA_VIDEO"		";
 		m_Name.append(_name).append("@").append("VIEW-POINT");
@@ -18,10 +22,19 @@ namespace OE1Core
 
 	void DynamicViewport::Update()
 	{
-		UpdateViewport();
+		m_CameraPackageComponent->Update(m_TransformComponent);
+		m_Entity.Update();
+
+		UpdateViewport(); 
 	}
 	void DynamicViewport::Render()
 	{
+		if (!m_Open)
+		{
+			if (!m_PurgeCommandSent)
+				SendPurgeCommand();
+			return;
+		}
 		ImGui::SetNextWindowSizeConstraints(ImVec2(
 			(float)Renderer::Policy::MIN_RESOLUTION_X, 
 			(float)Renderer::Policy::MIN_RESOLUTION_Y
@@ -42,6 +55,7 @@ namespace OE1Core
 		ShowMinActionButton();
 
 		ImGui::End();
+		
 	}
 	void DynamicViewport::OnEvent(OECore::IEvent& e)
 	{
@@ -50,7 +64,16 @@ namespace OE1Core
 	bool DynamicViewport::IsOpen() { return m_Open; }
 	void DynamicViewport::Open() { m_Open = true; }
 	void DynamicViewport::Close() { m_Open = false; };
+	void DynamicViewport::SendPurgeCommand()
+	{
+		// Turn off the camera
+		m_Camera->PowerOff();
 
+		CommandDef::PurgeDynamicViewportCommandDef command;
+		command.Name = m_Camera->GetName();
+		Command::PushDynamicViewportPurgeCommand(command);
+		m_PurgeCommandSent = true;
+	}
 	void DynamicViewport::ShowMinActionButton()
 	{
 		// Get Aveil Window Size
@@ -63,8 +86,20 @@ namespace OE1Core
 
 		m_ActionButton.OpenDefaultActionButtonStyle();
 
+		std::string ButtonName;
+		if (m_Camera->IsPilotMode())
+		{
+			ButtonName = ICON_FA_PLANE_LOCK" ";
+		}
+		else
+		{
+			ButtonName = ICON_FA_PLANE_DEPARTURE" ";
+		}
+		ButtonName.append("Pilot Camera  ");
+		if (!m_Camera->IsPowerOn())
+			ButtonName.append(ICON_FA_POWER_OFF);
 
-		if (ImGui::Button(ICON_FA_PLANE_DEPARTURE"	Pilot Camera", { 90.0f, 0.0f }))
+		if (ImGui::Button(ButtonName.c_str(), {100.0f, 0.0f}))
 		{
 			SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(m_Camera->GetName());
 		}

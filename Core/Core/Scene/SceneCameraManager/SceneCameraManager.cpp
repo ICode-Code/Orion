@@ -21,8 +21,8 @@ namespace OE1Core
 	{
 		return m_CameraList.find(_name) != m_CameraList.end();
 	}
-	std::unordered_map<std::string, CameraParameters>& SceneCameraManager::GetCameraList()
-	{
+	std::map<std::string, CameraParameters>& SceneCameraManager::GetCameraList()
+	{ 
 		return m_CameraList;
 	}
 	CameraPackage* SceneCameraManager::RegisterCamera(std::string _name, glm::vec3 _init_pos)
@@ -56,6 +56,16 @@ namespace OE1Core
 			cam->second.Camera->DeactivatePilotMode();
 
 		m_CameraList[_name].Camera->ActivatePilotCamera();
+		m_CameraList[_name].Camera->PowerOn();
+	}
+	bool SceneCameraManager::PurgeCamera(std::string _name)
+	{
+		if (!HasCamera(_name))
+			return false;
+
+		delete m_CameraList[_name].Camera;
+		m_CameraList.erase(_name);
+		return true;
 	}
 	CameraParameters& SceneCameraManager::GetCameraWithParameters(std::string _name)
 	{

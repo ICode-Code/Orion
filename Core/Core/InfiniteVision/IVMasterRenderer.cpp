@@ -75,7 +75,7 @@ namespace OE1Core
 			m_MainPassFramebuffer.Update(_width, _height);
 		}
 		IVForwardMainPassFramebuffer& IVMasterRenderer::GetMainPassFramebuffer() { return m_MainPassFramebuffer; }
-		void IVMasterRenderer::MasterPass(std::unordered_map<std::string, CameraParameters>& _cameras)
+		void IVMasterRenderer::MasterPass(std::map<std::string, CameraParameters>& _cameras)
 		{
 			 
 			MainViewportPass(m_Scene->m_MasterCamera, 0);

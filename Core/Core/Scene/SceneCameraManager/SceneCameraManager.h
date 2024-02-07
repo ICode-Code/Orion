@@ -1,7 +1,7 @@
 #ifndef OE1_SCENE_CAMERA_MANAGER_H_
 #define OE1_SCENE_CAMERA_MANAGER_H_
 
-#include <unordered_map>
+#include <map>
 
 #include "../../CameraPackage/CameraPackage.h"
 
@@ -20,6 +20,7 @@ namespace OE1Core
 		CameraPackage* GetCamera(std::string _name);
 
 		void EngagePilotMode(std::string _name);
+		bool PurgeCamera(std::string _name);
 
 		
 		/// <summary>
@@ -36,11 +37,11 @@ namespace OE1Core
 		/// <returns></returns>
 		int GetCameraIndex(std::string _name);
 		bool HasCamera(std::string _name);
-		std::unordered_map<std::string, CameraParameters>& GetCameraList();
+		std::map<std::string, CameraParameters>& GetCameraList(); 
 
 
 	private:
-		std::unordered_map<std::string, CameraParameters> m_CameraList;
+		std::map<std::string, CameraParameters> m_CameraList;
 		SDL_Window* m_Context = nullptr;
 
 	};

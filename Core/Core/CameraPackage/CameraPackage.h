@@ -8,10 +8,11 @@
 
 namespace OE1Core
 {
-	namespace Component { class InspectorComponent; };
+	namespace Component { class InspectorComponent; class CameraPackageComponent; };
 	class CameraPackage
 	{
 		friend class Component::InspectorComponent;
+		friend class Component::CameraPackageComponent;
 		friend class ActionButtonUtilityGroup;
 	public:
 		CameraPackage(SDL_Window* _window, std::string _name);
@@ -30,6 +31,10 @@ namespace OE1Core
 		void PowerOn();
 		void PowerOff();
 		bool IsPowerOn();
+
+		void SetParentEntityID(uint32_t _id);
+		bool HasParentEntity();
+		uint32_t GetParentEntity();
 
 		void ActivatePilotCamera();
 		void DeactivatePilotMode();
@@ -57,6 +62,9 @@ namespace OE1Core
 		GLintptr m_BufferOffset = -1;
 		uint32_t m_CameraID = 0;
 		std::string m_Name = "";
+
+		uint32_t m_ParentEntityID = 0;
+		bool m_HasParentEntityID = false;
 
 	private:
 		Renderer::IVForwardMainPassFramebuffer* m_MainPassFramebuffer = nullptr;

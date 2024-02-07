@@ -18,6 +18,7 @@ namespace OE1Core
 		class BaseCameraControllerComponent
 		{
 			friend class InspectorComponent;
+			friend class CameraPackageComponent;
 			friend class ActionButtonUtilityGroup;
 		public:
 			BaseCameraControllerComponent(SDL_Window* _active_context);

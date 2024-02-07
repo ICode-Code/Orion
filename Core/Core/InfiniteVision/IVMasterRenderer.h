@@ -40,7 +40,7 @@ namespace OE1Core
 			void PushToRenderStack(StaticMesh* _mesh);
 			void PurgeFromRenderStack(StaticMesh* _mesh);
 			void Update(int _width, int _height);
-			void MasterPass(std::unordered_map<std::string, CameraParameters>& _cameras);
+			void MasterPass(std::map<std::string, CameraParameters>& _cameras);
 			IVForwardMainPassFramebuffer& GetMainPassFramebuffer();
 			inline IVGridRenderer& GetGridRenderer() { return m_GridRenderer; }; 
 		protected: // Renderer

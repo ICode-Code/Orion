@@ -11,6 +11,7 @@ namespace OE1Core
 		class FreeLookCameraControllerComponent : public BaseCameraControllerComponent
 		{
 			friend class InspectorComponent;
+			friend class CameraPackageComponent;
 			friend class ActionButtonUtilityGroup;
 		public:
 			FreeLookCameraControllerComponent(SDL_Window* _window);

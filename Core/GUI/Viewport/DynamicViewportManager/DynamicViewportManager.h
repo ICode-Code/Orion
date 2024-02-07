@@ -4,6 +4,7 @@
 #include "../DynamicViewport/DynamicViewport.h"
 
 #include <unordered_map>
+#include <functional>
 
 namespace OE1Core
 {
@@ -17,10 +18,11 @@ namespace OE1Core
 		static DynamicViewport* RegisterDynamicViewport(std::string _name, CameraPackage* _camera);
 		static DynamicViewport* GetViewport(std::string _name);
 		static bool PurgeDynamicViewport(std::string _name);
+		static bool HasViewport(std::string _name);
 
 
 	protected:
-		inline static std::unordered_map<std::string, DynamicViewport*> s_DynamicViewport;
+		inline static std::unordered_map<std::string, DynamicViewport*> m_DynamicViewport;
 
 	};
 }

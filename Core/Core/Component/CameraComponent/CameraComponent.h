@@ -13,6 +13,7 @@ namespace OE1Core
 		class CameraComponent
 		{
 			friend class InspectorComponent;
+			friend class CameraPackageComponent;
 			friend class FreeLookCameraControllerComponent;
 			friend class BaseCameraControllerComponent;
 		public:

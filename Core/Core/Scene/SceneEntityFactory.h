@@ -72,6 +72,7 @@ namespace OE1Core
 	protected: // Purge Util/ Some component need more that just like remove
 		static void RemoveMeshComponent(Entity _entity);
 		static void RemoveBillboardComponent(Entity _entity);
+		static bool RemoveCameraPackageComponent(Entity _entity);
 	};
 }
 

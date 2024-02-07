@@ -154,13 +154,8 @@ namespace OE1Core
 
 			if (ImGui::TreeNodeEx("Camera View Point", m_TreeNodeFlags))
 			{
-				CameraPackage* _camera_package = m_CameraPackageComponent->GetCameraPackage();
-
-				if (CustomFrame::UIEditorf3<glm::vec3>("Position", _camera_package->m_Controller->m_FinalPosition, 0.0f, 100.0f))
-					m_TransformComponent->m_Position = _camera_package->m_Controller->m_FinalPosition;
 				
-				//ImGui::Image((ImTextureID)(intptr_t)_camera_package->GetRenderedScene(), {200, 200}, { 0, 1 }, { 1, 0 });
-
+				
 				ImGui::TreePop();
 			}
 

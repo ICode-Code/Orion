@@ -19,6 +19,8 @@ namespace OE1Core
 			CameraPackage* GetCameraPackage();
 			const char* GetCameraPackageName();
 
+			void Update(class TransformComponent* _transform);
+
 			
 
 		private:

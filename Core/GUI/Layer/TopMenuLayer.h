@@ -23,6 +23,7 @@ namespace OE1Core
 		void Tools();
 		void Debug();
 		void Help();
+
 	};
 }
 

@@ -1,6 +1,7 @@
 #include "TopMenuLayer.h"
 #include "../Viewport/DynamicViewportManager/DynamicViewportManager.h"
 
+
 namespace OE1Core
 {
 	TopMenuLayer::TopMenuLayer()
@@ -206,7 +207,10 @@ namespace OE1Core
 						_name.append(cam->first);
 						if (ImGui::MenuItem(_name.c_str(), "    "))
 						{
-							DynamicViewportManager::RegisterDynamicViewport(cam->first, cam->second.Camera);
+							DynamicViewport* res = DynamicViewportManager::RegisterDynamicViewport(cam->first, cam->second.Camera);
+							if (res)
+								res->Open();
+							
 						}
 					}
 				}

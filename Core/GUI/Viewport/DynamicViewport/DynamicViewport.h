@@ -5,12 +5,14 @@
 #include "../BaseViewport.h"
 #include "../Util/VPActionButton/ActionButtonBase.h"
 
+#include <functional>
+
 namespace OE1Core
 {
 	class DynamicViewport : public BaseViewport
 	{
 	public:
-		DynamicViewport(CameraPackage* _camera, std::string _name);
+		DynamicViewport(CameraPackage* _camera, std::string _name, Entity _entity);
 		~DynamicViewport();
 
 		void Update() override;
@@ -24,6 +26,7 @@ namespace OE1Core
 	protected:
 		void UpdateViewport() override;
 		void ShowMinActionButton();
+		void SendPurgeCommand();
 	protected:
 		CameraPackage* m_ViewPoint = nullptr;
 		ImGuiWindowFlags m_LocalViewportFlags =
@@ -32,10 +35,15 @@ namespace OE1Core
 			| ImGuiWindowFlags_NoCollapse;
 
 	private:
+		bool m_PurgeCommandSent = false;
 		bool m_Open = false;
 		CameraPackage* m_Camera = nullptr;
 		std::string m_Name = "";
 		ActionButtonBase m_ActionButton;
+
+		Entity m_Entity;
+		Component::CameraPackageComponent* m_CameraPackageComponent = nullptr;
+		Component::TransformComponent* m_TransformComponent = nullptr;
 	};
 }
 

@@ -75,7 +75,7 @@ namespace OE1Core
 		}
 
 		// Render Additional Viewport
-		for (auto& _dynamic_view_port : DynamicViewportManager::s_DynamicViewport)
+		for (auto& _dynamic_view_port : DynamicViewportManager::m_DynamicViewport)
 			_dynamic_view_port.second->Render();
 		
 

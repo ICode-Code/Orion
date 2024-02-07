@@ -17,6 +17,7 @@ namespace OE1Core
 	{
 		friend class ExecutionHandler;
 	public:
+		static void PushDynamicViewportPurgeCommand(CommandDef::PurgeDynamicViewportCommandDef _command);
 		static void PushTextureLoadCommand(CommandDef::TextureLoadCommandDef _command);
 		static void PushTextureLoadCommand(DataBlock::Image2D _data);
 		static void PushAssetLoadCommand(Loader::LoadArgs _args);	
@@ -36,7 +37,7 @@ namespace OE1Core
 		inline static std::queue<DataBlock::Image2D> s_TextureLoadRawDataCommands;
 		inline static std::queue<CommandDef::MaterialtextureUpdateCommandDef> s_MaterialTextureUpdateCommands;
 		inline static std::queue<CommandDef::MasterRendererMaterialRefreshCommandDef> s_MasterRendererMaterialRefreshCommands;
-		
+		inline static std::queue<CommandDef::PurgeDynamicViewportCommandDef> s_DyanmicViewportPurgeCommands;
 	};
 }
 

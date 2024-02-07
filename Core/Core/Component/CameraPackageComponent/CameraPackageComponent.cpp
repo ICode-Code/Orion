@@ -1,5 +1,5 @@
 #include "CameraPackageComponent.h"
-
+#include "../TransformComponent/TransformComponent.h"
 
 namespace OE1Core
 {
@@ -36,6 +36,13 @@ namespace OE1Core
 		const char* CameraPackageComponent::GetCameraPackageName()
 		{
 			return m_Name;
+		}
+		void CameraPackageComponent::Update(TransformComponent* _transform)
+		{
+			if (m_Camera->IsPilotMode())
+				_transform->m_Position = m_Camera->m_Controller->m_CurrentPosition;
+			else
+				m_Camera->m_Controller->m_FinalPosition = _transform->m_Position;
 		}
 	}
 }

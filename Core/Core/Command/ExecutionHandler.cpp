@@ -1,6 +1,8 @@
 #include "ExecutionHandler.h"
 #include "../Core/InfiniteVision/Renderers/2DTextureArrayExtractQuadRenderer/IV2DTextureArrayExtractQuadRenderer.h"
 #include "LogUI.h"
+#include "../GUI/Viewport/DynamicViewportManager/DynamicViewportManager.h"
+
 namespace OE1Core
 {
 	void ExecutionHandler::RegisterContentBrowserLayerNotifyCallback(const ContentBrowserLayerNotifyCallback& _callback)
@@ -34,6 +36,9 @@ namespace OE1Core
 
 		//Any MasterRenderer Material update request?
 		ProcessMasterRendererMaterialRefershCommand(_scene);
+
+		// Any Viewport purge commands
+		ProcessDynamicViewportPurgeCommand();
 
 		// any Material Texture extraction command?
 		ProcessMaterialTextureExtractionCommand();
@@ -330,6 +335,15 @@ namespace OE1Core
 
 
 			Command::s_MasterRendererMaterialRefreshCommands.pop();
+		}
+	}
+	void ExecutionHandler::ProcessDynamicViewportPurgeCommand()
+	{
+		while (!Command::s_DyanmicViewportPurgeCommands.empty())
+		{
+			auto& commandX = Command::s_DyanmicViewportPurgeCommands.front();
+			DynamicViewportManager::PurgeDynamicViewport(commandX.Name);
+			Command::s_DyanmicViewportPurgeCommands.pop();
 		}
 	}
 }

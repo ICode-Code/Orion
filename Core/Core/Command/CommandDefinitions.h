@@ -76,6 +76,12 @@ namespace OE1Core
 
 			uint32_t StaticMeshID = -1;
 		};
+
+
+		struct PurgeDynamicViewportCommandDef
+		{
+			std::string Name;
+		};
 	}
 }
 

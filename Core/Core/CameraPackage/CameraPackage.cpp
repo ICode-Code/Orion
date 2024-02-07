@@ -22,8 +22,8 @@ namespace OE1Core
 	Component::FreeLookCameraControllerComponent* CameraPackage::GetController() { return m_Controller; }
 	void CameraPackage::Update(float _dt)
 	{ 
-		if(IsPilotMode())
-			m_Controller->UpdateInput(_dt); 
+		//if(IsPilotMode())
+		m_Controller->UpdateInput(_dt); 
 
 		m_SceneTransform.CameraPosition = m_Camera->GetPosition();
 		m_SceneTransform.Projection = m_Camera->m_Projection;
@@ -70,4 +70,15 @@ namespace OE1Core
 	void CameraPackage::ActivatePilotCamera() { m_FlightState = CameraState::FlightState::PILOT; }
 	void CameraPackage::DeactivatePilotMode() { m_FlightState = CameraState::FlightState::REST; }
 	bool CameraPackage::IsPilotMode() { return m_FlightState == CameraState::FlightState::PILOT;};
+
+	void CameraPackage::SetParentEntityID(uint32_t _id)
+	{
+		m_HasParentEntityID = true;
+		m_ParentEntityID = _id;
+	}
+	uint32_t CameraPackage::GetParentEntity() { return m_ParentEntityID; }
+	bool CameraPackage::HasParentEntity()
+	{
+		return m_HasParentEntityID;
+	}
 }

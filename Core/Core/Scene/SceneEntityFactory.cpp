@@ -1,5 +1,6 @@
 #include "SceneEntityFactory.h"
 #include "Entity.h"
+#include "LogUI.h"
 
 
 namespace OE1Core
@@ -30,6 +31,11 @@ namespace OE1Core
 	{
 		if (!m_Scene->m_EntityRegistry.valid(_entity.GetHandle()))
 			return false;
+
+		// If the client request to remove camera component need to be carfully handeled
+		if (!RemoveCameraPackageComponent(_entity))
+			return false;
+
 		Component::TransformComponent& transform = _entity.GetComponent<Component::TransformComponent>();
 		
 		if (transform.m_Parent)
@@ -85,8 +91,11 @@ namespace OE1Core
 	Entity SceneEntityFactory::CreateSceneCamera(std::string _name)
 	{
 		Entity my_entity = m_Scene->CreateEntity();
+
 		AddDefaultComponent(my_entity, _name);
+
 		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_CAMERA);
+
 		Component::TransformComponent& transform = my_entity.GetComponent<Component::TransformComponent>();
 		transform.m_Position = glm::vec3(0.0f, 2.0f, 0.0f);
 		transform.Update();
@@ -99,6 +108,7 @@ namespace OE1Core
 		Component::TagComponent& tag = my_entity.GetComponent<Component::TagComponent>();
 		CameraPackage* camera = m_Scene->GetCameraManager()->RegisterCamera(tag.m_Identifier);
 		camera->PowerOn();
+		camera->SetParentEntityID(my_entity);
 		my_entity.AddComponent<Component::CameraPackageComponent>(camera, tag.m_Identifier);
 
 		// Register Inspector
@@ -320,7 +330,8 @@ namespace OE1Core
 		// Create Component
 		Component::TagComponent& tag = _dest.GetComponent<Component::TagComponent>();
 		CameraPackage* camera = m_Scene->GetCameraManager()->RegisterCamera(tag.m_Identifier);
-
+		camera->PowerOn();
+		camera->SetParentEntityID(_dest);
 		_dest.AddComponent<Component::CameraPackageComponent>(camera, tag.m_Identifier);
 
 		// Register Inspector
@@ -361,5 +372,23 @@ namespace OE1Core
 		
 		if (Sprite->GetInstanceCount() <= 0)
 			m_Scene->PurgeBillboardIcon(BillboardComponent.GetType());
+	}
+	bool SceneEntityFactory::RemoveCameraPackageComponent(Entity _entity)
+	{
+		if (!_entity.HasComponent<Component::CameraPackageComponent>())
+			return true;
+
+		Component::CameraPackageComponent& _camera = _entity.GetComponent<Component::CameraPackageComponent>();
+
+		if (_camera.GetCameraPackage()->IsPilotMode() || _camera.GetCameraPackage()->IsPowerOn())
+		{
+			LOG_WARRNING(LogLayer::Pipe("Close viewport before purgeing the camera! PLEASE", OELog::WARNING));
+			return false;
+		}
+
+		Component::TagComponent& tag = _entity.GetComponent<Component::TagComponent>();
+		m_Scene->GetCameraManager()->PurgeCamera(tag.m_Identifier);
+
+		return true;
 	}
 }

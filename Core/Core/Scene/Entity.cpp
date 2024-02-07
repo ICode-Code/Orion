@@ -30,6 +30,9 @@ namespace OE1Core
 	{
 		if (HasComponent<Component::MeshComponent>())
 			GetComponent<Component::MeshComponent>().Update(_transform);
+
+	/*	if(HasComponent<Component::CameraPackageComponent>())
+			GetComponent<Component::CameraPackageComponent>().Update(&GetComponent<Component::TransformComponent>());*/
 	}
 	bool Entity::IsFunctional()
 	{
