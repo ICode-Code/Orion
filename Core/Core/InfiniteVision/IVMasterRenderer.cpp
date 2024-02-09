@@ -15,6 +15,7 @@ namespace OE1Core
 			m_MeshRenderer = new IVMeshRenderer();
 			m_OutlineRenderer = new IVOutlineRenderer();
 			m_ViewportBillboardRenderer = new IVViewportBillboardIconRenderer();
+			m_MaterialPreviewRenderer = new IVMaterialPreviewRenderer();
 		}
 		IVMasterRenderer::~IVMasterRenderer()
 		{
@@ -22,6 +23,7 @@ namespace OE1Core
 			delete m_MeshRenderer;
 			delete m_OutlineRenderer;
 			delete m_ViewportBillboardRenderer;
+			delete m_MaterialPreviewRenderer;
 		}
 		void IVMasterRenderer::PushToRenderStack(class StaticMesh* _mesh)
 		{

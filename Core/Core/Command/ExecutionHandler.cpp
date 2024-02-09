@@ -1,7 +1,8 @@
 #include "ExecutionHandler.h"
 #include "../Core/InfiniteVision/Renderers/2DTextureArrayExtractQuadRenderer/IV2DTextureArrayExtractQuadRenderer.h"
-#include "LogUI.h"
+#include "../Core/InfiniteVision/Renderers/MaterialPreviewRenderer/IVMaterialPreviewRenderer.h"
 #include "../GUI/Viewport/DynamicViewportManager/DynamicViewportManager.h"
+#include "LogUI.h"
 
 namespace OE1Core
 {
@@ -36,6 +37,9 @@ namespace OE1Core
 
 		//Any MasterRenderer Material update request?
 		ProcessMasterRendererMaterialRefershCommand(_scene);
+
+		// Any Material Snapshot take command
+		ProcessMaterialSnapshotCommand(_scene);
 
 		// Any Viewport purge commands
 		ProcessDynamicViewportPurgeCommand();
@@ -344,6 +348,31 @@ namespace OE1Core
 			auto& commandX = Command::s_DyanmicViewportPurgeCommands.front();
 			DynamicViewportManager::PurgeDynamicViewport(commandX.Name);
 			Command::s_DyanmicViewportPurgeCommands.pop();
+		}
+	}
+
+	void ExecutionHandler::ProcessMaterialSnapshotCommand(Scene* _scene)
+	{
+		while (!Command::s_MaterialSnapshotCommands.empty())
+		{
+			auto& commandX = Command::s_MaterialSnapshotCommands.front();
+
+			std::string full_address = ORI_PROJECT_HOT_DIRECTORY + "\\"  + commandX.Name + ORI_MATERIAL_POSTFIX;
+
+			std::ofstream file_texture(full_address, std::ios::out | std::ios::binary);
+			WriteBinary(file_texture, "-- ORION ENGINE MATERIAL -- \n\n\n");
+			WriteBinary(file_texture, "Name:				" + commandX.Name + "\n");
+			WriteBinary(file_texture, "Dest:		" + ORI_PROJECT_HOT_DIRECTORY + "\n");
+			WriteBinary(file_texture, "--	--	--	--	\n");
+			file_texture.close();
+
+
+			// Render Preivew
+			Renderer::IVMaterialPreviewRenderer::Render(commandX.Material, _scene);
+			
+
+			Command::s_MaterialSnapshotCommands.pop();
+			s_ContentBrowserLayerNotifyCallback();
 		}
 	}
 }

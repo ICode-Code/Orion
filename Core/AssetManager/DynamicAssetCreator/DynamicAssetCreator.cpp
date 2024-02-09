@@ -13,14 +13,12 @@ namespace OE1Core
 		const unsigned int X_SEGMENTS = 64;
 		const unsigned int Y_SEGMENTS = 64;
 		const float PI = 3.14159265359f;
-
-		for (unsigned int x = 0; x < X_SEGMENTS; x++)
+		for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
 		{
-			for (unsigned int y = 0; y < Y_SEGMENTS; y++)
+			for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
 			{
 				float xSegment = (float)x / (float)X_SEGMENTS;
 				float ySegment = (float)y / (float)Y_SEGMENTS;
-
 				float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
 				float yPos = std::cos(ySegment * PI);
 				float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
@@ -32,19 +30,18 @@ namespace OE1Core
 		}
 
 		bool oddRow = false;
-		for (unsigned int y = 0; y < Y_SEGMENTS; y++)
+		for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
 		{
-			if (!oddRow)
+			if (!oddRow) // even rows: y == 0, y == 2; and so on
 			{
 				for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
 				{
-					Indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
 					Indices.push_back(y * (X_SEGMENTS + 1) + x);
+					Indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
 				}
 			}
 			else
 			{
-				// investigate here which when x is unsigned int it stuck in the loop
 				for (int x = X_SEGMENTS; x >= 0; --x)
 				{
 					Indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
@@ -110,7 +107,7 @@ namespace OE1Core
 		glBufferData(GL_ARRAY_BUFFER, _core_mesh.VertexData.size() * sizeof(OE1Core::DataBlock::Vertex), &_core_mesh.VertexData[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _core_mesh.EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, _core_mesh.IndiceData.size() * sizeof(uint32_t), &_core_mesh.IndiceData[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, _core_mesh.IndiceData.size() * sizeof(unsigned int), &_core_mesh.IndiceData[0], GL_STATIC_DRAW);
 
 
 		// Position

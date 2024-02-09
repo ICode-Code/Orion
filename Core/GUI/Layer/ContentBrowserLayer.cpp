@@ -152,6 +152,8 @@ namespace OE1Core
 				m_AssetEntry.push_back(std::make_pair(info, data_iter));
 			else if (ext == ORI_TEXTURE_POSTFIX)
 				m_TextureEntry.push_back(std::make_pair(info, data_iter));
+			else if (ext == ORI_MATERIAL_POSTFIX)
+				m_MaterialEntry.push_back(std::make_pair(info, data_iter));
 			else if (ext == ".wav" || ext == ".mp3")
 				m_MusicEntry.push_back(std::make_pair(info, data_iter));
 			else 
@@ -213,7 +215,32 @@ namespace OE1Core
 			ImGui::PopID();
 		}
 
-		for (size_t i = 0; i < m_TextureEntry.size(); i++)
+		for (size_t i = 0; i < m_MaterialEntry.size(); i++)
+		{
+			ImGui::PushID(s_ASSET_DRAG_ID++); 
+
+			PushPanalItemStyle({0.4f, 0.7f, 0.4f, 0.05f});
+
+			ImGui::ImageButton((ImTextureID)(uintptr_t)MaterialManager::GetMaterial(m_MaterialEntry[i].first.Name)->GetPreviewRef(), {m_ThumbnailSize, m_ThumbnailSize}, {0, 1}, {1, 0});
+
+			PopPanalItemStyle();
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				MasterMaterial* package_payload = MaterialManager::GetMaterial(m_MaterialEntry[i].first.Name);
+
+				ImGui::SetDragDropPayload(ORI_MATERIAL_PACKAGE_PAYLOAD, package_payload, sizeof(MasterMaterial));
+
+				ImGui::EndDragDropSource();
+			}
+
+			PrintName(std::string(ORI_MATERIAL_PREFIX + m_MaterialEntry[i].first.Name).c_str());
+			ImGui::NextColumn();
+
+			ImGui::PopID();
+		}
+
+		/*for (size_t i = 0; i < m_TextureEntry.size(); i++)
 		{
 			ImGui::PushID(s_TEXTURE_DRAG_ID++);
 
@@ -235,7 +262,7 @@ namespace OE1Core
 			PrintName(m_TextureEntry[i].first.Name.c_str());
 			ImGui::NextColumn();
 			ImGui::PopID();
-		}
+		}*/
 
 		
 		ImGui::Columns(1);

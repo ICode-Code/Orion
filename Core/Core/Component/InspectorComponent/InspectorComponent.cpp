@@ -90,7 +90,38 @@ namespace OE1Core
 					ImGui::Indent(16.0f);
 					if (ImGui::TreeNodeEx(package->MeshList[i].Material->GetName().c_str(), m_TreeNodeFlags + ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						CustomFrame::UIEditorImage("Preview", 0, { 60, 60 });
+						MasterMaterial* ActiveMat = package->MeshList[i].Material;
+						
+						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.10f, 0.10f, 0.10f, 1.0f });
+						ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 1 });
+						ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 10.0f, 10.0f });
+
+						if (CustomFrame::UIEditorImageButton("Orion Material", (ImTextureID)(uintptr_t)ActiveMat->GetPreviewRef(), { 60, 60 }))
+						{
+							if (MaterialManager::GetMaterialView().size() < ORI_MATERIAL_WINDOW_ALLOCATION_THRESHOLD)
+							{
+								MaterialManager::RegisterMaterialView(MaterialManager::GetMaterial(package->MeshList[i].MaterialID), m_MeshComponent->GetPackageID());
+							}
+							else
+							{
+								LOG_ERROR("Unable to open a new material window. Please close any existing material windows, as the allocation threshold has reached maximum capacity.");
+							}
+						}
+						ImGui::PopStyleVar(3);
+						ImGui::PopStyleColor();
+
+						if (ImGui::BeginDragDropTarget())
+						{
+
+							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ORI_MATERIAL_PACKAGE_PAYLOAD))
+							{
+								
+							}
+
+							ImGui::EndDragDropTarget();
+						}
+						
 						ImGui::BeginDisabled();
 						bool has_color_map = package->MeshList[i].Material->HasColorMap();
 						bool has_non_color_map = package->MeshList[i].Material->HasNonColorMap();
@@ -107,17 +138,7 @@ namespace OE1Core
 						ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.0f });
 						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.0f, 0.0f, 0.0f, 0.0f });
 
-						if (CustomFrame::UIEditorPushButton("Detail", ICON_FA_ELLIPSIS))
-						{
-							if (MaterialManager::GetMaterialView().size() < ORI_MATERIAL_WINDOW_ALLOCATION_THRESHOLD)
-							{
-								MaterialManager::RegisterMaterialView(MaterialManager::GetMaterial(package->MeshList[i].MaterialID), m_MeshComponent->GetPackageID());
-							}
-							else
-							{
-								LOG_ERROR("Unable to open a new material window. Please close any existing material windows, as the allocation threshold has reached maximum capacity.");
-							}
-						}
+						
 
 						ImGui::PopStyleColor(2);
 

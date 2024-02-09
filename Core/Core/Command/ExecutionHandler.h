@@ -38,6 +38,7 @@ namespace OE1Core
 		static void RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback);
 
 	protected:
+		static void ProcessMaterialSnapshotCommand(Scene* _scene);
 		static void ProcessDynamicViewportPurgeCommand();
 		static void ProcessMasterRendererMaterialRefershCommand(Scene* _scene);
 		static void ProcessSelectionCommand();

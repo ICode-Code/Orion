@@ -15,6 +15,14 @@ namespace OE1Core
 		SceneCameraManager(SDL_Window* _window);
 		~SceneCameraManager();
 
+		/// <summary>
+		/// DO NOT CALL THIS FUNCTION INSIDE ATTACHNED
+		/// FRAMEBUFFER, JUST CALL IT BEFORE ATTACHING FRAMBUFFER
+		/// AND ALSO NEED TO BE CALLED WITH ACTIVE OPENGL CONTEXT
+		/// </summary>
+		/// <param name="_name"></param>
+		/// <param name="_init_pos"></param>
+		/// <returns></returns>
 		CameraPackage* RegisterCamera(std::string _name, glm::vec3 _init_pos = glm::vec3(0.0f, 5.0f, 0.0f));
 
 		CameraPackage* GetCamera(std::string _name);

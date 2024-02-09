@@ -40,7 +40,7 @@ namespace OE1Core
 	void MasterMaterial::SetName(std::string _name)
 	{
 		m_Name.clear();
-		m_Name = ORI_MATERIAL_PREFIX;
+		//m_Name = ORI_MATERIAL_PREFIX;
 		m_Name.append(_name);
 	}
 	GLuint MasterMaterial::GetColorTextures() const { return m_ColorTexture; };

@@ -20,6 +20,7 @@ namespace OE1Core
 		
 		// This function need to be called with the thread with active OpenGL context
 		static std::vector<std::string> ParseStaticGeometry(Loader::StaticGeometryLoader::MeshSet& _mesh_set);
+		static std::vector<std::string> ParseStaticGeometryI(Loader::StaticGeometryLoader::MeshSet& _mesh_set, DynamicAssetType _type);
 		static void ParseDynamicGeometry();
 
 

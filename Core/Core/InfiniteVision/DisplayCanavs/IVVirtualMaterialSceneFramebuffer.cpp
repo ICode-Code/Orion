@@ -6,14 +6,14 @@ namespace OE1Core
 	namespace Renderer
 	{
 		IVVirtualMaterialSceneFramebuffer::IVVirtualMaterialSceneFramebuffer(GLuint& _color)
-			: IVForwardBaseFramebuffer{ IVFrameSize::R_1k }
+			: IVForwardBaseFramebuffer{ IVFrameSize::R_640_480 }
 		{
 			Init(_color);
 		
 		}
 		IVVirtualMaterialSceneFramebuffer::~IVVirtualMaterialSceneFramebuffer()
 		{
-			glDeleteTextures(1, &m_Depth);
+			glDeleteRenderbuffers(1, &m_Depth);
 		}
 		void IVVirtualMaterialSceneFramebuffer::Init() { }
 		void IVVirtualMaterialSceneFramebuffer::Update(int _width, int _height) {}

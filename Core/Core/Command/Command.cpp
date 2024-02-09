@@ -37,4 +37,8 @@ namespace OE1Core
 	{
 		s_DyanmicViewportPurgeCommands.push(_command);
 	}
+	void Command::PushMaterialSnapshotCommand(CommandDef::MaterialSnapShotCommandDefs _command)
+	{
+		s_MaterialSnapshotCommands.push(_command);
+	}
 }

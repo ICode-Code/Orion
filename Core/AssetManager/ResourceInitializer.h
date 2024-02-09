@@ -21,6 +21,7 @@ namespace OE1Core
 
 	private:
 		inline static const std::string s_DefaultTexturePath = "../ExternalAsset/Default/Texture/";
+		inline static const std::string s_DefaultMeshPath = "../ExternalAsset/Default/Mesh/";
 	};
 }
 

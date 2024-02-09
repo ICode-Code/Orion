@@ -10,6 +10,7 @@
 #include "Renderers/ModelPreviewRenderer/IVModelPreviewRenderer.h"
 #include "Renderers/MeshRenderer/IVMeshRenderer.h"
 #include "Renderers/OutlineRenderer/IVOutlineRenderer.h"
+#include "Renderers/MaterialPreviewRenderer/IVMaterialPreviewRenderer.h"
 
 // Render Stack
 #include "RenderStack/RenderStack.h"
@@ -49,6 +50,7 @@ namespace OE1Core
 			IVMeshRenderer* m_MeshRenderer = nullptr;
 			IVOutlineRenderer* m_OutlineRenderer = nullptr;
 			IVViewportBillboardIconRenderer* m_ViewportBillboardRenderer = nullptr;
+			IVMaterialPreviewRenderer* m_MaterialPreviewRenderer = nullptr;
 
 		protected: // Framebuffer
 			IVForwardMainPassFramebuffer m_MainPassFramebuffer;

@@ -51,13 +51,14 @@ namespace OE1Core
 			glm::mat4 m_Projection = glm::mat4(1.0f);
 
 		private:
+			glm::vec3 m_Front;
+			glm::vec3 m_Up;
+			glm::vec3 m_Right;
+
 			float m_Yaw;
 			float m_Pitch;
 			float m_AspectRatio;
 			glm::vec3 m_Position;
-			glm::vec3 m_Front;
-			glm::vec3 m_Up;
-			glm::vec3 m_Right;
 			glm::vec2 m_Resolution;
 			bool m_Active = false;
 			bool m_Cull = false;

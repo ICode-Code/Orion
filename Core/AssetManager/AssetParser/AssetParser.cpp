@@ -30,6 +30,33 @@ namespace OE1Core
 		_mesh_set.clear();
 		return packages_names;
 	}
+	std::vector<std::string> AssetParser::ParseStaticGeometryI(Loader::StaticGeometryLoader::MeshSet& _mesh_set, DynamicAssetType _type)
+	{
+		std::vector<std::string> packages_names;
+		for (auto& iter : _mesh_set)
+		{
+			ModelPkg model_package;
+
+			model_package.Name = std::get<0>(iter.second);
+			model_package.PackageID = GetAssetID();
+
+			// get geometry data
+			auto& raw_geometry_data_list = std::get<1>(iter.second);
+
+			//PreProcessGeometry(raw_geometry_data_list);
+
+			for (size_t i = 0; i < raw_geometry_data_list.size(); i++)
+				model_package.MeshList.push_back(ProcessGeometry(std::get<1>(iter.second)[i], model_package.PackageID, false));
+
+			ReadModelInfo(model_package);
+
+			AssetManager::RegisterGeometryI(model_package, _type);
+			packages_names.push_back(model_package.Name);
+		}
+
+		_mesh_set.clear();
+		return packages_names;
+	}
 	void AssetParser::ParseDynamicGeometry()
 	{
 
@@ -78,6 +105,12 @@ namespace OE1Core
 		{
 			core_mesh_package.MaterialID = CreateMaterial(_unprocessed_geometry.Texture, core_mesh_package.Name);
 			core_mesh_package.Material = MaterialManager::GetMaterial(core_mesh_package.MaterialID);
+			
+			CommandDef::MaterialSnapShotCommandDefs _command;
+			_command.Material = core_mesh_package.Material;
+			_command.Name = core_mesh_package.Material->GetName();
+			_command.Offset = core_mesh_package.Material->GetOffset();
+			Command::PushMaterialSnapshotCommand(_command);
 		}
 		
 

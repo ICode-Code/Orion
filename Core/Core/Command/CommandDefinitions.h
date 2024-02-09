@@ -59,6 +59,17 @@ namespace OE1Core
 			uint32_t StaticMeshID = -1;
 		};
 
+		/// <summary>
+		/// This command is queued or used when we register new material or create one
+		/// this command will be queued inorder to take material snapshot/privew
+		/// </summary>
+		struct MaterialSnapShotCommandDefs
+		{
+			MasterMaterial* Material;
+			std::string Name;
+			int Offset;
+		};
+
 
 		/// <summary>
 		/// This command is queued when we add or update texture of a material
@@ -77,7 +88,10 @@ namespace OE1Core
 			uint32_t StaticMeshID = -1;
 		};
 
-
+		/// <summary>
+		/// This commnad is queued when the user click 
+		/// the close button in a dynamic viewport
+		/// </summary>
 		struct PurgeDynamicViewportCommandDef
 		{
 			std::string Name;

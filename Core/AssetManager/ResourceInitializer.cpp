@@ -1,5 +1,6 @@
 #include "ResourceInitializer.h"
-
+#include <Geometry/StaticGeometryLoader.h>
+#include "../AssetManager/AssetParser/AssetParser.h"
 
 namespace OE1Core
 {
@@ -36,7 +37,12 @@ namespace OE1Core
 	}
 	void ResourceInitializer::InitInternalUsageMesh()
 	{
-		AssetManager::RegisterGeometryI(DAC::GeometryCreator::GetSphere(), DynamicAssetType::SPHERE);
+		//AssetManager::RegisterGeometryI(DAC::GeometryCreator::GetSphere(), DynamicAssetType::SPHERE);
+
+		Loader::StaticGeometryLoader::MeshSet mesh;
+		Loader::StaticGeometryLoader::OELoadStaticGeometry(s_DefaultMeshPath + "Sphere.fbx", mesh);
+		
+		AssetParser::ParseStaticGeometryI(mesh, DynamicAssetType::SPHERE);
 
 	}
 }

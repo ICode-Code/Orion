@@ -148,8 +148,8 @@ namespace OE1Core
 		ImGui::SameLine();
 
 		ImGui::BeginChild("childR", {0, 0}, true);
-
-		ImGui::Text("Shader");
+		ImGui::Image((ImTextureID)(uintptr_t)m_Material->GetPreviewRef(), { 200, 200 }, { 0, 1 }, { 1, 0 });
+		//ImGui::Text("Shader");
 
 		ImGui::EndChild(); // End Sub-Right Child
 

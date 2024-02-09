@@ -23,12 +23,13 @@ namespace OE1Core
 		int HEIGHT;
 		int CHANNEL = 4; // default
 	};
-
+	namespace Renderer { class IVMaterialPreviewRenderer; }
 	class MasterMaterial
 	{
 		friend class MaterialManager;
 		friend class AssetParser;
 		friend class ExecutionHandler;
+		friend class Renderer::IVMaterialPreviewRenderer;
 	public:
 		MasterMaterial(Shader* _shade = nullptr, std::string _name = "Untitled", int _offset = 0);
 		/// <summary>
