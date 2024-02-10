@@ -16,6 +16,7 @@ namespace OE1Core
 			~IVMaterialPreviewRenderer();
 
 			static void Render(MasterMaterial* _material, Scene* _scene);
+			static void Refresh(MasterMaterial* _material, Scene* _scene);
 
 
 		private:

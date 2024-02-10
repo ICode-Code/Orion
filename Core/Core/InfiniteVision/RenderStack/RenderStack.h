@@ -2,9 +2,10 @@
 #define OE1_RENDER_STACK_H_
 
 #include "../../MeshCluster/lwStaticMeshPkg.h"
+#include "CoreRenderComponent/CoreRenderComponent.h"
 
 #include <vector>
-#include <unordered_map>
+
 
 namespace OE1Core
 {
@@ -18,11 +19,9 @@ namespace OE1Core
 			IVRenderStack() = default;
 			~IVRenderStack();
 			
-			using IVDrawList = std::pair<Shader*, std::vector<lwStaticMeshPkg*>>;
-			using IVDrawData = std::unordered_map<uint32_t, IVDrawList>;
-			void RegisterOpaqueMesh(lwStaticMeshPkg* _mesh, uint32_t _id);
-			void RegisterTransparentMesh(lwStaticMeshPkg* _mesh, uint32_t _id);
-			void RegisterFlatMaterialMesh(lwStaticMeshPkg* _mesh, uint32_t _id);
+			void RegisterOpaqueMesh(lwStaticMeshPkg* _mesh, uint32_t _mesh_id);
+			void RegisterTransparentMesh(lwStaticMeshPkg* _mesh, uint32_t _mesh_id);
+			void RegisterFlatMaterialMesh(lwStaticMeshPkg* _mesh, uint32_t _mesh_id);
 
 			
 			/// <summary>
@@ -31,22 +30,38 @@ namespace OE1Core
 			/// it will remove it completely
 			/// </summary>
 			/// <param name="_id"></param>
-			void PurgeFromStack(uint32_t _id);
-			std::vector<lwStaticMeshPkg*> QueryLWStaticMesh(uint32_t _id, bool _clear_existing);
+			void PurgeFromStack(uint32_t _mesh_id);
+			std::vector<lwStaticMeshPkg*> QueryLWStaticMeshByMaterial(uint32_t _material_id, bool _clear_existing);
 
 		protected:
-			IVRenderStack::IVDrawData s_FlatMaterialMeshList; // to Avoid binding non existing material
-			IVRenderStack::IVDrawData s_OpaqueMeshList;
-			IVRenderStack::IVDrawData s_TransparentMeshList;
+
+			Core::IVCoreDrawDataBuffer s_FlatMaterialMeshList;
+			Core::IVCoreDrawDataBuffer s_OpaqueMeshList;
+			Core::IVCoreDrawDataBuffer s_TransparentMeshList;
 
 
 		private:
-			void PurgeFromMeshList(IVRenderStack::IVDrawData& buffer, uint32_t _id);
-			void CollectLWMesh(IVRenderStack::IVDrawData& _mem, std::vector<lwStaticMeshPkg*>& _buffer, uint32_t _id);
+			void PurgeFromMeshList(Core::IVCoreDrawDataBuffer& buffer, uint32_t _mesh_id);
+			/// <summary>
+			/// This function will collect all the lwStaticMeshPkg data
+			/// which use the same material.
+			/// </summary>
+			/// <param name="_mem">Source</param>
+			/// <param name="_buffer">Destination</param>
+			/// <param name="_material_id">Filter</param>
+			void CollectLWMeshByMaterial(Core::IVCoreDrawDataBuffer& _mem, std::vector<lwStaticMeshPkg*>& _buffer, uint32_t _material_id);
+			/// <summary>
+			/// This function will collect all the lwStaticMeshPkg data
+			/// which use the same material and REMOVE them from the original list - really important
+			/// </summary>
+			/// <param name="_mem">Source</param>
+			/// <param name="_buffer">Destination</param>
+			/// <param name="_material_id">Filter</param>
+			void ClearCollectLWMeshByMaterial(Core::IVCoreDrawDataBuffer& _mem, std::vector<lwStaticMeshPkg*>& _buffer, uint32_t _material_id);
 
-			// This will remove the existing and return the value
-			void ClearCollectLWMesh(IVRenderStack::IVDrawData& _mem, std::vector<lwStaticMeshPkg*>& _buffer, uint32_t _id);
 
+		private:
+			void RegisterCoreMesh(Core::IVCoreDrawDataBuffer& _buffer, lwStaticMeshPkg* _mesh, uint32_t _mesh_id);
 		};
 	}
 }

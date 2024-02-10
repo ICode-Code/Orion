@@ -19,7 +19,7 @@ namespace OE1Core
 		static MasterMaterial* GetMaterial(std::string _name);
 		static MasterMaterial* GetMaterial(uint32_t _id);
 
-		static void RegisterMaterialView(MasterMaterial* _material, uint32_t _static_mesh_id);
+		static void RegisterMaterialView(MasterMaterial* _material);
 		static void RemoveMaterialView(MasterMaterial* _material);
 
 		inline static std::unordered_map<std::string, MaterialViewWin*>& GetMaterialView() { return m_MaterialEditorWindow; }

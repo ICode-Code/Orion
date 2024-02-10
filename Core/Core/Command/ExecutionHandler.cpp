@@ -100,14 +100,12 @@ namespace OE1Core
 
 				commandX.Name = command.Material->m_Name;
 				commandX.Offset = command.Material->m_Offset;
-				commandX.OldMaterialType = _mat_type_before_change;
 				commandX.Material = command.Material;
-				commandX.StaticMeshID = command.StaticMeshID;
 
 				Command::PushMasterRendererMaterialRefresh(commandX);
 				command.Material->FlipDirtyFlag();
 			}
-
+			Renderer::IVMaterialPreviewRenderer::Refresh(command.Material, SceneManager::GetActiveScene());
 			Command::s_MaterialTextureUpdateCommands.pop();
 		}
 	}
@@ -119,7 +117,7 @@ namespace OE1Core
 
 			MasterMaterial* master_material = command.Material;
 			MaterialViewWin* material_view = command.MaterialView;
-			material_view->SetPrimaryMeshID(command.StaticMeshID);
+			//material_view->SetPrimaryMeshID(command.StaticMeshID);
 			// Init Renderer 
 			Renderer::IV2DTextureArrayExtractQuadRenderer* renderer = new Renderer::IV2DTextureArrayExtractQuadRenderer();
 
@@ -330,13 +328,7 @@ namespace OE1Core
 			auto& commandX = Command::s_MasterRendererMaterialRefreshCommands.front();
 
 			// Process
-			_scene->GetRenderer()->ReEvaluateRenderStackMaterial(
-				commandX.OldMaterialType, 
-				commandX.Material,
-				commandX.StaticMeshID
-			);
-			
-
+			_scene->GetRenderer()->ReEvaluateRenderStackMaterial(commandX.Material);
 
 			Command::s_MasterRendererMaterialRefreshCommands.pop();
 		}

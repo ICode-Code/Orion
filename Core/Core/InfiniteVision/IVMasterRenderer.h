@@ -37,7 +37,7 @@ namespace OE1Core
 			/// </summary>
 			/// <param name="_prev_mat_type">What was the material type before it get updated, Until this moment the renderer know the original type, even though the material value is chnaged</param>
 			/// <param name="_new_material">and Pointer to the material</param>
-			void ReEvaluateRenderStackMaterial(MaterialType _prev_mat_type, MasterMaterial* _new_material, uint32_t _mesh_id);
+			void ReEvaluateRenderStackMaterial(MasterMaterial* _new_material);
 			void PushToRenderStack(StaticMesh* _mesh);
 			void PurgeFromRenderStack(StaticMesh* _mesh);
 			void Update(int _width, int _height);

@@ -12,11 +12,12 @@ namespace OE1Core
 {
 	struct DirEntryInfo
 	{
-		DirEntryInfo(std::string _name = "", std::string _path = "", std::string _ext = "")
-			: Name(_name), Path(_path), Extenstion(_ext) {}
+		DirEntryInfo(std::string _name = "", std::string _path = "", std::string _ext = "", unsigned int _id = 0)
+			: Name(_name), Path(_path), Extenstion(_ext), ID(_id) {}
 		std::string Name;
 		std::string Path;
 		std::string Extenstion;
+		unsigned int ID;
 	};
 
 
@@ -74,6 +75,17 @@ namespace OE1Core
 		inline static int s_MATERIAL_DRAG_ID = 0;
 		inline static int s_FOLDER_DRAG_ID = 0;
 		inline static int s_MUSIC_DRAG_ID = 0;
+
+
+		// Content List
+		bool m_ShowDir =					true;
+		bool m_ShowMaterials =				true;
+		bool m_ShowMeshs =					true;
+		bool m_ShowAudio =					true;
+		bool m_ShowUnknownFile =			false;
+		bool m_ShowScript =					true;
+		bool m_ShowTextures =				false;
+		bool m_ShowAnimationSkalaton =		true;
 	};
 }
 

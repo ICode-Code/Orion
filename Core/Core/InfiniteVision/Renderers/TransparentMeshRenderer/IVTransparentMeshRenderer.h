@@ -14,7 +14,7 @@ namespace OE1Core
 			IVTransparentMeshRenderer() = default;
 			~IVTransparentMeshRenderer();
 
-			void Render(IVRenderStack::IVDrawData& _data, int _camera_idx);
+			void Render(Core::IVCoreDrawDataBuffer& _data, int _camera_idx);
 		};
 	}
 }

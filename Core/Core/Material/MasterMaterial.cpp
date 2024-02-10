@@ -31,8 +31,8 @@ namespace OE1Core
 		m_Shader->AttachTextureUnit();
 
 	}
-	int MasterMaterial::GetOffset() const { return m_Offset; }
-	void MasterMaterial::SetOffset(int _offset)
+	uint32_t MasterMaterial::GetOffset() const { return m_Offset; }
+	void MasterMaterial::SetOffset(uint32_t _offset)
 	{
 		m_Offset = _offset;
 	}

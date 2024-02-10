@@ -25,12 +25,13 @@ namespace OE1Core
 	}
 	void ContentBrowserLayer::ContentBrowserMiniOptionPopup()
 	{
-		ImGui::SetNextWindowSize(ImVec2(270.0f, 60.0f));
+		ImGui::SetNextWindowSize(ImVec2(270.0f, 70.0f));
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.09f, 0.09f, 0.09f, 1.0f));
 		if (ImGui::BeginPopup("content_setting"))
 		{
 			CustomFrame::UIEditorFloat("Padding", &m_Padding, 32, 100, "%.3f", 0, 70);
 			CustomFrame::UIEditorFloat("Thumbnail", &m_ThumbnailSize, 32, 100, "%.3f", 0, 70);
+			CustomFrame::UIEditorCheckbox("Textures", &m_ShowTextures, 70);
 
 			ImGui::EndPopup();
 		}
@@ -153,7 +154,10 @@ namespace OE1Core
 			else if (ext == ORI_TEXTURE_POSTFIX)
 				m_TextureEntry.push_back(std::make_pair(info, data_iter));
 			else if (ext == ORI_MATERIAL_POSTFIX)
+			{
+				info.ID = MaterialManager::GetMaterial(info.Name)->GetOffset();
 				m_MaterialEntry.push_back(std::make_pair(info, data_iter));
+			}
 			else if (ext == ".wav" || ext == ".mp3")
 				m_MusicEntry.push_back(std::make_pair(info, data_iter));
 			else 
@@ -215,6 +219,8 @@ namespace OE1Core
 			ImGui::PopID();
 		}
 
+
+		//////////////////////////////////////// MATERIAL
 		for (size_t i = 0; i < m_MaterialEntry.size(); i++)
 		{
 			ImGui::PushID(s_ASSET_DRAG_ID++); 
@@ -222,6 +228,16 @@ namespace OE1Core
 			PushPanalItemStyle({0.4f, 0.7f, 0.4f, 0.05f});
 
 			ImGui::ImageButton((ImTextureID)(uintptr_t)MaterialManager::GetMaterial(m_MaterialEntry[i].first.Name)->GetPreviewRef(), {m_ThumbnailSize, m_ThumbnailSize}, {0, 1}, {1, 0});
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				if (MaterialManager::GetMaterialView().size() < ORI_MATERIAL_WINDOW_ALLOCATION_THRESHOLD)
+				{
+					MaterialManager::RegisterMaterialView(
+						MaterialManager::GetMaterial(m_MaterialEntry[i].first.ID)
+					);
+				}
+			}
 
 			PopPanalItemStyle();
 
@@ -240,29 +256,34 @@ namespace OE1Core
 			ImGui::PopID();
 		}
 
-		/*for (size_t i = 0; i < m_TextureEntry.size(); i++)
+
+		////////////////////////////////////////// TEXTURES
+		if (m_ShowTextures)
 		{
-			ImGui::PushID(s_TEXTURE_DRAG_ID++);
-
-			PushPanalItemStyle();
-
-			ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_TextureRegistry[m_TextureEntry[i].first.Name]->GetTexture(), {m_ThumbnailSize, m_ThumbnailSize}, {0, 1}, {1, 0});
-
-			PopPanalItemStyle();
-
-			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			for (size_t i = 0; i < m_TextureEntry.size(); i++)
 			{
-				Texture* package_payload = AssetManager::s_TextureRegistry[m_TextureEntry[i].first.Name];
+				ImGui::PushID(s_TEXTURE_DRAG_ID++);
 
-				ImGui::SetDragDropPayload(ORI_TEXTURE_PACKAGE_PAYLOAD, package_payload, sizeof(ModelPkg));
+				PushPanalItemStyle();
 
-				ImGui::EndDragDropSource();
+				ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_TextureRegistry[m_TextureEntry[i].first.Name]->GetTexture(), { m_ThumbnailSize, m_ThumbnailSize }, { 0, 1 }, { 1, 0 });
+
+				PopPanalItemStyle();
+
+				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+				{
+					Texture* package_payload = AssetManager::s_TextureRegistry[m_TextureEntry[i].first.Name];
+
+					ImGui::SetDragDropPayload(ORI_TEXTURE_PACKAGE_PAYLOAD, package_payload, sizeof(ModelPkg));
+
+					ImGui::EndDragDropSource();
+				}
+
+				PrintName(m_TextureEntry[i].first.Name.c_str());
+				ImGui::NextColumn();
+				ImGui::PopID();
 			}
-
-			PrintName(m_TextureEntry[i].first.Name.c_str());
-			ImGui::NextColumn();
-			ImGui::PopID();
-		}*/
+		}
 
 		
 		ImGui::Columns(1);

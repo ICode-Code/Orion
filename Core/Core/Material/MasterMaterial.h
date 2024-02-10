@@ -54,8 +54,8 @@ namespace OE1Core
 
 		void Update();
 		
-		int GetOffset() const;
-		void SetOffset(int _offset);
+		uint32_t GetOffset() const;
+		void SetOffset(uint32_t _offset);
 
 
 		std::string GetName() const;
@@ -116,7 +116,7 @@ namespace OE1Core
 		GLuint m_ColorTexture;
 		GLuint m_NonColorTexture;
 		int m_MaxAnisotropic = 2;
-		int m_Offset;
+		uint32_t m_Offset;
 		std::string m_Name;
 
 		/// <summary>

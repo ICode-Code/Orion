@@ -16,7 +16,11 @@ namespace OE1Core
 
 		}
 
-
+		void IVMaterialPreviewRenderer::Refresh(MasterMaterial* _material, Scene* _scene)
+		{
+			glDeleteTextures(1, &_material->m_Preview);
+			Render(_material, _scene);
+		}
 		void IVMaterialPreviewRenderer::Render(MasterMaterial* _material, Scene* _scene)
 		{
 

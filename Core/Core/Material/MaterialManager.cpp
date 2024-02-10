@@ -44,7 +44,7 @@ namespace OE1Core
 		return nullptr;
 	}
 
-	void MaterialManager::RegisterMaterialView(MasterMaterial* _material, uint32_t _static_mesh_id)
+	void MaterialManager::RegisterMaterialView(MasterMaterial* _material)
 	{
 		// Make sure this material editor window isn't open already
 		if (m_MaterialEditorWindow.find(_material->GetName()) != m_MaterialEditorWindow.end())
@@ -56,7 +56,6 @@ namespace OE1Core
 		CommandDef::MaterialTextureExtractionDef command;
 
 		// Load Command
-		command.StaticMeshID = _static_mesh_id;
 		command.Material = _material;
 		command.MaterialView = m_MaterialEditorWindow[_material->GetName()];
 

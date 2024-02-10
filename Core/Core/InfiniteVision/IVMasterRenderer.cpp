@@ -31,28 +31,28 @@ namespace OE1Core
 			for (size_t i = 0; i < mesh_package.size(); i++)
 			{
 				if (mesh_package[i].Material->GetType() == MaterialType::ALPHA)
-					m_Scene->m_RenderStack->RegisterTransparentMesh(&mesh_package[i], _mesh->GetPackageID());
+					m_Scene->m_RenderStack->RegisterTransparentMesh(&mesh_package[i], mesh_package[i].PackageID);
 				else if (mesh_package[i].Material->GetType() == MaterialType::DEFAULT)
-					m_Scene->m_RenderStack->RegisterFlatMaterialMesh(&mesh_package[i], _mesh->GetPackageID());
+					m_Scene->m_RenderStack->RegisterFlatMaterialMesh(&mesh_package[i], mesh_package[i].PackageID);
 				else
-					m_Scene->m_RenderStack->RegisterOpaqueMesh(&mesh_package[i], _mesh->GetPackageID());
+					m_Scene->m_RenderStack->RegisterOpaqueMesh(&mesh_package[i], mesh_package[i].PackageID);
 			}
 		}
 		void IVMasterRenderer::PurgeFromRenderStack(StaticMesh* _mesh)
 		{
 			m_Scene->m_RenderStack->PurgeFromStack(_mesh->GetPackageID());
 		}
-		void IVMasterRenderer::ReEvaluateRenderStackMaterial(MaterialType _prev_mat_type, MasterMaterial* _new_material, uint32_t _mesh_id)
+		void IVMasterRenderer::ReEvaluateRenderStackMaterial(MasterMaterial* _new_material)
 		{
-			if (_mesh_id < 0)
+			if (!_new_material)
 			{
-				LOG_ERROR("Invalid StaticMesh ID master material re-evaluation process fail!");
+				LOG_ERROR(LogLayer::Pipe("Invalid Master Material, Material Re-evaluation Process Fail!", OELog::CRITICAL));
 				return;
 			}
 			
-			//StaticMesh* _mesh = m_Scene->m_StaticMeshRegistry[_mesh_id];
+			// Collect the mesh by Material ID
 			
-			std::vector<lwStaticMeshPkg*> re_evalutaion_buffer = m_Scene->m_RenderStack->QueryLWStaticMesh(_mesh_id, true);
+			std::vector<lwStaticMeshPkg*> re_evalutaion_buffer = m_Scene->m_RenderStack->QueryLWStaticMeshByMaterial(_new_material->GetOffset(), true);
 
 			if (re_evalutaion_buffer.empty())
 			{
@@ -65,11 +65,11 @@ namespace OE1Core
 			for (size_t i = 0; i < re_evalutaion_buffer.size(); i++)
 			{
 				if (re_evalutaion_buffer[i]->Material->GetType() == MaterialType::ALPHA)
-					m_Scene->m_RenderStack->RegisterTransparentMesh(re_evalutaion_buffer[i], _mesh_id);
+					m_Scene->m_RenderStack->RegisterTransparentMesh(re_evalutaion_buffer[i], re_evalutaion_buffer[i]->PackageID);
 				else if (re_evalutaion_buffer[i]->Material->GetType() == MaterialType::DEFAULT)
-					m_Scene->m_RenderStack->RegisterFlatMaterialMesh(re_evalutaion_buffer[i], _mesh_id);
+					m_Scene->m_RenderStack->RegisterFlatMaterialMesh(re_evalutaion_buffer[i], re_evalutaion_buffer[i]->PackageID);
 				else
-					m_Scene->m_RenderStack->RegisterOpaqueMesh(re_evalutaion_buffer[i], _mesh_id);
+					m_Scene->m_RenderStack->RegisterOpaqueMesh(re_evalutaion_buffer[i], re_evalutaion_buffer[i]->PackageID);
 			}
 		}
 		void IVMasterRenderer::Update(int _width, int _height)
@@ -82,7 +82,8 @@ namespace OE1Core
 			 
 			MainViewportPass(m_Scene->m_MasterCamera, 0);
 
-			auto cam_iteration_alpha = std::next(_cameras.begin());
+			auto cam_iteration_alpha = std::next(_cameras.begin()); // Ignore the main camera
+
 			for (auto cam = cam_iteration_alpha; cam != _cameras.end(); cam++)
 			{
 				if (!cam->second.Camera->IsPowerOn())
@@ -105,12 +106,6 @@ namespace OE1Core
 
 			m_MeshRenderer->Render(m_Scene->m_RenderStack, ActiveCameraIdx);
 
-
-			//m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), ActiveCameraIdx);
-
-			//m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, ActiveCameraIdx);
-
-			m_GridRenderer.Render(*m_Scene->m_Grid, ActiveCameraIdx);
 
 			_dynamic_camera->DetachFramebuffer();
 		}
