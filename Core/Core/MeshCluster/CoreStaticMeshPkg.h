@@ -22,6 +22,7 @@ namespace OE1Core
 		glm::vec3 MinPoint;
 		glm::vec3 MaxPoint;
 
+		uint32_t LocalID;
 		uint32_t PackageID;
 		uint32_t MaterialID;
 		MasterMaterial* Material = nullptr;

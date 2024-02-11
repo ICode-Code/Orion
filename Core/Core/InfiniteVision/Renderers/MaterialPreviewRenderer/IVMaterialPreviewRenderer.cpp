@@ -48,7 +48,10 @@ namespace OE1Core
 
 
 			s_LocalShader->Attach();
-			s_LocalShader->SetMat4("Model", glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+			glm::mat4 Model = glm::mat4(1.0f);
+			Model = glm::rotate(Model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+			Model = glm::rotate(Model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			s_LocalShader->SetMat4("Model", Model);
 			s_LocalShader->Set1i("ActiveCameraIndex", PREVIEW_CAMERA_TAG_IDX);
 
 			s_LocalShader->Set1i("matIndex", _material->GetOffset());
@@ -61,7 +64,7 @@ namespace OE1Core
 			for (size_t i = 0; i < m_VirtualRenderMesh->MeshList.size(); i++)
 			{
 				glBindVertexArray(m_VirtualRenderMesh->MeshList[i].VAO);
-				glDrawElements(GL_TRIANGLES, m_VirtualRenderMesh->MeshList[i].IndiceCount, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLE_STRIP, m_VirtualRenderMesh->MeshList[i].IndiceCount, GL_UNSIGNED_INT, 0);
 			}
 
 			s_LocalShader->Detach();

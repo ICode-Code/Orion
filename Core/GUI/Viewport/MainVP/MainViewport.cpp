@@ -197,7 +197,7 @@ namespace OE1Core
 
 			if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
-				CommandDef::EntitySelectionCommandDef selection_command;
+				CommandDef::EntitySelectionCommandDef selection_command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
 				selection_command.posX = m_MousePosition.x;
 				selection_command.posY = m_MousePosition.y;
 

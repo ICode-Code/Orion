@@ -37,6 +37,7 @@ namespace OE1Core
 			/// <param name="path">Image Path</param>
 			/// <returns>Image Data</returns>
 			static DataBlock::ImageHDRI OELoadHDRI(std::string _path);
+			static void FreeMemory(DataBlock::Image2D _image);
 		};
 	}
 }

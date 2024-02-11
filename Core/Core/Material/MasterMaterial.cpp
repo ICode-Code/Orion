@@ -6,6 +6,8 @@ namespace OE1Core
 	MasterMaterial::MasterMaterial(Shader* _shader, std::string _name, int _offset)
 	{
 
+		glGenTextures(1, &m_ColorTexture);
+		glGenTextures(1, &m_NonColorTexture);
 		m_Type = MaterialType::DEFAULT;
 		SetName(_name);
 		if (_shader)
@@ -14,11 +16,8 @@ namespace OE1Core
 	}
 	MasterMaterial::~MasterMaterial()
 	{
-		if (glIsTexture(m_ColorTexture))
-			glDeleteTextures(1, &m_ColorTexture);
-
-		if (glIsTexture(m_NonColorTexture))
-			glDeleteTextures(1, &m_NonColorTexture);
+		glDeleteTextures(1, &m_ColorTexture);
+		glDeleteTextures(1, &m_NonColorTexture);
 
 		delete m_Shader;
 	}
@@ -43,8 +42,8 @@ namespace OE1Core
 		//m_Name = ORI_MATERIAL_PREFIX;
 		m_Name.append(_name);
 	}
-	GLuint MasterMaterial::GetColorTextures() const { return m_ColorTexture; };
-	GLuint MasterMaterial::GetNonColorTexture() const { return m_NonColorTexture; };
+	GLuint& MasterMaterial::GetColorTextures() { return m_ColorTexture; };
+	GLuint& MasterMaterial::GetNonColorTexture() { return m_NonColorTexture; };
 
 	void MasterMaterial::SetType(MaterialType _type)
 	{
@@ -63,17 +62,6 @@ namespace OE1Core
 	bool MasterMaterial::HasNonColorMap()
 	{
 		return m_HasNonColorMap;
-	}
-
-	void MasterMaterial::SetColorMapTexture(GLuint _color)
-	{
-		m_HasColorMap = true;
-		m_ColorTexture = _color;
-	}
-	void MasterMaterial::SetNonColorMapTexture(GLuint _non_color)
-	{
-		m_HasNonColorMap = true;
-		m_NonColorTexture = _non_color;
 	}
 	void MasterMaterial::FlipDirtyFlag()
 	{
@@ -197,6 +185,7 @@ namespace OE1Core
 	}
 	bool MasterMaterial::UpdateTextureCore(bool& _has_texture, int& _tai, bool& _has_req_map, GLuint* _texture_id, bool is_color, OE1Core::Texture* _texture)
 	{
+		_texture->RegisterAssociateMaterialOffset(m_Offset);
 		// This function purpose is to reduce the code repition and stuff
 
 		bool default_return = false;
@@ -249,13 +238,10 @@ namespace OE1Core
 		}
 		else
 		{
-			// If we are here it means there is no Non-Color map texture
-			// So let's have one
 
-			glGenTextures(1, _texture_id);
 			glBindTexture(GL_TEXTURE_2D_ARRAY, *_texture_id);
 
-			// Now we have Non-Color Texture
+
 			_has_req_map = true;
 
 			// After getting initial texture buffer

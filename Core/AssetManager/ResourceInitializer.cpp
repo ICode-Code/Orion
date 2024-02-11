@@ -37,12 +37,12 @@ namespace OE1Core
 	}
 	void ResourceInitializer::InitInternalUsageMesh()
 	{
-		//AssetManager::RegisterGeometryI(DAC::GeometryCreator::GetSphere(), DynamicAssetType::SPHERE);
+		AssetManager::RegisterGeometryI(DAC::GeometryCreator::GetSphere(), DynamicAssetType::SPHERE);
 
-		Loader::StaticGeometryLoader::MeshSet mesh;
+		/*Loader::StaticGeometryLoader::MeshSet mesh;
 		Loader::StaticGeometryLoader::OELoadStaticGeometry(s_DefaultMeshPath + "Sphere.fbx", mesh);
 		
-		AssetParser::ParseStaticGeometryI(mesh, DynamicAssetType::SPHERE);
+		AssetParser::ParseStaticGeometryI(mesh, DynamicAssetType::SPHERE);*/
 
 	}
 }

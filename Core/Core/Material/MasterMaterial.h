@@ -61,8 +61,8 @@ namespace OE1Core
 		std::string GetName() const;
 		void SetName(std::string _name);
 
-		GLuint GetColorTextures() const;
-		GLuint GetNonColorTexture() const;
+		GLuint& GetColorTextures();
+		GLuint& GetNonColorTexture();
 
 		void SetType(MaterialType _type);
 		MaterialType GetType() const;
@@ -84,9 +84,6 @@ namespace OE1Core
 
 		bool HasColorMap();
 		bool HasNonColorMap();
-
-		void SetColorMapTexture(GLuint _color);
-		void SetNonColorMapTexture(GLuint _non_color);
 
 		void SetColorIndex(int _idx);
 		void SetNormalIndex(int _idx);

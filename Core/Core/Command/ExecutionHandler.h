@@ -38,6 +38,8 @@ namespace OE1Core
 		static void RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback);
 
 	protected:
+		static void ProcessModelPreviewCommand();
+		static void ProcessMaterialCreationCommand(Scene* _scene);
 		static void ProcessMaterialSnapshotCommand(Scene* _scene);
 		static void ProcessDynamicViewportPurgeCommand();
 		static void ProcessMasterRendererMaterialRefershCommand(Scene* _scene);
@@ -52,6 +54,9 @@ namespace OE1Core
 		static Renderer::CheckMatPreviewTexture FilterMaterialTexture(MasterMaterial* _material);
 		
 
+
+	private: // Util
+		static bool AssignMaterial(ModelPkg* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id);
 
 	private:
 		inline static _3DAssetLoaderThreadPkg s_3DAssetLoaderThread;

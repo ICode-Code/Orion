@@ -22,32 +22,34 @@ namespace OE1Core
 			delete iter.second;
 		s_TextureInternalRegistry.clear();
 	}
-	void AssetManager::RegisterTexture(std::string _path, std::string _name)
+	Texture* AssetManager::RegisterTexture(std::string _path, std::string _name)
 	{
 		DataBlock::Image2D image_raw = Loader::TextureLoader::OELoadImage(_path);
 		if (!image_raw.Valid)
-			return;
+			return s_TextureRegistry[_name];
 		// make sure this image or at least another image with the same name
 		bool name_exist = (s_TextureRegistry.find(_name) != s_TextureRegistry.end());
 		if (name_exist)
 		{
-			stbi_image_free(image_raw.Data);
-			return; // Just ignore it for now
+			return s_TextureRegistry[_name]; // Just ignore it for now
 		}
 
 		s_TextureRegistry.insert(std::make_pair(_name, new Texture(image_raw)));
+
+		return s_TextureRegistry[_name];
 	}
-	void AssetManager::RegisterTexture(DataBlock::Image2D& _image)
+	Texture* AssetManager::RegisterTexture(DataBlock::Image2D& _image)
 	{
 		// make sure this image or at least another image with the same name
-		bool name_exist = (s_TextureRegistry.find(_image.Name) != s_TextureRegistry.end());
+		std::string _name = _image.Name;
+		bool name_exist = (s_TextureRegistry.find(_name) != s_TextureRegistry.end());
 		if (name_exist)
 		{
-			stbi_image_free(_image.Data);
-			return; // Just ignore it for now
+			return s_TextureRegistry[_name]; // Just ignore it for now
 		}
 
-		s_TextureRegistry.insert(std::make_pair(_image.Name, new Texture(_image)));
+		s_TextureRegistry.insert(std::make_pair(_name, new Texture(_image)));
+		return s_TextureRegistry[_name];
 	}
 	void AssetManager::RegisterInternalTexture(std::string _path, std::string _name)
 	{
@@ -58,7 +60,6 @@ namespace OE1Core
 		bool name_exist = (s_TextureInternalRegistry.find(_name) != s_TextureInternalRegistry.end());
 		if (name_exist)
 		{
-			stbi_image_free(image_raw.Data);
 			return; // Just ignore it for now
 		}
 

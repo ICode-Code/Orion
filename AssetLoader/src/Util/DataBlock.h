@@ -95,7 +95,7 @@ namespace OE1Core
 		struct UnprocessedGeometry
 		{
 			std::vector<Vertex> VertexData;
-			std::unordered_map<TextureType, std::tuple<std::string, Image2D>> Texture;
+			std::unordered_map<std::string, TextureType> Texture;
 			std::vector<uint32_t> Indices;
 			std::string Name;
 			glm::vec3 MinPoint;

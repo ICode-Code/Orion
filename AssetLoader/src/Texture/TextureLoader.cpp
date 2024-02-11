@@ -19,7 +19,10 @@ namespace OE1Core
 		{
 
 		}
-
+		void TextureLoader::FreeMemory(DataBlock::Image2D _image)
+		{
+			stbi_image_free(_image.Data);
+		}
 		DataBlock::Image2D TextureLoader::OELoadImage(std::string _path)
 		{
 			DataBlock::Image2D image_data;

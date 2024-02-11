@@ -14,7 +14,7 @@ namespace OE1Core
 
 		}
 
-		void StaticGeometryLoader::OELoadStaticGeometry(std::string _path, MeshSet& _mesh_set)
+		void StaticGeometryLoader::OELoadStaticGeometry(std::string _path, MeshSet& _mesh_set, std::unordered_map<std::string, TexturePkg>& _tex_buffer)
 		{
 			PROGRESS_INFO = "Loading to memory.."; PROGRESS_LEVEL = 0.02f;
 
@@ -26,7 +26,8 @@ namespace OE1Core
 			}
 			PROGRESS_INFO = "Unpacking Scene..."; PROGRESS_LEVEL = 0.1f;
 			ExtractScene(s_Scene->mRootNode, _mesh_set);
-
+			_tex_buffer = s_LoadedTexture;
+			s_LoadedTexture.clear();
 			s_Importer.FreeScene();
 		}
 
@@ -185,14 +186,20 @@ namespace OE1Core
 		void StaticGeometryLoader::RegisterSingleTexture(TextureSet& _texture_set, DataBlock::TextureType _oe_texture_type, aiTextureType _ai_texture_type, aiMaterial* _material)
 		{
 			int texture_count = _material->GetTextureCount(_ai_texture_type);
+			std::string n = _material->GetName().C_Str();
 			aiString texture_path;
 			if (texture_count != 0)
 			{
 				// Read texture Path
 				_material->GetTexture(_ai_texture_type, 0, &texture_path);
-				_texture_set.insert(
-					std::make_pair(_oe_texture_type, std::make_pair(_material->GetName().C_Str(), ReadTextureData(texture_path.C_Str())))
-				);
+
+				std::string TextureName = GetTextureName(texture_path.C_Str());
+				if (!IsTextureAlreadyLoaded(TextureName))
+				{
+					RegisterTexture(TextureName, _oe_texture_type, ReadTextureData(TextureName));
+				}
+
+				_texture_set.insert(std::make_pair(TextureName, _oe_texture_type));
 			}
 		}
 		DataBlock::Image2D StaticGeometryLoader::ReadTextureData(std::string _path)
@@ -204,6 +211,29 @@ namespace OE1Core
 			// If the texture is separted get that 
 			std::string relative_texture_path = NameHandle::FilterPath(s_AbsPath) + _path.c_str();
 			return TextureLoader::OELoadImage(relative_texture_path);
+		}
+		std::string StaticGeometryLoader::GetTextureName(std::string _path)
+		{
+			if (const aiTexture* embd_texture = s_Scene->GetEmbeddedTexture(_path.c_str()))
+				return std::string(embd_texture->mFilename.C_Str());
+
+			return NameHandle::FilterFileNameExt(_path);
+		}
+		bool StaticGeometryLoader::IsTextureAlreadyLoaded(std::string _name)
+		{
+			return s_LoadedTexture.find(_name) != s_LoadedTexture.end();
+		}
+		TexturePkg StaticGeometryLoader::GetLoadedTexture(std::string _name)
+		{
+			return s_LoadedTexture[_name];
+		}
+		void StaticGeometryLoader::RegisterTexture(std::string _name, DataBlock::TextureType _type, DataBlock::Image2D _image)
+		{
+			TexturePkg pkg;
+			pkg.TexData = _image;
+			pkg.TexType = _type;
+
+			s_LoadedTexture.insert(std::make_pair(_name, pkg));
 		}
 	}
 }

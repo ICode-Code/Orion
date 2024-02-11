@@ -17,6 +17,8 @@ namespace OE1Core
 	{
 		friend class ExecutionHandler;
 	public:
+		static void PushModelPreviewRenderCommand(CommandDef::ModelPreviewRenderCommandDef _command);
+		static void PushMaterialCreationCommand(CommandDef::MaterialCreationCommandDef _command);
 		static void PushMaterialSnapshotCommand(CommandDef::MaterialSnapShotCommandDefs _command);
 		static void PushDynamicViewportPurgeCommand(CommandDef::PurgeDynamicViewportCommandDef _command);
 		static void PushTextureLoadCommand(CommandDef::TextureLoadCommandDef _command);
@@ -31,6 +33,7 @@ namespace OE1Core
 		/// <param name="_command"></param>
 		static void PushMaterialTextureExtractionCommand(CommandDef::MaterialTextureExtractionDef _command);
 	private:
+		inline static std::queue<CommandDef::MaterialCreationCommandDef> s_MaterialCreationCommands;
 		inline static std::queue<Loader::LoadArgs> s_Load3DAssetCommands;
 		inline static std::queue<CommandDef::EntitySelectionCommandDef> s_EntitySelectionCommands;
 		inline static std::queue<CommandDef::MaterialTextureExtractionDef> s_MaterialTextureExtractionCommands;
@@ -40,6 +43,7 @@ namespace OE1Core
 		inline static std::queue<CommandDef::MasterRendererMaterialRefreshCommandDef> s_MasterRendererMaterialRefreshCommands;
 		inline static std::queue<CommandDef::PurgeDynamicViewportCommandDef> s_DyanmicViewportPurgeCommands;
 		inline static std::queue<CommandDef::MaterialSnapShotCommandDefs> s_MaterialSnapshotCommands;
+		inline static std::queue<CommandDef::ModelPreviewRenderCommandDef> s_ModelPreviewRenderCommands;
 	};
 }
 

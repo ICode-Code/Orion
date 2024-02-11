@@ -53,7 +53,7 @@ namespace OE1Core
 		m_MaterialEditorWindow.insert(std::make_pair(_material->GetName(), new MaterialViewWin(_material)));
 		
 		// Create Command
-		CommandDef::MaterialTextureExtractionDef command;
+		CommandDef::MaterialTextureExtractionDef command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
 
 		// Load Command
 		command.Material = _material;

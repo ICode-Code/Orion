@@ -69,7 +69,7 @@ namespace OE1Core
 		// Turn off the camera
 		m_Camera->PowerOff();
 
-		CommandDef::PurgeDynamicViewportCommandDef command;
+		CommandDef::PurgeDynamicViewportCommandDef command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
 		command.Name = m_Camera->GetName();
 		Command::PushDynamicViewportPurgeCommand(command);
 		m_PurgeCommandSent = true;

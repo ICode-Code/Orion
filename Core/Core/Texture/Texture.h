@@ -23,6 +23,11 @@ namespace OE1Core
 		int GetHeight() const;
 		float GetSizeMB() const;
 
+		void RegisterAssociateMaterialOffset(uint32_t _offset);
+		bool PurgeAssociateMaterialOffset(uint32_t _offset);
+		bool HasAssociateMaterial(uint32_t _offset);
+		std::vector<uint32_t>& AssociateMaterialOffset();
+
 	protected:
 		GLuint m_Texture;
 		int m_Width;
@@ -30,6 +35,8 @@ namespace OE1Core
 		float m_SizeMB;
 		bool m_LoadedWithGamma;
 		std::string m_Name;
+		bool m_HasAssociateMaterial = false;
+		std::vector<uint32_t> m_AssociateMaterialOffsets;
 	};
 }
 

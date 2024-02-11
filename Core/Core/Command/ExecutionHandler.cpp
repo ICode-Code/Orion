@@ -16,11 +16,17 @@ namespace OE1Core
 	}
 	void ExecutionHandler::ProcessQueueCommands(Scene* _scene)
 	{
+		// Is anything that are loaded which need processing?
+		ProcessAsset();
+
+		// Any Material Creation Command?
+		ProcessMaterialCreationCommand(_scene);
+
 		// If there is anything to load?
 		ProcessAssetLoadCommand();
 
-		// Is anything that are loaded which need processing?
-		ProcessAsset();
+		// Any Model Preview Command
+		ProcessModelPreviewCommand();
 
 		// Any Texture load request?
 		ProcessTextureLoadCommand();
@@ -96,7 +102,7 @@ namespace OE1Core
 				command.Material->m_Shader->UpdateFragmentShader(_new_frag_shader);
 				Memory::UniformBlockManager::LinkShader(command.Material->m_Shader);
 
-				CommandDef::MasterRendererMaterialRefreshCommandDef commandX;
+				CommandDef::MasterRendererMaterialRefreshCommandDef commandX(ORI_COMMAND_DEF_ARGS(__FUNCTION__));;
 
 				commandX.Name = command.Material->m_Name;
 				commandX.Offset = command.Material->m_Offset;
@@ -180,9 +186,9 @@ namespace OE1Core
 	{
 		while (!Loader::GeometryLoader::s_MeshSets.empty())
 		{
-			auto& mesh_data = Loader::GeometryLoader::s_MeshSets.front();
-			std::vector<std::string> registered_packages = AssetParser::ParseStaticGeometry(std::get<1>(mesh_data));
-			Loader::LoadArgs& load_args = std::get<0>(mesh_data);
+			auto& AssetPackage = Loader::GeometryLoader::s_MeshSets.front();
+			std::vector<std::string> registered_packages = AssetParser::ParseStaticGeometry(AssetPackage.MeshSet, AssetPackage.TextureBuffer);
+			Loader::LoadArgs& load_args = AssetPackage.Args;
 			
 			for (size_t i = 0; i < registered_packages.size(); i++)
 			{
@@ -198,15 +204,17 @@ namespace OE1Core
 				WriteBinary(file_macro, "--	--	--	--	\n");
 				file_macro.close();
 
-				Renderer::IVModelPreviewRenderer::Render(*model);
+				CommandDef::ModelPreviewRenderCommandDef command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
+				command.Model = model;
+
+				Command::PushModelPreviewRenderCommand(command);
 			}
 			
 			Loader::GeometryLoader::s_MeshSets.pop();
 			// update info
 			s_ContentBrowserLayerNotifyCallback();
 			LogLayer::Pipe("Asset Loaded " + load_args.SourcePath, OELog::INFO);
-			Loader::StaticGeometryLoader::PROGRESS_INFO = "Job Done.";
-			s_ThreadInfoLayerNotifyCallback(false);
+			Loader::StaticGeometryLoader::PROGRESS_INFO = "Finalizing Asset....";
 		}
 
 	}
@@ -366,5 +374,152 @@ namespace OE1Core
 			Command::s_MaterialSnapshotCommands.pop();
 			s_ContentBrowserLayerNotifyCallback();
 		}
+	}
+	void ExecutionHandler::ProcessMaterialCreationCommand(Scene* _scene)
+	{
+		while (!Command::s_MaterialCreationCommands.empty())
+		{
+			auto& commandX = Command::s_MaterialCreationCommands.front();
+
+			// Query Targte Mesh
+			ModelPkg* TARGET_MESH = AssetManager::GetGeometry(commandX.TargetMeshID);
+			// Check if the same material exist
+			MasterMaterial* _mat = MaterialManager::GetMaterial(commandX.MaterialName);
+			if (_mat)
+			{
+				AssignMaterial(TARGET_MESH, _mat, commandX.LocalSubMeshID);
+			}
+			else
+			{
+
+				bool same_material_found = false;
+				if (commandX.TextureFlag.HasColor)
+				{
+					MasterMaterial* _same_Master_material = nullptr;
+					Texture* query_texture = AssetManager::GetTexture(commandX.Textuers[DataBlock::TextureType::DIFFUSE].Name);
+					if (query_texture)
+					{
+						auto& associate_material_offset = query_texture->AssociateMaterialOffset();
+						for (size_t i = 0; associate_material_offset.size(); i++)
+						{
+							_same_Master_material = MaterialManager::GetMaterial(associate_material_offset[i]);
+							if (_same_Master_material)
+								break;
+						}
+
+						if (_same_Master_material)
+						{
+							same_material_found = true;
+							AssignMaterial(TARGET_MESH, _same_Master_material, commandX.LocalSubMeshID);
+						}
+					}
+					 
+				}
+
+				if (!same_material_found)
+				{
+					// Identify material type
+					MaterialType MATERIAL_TYPE = commandX.AvialTextures.GetMaterialType();
+
+					// Prepare shader based on the material type
+					std::string VERTEX_SHADER = ShaderGenerator::GetStandardVertexShader();
+					std::string VERTEX_SHADER_PROXY = ShaderGenerator::GetStandardProxyVertexShader();
+					std::string FRAGMENT_SHADER = ShaderGenerator::GetForwardPixelShader(commandX.AvialTextures);
+
+
+					// Create Master Material
+					MasterMaterial* MASTER_MATERIAL = MaterialManager::RegisterMaterial(
+						commandX.MaterialName, new Shader(VERTEX_SHADER.c_str(), FRAGMENT_SHADER.c_str(), VERTEX_SHADER_PROXY.c_str())
+					);
+
+
+					if (MATERIAL_TYPE == MaterialType::DEFAULT)
+					{
+						MASTER_MATERIAL->Update();
+						AssignMaterial(TARGET_MESH, MASTER_MATERIAL, commandX.LocalSubMeshID);
+
+						CommandDef::MaterialSnapShotCommandDefs _command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));;
+						_command.Material = MASTER_MATERIAL;
+						_command.Name = MASTER_MATERIAL->GetName();
+						_command.Offset = MASTER_MATERIAL->GetOffset();
+						Command::PushMaterialSnapshotCommand(_command);
+
+
+					}
+					else
+					{
+						if (commandX.TextureFlag.HasColor)
+							MASTER_MATERIAL->RegisterAlbedoMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::DIFFUSE]));
+
+						if (commandX.TextureFlag.HasNormal)
+							MASTER_MATERIAL->RegisterNormalMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::NORMAL]));
+
+						if (commandX.TextureFlag.HasMetalRoughness)
+							MASTER_MATERIAL->RegisterMetalRoughnessMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::METAL_ROUGHNESS]));
+						else
+						{
+							if (commandX.TextureFlag.HasRoughness)
+								MASTER_MATERIAL->RegisterRoughnessMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::ROUGHNESS]));
+
+							if (commandX.TextureFlag.HasMetal)
+								MASTER_MATERIAL->RegisterMetalMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::METAL]));
+
+						}
+
+						if (commandX.TextureFlag.HasAO)
+							MASTER_MATERIAL->RegisterAOMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::AO]));
+
+						if (commandX.TextureFlag.HasEmission)
+							MASTER_MATERIAL->RegisterEmissionMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::EMISSIVE]));
+
+						if (commandX.TextureFlag.HasAlpha)
+							MASTER_MATERIAL->RegisterAlphaMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::OPACITY]));
+
+						MASTER_MATERIAL->Update();
+						AssignMaterial(TARGET_MESH, MASTER_MATERIAL, commandX.LocalSubMeshID);
+
+						CommandDef::MaterialSnapShotCommandDefs _command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));;
+						_command.Material = MASTER_MATERIAL;
+						_command.Name = MASTER_MATERIAL->GetName();
+						_command.Offset = MASTER_MATERIAL->GetOffset();
+						Command::PushMaterialSnapshotCommand(_command);
+					}
+				}
+			
+			}
+
+			Command::s_MaterialCreationCommands.pop();
+
+			Loader::StaticGeometryLoader::PROGRESS_INFO = "Creating Material....";
+			s_ThreadInfoLayerNotifyCallback(false);
+		}
+	}
+	void ExecutionHandler::ProcessModelPreviewCommand()
+	{
+		while (!Command::s_ModelPreviewRenderCommands.empty())
+		{
+			auto& commandX = Command::s_ModelPreviewRenderCommands.front();
+
+			Renderer::IVModelPreviewRenderer::Render(*commandX.Model);
+
+			Command::s_ModelPreviewRenderCommands.pop();
+			
+		}
+	}
+	bool ExecutionHandler::AssignMaterial(ModelPkg* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id)
+	{
+		bool _positive_return = false;
+		for (size_t i = 0; i < _mesh->MeshList.size(); i++)
+		{
+			if (_mesh->MeshList[i].LocalID == _sub_mesh_id)
+			{
+				_mesh->MeshList[i].Material = _material;
+				_mesh->MeshList[i].MaterialID = _material->GetOffset();
+				_positive_return = true;
+				break;
+			}
+		}
+
+		return _positive_return;
 	}
 }

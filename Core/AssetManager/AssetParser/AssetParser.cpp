@@ -3,7 +3,7 @@
 
 namespace OE1Core
 {
-	std::vector<std::string> AssetParser::ParseStaticGeometry(Loader::StaticGeometryLoader::MeshSet& _mesh_set)
+	std::vector<std::string> AssetParser::ParseStaticGeometry(Loader::StaticGeometryLoader::MeshSet& _mesh_set, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer)
 	{
 		std::vector<std::string> packages_names;
 		for (auto& iter : _mesh_set)
@@ -19,7 +19,7 @@ namespace OE1Core
 			//PreProcessGeometry(raw_geometry_data_list);
 			
 			for (size_t i = 0; i < raw_geometry_data_list.size(); i++)
-				model_package.MeshList.push_back(ProcessGeometry(std::get<1>(iter.second)[i], model_package.PackageID));
+				model_package.MeshList.push_back(ProcessGeometry(std::get<1>(iter.second)[i], _texture_buffer, model_package.PackageID, (uint32_t)i));
 			
 			ReadModelInfo(model_package);
 
@@ -30,33 +30,33 @@ namespace OE1Core
 		_mesh_set.clear();
 		return packages_names;
 	}
-	std::vector<std::string> AssetParser::ParseStaticGeometryI(Loader::StaticGeometryLoader::MeshSet& _mesh_set, DynamicAssetType _type)
-	{
-		std::vector<std::string> packages_names;
-		for (auto& iter : _mesh_set)
-		{
-			ModelPkg model_package;
+	//std::vector<std::string> AssetParser::ParseStaticGeometryI(Loader::StaticGeometryLoader::MeshSet& _mesh_set, DynamicAssetType _type)
+	//{
+	//	std::vector<std::string> packages_names;
+	//	for (auto& iter : _mesh_set)
+	//	{
+	//		ModelPkg model_package;
 
-			model_package.Name = std::get<0>(iter.second);
-			model_package.PackageID = GetAssetID();
+	//		model_package.Name = std::get<0>(iter.second);
+	//		model_package.PackageID = GetAssetID();
 
-			// get geometry data
-			auto& raw_geometry_data_list = std::get<1>(iter.second);
+	//		// get geometry data
+	//		auto& raw_geometry_data_list = std::get<1>(iter.second);
 
-			//PreProcessGeometry(raw_geometry_data_list);
+	//		//PreProcessGeometry(raw_geometry_data_list);
 
-			for (size_t i = 0; i < raw_geometry_data_list.size(); i++)
-				model_package.MeshList.push_back(ProcessGeometry(std::get<1>(iter.second)[i], model_package.PackageID, false));
+	//		for (size_t i = 0; i < raw_geometry_data_list.size(); i++)
+	//			model_package.MeshList.push_back(ProcessGeometry(std::get<1>(iter.second)[i], model_package.PackageID, (uint32_t)i,  false));
 
-			ReadModelInfo(model_package);
+	//		ReadModelInfo(model_package);
 
-			AssetManager::RegisterGeometryI(model_package, _type);
-			packages_names.push_back(model_package.Name);
-		}
+	//		AssetManager::RegisterGeometryI(model_package, _type);
+	//		packages_names.push_back(model_package.Name);
+	//	}
 
-		_mesh_set.clear();
-		return packages_names;
-	}
+	//	_mesh_set.clear();
+	//	return packages_names;
+	//}
 	void AssetParser::ParseDynamicGeometry()
 	{
 
@@ -87,9 +87,10 @@ namespace OE1Core
 			model_package.Extents.y = 0.01f;
 		model_package.SubMeshCount = (int)model_package.MeshList.size();
 	}
-	CoreStaticMeshPkg AssetParser::ProcessGeometry(DataBlock::UnprocessedGeometry& _unprocessed_geometry, uint32_t _package_id, bool _load_mat)
+	CoreStaticMeshPkg AssetParser::ProcessGeometry(DataBlock::UnprocessedGeometry& _unprocessed_geometry, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, uint32_t _package_id, uint32_t _local_id, bool _load_mat)
 	{
 		CoreStaticMeshPkg core_mesh_package;
+		core_mesh_package.LocalID = _local_id;
 		core_mesh_package.MaterialID = 0;
 		core_mesh_package.Name = _unprocessed_geometry.Name;
 		core_mesh_package.VertexData = _unprocessed_geometry.VertexData;
@@ -101,21 +102,15 @@ namespace OE1Core
 		core_mesh_package.VertexCount = (int)_unprocessed_geometry.VertexData.size();
 		core_mesh_package.PackageID = _package_id;
 
-		if (_load_mat)
-		{
-			core_mesh_package.MaterialID = CreateMaterial(_unprocessed_geometry.Texture, core_mesh_package.Name);
-			core_mesh_package.Material = MaterialManager::GetMaterial(core_mesh_package.MaterialID);
-			
-			CommandDef::MaterialSnapShotCommandDefs _command;
-			_command.Material = core_mesh_package.Material;
-			_command.Name = core_mesh_package.Material->GetName();
-			_command.Offset = core_mesh_package.Material->GetOffset();
-			Command::PushMaterialSnapshotCommand(_command);
-		}
-		
 
 		BufferIntilization(core_mesh_package);
 
+
+		if (_load_mat)
+		{
+			CreateMaterial(_unprocessed_geometry.Texture, _texture_buffer, core_mesh_package.Name, core_mesh_package.LocalID, core_mesh_package.PackageID);
+		}
+		
 		return core_mesh_package;
 	}
 	void AssetParser::PreProcessGeometry(std::vector<DataBlock::UnprocessedGeometry>& _unprocessed_geometres)
@@ -151,162 +146,54 @@ namespace OE1Core
 		}
 
 	}
-	uint32_t AssetParser::CreateMaterial(Loader::StaticGeometryLoader::TextureSet& _texture_set, std::string _mat_name)
+	void AssetParser::CreateMaterial(Loader::StaticGeometryLoader::TextureSet& _textures, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, std::string _mat_name, uint32_t _local_id, uint32_t _pkg_id)
 	{
 
 		// Which Texture exist which does not
-
 		MaterialTextureAvailFlags texture_avial_flag;
 
-		texture_avial_flag.HasColor				=	s_AvialTextures.HasDiffuse				= _texture_set.find(DataBlock::TextureType::DIFFUSE)			!= _texture_set.end();
-		texture_avial_flag.HasNormal			=	s_AvialTextures.HasNormal				= _texture_set.find(DataBlock::TextureType::NORMAL)				!= _texture_set.end();
-		texture_avial_flag.HasRoughness			=	s_AvialTextures.HasRoughness			= _texture_set.find(DataBlock::TextureType::ROUGHNESS)			!= _texture_set.end();
-		texture_avial_flag.HasMetal				=	s_AvialTextures.HasMetal				= _texture_set.find(DataBlock::TextureType::METAL)				!= _texture_set.end();
-		texture_avial_flag.HasMetalRoughness	=	s_AvialTextures.HasRoughness_Metal		= _texture_set.find(DataBlock::TextureType::METAL_ROUGHNESS)	!= _texture_set.end();
-		texture_avial_flag.HasAlpha				=	s_AvialTextures.HasAlphaMask			= _texture_set.find(DataBlock::TextureType::OPACITY)			!= _texture_set.end();
-		texture_avial_flag.HasEmission			=	s_AvialTextures.HasEmission				= _texture_set.find(DataBlock::TextureType::EMISSIVE)			!= _texture_set.end();
-		texture_avial_flag.HasAO				=	s_AvialTextures.HasAo					= _texture_set.find(DataBlock::TextureType::AO)					!= _texture_set.end();
+		texture_avial_flag.HasColor				= s_AvialTextures.HasDiffuse				= HasTexture(DataBlock::TextureType::DIFFUSE,			_textures);
+		texture_avial_flag.HasEmission			= s_AvialTextures.HasEmission				= HasTexture(DataBlock::TextureType::EMISSIVE,			_textures);
+		texture_avial_flag.HasNormal			= s_AvialTextures.HasNormal					= HasTexture(DataBlock::TextureType::NORMAL,			_textures);
+		texture_avial_flag.HasMetal				= s_AvialTextures.HasMetal					= HasTexture(DataBlock::TextureType::METAL,				_textures);
+		texture_avial_flag.HasRoughness			= s_AvialTextures.HasRoughness				= HasTexture(DataBlock::TextureType::ROUGHNESS,			_textures);
+		texture_avial_flag.HasMetalRoughness	= s_AvialTextures.HasRoughness_Metal		= HasTexture(DataBlock::TextureType::METAL_ROUGHNESS,	_textures);
+		texture_avial_flag.HasAO				= s_AvialTextures.HasAo						= HasTexture(DataBlock::TextureType::AO,				_textures);
+		texture_avial_flag.HasAlpha				= s_AvialTextures.HasAlphaMask				= HasTexture(DataBlock::TextureType::OPACITY,			_textures);
 
+		// Build Texture Map
+		std::unordered_map<DataBlock::TextureType, DataBlock::Image2D> Textures;
 
-		// Decide Material type based on the provided texture
-		MaterialType material_type = s_AvialTextures.GetMaterialType();
+		if(texture_avial_flag.HasColor)
+			FetchTexture(GetTextureName(DataBlock::TextureType::DIFFUSE, _textures), DataBlock::TextureType::DIFFUSE,		_texture_buffer, Textures);
+		if(texture_avial_flag.HasEmission)
+			FetchTexture(GetTextureName(DataBlock::TextureType::EMISSIVE, _textures), DataBlock::TextureType::EMISSIVE,			_texture_buffer, Textures);
+		if(texture_avial_flag.HasNormal)
+			FetchTexture(GetTextureName(DataBlock::TextureType::NORMAL, _textures), DataBlock::TextureType::NORMAL,			_texture_buffer, Textures);
+		if(texture_avial_flag.HasMetal)
+			FetchTexture(GetTextureName(DataBlock::TextureType::METAL, _textures), DataBlock::TextureType::METAL,				_texture_buffer, Textures);
+		if(texture_avial_flag.HasRoughness)
+			FetchTexture(GetTextureName(DataBlock::TextureType::ROUGHNESS, _textures), DataBlock::TextureType::ROUGHNESS,				_texture_buffer, Textures);
+		if(texture_avial_flag.HasMetalRoughness)
+			FetchTexture(GetTextureName(DataBlock::TextureType::METAL_ROUGHNESS, _textures), DataBlock::TextureType::METAL_ROUGHNESS,			_texture_buffer, Textures);
+		if(texture_avial_flag.HasAO)
+			FetchTexture(GetTextureName(DataBlock::TextureType::AO, _textures), DataBlock::TextureType::AO,	_texture_buffer, Textures);
+		if(texture_avial_flag.HasAlpha)
+			FetchTexture(GetTextureName(DataBlock::TextureType::OPACITY, _textures), DataBlock::TextureType::OPACITY,			_texture_buffer, Textures);
 
-
-		// Generate Shader Code based on the provided texture
-		std::string vertex_shader = ShaderGenerator::GetStandardVertexShader();
-		std::string vertex_shader_proxy = ShaderGenerator::GetStandardProxyVertexShader();
-		std::string fragment_shader = ShaderGenerator::GetForwardPixelShader(s_AvialTextures);
-
-		// Generate the Material
-		// This alloacted shader is managed by the material, so it will delete it, no need to worry
-		MasterMaterial* master_material = MaterialManager::RegisterMaterial(_mat_name, new Shader(vertex_shader.c_str(), fragment_shader.c_str(), vertex_shader_proxy.c_str()));
-		master_material->m_TextureAvailFlag = texture_avial_flag;
-		master_material->m_MaterialTextureCount.CountAvialTexture(master_material->m_TextureAvailFlag);
-		master_material->SetType(material_type);
-
-		// if the material type is default which means there is no texture we can return here
-		if (material_type == MaterialType::DEFAULT)
-		{
-			master_material->Update();
-			return master_material->GetOffset();
-		}
-
-		// other wise we can start processing textures
-
-		int available_texture_count = (int)_texture_set.size();
-
-		GLuint color_map_texture;
-		GLuint non_color_map_texture;
-
-
-		if (s_AvialTextures.HasDiffuse || s_AvialTextures.HasEmission)
-		{
-			glGenTextures(1, &color_map_texture);
-			master_material->SetColorMapTexture(color_map_texture);
-		}
 		
+		CommandDef::MaterialCreationCommandDef command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
 
-		Memory::TextureAccessIndex& taidx = master_material->GetTAI();
+		command.TargetMeshID = _pkg_id;
+		command.LocalSubMeshID = _local_id;
 
-
-		///////////////////////// COLOR MAPS
-
-		if (s_AvialTextures.HasDiffuse && s_AvialTextures.HasEmission)
-		{
-			auto& diffuse_texture = std::get<1>(_texture_set[DataBlock::TextureType::DIFFUSE]);
-			OE1Core::Texture* _texture =  AssetManager::GetTexture(diffuse_texture.Name);
-			if (_texture)
-				printf("We are cool");
-			// Allocate memory
-			glBindTexture(GL_TEXTURE_2D_ARRAY, color_map_texture);
-			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_SRGB_ALPHA, diffuse_texture.Width, diffuse_texture.Height, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-			available_texture_count--;
-			ReadTextureData(diffuse_texture, 0, _mat_name);
-			taidx.Color = 0;
-
-			available_texture_count--;
-			ReadTextureData(std::get<1>(_texture_set[DataBlock::TextureType::EMISSIVE]), 1, _mat_name);
-			taidx.Emission = 1;
-
-		}
-		else if (s_AvialTextures.HasDiffuse && !s_AvialTextures.HasEmission)
-		{
-			auto& diffuse_texture = std::get<1>(_texture_set[DataBlock::TextureType::DIFFUSE]);
-			// Allocate memory
-			glBindTexture(GL_TEXTURE_2D_ARRAY, color_map_texture);
-			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_SRGB_ALPHA, diffuse_texture.Width, diffuse_texture.Height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-			available_texture_count--;
-			ReadTextureData(diffuse_texture, 0, _mat_name);
-			taidx.Color = 0;
-
-		}
-		else if (s_AvialTextures.HasEmission)
-		{
-			auto& emissive_texture = std::get<1>(_texture_set[DataBlock::TextureType::EMISSIVE]);
-			// Allocate memory
-			glBindTexture(GL_TEXTURE_2D_ARRAY, color_map_texture);
-			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_SRGB_ALPHA, emissive_texture.Width, emissive_texture.Height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-			available_texture_count--;
-			ReadTextureData(emissive_texture, 0, _mat_name);
-			taidx.Color = 0;
-		}
-
-
-
-		/////////////////////////////////////////////////////// NON-COLOR
-
-		if (available_texture_count > 0)
-		{
-			glGenTextures(1, &non_color_map_texture);
-			master_material->SetNonColorMapTexture(non_color_map_texture);
-
-			int non_color_texture_index = 0;
-
-			glm::vec2 texture_size = GrabTextureSize(_texture_set);
-
-			glBindTexture(GL_TEXTURE_2D_ARRAY, non_color_map_texture);
-			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, (GLsizei)texture_size.x, (GLsizei)texture_size.y, (GLsizei)available_texture_count, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-			if (s_AvialTextures.HasNormal)
-			{
-				ReadTextureData(std::get<1>(_texture_set[DataBlock::TextureType::NORMAL]), non_color_texture_index, _mat_name);
-				taidx.Normal = non_color_texture_index++;
-			}
-			if (s_AvialTextures.HasRoughness_Metal)
-			{
-				ReadTextureData(std::get<1>(_texture_set[DataBlock::TextureType::METAL_ROUGHNESS]), non_color_texture_index, _mat_name);
-				taidx.RoughnessMetal = non_color_texture_index++;
-			}
-			else
-			{
-				if (s_AvialTextures.HasRoughness)
-				{
-					ReadTextureData(std::get<1>(_texture_set[DataBlock::TextureType::ROUGHNESS]), non_color_texture_index, _mat_name);
-					taidx.Roughness = non_color_texture_index++;
-				}
-				if (s_AvialTextures.HasMetal)
-				{
-					ReadTextureData(std::get<1>(_texture_set[DataBlock::TextureType::METAL]), non_color_texture_index, _mat_name);
-					taidx.Metal = non_color_texture_index++;
-				}
-			}
-
-			if (s_AvialTextures.HasAlphaMask)
-			{
-				ReadTextureData(std::get<1>(_texture_set[DataBlock::TextureType::OPACITY]), non_color_texture_index, _mat_name);
-				taidx.AlphaMask = non_color_texture_index++;
-			}
-			if (s_AvialTextures.HasAo)
-			{
-				ReadTextureData(std::get<1>(_texture_set[DataBlock::TextureType::AO]), non_color_texture_index, _mat_name);
-				taidx.AmbientOcclusion = non_color_texture_index++;
-			}
-		}
-		master_material->Update();
-		return master_material->GetOffset();
+		command.AvialTextures = s_AvialTextures;
+		command.MaterialName = _mat_name;
+		command.TextureFlag = texture_avial_flag;
+		command.TextureCount.CountAvialTexture(texture_avial_flag);
+		command.Textuers = Textures;
+		
+		Command::PushMaterialCreationCommand(command);
 	}
 	void AssetParser::ReadTextureData(DataBlock::Image2D& _image, int _layer, std::string _mat_name)
 	{
@@ -315,43 +202,34 @@ namespace OE1Core
 		// Clean memory
 		Command::PushTextureLoadCommand(_image);
 	}
-	glm::vec2 AssetParser::GrabTextureSize(Loader::StaticGeometryLoader::TextureSet& _texture_set)
+	bool AssetParser::FetchTexture(std::string _name, DataBlock::TextureType _type, std::unordered_map<std::string, Loader::TexturePkg>& _buffer, std::unordered_map<DataBlock::TextureType, DataBlock::Image2D>& _dest)
 	{
-		if (s_AvialTextures.HasNormal)
+		for (auto iter = _buffer.begin(); iter != _buffer.end(); iter++)
 		{
-			auto& _texture = std::get<1>(_texture_set[DataBlock::TextureType::NORMAL]);
-			return glm::vec2(_texture.Width, _texture.Height);
-		}
-		if (s_AvialTextures.HasRoughness_Metal)
-		{
-			auto& _texture = std::get<1>(_texture_set[DataBlock::TextureType::METAL_ROUGHNESS]);
-			return glm::vec2(_texture.Width, _texture.Height);
-		}
-		else
-		{
-			if (s_AvialTextures.HasMetal)
+			if (iter->second.TexData.Name == _name)
 			{
-				auto& _texture = std::get<1>(_texture_set[DataBlock::TextureType::METAL]);
-				return glm::vec2(_texture.Width, _texture.Height);
+				_dest.insert(std::make_pair(iter->second.TexType, iter->second.TexData));
+				return true;
 			}
-			if (s_AvialTextures.HasRoughness)
-			{
-				auto& _texture = std::get<1>(_texture_set[DataBlock::TextureType::ROUGHNESS]);
-				return glm::vec2(_texture.Width, _texture.Height);
-			}
-		}
-		if (s_AvialTextures.HasAlphaMask)
-		{
-			auto& _texture = std::get<1>(_texture_set[DataBlock::TextureType::OPACITY]);
-			return glm::vec2(_texture.Width, _texture.Height);
-		}
-		if (s_AvialTextures.HasAo)
-		{
-			auto& _texture = std::get<1>(_texture_set[DataBlock::TextureType::AO]);
-			return glm::vec2(_texture.Width, _texture.Height);
 		}
 
-		return glm::vec2(0.0f, 0.0f);
+		return false;
+	}
+	bool AssetParser::HasTexture(DataBlock::TextureType _type, Loader::StaticGeometryLoader::TextureSet& _buff)
+	{
+		for (auto iter = _buff.begin(); iter != _buff.end(); iter++)
+			if (iter->second == _type)
+				return true;
+
+		return false;
+	}
+	std::string AssetParser::GetTextureName(DataBlock::TextureType _type, Loader::StaticGeometryLoader::TextureSet& _buff)
+	{
+		for (auto iter = _buff.begin(); iter != _buff.end(); iter++)
+			if (iter->second == _type)
+				return iter->first;
+
+		return std::string("%%NO_TEXTURE_FOUND%%");
 	}
 	void AssetParser::Texture2DFilter()
 	{

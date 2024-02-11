@@ -41,4 +41,12 @@ namespace OE1Core
 	{
 		s_MaterialSnapshotCommands.push(_command);
 	}
+	void Command::PushMaterialCreationCommand(CommandDef::MaterialCreationCommandDef _command)
+	{
+		s_MaterialCreationCommands.push(_command);
+	}
+	void Command::PushModelPreviewRenderCommand(CommandDef::ModelPreviewRenderCommandDef _command)
+	{
+		s_ModelPreviewRenderCommands.push(_command);
+	}
 }

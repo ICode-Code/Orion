@@ -17,6 +17,11 @@ namespace OE1Core
 {
 	namespace Loader
 	{
+		struct TexturePkg
+		{
+			DataBlock::TextureType TexType;
+			DataBlock::Image2D TexData;
+		};
 		class StaticGeometryLoader
 		{
 		public:
@@ -24,8 +29,8 @@ namespace OE1Core
 			~StaticGeometryLoader();
 
 			using MeshSet = std::unordered_map<int, std::tuple<std::string, std::vector<DataBlock::UnprocessedGeometry>>>;
-			using TextureSet = std::unordered_map<DataBlock::TextureType, std::tuple<std::string, DataBlock::Image2D>>;
-			static void OELoadStaticGeometry(std::string _path, MeshSet& _mesh_set);
+			using TextureSet = std::unordered_map<std::string, DataBlock::TextureType>;
+			static void OELoadStaticGeometry(std::string _path, MeshSet& _mesh_set, std::unordered_map<std::string, TexturePkg>& _tex_buffer);
 
 			// load Progress
 			inline static float PROGRESS_LEVEL = 0.0f;
@@ -46,6 +51,19 @@ namespace OE1Core
 			static TextureSet GetTextureSet(aiMaterial* _material);
 			static void RegisterSingleTexture(TextureSet& _texture_set, DataBlock::TextureType _oe_texture_type, aiTextureType _ai_texture_type, aiMaterial* _material);
 			static DataBlock::Image2D ReadTextureData(std::string _path);
+			static std::string GetTextureName(std::string _path);
+
+		private: // Texture buffer
+			inline static std::unordered_map<std::string, TexturePkg> s_LoadedTexture;
+			static bool IsTextureAlreadyLoaded(std::string _name);
+			/// <summary>
+			/// Make sure the texture exist before query
+			/// </summary>
+			/// <param name="_name"></param>
+			/// <returns></returns>
+			static TexturePkg GetLoadedTexture(std::string _name);
+			static void RegisterTexture(std::string _name, DataBlock::TextureType _type, DataBlock::Image2D _image);
+			inline static std::unordered_map<std::string, DataBlock::TextureType> s_TextureSignature;
 
 		};
 	}

@@ -14,14 +14,16 @@ namespace OE1Core
 			// _is_running: is specific to this function so if we need some global info
 			s_Working = _is_running;
 
-			// Create Local data
-			StaticGeometryLoader::MeshSet mesh_set;
+			// Init
+			LoadAssetPkg AssetPackage;
+			AssetPackage.Args = _load_args;
 
 			// heavy process
-			StaticGeometryLoader::OELoadStaticGeometry(_load_args.SourcePath, mesh_set);
+			StaticGeometryLoader::OELoadStaticGeometry(_load_args.SourcePath, AssetPackage.MeshSet, AssetPackage.TextureBuffer);
+
 
 			// to the list
-			s_MeshSets.push(std::make_pair(_load_args, mesh_set));
+			s_MeshSets.push(AssetPackage);
 
 			// update info
 			StaticGeometryLoader::PROGRESS_INFO = "Establishing Orion asset..";

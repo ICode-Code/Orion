@@ -252,7 +252,7 @@ namespace OE1Core
 			{
 				Texture* package = (Texture*)payload->Data;
 			
-				CommandDef::MaterialtextureUpdateCommandDef command;
+				CommandDef::MaterialtextureUpdateCommandDef command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
 				command.Material = m_Material; 
 				command.TextureType = _type;
 				command.NewTexture = AssetManager::GetTexture(Loader::NameHandle::FilterFileName(package->GetName()));
@@ -272,7 +272,7 @@ namespace OE1Core
 	void MaterialViewWin::AnalizeTextureSelectionFlag(OE1Core::Texture* _texture, OE1Core::MaterialType _type)
 	{
 		// Construct a command 
-		CommandDef::MaterialtextureUpdateCommandDef command;
+		CommandDef::MaterialtextureUpdateCommandDef command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
 
 		command.Material = m_Material;
 		command.TextureType = _type;
@@ -295,7 +295,7 @@ namespace OE1Core
 	void MaterialViewWin::PushUpdateViewCommand()
 	{
 		// Update View
-		CommandDef::MaterialTextureExtractionDef mat_view_update_command;
+		CommandDef::MaterialTextureExtractionDef mat_view_update_command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
 		mat_view_update_command.Material = m_Material;
 		mat_view_update_command.MaterialView = this;
 		// Queue command
