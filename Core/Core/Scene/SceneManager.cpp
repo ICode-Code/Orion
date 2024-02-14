@@ -31,6 +31,10 @@ namespace OE1Core
 	{
 		s_ActiveScene->Render();
 	}
+	int SceneManager::RenderThreadCall(SDL_Window* _window, SDL_GLContext _context)
+	{
+		return -1;
+	}
 	ActiveEntity* SceneManager::QueryActiveEntity()
 	{
 		return GetActiveScene()->GetActiveEntity();

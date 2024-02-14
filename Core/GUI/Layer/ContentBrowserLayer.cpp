@@ -11,7 +11,8 @@ namespace OE1Core
 		ORI_PROJECT_HOT_DIRECTORY = ORI_ACTIVE_PATH;
 
 		SyncDataEntry();
-		ExecutionHandler::RegisterContentBrowserLayerNotifyCallback(std::bind(&ContentBrowserLayer::SyncDataEntry, this));
+		
+		Command::RegisterContentBrowserLayerNotifyCallback(std::bind(&ContentBrowserLayer::SyncDataEntry, this));
 	}
 	ContentBrowserLayer::~ContentBrowserLayer()
 	{

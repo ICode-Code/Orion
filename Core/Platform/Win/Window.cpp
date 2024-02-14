@@ -19,6 +19,9 @@ namespace OE1Core
 	Window::~Window()
 	{
 		SDL_DestroyWindow(m_Args.Win);
+
+		SDL_GL_DeleteContext(m_Args.SharedContext);
+		SDL_GL_DeleteContext(m_Args.MainContext);
 	}
 	void Window::InitOpenGLContext()
 	{
@@ -26,6 +29,7 @@ namespace OE1Core
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
 	}
 	void Window::InitRenderState()
 	{
@@ -44,7 +48,7 @@ namespace OE1Core
 	void Window::EnableWin()
 	{
 		// Make the OpenGL context current for the window
-		SDL_GL_MakeCurrent(m_Args.Win, m_Args.Context);
+		SDL_GL_MakeCurrent(m_Args.Win, m_Args.MainContext);
 
 		// Show the SDL window (if not already shown)
 		SDL_ShowWindow(m_Args.Win);
@@ -111,9 +115,19 @@ namespace OE1Core
 		SDL_SetWindowSize(m_Args.Win, m_Args.Width, m_Args.Height);
 		SDL_MaximizeWindow(m_Args.Win);
 
-		m_Args.Context = SDL_GL_CreateContext(m_Args.Win);
+		SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+		
+		// Create Shared Context with the main Context
+		m_Args.SharedContext = SDL_GL_CreateContext(m_Args.Win);
 
-		if (!m_Args.Context)
+		// Create Main OpenGL Context
+		m_Args.MainContext = SDL_GL_CreateContext(m_Args.Win);
+
+		
+
+		SDL_GL_MakeCurrent(m_Args.Win, m_Args.MainContext);
+
+		if (!m_Args.MainContext)
 		{
 			LOG_ERROR("OpenGL Context creation failed, Operation terminated.");
 			exit(0);

@@ -12,6 +12,11 @@
 
 namespace OE1Core
 {
+	struct RenderThreadArgs
+	{
+		SDL_Window* Window;
+		SDL_GLContext Context;
+	};
 	class SceneManager
 	{
 	protected:
@@ -26,6 +31,13 @@ namespace OE1Core
 		static void UpdateScene(float _dt);
 		static void OnEvent(OECore::IEvent& e);
 		static void RenderScenes();
+		/// <summary>
+		/// Nothing
+		/// </summary>
+		/// <param name="_window"></param>
+		/// <param name="_context"></param>
+		/// <returns></returns>
+		static int RenderThreadCall(SDL_Window* _window, SDL_GLContext _context);
 
 	protected:
 		inline static Scene* s_ActiveScene = nullptr;

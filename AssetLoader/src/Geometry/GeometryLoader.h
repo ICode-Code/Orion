@@ -23,7 +23,7 @@ namespace OE1Core
 		public:
 			~GeometryLoader() = default;
 			// This will pharse the load args
-			static void LoadGeometry(LoadArgs _load_args, bool& _is_running);
+			static void LoadGeometry(LoadArgs _load_args);
 			inline static std::queue<LoadAssetPkg> s_MeshSets;
 			inline static bool s_Working = false;
 		};

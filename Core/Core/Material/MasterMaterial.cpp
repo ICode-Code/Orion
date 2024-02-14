@@ -263,6 +263,9 @@ namespace OE1Core
 
 		this->Update();
 
+		m_AvailableTexture = AvailTexture(m_TextureAvailFlag);
+		m_Type = m_AvailableTexture.GetMaterialType();
+
 		return default_return;
 	}
 
@@ -286,6 +289,7 @@ namespace OE1Core
 
 		// if the texture is new update shader
 		m_Dirty = _need_Shader_update && _state;
+
 
 		return _state;
 		
@@ -391,7 +395,6 @@ namespace OE1Core
 			_texture
 
 		);
-
 		m_Dirty = _need_Shader_update && _state;;
 		return _state;
 	}

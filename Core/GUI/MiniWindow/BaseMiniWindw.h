@@ -5,7 +5,7 @@
 #include "../../AssetManager/AssetManager.h"
 #include "../../Platform/Win/WindowManager.h"
 #include "../Native/WindowFileDialog.h"
-#include "../../Core/Command/Commnad.h"
+#include "../../Core/Command/CoreCommand/Commnad.h"
 #include "../CustomFrame/CustomFrame.h"
 #include <Gui.h>
 

@@ -8,7 +8,7 @@
 #include "ShaderManager/ShaderManager.h"
 #include "../../Common/Shared/MaterialType.h"
 #include "../../Common/Shared/PreDef.h"
-#include "../Command/Commnad.h"
+#include "../Command/CoreCommand/Commnad.h"
 #include <glm/glm.hpp>
 
 namespace OE1Core
@@ -23,6 +23,7 @@ namespace OE1Core
 		int HEIGHT;
 		int CHANNEL = 4; // default
 	};
+	namespace CommandHnd { class CommandMasterOperationExecutionHandle; class CommandContextOperationExeHandler; }
 	namespace Renderer { class IVMaterialPreviewRenderer; }
 	class MasterMaterial
 	{
@@ -30,6 +31,8 @@ namespace OE1Core
 		friend class AssetParser;
 		friend class ExecutionHandler;
 		friend class Renderer::IVMaterialPreviewRenderer;
+		friend class CommandHnd::CommandMasterOperationExecutionHandle;
+		friend class CommandHnd::CommandContextOperationExeHandler;
 	public:
 		MasterMaterial(Shader* _shade = nullptr, std::string _name = "Untitled", int _offset = 0);
 		/// <summary>
@@ -103,6 +106,7 @@ namespace OE1Core
 		MaterialType m_Type;
 		MaterialTextureAvailFlags m_TextureAvailFlag;
 		MaterialTextureCount m_MaterialTextureCount;
+		AvailTexture m_AvailableTexture;
 
 		GLuint m_Preview;
 		/// <summary>

@@ -4,6 +4,16 @@
 
 namespace OE1Core
 {
+
+	void Command::RegisterContentBrowserLayerNotifyCallback(const ContentBrowserLayerNotifyCallback& _callback)
+	{
+		s_ContentBrowserLayerNotifyCallback = _callback;
+	}
+	void Command::RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback)
+	{
+		s_ThreadInfoLayerNotifyCallback = _callback;
+	}
+
 	void Command::PushAssetLoadCommand(Loader::LoadArgs _args)
 	{
 		s_Load3DAssetCommands.push(_args);

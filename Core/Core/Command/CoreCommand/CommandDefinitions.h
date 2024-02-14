@@ -27,9 +27,11 @@ namespace OE1Core
 				__CM_LINE = _line;
 				__CM_CALLER = _func;
 			}
+		public:
 			std::string __CM_FILE;
 			int __CM_LINE;
 			std::string __CM_CALLER;
+			bool Lock = false;
 		};
 
 		/// <summary>
@@ -162,8 +164,7 @@ namespace OE1Core
 				: CommandBase(_file, _line, _func)
 			{}
 
-			ModelPkg* Model;
-			bool Ready = false;
+			ModelPkg* Model = nullptr;
 		};
 	}
 }

@@ -4,7 +4,7 @@
 
 #include "../../Platform/Win/WindowManager.h"
 #include "../Native/WindowFileDialog.h"
-#include "../../Core/Command/Commnad.h"
+#include "../../Core/Command/CoreCommand/Commnad.h"
 #include "../MiniWindow/IMiniWin.h"
 #include "../../Common/Shared/ViewportArgs.h"
 #include "../../Core/Scene/SceneManager.h"

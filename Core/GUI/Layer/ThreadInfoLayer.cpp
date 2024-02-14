@@ -5,7 +5,7 @@ namespace OE1Core
 {
 	ThreadInfoLayer::ThreadInfoLayer()
 	{
-		ExecutionHandler::RegisterThreadInfoLayerNotifyCallback(
+		Command::RegisterThreadInfoLayerNotifyCallback(
 			[this](bool _load)
 			{
 				this->IsLoading(_load);

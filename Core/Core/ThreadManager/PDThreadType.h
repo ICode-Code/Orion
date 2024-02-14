@@ -1,0 +1,16 @@
+#ifndef OE1_PRE_DEFINED_THREAD_H_
+#define OE1_PRE_DEFINED_THREAD_H_
+
+
+namespace OE1Core
+{
+	enum class PD_THREAD
+	{
+		RENDERER,
+		MATERIAL_CREATOR,
+		TEXTURE_LOADER,
+		GEOMETRY_LOADER
+	};
+}
+
+#endif // !OE1_PRE_DEFINED_THREAD_H_

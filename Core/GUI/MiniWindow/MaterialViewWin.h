@@ -41,10 +41,16 @@ namespace OE1Core
 		}
 	};
 
-
+	namespace CommandHnd
+	{
+		class CommandMasterOperationExecutionHandle;
+		class CommandContextOperationExeHandler;
+	}
 	class MaterialViewWin : public BaseMiniWindow
 	{
 		friend class ExecutionHandler;
+		friend class CommandHnd::CommandMasterOperationExecutionHandle;
+		friend class CommandHnd::CommandContextOperationExeHandler;
 	public:
 		MaterialViewWin(MasterMaterial* _material);
 		~MaterialViewWin();

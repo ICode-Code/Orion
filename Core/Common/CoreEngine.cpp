@@ -12,8 +12,6 @@ namespace OE1Core
 		// Init Window System
 		s_Window = OE1Core::WindowManager::RegisterWindow(ENGINE_MAIN_WINDOW);
 		
-		
-
 		// Setup the callback
 		s_Window->RegisterEventCallback(std::bind(&CoreEngine::OnEvent, this, std::placeholders::_1));
 		
@@ -24,7 +22,7 @@ namespace OE1Core
 		s_ResourceInitializer = new OE1Core::ResourceInitializer();
 
 		// Init UI
-		s_GuiBase = new OE1Core::GUIBase(s_Window->GetWin(), &s_Window->GetArg().Context);
+		s_GuiBase = new OE1Core::GUIBase(s_Window->GetWin(), &s_Window->GetArg().MainContext);
 
 		// Register ImGui Event Callabck
 		s_Window->RegisterImGuiSDLEventProcessorCallback(std::bind(ImGui_ImplSDL2_ProcessEvent, std::placeholders::_1));
@@ -41,6 +39,9 @@ namespace OE1Core
 		// Create Master Scene
 		SceneManager::RegisterScene("MasterScene", new Scene(s_Window->GetWin()), true);
 
+
+		// command processing
+		s_CommandExecutionHandleManager = new OE1Core::CommandHnd::ExeHandleManager(SceneManager::GetActiveScene());
 	}
 
 	CoreEngine::~CoreEngine()
@@ -53,7 +54,7 @@ namespace OE1Core
 		delete s_ShaderManager;
 		delete s_MemeoryManager;
 		delete s_ResourceInitializer;
-
+		delete s_CommandExecutionHandleManager;
 	}
 	
 	void CoreEngine::Run()
@@ -61,23 +62,54 @@ namespace OE1Core
 		// Enbale the Window
 		s_Window->EnableWin();
 
-		while (*s_Window)
+		ThreadPackage _pkg;
+		_pkg.EngineWindow = s_Window;
+		_pkg.SDLWindow = s_Window->GetArg().Win;
+		_pkg.SharedContext = s_Window->GetArg().SharedContext;
+
+		SDL_Thread* COMMAND_PROCESSING_THREAD = SDL_CreateThread(__exe_RunTimeCommandProcessingThread, "RunTimeCommand", &_pkg);
+
+		while (s_Window->GetArg().Running)
 		{
 			s_Window->PullEvent();
 
 			// any queued command will be executed here
-			ExecutionHandler::ProcessQueueCommands(SceneManager::GetActiveScene());
+			CommandHnd::ExeHandleManager::ProcessContextCommandQueue();
 			
 			SceneManager::UpdateScene(s_Window->GetArg().DeltaTime);
+
 			SceneManager::RenderScenes();
 
 
 			s_GuiBase->Attach();
 			s_GuiBase->Update();
-			s_GuiBase->Render(s_Window->GetWin(), s_Window->GetArg().Context);
+			s_GuiBase->Render(s_Window->GetWin(), s_Window->GetArg().MainContext);
 
 			s_Window->SwapBuffer();
 		}
+		__TerminateSharedThread = !__TerminateSharedThread;
+	}
+	int CoreEngine::__exe_RunTimeCommandProcessingThread(void* _data)
+	{
+		ThreadPackage* pkg = static_cast<ThreadPackage*>(_data);
+
+		int __thread_share = SDL_GL_MakeCurrent(pkg->EngineWindow->GetArg().Win, pkg->EngineWindow->GetArg().SharedContext);
+		if (__thread_share != 0)
+		{
+			LOG_ERROR("Unable to Shader Context! Processing Low Frequency Command is not possible! aborting...");
+			pkg->EngineWindow->Close();
+			return 0;
+		}
+
+		while (!__TerminateSharedThread)
+		{
+			CommandHnd::ExeHandleManager::ProcessLowFrequencyCommands();
+
+			std::this_thread::sleep_for(2s);
+			
+		}
+
+		return 0;
 	}
 
 	void CoreEngine::OnEvent(OECore::IEvent& e) 

@@ -2,11 +2,13 @@
 #define OE_LAYER_BASE_H_
 
 #include "../../Core/ActiveEntity/ActiveEntity.h"
-#include "../../Core/Command/ExecutionHandler.h"
+#include "../../Core/Command/CoreCommand/Commnad.h"
 #include "../../AssetManager/AssetManager.h"
 #include "../../Platform/Win/WindowManager.h"
 #include "../Native/WindowFileDialog.h"
-#include "../../Core/Command/Commnad.h"
+
+#include "../../Core/Scene/SceneManager.h"
+
 #include "../MiniWindow/IMiniWin.h"
 #include <Gui.h>
 

@@ -6,13 +6,11 @@ namespace OE1Core
 	namespace Loader
 	{
 		using namespace std::chrono_literals;
-		void GeometryLoader::LoadGeometry(LoadArgs _load_args, bool& _is_running)
+		void GeometryLoader::LoadGeometry(LoadArgs _load_args)
 		{
-			// Flag used to tell this thred is running
-			_is_running = true;
 
 			// _is_running: is specific to this function so if we need some global info
-			s_Working = _is_running;
+			s_Working = true;
 
 			// Init
 			LoadAssetPkg AssetPackage;
@@ -27,13 +25,6 @@ namespace OE1Core
 
 			// update info
 			StaticGeometryLoader::PROGRESS_INFO = "Establishing Orion asset..";
-
-			// For proper sync 
-			std::this_thread::sleep_for(1s);
-
-
-			// update flags
-			_is_running = false;
 		}
 	}
 }

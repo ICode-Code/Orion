@@ -6,9 +6,24 @@
 #include "Util/LoadArgs.h"
 #include "CommandDefinitions.h"
 #include "Util/DataBlock.h"
+#include <functional>
+#include <chrono>
 
+using namespace std::chrono_literals;
 namespace OE1Core
 {
+	namespace CommandHnd
+	{
+		class CommandContextHighFreqOperationHandle;
+		class CommandContextOperationExeHandler;
+		class CommandIgnitionExecutionHandle;
+		class CommandMasterOperationExecutionHandle;
+		class ExeHandleManager;
+	}
+
+	typedef std::function<void()> ContentBrowserLayerNotifyCallback;
+	typedef std::function<void(bool)> ThreadInfoLayerNotifyCallback;
+
 	/// <summary>
 	///This command are invocked from the ui and need to queue them and execute them
 	// after the UI call
@@ -16,6 +31,15 @@ namespace OE1Core
 	class Command
 	{
 		friend class ExecutionHandler;
+		friend class CommandHnd::CommandContextHighFreqOperationHandle;
+		friend class CommandHnd::CommandContextOperationExeHandler;
+		friend class CommandHnd::CommandIgnitionExecutionHandle;
+		friend class CommandHnd::CommandMasterOperationExecutionHandle;
+		friend class CommandHnd::ExeHandleManager;
+	public:
+		static void RegisterContentBrowserLayerNotifyCallback(const ContentBrowserLayerNotifyCallback& _callback);
+		static void RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback);
+
 	public:
 		static void PushModelPreviewRenderCommand(CommandDef::ModelPreviewRenderCommandDef _command);
 		static void PushMaterialCreationCommand(CommandDef::MaterialCreationCommandDef _command);
@@ -44,6 +68,30 @@ namespace OE1Core
 		inline static std::queue<CommandDef::PurgeDynamicViewportCommandDef> s_DyanmicViewportPurgeCommands;
 		inline static std::queue<CommandDef::MaterialSnapShotCommandDefs> s_MaterialSnapshotCommands;
 		inline static std::queue<CommandDef::ModelPreviewRenderCommandDef> s_ModelPreviewRenderCommands;
+
+	private: // callbacks
+		inline static ContentBrowserLayerNotifyCallback s_ContentBrowserLayerNotifyCallback;
+		inline static ThreadInfoLayerNotifyCallback s_ThreadInfoLayerNotifyCallback;
+
+		// Util
+		template<typename T> static void LockCommand(std::queue<T>& _commands)
+		{
+			std::queue<T> _temp;
+			while (!_commands.empty())
+			{
+				T mod_command = _commands.front();
+				mod_command.Lock = true;
+				_temp.push(mod_command);
+				_commands.pop();
+			}
+
+			// re-populate
+			while (!_temp.empty())
+			{
+				_commands.push(_temp.front());
+				_temp.pop();
+			}
+		}
 	};
 }
 

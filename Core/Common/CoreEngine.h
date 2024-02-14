@@ -24,12 +24,22 @@
 
 #include <IEvent/IEvent.h>
 #include "../GUI/GUIBase.h"
-#include "../Core/Command/ExecutionHandler.h"
+
+#include "../Core/ThreadManager/ThreadManager.h"
+
+#include "../Core/Command/ExeHandleManager/ExeHandleManager.h"
+
 
 
 
 namespace OE1Core
 {
+	struct ThreadPackage
+	{
+		OE1Core::Window* EngineWindow;
+		SDL_Window* SDLWindow;
+		SDL_GLContext SharedContext;
+	};
 	class CoreEngine
 	{
 	public:
@@ -40,12 +50,17 @@ namespace OE1Core
 		void OnEvent(OECore::IEvent& e);
 
 
+	private:
+		static int __exe_RunTimeCommandProcessingThread(void* _data);
+		inline static bool __TerminateSharedThread = false;
+
 	protected: // Event Handle
 		bool HandleWindowCloseEvent(OECore::WindowCloseEvent& e);
 		bool HandleWindowResizeEvent(OECore::WindowResizeEvent& e);
 		bool HandleWindowMax(OECore::WindowMaximizedEvent& e);
 		bool HandleWindowMin(OECore::WindowMinimizedEvent& e);
 		bool HandleApplicationKeyInput(OECore::KeyPressedEvent& e);
+
 
 	protected:
 		inline static OE1Core::CoreSystem* s_CoreSystem = nullptr;
@@ -58,7 +73,7 @@ namespace OE1Core
 		inline static OE1Core::Memory::UniformBlockManager* s_MemeoryManager = nullptr;
 		inline static OE1Core::ResourceInitializer* s_ResourceInitializer = nullptr;
 		inline static OE1Core::ProjectManager* s_ProjectManager = nullptr;
-		
+		inline static OE1Core::CommandHnd::ExeHandleManager* s_CommandExecutionHandleManager = nullptr;
 	};
 }
 
