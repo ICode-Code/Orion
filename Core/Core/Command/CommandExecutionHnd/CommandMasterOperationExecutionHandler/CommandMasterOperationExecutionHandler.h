@@ -20,12 +20,13 @@ namespace OE1Core
 
 		private:
 			static void ProcessAssetLoadCommands();
-			static void ProcessMaterialCreationCommands();
+			static void ProcessMaterialCreationCommand();
 
 			static void ProcessPurgeDynamicViewportCommand();
 
 		private: // Util
 			static bool AssignMaterial(ModelPkg* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id);
+			static Renderer::CheckMatPreviewTexture FilterMaterialTexture(MasterMaterial* _material);
 		};
 	}
 }

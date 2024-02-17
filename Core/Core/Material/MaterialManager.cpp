@@ -10,17 +10,19 @@ namespace OE1Core
 		s_MaterialRegistry.clear();
 	}
 
-	std::string MaterialManager::HandleNameDuplication(std::string _name)
+	bool MaterialManager::NameExist(std::string _name)
 	{
+		for (auto iter = s_MaterialRegistry.begin(); iter != s_MaterialRegistry.end(); iter++)
+			if (iter->first == _name)
+				return true;
 
-
-		return _name;
+		return false;
 	}
 
 	MasterMaterial* MaterialManager::RegisterMaterial(std::string _name, Shader* _shader)
 	{
 		if (s_MaterialRegistry.find(_name) != s_MaterialRegistry.end())
-			_name = HandleNameDuplication(_name);
+			_name = Util::UtilFunc::CheckNameCollision(_name, MaterialManager::NameExist);
 
 		s_MaterialIDTranslator.insert(std::make_pair((uint32_t)s_MaterialRegistry.size(), _name));
 		s_MaterialRegistry.insert(std::make_pair(_name, new MasterMaterial(_shader, _name, (int)s_MaterialRegistry.size())));

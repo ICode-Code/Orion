@@ -23,8 +23,8 @@ namespace OE1Core
 			
 			ReadModelInfo(model_package);
 
-			AssetManager::RegisterGeometry(model_package);
-			packages_names.push_back(model_package.Name);
+			std::string reg_name = AssetManager::RegisterGeometry(model_package);
+			packages_names.push_back(reg_name);
 		}
 
 		_mesh_set.clear();

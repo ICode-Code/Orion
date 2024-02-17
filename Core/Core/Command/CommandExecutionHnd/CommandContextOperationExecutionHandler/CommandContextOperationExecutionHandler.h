@@ -29,6 +29,8 @@ namespace OE1Core
 			static void ProcessTextureLoadCommand();
 			static void ProcessRawDataTextureLoadCommand();
 		
+			// Creation
+			static void ProcessMaterialCreationCommand();
 
 			// Update
 			static void ProcessMasterMaterialUpdateCommand();
@@ -44,6 +46,7 @@ namespace OE1Core
 
 
 		private: //Util
+			static bool AssignMaterial(ModelPkg* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id);
 			static Renderer::CheckMatPreviewTexture FilterMaterialTexture(MasterMaterial* _material);
 		};
 	}

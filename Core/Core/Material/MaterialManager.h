@@ -33,7 +33,7 @@ namespace OE1Core
 		
 
 	private:
-		static std::string HandleNameDuplication(std::string _name);
+		static bool NameExist(std::string _name);
 	};
 }
 

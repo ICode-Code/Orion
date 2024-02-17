@@ -367,7 +367,7 @@ namespace OE1Core
 		bool _state = UpdateTextureCore(
 
 			m_TextureAvailFlag.HasMetalRoughness,
-			m_TAI.RoughnessMetal,
+			m_TAI.Roughness,
 			m_HasNonColorMap,
 			&m_NonColorTexture,
 			false,
@@ -388,7 +388,7 @@ namespace OE1Core
 		bool _state = UpdateTextureCore(
 
 			m_TextureAvailFlag.HasRoughness,
-			m_TAI.Roughness,
+			m_TAI.RoughnessMetal,
 			m_HasNonColorMap,
 			&m_NonColorTexture,
 			false,

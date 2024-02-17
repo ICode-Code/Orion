@@ -8,6 +8,8 @@
 
 #include <unordered_map>
 
+#include "UtilFunc/UtilFunc.h"
+
 namespace OE1Core
 {
 	class AssetManager
@@ -35,7 +37,7 @@ namespace OE1Core
 
 		static ModelPkg* GetGeometry(uint32_t _model_id);
 		static ModelPkg* GetGeometry(std::string _name);
-		static void RegisterGeometry(ModelPkg _model);
+		static std::string RegisterGeometry(ModelPkg _model);
 
 		// Internal Geometry
 		static ModelPkg* GetGeometryI(DynamicAssetType _type);
@@ -57,6 +59,10 @@ namespace OE1Core
 		inline static std::unordered_map<DynamicAssetType, ModelPkg> s_InternalPurposeGeometry;
 
 		inline static std::unordered_map<std::string, Texture*> s_TextureInternalRegistry;
+
+
+	private: // Util function
+		static bool NameExist(std::string _name);
 	};
 }
 

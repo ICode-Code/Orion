@@ -115,15 +115,18 @@ namespace OE1Core
 			return nullptr;
 		return &s_RenderableGeometry[_name];
 	}
-	void AssetManager::RegisterGeometry(ModelPkg _model)
+	std::string AssetManager::RegisterGeometry(ModelPkg _model)
 	{
 		uint32_t model_id = _model.PackageID;
 		std::string model_name = _model.Name;
 
 		if (s_RenderableGeometry.find(model_name) != s_RenderableGeometry.end())
-			return;
+			model_name = Util::UtilFunc::CheckNameCollision(_model.Name, AssetManager::NameExist);
+
 		s_RenderableGeometryIDTranslator.insert(std::make_pair(model_id, model_name));
 		s_RenderableGeometry.insert(std::make_pair(model_name, _model));
+
+		return model_name;
 	}
 	ModelPkg* AssetManager::GetGeometryI(DynamicAssetType _type)
 	{
@@ -148,5 +151,14 @@ namespace OE1Core
 	std::unordered_map<std::string, Texture*>& AssetManager::GetTextureInternalRegistry()
 	{
 		return s_TextureInternalRegistry;
+	}
+
+	bool AssetManager::NameExist(std::string _name)
+	{
+		for (auto iter = s_RenderableGeometry.begin(); iter != s_RenderableGeometry.end(); iter++)
+			if (iter->first == _name)
+				return true;
+
+		return false;
 	}
 }

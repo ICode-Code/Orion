@@ -17,10 +17,8 @@ namespace OE1Core
 		void CommandMasterOperationExecutionHandle::ProcessQueue()
 		{
 			ProcessAssetLoadCommands();
-
-			ProcessMaterialCreationCommands();
-
 			ProcessPurgeDynamicViewportCommand();
+			ProcessMaterialCreationCommand();
 
 		}
 
@@ -49,7 +47,7 @@ namespace OE1Core
 				std::this_thread::sleep_for(0.5s);
 			}
 		}
-		void CommandMasterOperationExecutionHandle::ProcessMaterialCreationCommands()
+		void CommandMasterOperationExecutionHandle::ProcessMaterialCreationCommand()
 		{
 			// Get the initial count of material creation commands
 			const size_t command_count = Command::s_MaterialCreationCommands.size();
@@ -76,15 +74,7 @@ namespace OE1Core
 				// Query the target mesh
 				ModelPkg* TARGET_MESH = AssetManager::GetGeometry(commandX.TargetMeshID);
 
-				// Check if the material already exists
-				MasterMaterial* _mat = MaterialManager::GetMaterial(commandX.MaterialName);
-
-				// If the material exists, assign it to the mesh
-				if (_mat)
-				{
-					AssignMaterial(TARGET_MESH, _mat, commandX.LocalSubMeshID);
-				}
-				else
+				if (TARGET_MESH)
 				{
 					bool same_material_found = false;
 
@@ -171,23 +161,57 @@ namespace OE1Core
 
 						Loader::StaticGeometryLoader::PROGRESS_INFO = "Creating Material ... " + _command.Name;
 					}
+
+					// Remove the processed command from the queue
+					Command::s_MaterialCreationCommands.pop();
+
+					// Since the material is ready we can have model preview 
+					if (Command::s_MaterialCreationCommands.empty())
+					{
+						Command::LockCommand<CommandDef::ModelPreviewRenderCommandDef>(Command::s_ModelPreviewRenderCommands);
+						Loader::StaticGeometryLoader::PROGRESS_INFO = "Creating Preview....";
+					}
 				}
-
-				// Remove the processed command from the queue
-				Command::s_MaterialCreationCommands.pop();
-
-				// Since the material is ready we can have model preview 
-				if (Command::s_MaterialCreationCommands.empty())
+				else
 				{
-					Command::LockCommand<CommandDef::ModelPreviewRenderCommandDef>(Command::s_ModelPreviewRenderCommands);
-					Loader::StaticGeometryLoader::PROGRESS_INFO = "Creating Preview....";
+					Command::s_ThreadInfoLayerNotifyCallback(false);
+					LOG_ERROR(LogLayer::Pipe("The Queryed Mesh Returned NULL! Which isn't suppost to happen! Material creation command ignored!", OELog::CRITICAL));
+					Command::s_MaterialCreationCommands.pop();
 				}
-
-				// Update progress info
-
 			}
 		}
+		Renderer::CheckMatPreviewTexture CommandMasterOperationExecutionHandle::FilterMaterialTexture(MasterMaterial* _material)
+		{
+			Renderer::CheckMatPreviewTexture data;
 
+			Memory::TextureAccessIndex texture_idx = _material->GetTAI();
+
+			if (texture_idx.Color != -1)
+				data.HasColor = true;
+
+			if (texture_idx.Emission != -1)
+				data.HasEmission = true;
+
+			if (texture_idx.Normal != -1)
+				data.HasNormal = true;
+
+			if (texture_idx.Roughness != -1)
+				data.HasRoughness = true;
+
+			if (texture_idx.Metal != -1)
+				data.HasMetal = true;
+
+			if (texture_idx.RoughnessMetal != -1)
+				data.HasMetalRougness = true;
+
+			if (texture_idx.AmbientOcclusion != -1)
+				data.HasAO = true;
+
+			if (texture_idx.AlphaMask != -1)
+				data.HasAlpha = true;
+
+			return data;
+		}
 		bool CommandMasterOperationExecutionHandle::AssignMaterial(ModelPkg* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id)
 		{
 			bool _positive_return = false;
