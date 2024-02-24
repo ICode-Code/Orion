@@ -220,10 +220,25 @@ namespace OE1Core
 
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ORI_STATIC_MESH_PACKAGE_PAYLOAD))
 			{
-				ModelPkg* package = (ModelPkg*)payload->Data;
+				IVModel* package = (IVModel*)payload->Data;
 				
 				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_MasterCamera->GetController()->GetCurrentPosition();
 				Entity droped_entity = SceneEntityFactory::CreateRichMeshEntity(package, position);
+				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(droped_entity, true);
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ORI_DYNAMIC_MESH_PACKAGE_PAYLOAD))
+			{
+				IVModel* package = (IVModel*)payload->Data;
+
+				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_MasterCamera->GetController()->GetCurrentPosition();
+				Entity droped_entity = SceneEntityFactory::CreateRichSkinnedMeshEntity(package, position);
 				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(droped_entity, true);
 			}
 

@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+
 #include <assimp/scene.h>
 
 namespace OE1Core
@@ -15,6 +17,7 @@ namespace OE1Core
 			glm::vec3 VECTOR(aiVector3D _From);
 			glm::vec2 VECTOR(aiVector2D _From);
 			glm::mat4 AiMatrix4x4ToGlm(const aiMatrix4x4* from);
+			glm::quat AiQuatToGlm(const aiQuaternion& _from);
 		}
 	}
 }

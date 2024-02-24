@@ -18,7 +18,8 @@ namespace OE1Core
 	{
 		m_DirEntry.clear();
 		m_MusicEntry.clear();
-		m_AssetEntry.clear();
+		m_StaticMeshEntry.clear();
+		m_DynamicMeshEntry.clear();
 		m_MaterialEntry.clear();
 		m_ScriptEntry.clear();
 		m_TextureEntry.clear();
@@ -134,7 +135,8 @@ namespace OE1Core
 
 		m_DirEntry.clear();
 		m_MusicEntry.clear();
-		m_AssetEntry.clear();
+		m_StaticMeshEntry.clear();
+		m_DynamicMeshEntry.clear();
 		m_MaterialEntry.clear();
 		m_ScriptEntry.clear();
 		m_TextureEntry.clear();
@@ -150,8 +152,10 @@ namespace OE1Core
 
 			if (data_iter.is_directory())
 				m_DirEntry.push_back(std::make_pair(info, data_iter));
-			else if (ext == ORI_ASSET_POSTFIX)
-				m_AssetEntry.push_back(std::make_pair(info, data_iter));
+			else if (ext == ORI_STATIC_MESH_ASSET_POSTFIX)
+				m_StaticMeshEntry.push_back(std::make_pair(info, data_iter));
+			else if (ext == ORI_DYNAMIC_MESH_ASSET_POSTFIX)
+				m_DynamicMeshEntry.push_back(std::make_pair(info, data_iter));
 			else if (ext == ORI_TEXTURE_POSTFIX)
 				m_TextureEntry.push_back(std::make_pair(info, data_iter));
 			else if (ext == ORI_MATERIAL_POSTFIX)
@@ -195,26 +199,51 @@ namespace OE1Core
 			ImGui::NextColumn();
 		}
 
-		for (size_t i = 0; i < m_AssetEntry.size(); i++)
+		for (size_t i = 0; i < m_StaticMeshEntry.size(); i++)
 		{
 			ImGui::PushID(s_ASSET_DRAG_ID++);
 
 			PushPanalItemStyle();
 			
-			ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_RenderableGeometry[m_AssetEntry[i].first.Name].SnapShot, { m_ThumbnailSize, m_ThumbnailSize }, {0, 1}, {1, 0});
+			ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_RenderableGeometry[m_StaticMeshEntry[i].first.Name].Preview, { m_ThumbnailSize, m_ThumbnailSize }, {0, 1}, {1, 0});
 
 			PopPanalItemStyle();
 
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 			{
-				ModelPkg* package_payload = AssetManager::GetGeometry(m_AssetEntry[i].first.Name);
+				IVModel* package_payload = AssetManager::GetGeometry(m_StaticMeshEntry[i].first.Name);
 
-				ImGui::SetDragDropPayload(ORI_STATIC_MESH_PACKAGE_PAYLOAD, package_payload, sizeof(ModelPkg));
+				ImGui::SetDragDropPayload(ORI_STATIC_MESH_PACKAGE_PAYLOAD, package_payload, sizeof(IVModel));
 
 				ImGui::EndDragDropSource();
 			}
 
-			PrintName(m_AssetEntry[i].first.Name.c_str());
+			PrintName(m_StaticMeshEntry[i].first.Name.c_str());
+			ImGui::NextColumn();
+
+			ImGui::PopID();
+		}
+
+		for (size_t i = 0; i < m_DynamicMeshEntry.size(); i++)
+		{
+			ImGui::PushID(s_ASSET_DRAG_ID++);
+
+			PushPanalItemStyle();
+
+			ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_RenderableGeometry[m_DynamicMeshEntry[i].first.Name].Preview, { m_ThumbnailSize, m_ThumbnailSize }, { 0, 1 }, { 1, 0 });
+
+			PopPanalItemStyle();
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				IVModel* package_payload = AssetManager::GetGeometry(m_DynamicMeshEntry[i].first.Name);
+
+				ImGui::SetDragDropPayload(ORI_DYNAMIC_MESH_PACKAGE_PAYLOAD, package_payload, sizeof(IVModel));
+
+				ImGui::EndDragDropSource();
+			}
+
+			PrintName(m_DynamicMeshEntry[i].first.Name.c_str());
 			ImGui::NextColumn();
 
 			ImGui::PopID();
@@ -275,7 +304,7 @@ namespace OE1Core
 				{
 					Texture* package_payload = AssetManager::s_TextureRegistry[m_TextureEntry[i].first.Name];
 
-					ImGui::SetDragDropPayload(ORI_TEXTURE_PACKAGE_PAYLOAD, package_payload, sizeof(ModelPkg));
+					ImGui::SetDragDropPayload(ORI_TEXTURE_PACKAGE_PAYLOAD, package_payload, sizeof(Texture));
 
 					ImGui::EndDragDropSource();
 				}

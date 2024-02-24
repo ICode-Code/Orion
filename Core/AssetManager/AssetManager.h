@@ -3,7 +3,7 @@
 
 #include "../Core/Texture/Texture.h"
 #include "Texture/TextureLoader.h"
-#include "../Core/MeshCluster/ModelPkg.h"
+#include "../Core/MeshCluster/IVModel.h"
 #include "DynamicAssetCreator/DynamicAssetType.h"
 
 #include <unordered_map>
@@ -35,13 +35,15 @@ namespace OE1Core
 
 		static void RegisterInternalTexture(std::string _path, std::string _name);
 
-		static ModelPkg* GetGeometry(uint32_t _model_id);
-		static ModelPkg* GetGeometry(std::string _name);
-		static std::string RegisterGeometry(ModelPkg _model);
+		// Static Geometry
+
+		static IVModel* GetGeometry(uint32_t _model_id);
+		static IVModel* GetGeometry(std::string _name);
+		static std::string RegisterGeometry(IVModel _model);
 
 		// Internal Geometry
-		static ModelPkg* GetGeometryI(DynamicAssetType _type);
-		static void RegisterGeometryI(ModelPkg _model, DynamicAssetType _type);
+		static IVModel* GetGeometryI(DynamicAssetType _type);
+		static void RegisterGeometryI(IVModel _model, DynamicAssetType _type);
 
 		static std::unordered_map<std::string, Texture*>& GetTextureRegistry();
 		static std::unordered_map<std::string, Texture*>& GetTextureInternalRegistry();
@@ -53,15 +55,16 @@ namespace OE1Core
 		inline static std::unordered_map<std::string, Texture*> s_TextureRegistry;
 		inline static std::unordered_map<std::string, Texture*> s_TextureHDRIRegistry;
 
-		inline static std::unordered_map<std::string, ModelPkg> s_RenderableGeometry;
+		inline static std::unordered_map<std::string, IVModel> s_RenderableGeometry;
 		inline static std::unordered_map<uint32_t, std::string> s_RenderableGeometryIDTranslator;
 
-		inline static std::unordered_map<DynamicAssetType, ModelPkg> s_InternalPurposeGeometry;
+		inline static std::unordered_map<DynamicAssetType, IVModel> s_InternalPurposeGeometry;
 
 		inline static std::unordered_map<std::string, Texture*> s_TextureInternalRegistry;
 
 
 	private: // Util function
+		static bool NameExistStaticGeo(std::string _name);
 		static bool NameExist(std::string _name);
 	};
 }

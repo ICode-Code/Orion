@@ -13,7 +13,8 @@ namespace OE1Core
 			IVOpaqueMeshRenderer() = default;
 			~IVOpaqueMeshRenderer();
 
-			void Render(Core::IVCoreDrawDataBuffer& _data, int _camera_idx);
+			void Render(Core::IVCoreDrawStaticMeshDataBuffer& _data, int _camera_idx);
+			void Render(Core::IVCoreDrawDynamicMeshDataBuffer& _data, int _camera_idx);
 		};
 	}
 }

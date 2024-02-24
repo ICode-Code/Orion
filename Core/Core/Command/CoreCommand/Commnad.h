@@ -42,6 +42,7 @@ namespace OE1Core
 
 	public:
 		static void PushModelPreviewRenderCommand(CommandDef::ModelPreviewRenderCommandDef _command);
+		static void PushDynamicMeshModelPreviewRenderCommand(CommandDef::DynamicMeshModelPreviewRenderCommandDef _command);
 		static void PushMaterialCreationCommand(CommandDef::MaterialCreationCommandDef _command);
 		static void PushMaterialSnapshotCommand(CommandDef::MaterialSnapShotCommandDefs _command);
 		static void PushDynamicViewportPurgeCommand(CommandDef::PurgeDynamicViewportCommandDef _command);
@@ -68,7 +69,7 @@ namespace OE1Core
 		inline static std::queue<CommandDef::PurgeDynamicViewportCommandDef> s_DyanmicViewportPurgeCommands;
 		inline static std::queue<CommandDef::MaterialSnapShotCommandDefs> s_MaterialSnapshotCommands;
 		inline static std::queue<CommandDef::ModelPreviewRenderCommandDef> s_ModelPreviewRenderCommands;
-
+		inline static std::queue<CommandDef::DynamicMeshModelPreviewRenderCommandDef> s_DynamicMeshModelPreviewRenderCommands;
 	private: // callbacks
 		inline static ContentBrowserLayerNotifyCallback s_ContentBrowserLayerNotifyCallback;
 		inline static ThreadInfoLayerNotifyCallback s_ThreadInfoLayerNotifyCallback;

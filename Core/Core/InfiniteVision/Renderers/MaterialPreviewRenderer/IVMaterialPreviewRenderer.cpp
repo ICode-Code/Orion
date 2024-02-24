@@ -61,10 +61,10 @@ namespace OE1Core
 
 			_material->Attach();
 
-			for (size_t i = 0; i < m_VirtualRenderMesh->MeshList.size(); i++)
+			for (size_t i = 0; i < m_VirtualRenderMesh->SubMeshs.size(); i++)
 			{
-				glBindVertexArray(m_VirtualRenderMesh->MeshList[i].VAO);
-				glDrawElements(GL_TRIANGLE_STRIP, m_VirtualRenderMesh->MeshList[i].IndiceCount, GL_UNSIGNED_INT, 0);
+				glBindVertexArray(m_VirtualRenderMesh->SubMeshs[i].VAO);
+				glDrawElements(GL_TRIANGLE_STRIP, m_VirtualRenderMesh->SubMeshs[i].IndicesCount, GL_UNSIGNED_INT, 0);
 			}
 
 			s_LocalShader->Detach();

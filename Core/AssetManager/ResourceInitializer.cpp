@@ -1,5 +1,4 @@
 #include "ResourceInitializer.h"
-#include <Geometry/StaticGeometryLoader.h>
 #include "../AssetManager/AssetParser/AssetParser.h"
 
 namespace OE1Core

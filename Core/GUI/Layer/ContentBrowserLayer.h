@@ -50,7 +50,8 @@ namespace OE1Core
 
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_DirEntry;
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_MusicEntry;
-		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_AssetEntry;
+		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_StaticMeshEntry;
+		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_DynamicMeshEntry;
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_MaterialEntry;
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_ScriptEntry;
 		std::vector<std::pair<DirEntryInfo, std::filesystem::directory_entry>> m_TextureEntry;
@@ -75,6 +76,8 @@ namespace OE1Core
 		inline static int s_MATERIAL_DRAG_ID = 0;
 		inline static int s_FOLDER_DRAG_ID = 0;
 		inline static int s_MUSIC_DRAG_ID = 0;
+		inline static int s_STATIC_MESH_DRAG_ID = 0;
+		inline static int s_DYNAMIC_MESH_DRAG_ID = 0;
 
 
 		// Content List

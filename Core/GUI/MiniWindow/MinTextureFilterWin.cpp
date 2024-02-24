@@ -43,7 +43,7 @@ namespace OE1Core
 			{
 				Texture* package_payload = iter->second;
 
-				ImGui::SetDragDropPayload(ORI_TEXTURE_PACKAGE_PAYLOAD, package_payload, sizeof(ModelPkg));
+				ImGui::SetDragDropPayload(ORI_TEXTURE_PACKAGE_PAYLOAD, package_payload, sizeof(Texture));
 
 				ImGui::EndDragDropSource(); 
 			}

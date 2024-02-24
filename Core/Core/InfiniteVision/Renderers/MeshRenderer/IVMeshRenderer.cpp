@@ -20,9 +20,16 @@ namespace OE1Core
 
 		void IVMeshRenderer::Render(IVRenderStack* _render_stack, int _camera_idx)
 		{
-			m_FlatMaterialMeshRenderer->Render(_render_stack->s_FlatMaterialMeshList, _camera_idx);
-			m_OpaqueMeshRenderer->Render(_render_stack->s_OpaqueMeshList, _camera_idx);
-			m_TransparentMeshRenderer->Render(_render_stack->s_TransparentMeshList, _camera_idx);
+			// Static Mesh Mesh
+			m_FlatMaterialMeshRenderer->Render(_render_stack->m_STATIC_MESH_FLAT_MATERIAL_BUFFER, _camera_idx);
+			m_OpaqueMeshRenderer->Render(_render_stack->m_STATIC_MESH_OPAQUE_MATERIAL_BUFFER, _camera_idx);
+			m_TransparentMeshRenderer->Render(_render_stack->m_STATIC_MESH_TRANSPARENT_MATERIAL_BUFFER, _camera_idx);
+
+			// Dynamic Mesh
+			m_FlatMaterialMeshRenderer->Render(_render_stack->m_DYNAMIC_MESH_FLAT_MATERIAL_BUFFER, _camera_idx);
+			m_OpaqueMeshRenderer->Render(_render_stack->m_DYNAMIC_MESH_OPAQUE_MATERIAL_BUFFER, _camera_idx);
+			m_TransparentMeshRenderer->Render(_render_stack->m_DYNAMIC_MESH_TRANSPARENT_MATERIAL_BUFFER, _camera_idx);
+
 		}
 	}
 }

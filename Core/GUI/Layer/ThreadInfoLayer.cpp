@@ -36,9 +36,9 @@ namespace OE1Core
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0 });
 		ImGui::PushStyleColor(ImGuiCol_PlotHistogram, { 0.0f, 0.439f, 0.878f, 1.0f });
 
-		ImGui::ProgressBar(Loader::StaticGeometryLoader::PROGRESS_LEVEL, { 0.0f, 0.0f });
+		ImGui::ProgressBar(Loader::CoreGeometryLoader::PROGRESS_LEVEL, { 0.0f, 0.0f });
 		ImGui::SameLine();
-		ImGui::TextWrapped(Loader::StaticGeometryLoader::PROGRESS_INFO.c_str());
+		ImGui::TextWrapped(Loader::CoreGeometryLoader::PROGRESS_INFO.c_str());
 
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar(3);

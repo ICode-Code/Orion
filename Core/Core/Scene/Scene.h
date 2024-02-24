@@ -3,7 +3,10 @@
 
 
 #include "SceneCameraManager/SceneCameraManager.h"
+
 #include "../Mesh/StaticMesh/StaticMesh.h"
+#include "../Mesh/DynamicMesh/DynamicMesh.h"
+
 #include "../Grid/Grid.h"
 
 #include "../InfiniteVision/IVMasterRenderer.h"
@@ -53,11 +56,23 @@ namespace OE1Core
 		bool PurgeBillboardIcon(ViewportIconBillboardType _type);
 
 		RenderMode& GetRenderMode();
+		
+		// STATIC MESH
+
 		bool  PurgeStaticMesh(uint32_t _package_id);
 		StaticMesh* QueryStaticMesh(uint32_t _package_id);
-		StaticMesh* RegisterStaticMesh(ModelPkg* _model_pkg);
-		class ActiveEntity* GetActiveEntity(); 
+		StaticMesh* RegisterStaticMesh(IVModel* _model_pkg);
 		bool HasStaticMesh(uint32_t _package_id);
+
+		// DYNAMIC MESH
+
+		bool  PurgeDynamicMesh(uint32_t _package_id);
+		DynamicMesh* QueryDynamicMesh(uint32_t _package_id);
+		DynamicMesh* RegisterDynamicMesh(IVModel* _model_pkg);
+		bool HasDynamicMesh(uint32_t _package_id);
+
+
+		class ActiveEntity* GetActiveEntity(); 
 		void Update(int _width, int _height);
 		void Update(float dt);
 		void ResetPhysics();
@@ -86,6 +101,8 @@ namespace OE1Core
 		CameraPackage* m_MasterCamera = nullptr;
 
 		entt::registry m_EntityRegistry;
+
+		std::unordered_map<uint32_t, DynamicMesh*> m_DynamicMeshRegistry;
 		std::unordered_map<uint32_t, StaticMesh*> m_StaticMeshRegistry;
 		std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*> m_SceneBillboardIcon;
 

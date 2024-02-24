@@ -52,7 +52,7 @@ namespace OE1Core
 	void SceneEntityFactory::RegisterActiveScene(Scene* _scene) { m_Scene = _scene; }
 	Scene* SceneEntityFactory::GetScene() { return m_Scene; }
 
-	Entity SceneEntityFactory::CreateRichMeshEntity(ModelPkg* _model_pkg, glm::vec3 _initial_pos)
+	Entity SceneEntityFactory::CreateRichMeshEntity(IVModel* _model_pkg, glm::vec3 _initial_pos)
 	{
 		Entity my_entity = m_Scene->CreateEntity();
 		AddDefaultComponent(my_entity, _model_pkg->Name);
@@ -75,6 +75,31 @@ namespace OE1Core
 
 		
 		return my_entity;
+	}
+	Entity SceneEntityFactory::CreateRichSkinnedMeshEntity(IVModel* _model_pkg, glm::vec3 _initial_pos)
+	{
+		Entity my_entity = m_Scene->CreateEntity();
+		AddDefaultComponent(my_entity, _model_pkg->Name);
+		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_STATIC_MESH);
+		my_entity.GetComponent<Component::TransformComponent>().m_Position = _initial_pos;
+
+		// Create MeshComponent
+		bool scene_has_rich_data = m_Scene->HasDynamicMesh(_model_pkg->PackageID);
+		DynamicMesh* crt_dynamic_mesh = nullptr;
+
+		if (!scene_has_rich_data)
+			crt_dynamic_mesh = m_Scene->RegisterDynamicMesh(_model_pkg);
+		else
+			crt_dynamic_mesh = m_Scene->QueryDynamicMesh(_model_pkg->PackageID);
+
+		if (crt_dynamic_mesh)
+		{
+			uint32_t mem_offset = RegisterInstance(crt_dynamic_mesh, my_entity);
+			CreateRichSkinnedMeshComponent(_model_pkg, mem_offset, my_entity);
+		}
+
+		return my_entity;
+
 	}
 	Entity SceneEntityFactory::CreateDefaultCubeEntity()
 	{
@@ -170,16 +195,20 @@ namespace OE1Core
 
 	uint32_t SceneEntityFactory::RegisterInstance(StaticMesh* _mesh, Entity& _entity)
 	{
-		return _mesh->AddIntance(&_entity);
+		return _mesh->AddInstance(&_entity);
 	}
-	void SceneEntityFactory::CreateRichMeshComponent(ModelPkg* _mesh, uint32_t _offset, Entity& _entity)
+	uint32_t SceneEntityFactory::RegisterInstance(DynamicMesh* _mesh, Entity& _entity)
+	{
+		return _mesh->AddInstance(&_entity);
+	}
+	void SceneEntityFactory::CreateRichMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity)
 	{
 		std::vector<GLuint> geometry_buffer;
 		std::vector<uint32_t> material_offsets;
-		for (size_t i = 0; i < _mesh->MeshList.size(); i++)
+		for (size_t i = 0; i < _mesh->SubMeshs.size(); i++)
 		{
-			geometry_buffer.push_back(_mesh->MeshList[i].IBO);
-			material_offsets.push_back(_mesh->MeshList[i].MaterialID);
+			geometry_buffer.push_back(_mesh->SubMeshs[i].IBO);
+			material_offsets.push_back(_mesh->SubMeshs[i].MaterialID);
 		}
 		_entity.AddComponent<Component::MeshComponent>(
 			_mesh->PackageID,
@@ -189,6 +218,25 @@ namespace OE1Core
 			material_offsets
 		);
 		_entity.GetComponent<Component::InspectorComponent>().SetMeshComponent(&_entity.GetComponent<Component::MeshComponent>());
+	}
+	void SceneEntityFactory::CreateRichSkinnedMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity)
+	{
+		std::vector<GLuint> geometry_buffer;
+		std::vector<uint32_t> material_offsets;
+		for (size_t i = 0; i < _mesh->SubMeshs.size(); i++)
+		{
+			geometry_buffer.push_back(_mesh->SubMeshs[i].IBO);
+			material_offsets.push_back(_mesh->SubMeshs[i].MaterialID);
+		}
+		_entity.AddComponent<Component::SkinnedMeshComponent>(
+			_mesh->PackageID,
+			(uint32_t)_entity,
+			_offset,
+			_offset,
+			geometry_buffer,
+			material_offsets
+		);
+		_entity.GetComponent<Component::InspectorComponent>().SetSkinnedMeshComponent(&_entity.GetComponent<Component::SkinnedMeshComponent>());
 	}
 
 	std::string SceneEntityFactory::CheckNameCollision(std::string _name)
@@ -355,7 +403,7 @@ namespace OE1Core
 
 		StaticMesh* static_mesh = m_Scene->QueryStaticMesh(mesh.GetPackageID());
 
-		static_mesh->RemoveInstance(_entity, m_Scene);
+		static_mesh->PurgeInstance(_entity, m_Scene);
 
 		// This will remove it from render stack and the static mesh it take care of everything
 		if (static_mesh->GetInstanceCount() == 0)

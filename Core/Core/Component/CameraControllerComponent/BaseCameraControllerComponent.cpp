@@ -7,7 +7,7 @@ namespace OE1Core
 		BaseCameraControllerComponent::BaseCameraControllerComponent(SDL_Window* _active_context)
 		{
 			m_Window = _active_context;
-			m_ControlKey = SDL_BUTTON_RIGHT;
+			m_ControlKey = SDL_BUTTON_MIDDLE;
 			m_Speed = 50.0f;
 			m_Sensitivity = 0.04f;
 			SDL_GetWindowSize(m_Window, &m_WinCenterX, &m_WinCenterY);

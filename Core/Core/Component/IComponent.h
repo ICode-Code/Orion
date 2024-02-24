@@ -8,6 +8,7 @@
 #include "CameraComponent/CameraComponent.h"
 #include "CameraControllerComponent/FreeLookCameraControllerComponent/FreeLookCameraControllerComponent.h"
 #include "MeshComponent/MeshComponent.h"
+#include "SkinnedMeshComponent/SkinnedMeshComponent.h"
 #include "InspectorComponent/InspectorComponent.h"
 #include "ViewportBillboardComponent/ViewportBillboardComponent.h"
 #include "CameraPackageComponent/CameraPackageComponent.h"

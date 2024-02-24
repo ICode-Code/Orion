@@ -3,12 +3,12 @@
 
 namespace OE1Core
 {
-	std::vector<std::string> AssetParser::ParseStaticGeometry(Loader::StaticGeometryLoader::MeshSet& _mesh_set, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer)
+	std::vector<std::string> AssetParser::ParseStaticGeometry(Loader::MeshSet& _mesh_set, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer)
 	{
 		std::vector<std::string> packages_names;
 		for (auto& iter : _mesh_set)
 		{
-			ModelPkg model_package;
+			IVModel model_package;
 
 			model_package.Name = std::get<0>(iter.second);
 			model_package.PackageID = GetAssetID();
@@ -16,11 +16,11 @@ namespace OE1Core
 			// get geometry data
 			auto& raw_geometry_data_list = std::get<1>(iter.second);
 
-			//PreProcessGeometry(raw_geometry_data_list);
 			
 			for (size_t i = 0; i < raw_geometry_data_list.size(); i++)
-				model_package.MeshList.push_back(ProcessGeometry(std::get<1>(iter.second)[i], _texture_buffer, model_package.PackageID, (uint32_t)i));
+				model_package.SubMeshs.push_back(ProcessGeometry(std::get<1>(iter.second)[i], _texture_buffer, model_package.PackageID, (uint32_t)i));
 			
+			model_package.SetMeshType(CoreMeshDescriptor::CoreMeshType::STATIC);
 			ReadModelInfo(model_package);
 
 			std::string reg_name = AssetManager::RegisterGeometry(model_package);
@@ -30,89 +30,121 @@ namespace OE1Core
 		_mesh_set.clear();
 		return packages_names;
 	}
-	//std::vector<std::string> AssetParser::ParseStaticGeometryI(Loader::StaticGeometryLoader::MeshSet& _mesh_set, DynamicAssetType _type)
-	//{
-	//	std::vector<std::string> packages_names;
-	//	for (auto& iter : _mesh_set)
-	//	{
-	//		ModelPkg model_package;
-
-	//		model_package.Name = std::get<0>(iter.second);
-	//		model_package.PackageID = GetAssetID();
-
-	//		// get geometry data
-	//		auto& raw_geometry_data_list = std::get<1>(iter.second);
-
-	//		//PreProcessGeometry(raw_geometry_data_list);
-
-	//		for (size_t i = 0; i < raw_geometry_data_list.size(); i++)
-	//			model_package.MeshList.push_back(ProcessGeometry(std::get<1>(iter.second)[i], model_package.PackageID, (uint32_t)i,  false));
-
-	//		ReadModelInfo(model_package);
-
-	//		AssetManager::RegisterGeometryI(model_package, _type);
-	//		packages_names.push_back(model_package.Name);
-	//	}
-
-	//	_mesh_set.clear();
-	//	return packages_names;
-	//}
-	void AssetParser::ParseDynamicGeometry()
+	
+	std::vector<std::string> AssetParser::ParseDynamicGeometry(Loader::DynamicMeshSet& _mesh_set, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer)
 	{
+		std::vector<std::string> packages_names;
+		for (auto& iter : _mesh_set)
+		{
+			IVModel model_package;
 
+			model_package.Name = std::get<0>(iter.second);
+			model_package.PackageID = GetAssetID();
+
+			// get geometry data
+			auto& raw_geometry_data_list = std::get<1>(iter.second);
+
+			for (size_t i = 0; i < raw_geometry_data_list.size(); i++)
+				model_package.SubMeshs.push_back(ProcessGeometry(std::get<1>(iter.second)[i], _texture_buffer, model_package.PackageID, (uint32_t)i));
+
+			model_package.SetMeshType(CoreMeshDescriptor::CoreMeshType::DYNAMIC);
+			ReadModelInfo(model_package);
+
+			std::string reg_name = AssetManager::RegisterGeometry(model_package);
+			packages_names.push_back(reg_name);
+		}
+
+		_mesh_set.clear();
+		return packages_names;
 	}
-	void AssetParser::ReadModelInfo(ModelPkg& model_package)
+	
+	void AssetParser::ReadModelInfo(IVModel& model_package)
 	{
 		glm::vec3 min_point = glm::vec3(std::numeric_limits<float>::max());
 		glm::vec3 max_point = glm::vec3(std::numeric_limits<float>::lowest());
 
-		for (size_t i = 0; i < model_package.MeshList.size(); i++)
+		for (size_t i = 0; i < model_package.SubMeshs.size(); i++)
 		{
-			model_package.VertexCount += model_package.MeshList[i].VertexCount;
-			model_package.IndicesCount += model_package.MeshList[i].IndiceCount;
-			model_package.TriangleCount += model_package.MeshList[i].TriangleCount;
+			model_package.TotalVertexCount += model_package.SubMeshs[i].VertexCount;
+			model_package.TotalIndicesCount += model_package.SubMeshs[i].IndicesCount;
+			model_package.TotalTriangleCount += model_package.SubMeshs[i].TriangleCount;
 
-			min_point.x = std::min(min_point.x, model_package.MeshList[i].MinPoint.x);
-			min_point.y = std::min(min_point.y, model_package.MeshList[i].MinPoint.y);
-			min_point.z = std::min(min_point.z, model_package.MeshList[i].MinPoint.z);
+			min_point.x = std::min(min_point.x, model_package.SubMeshs[i].Bound.Min.x);
+			min_point.y = std::min(min_point.y, model_package.SubMeshs[i].Bound.Min.y);
+			min_point.z = std::min(min_point.z, model_package.SubMeshs[i].Bound.Min.z);
 
-			max_point.x = std::max(max_point.x, model_package.MeshList[i].MaxPoint.x);
-			max_point.y = std::max(max_point.y, model_package.MeshList[i].MaxPoint.y);
-			max_point.z = std::max(max_point.z, model_package.MeshList[i].MaxPoint.z);
+			max_point.x = std::max(max_point.x, model_package.SubMeshs[i].Bound.Max.x);
+			max_point.y = std::max(max_point.y, model_package.SubMeshs[i].Bound.Max.y);
+			max_point.z = std::max(max_point.z, model_package.SubMeshs[i].Bound.Max.z);
 		}
 
 		glm::vec3 center = (min_point * 0.5f) + (max_point * 0.5f);
-		model_package.Extents = glm::vec3(max_point.x - center.x, max_point.y - center.y, max_point.z - center.z);
-		if (model_package.Extents.y == 0.0f)
-			model_package.Extents.y = 0.01f;
-		model_package.SubMeshCount = (int)model_package.MeshList.size();
+		model_package.Extent = glm::vec3(max_point.x - center.x, max_point.y - center.y, max_point.z - center.z);
+		if (model_package.Extent.y == 0.0f)
+			model_package.Extent.y = 0.01f;
+		model_package.SubMeshCount = (int)model_package.SubMeshs.size();
 	}
-	CoreStaticMeshPkg AssetParser::ProcessGeometry(DataBlock::UnprocessedGeometry& _unprocessed_geometry, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, uint32_t _package_id, uint32_t _local_id, bool _load_mat)
+	
+	CoreRenderableMeshPackage AssetParser::ProcessGeometry(DataBlock::UnprocessedGeometry& _unprocessed_geometry, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, uint32_t _package_id, uint32_t _local_id, bool _load_mat)
 	{
-		CoreStaticMeshPkg core_mesh_package;
-		core_mesh_package.LocalID = _local_id;
+		CoreRenderableMeshPackage core_mesh_package;
+
+		core_mesh_package.LocalMeshID = _local_id;
 		core_mesh_package.MaterialID = 0;
 		core_mesh_package.Name = _unprocessed_geometry.Name;
-		core_mesh_package.VertexData = _unprocessed_geometry.VertexData;
-		core_mesh_package.IndiceData = _unprocessed_geometry.Indices;
-		core_mesh_package.MaxPoint = _unprocessed_geometry.MaxPoint;
-		core_mesh_package.MinPoint = _unprocessed_geometry.MinPoint;
-		core_mesh_package.IndiceCount = (int)_unprocessed_geometry.Indices.size();
+
+		core_mesh_package.GeometryPacketID = GeometryPacket::GeometryAssetPacketBuffer::RegisterStaticMeshGeometry(_unprocessed_geometry.VertexData, _unprocessed_geometry.Indices);
+
+		core_mesh_package.Bound.Max = _unprocessed_geometry.MaxPoint;
+		core_mesh_package.Bound.Min = _unprocessed_geometry.MinPoint;
+
+		core_mesh_package.IndicesCount = (int)_unprocessed_geometry.Indices.size();
 		core_mesh_package.TriangleCount = (int)(_unprocessed_geometry.Indices.size() / 3);
 		core_mesh_package.VertexCount = (int)_unprocessed_geometry.VertexData.size();
 		core_mesh_package.PackageID = _package_id;
 
 
-		BufferIntilization(core_mesh_package);
+		StaticMeshBufferIntilization(core_mesh_package);
 
 
 		if (_load_mat)
 		{
-			CreateMaterial(_unprocessed_geometry.Texture, _texture_buffer, core_mesh_package.Name, core_mesh_package.LocalID, core_mesh_package.PackageID);
+			CreateMaterial(_unprocessed_geometry.Texture, _texture_buffer, core_mesh_package.Name, core_mesh_package.LocalMeshID, core_mesh_package.PackageID);
 		}
 		
 		return core_mesh_package;
 	}
+	
+	CoreRenderableMeshPackage AssetParser::ProcessGeometry(DataBlock::UnprocessedDynamicGeometry& _unprocessed_geometry, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, uint32_t _package_id, uint32_t _local_id, bool _load_mat)
+	{
+		CoreRenderableMeshPackage core_mesh_package;
+
+		core_mesh_package.LocalMeshID = _local_id;
+		core_mesh_package.MaterialID = 0;
+		core_mesh_package.Name = _unprocessed_geometry.Name;
+
+		core_mesh_package.GeometryPacketID = GeometryPacket::GeometryAssetPacketBuffer::RegisterSkinnedMeshGeometry(_unprocessed_geometry.VertexData, _unprocessed_geometry.Indices);
+
+		core_mesh_package.Bound.Max = _unprocessed_geometry.MaxPoint;
+		core_mesh_package.Bound.Min = _unprocessed_geometry.MinPoint;
+
+		core_mesh_package.IndicesCount = (int)_unprocessed_geometry.Indices.size();
+		core_mesh_package.TriangleCount = (int)(_unprocessed_geometry.Indices.size() / 3);
+		core_mesh_package.VertexCount = (int)_unprocessed_geometry.VertexData.size();
+		core_mesh_package.PackageID = _package_id;
+
+
+		SkinnedMeshBufferIntilization(core_mesh_package);
+
+
+		if (_load_mat)
+		{
+			CreateMaterial(_unprocessed_geometry.Texture, _texture_buffer, core_mesh_package.Name, core_mesh_package.LocalMeshID, core_mesh_package.PackageID);
+		}
+
+		return core_mesh_package;
+	}
+	
 	void AssetParser::PreProcessGeometry(std::vector<DataBlock::UnprocessedGeometry>& _unprocessed_geometres)
 	{
 		glm::vec3 average = glm::vec3(0.0f);
@@ -146,7 +178,8 @@ namespace OE1Core
 		}
 
 	}
-	void AssetParser::CreateMaterial(Loader::StaticGeometryLoader::TextureSet& _textures, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, std::string _mat_name, uint32_t _local_id, uint32_t _pkg_id)
+	
+	void AssetParser::CreateMaterial(Loader::TextureSet& _textures, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, std::string _mat_name, uint32_t _local_id, uint32_t _pkg_id)
 	{
 
 		// Which Texture exist which does not
@@ -195,6 +228,7 @@ namespace OE1Core
 		
 		Command::PushMaterialCreationCommand(command);
 	}
+	
 	void AssetParser::ReadTextureData(DataBlock::Image2D& _image, int _layer, std::string _mat_name)
 	{
 		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, _layer, _image.Width, _image.Height, 1, GL_RGBA, GL_UNSIGNED_BYTE, _image.Data);
@@ -202,11 +236,12 @@ namespace OE1Core
 		// Clean memory
 		Command::PushTextureLoadCommand(_image);
 	}
+	
 	bool AssetParser::FetchTexture(std::string _name, DataBlock::TextureType _type, std::unordered_map<std::string, Loader::TexturePkg>& _buffer, std::unordered_map<DataBlock::TextureType, DataBlock::Image2D>& _dest)
 	{
 		for (auto iter = _buffer.begin(); iter != _buffer.end(); iter++)
 		{
-			if (iter->second.TexData.Name == _name)
+			if (iter->first == _name)
 			{
 				_dest.insert(std::make_pair(iter->second.TexType, iter->second.TexData));
 				return true;
@@ -215,7 +250,8 @@ namespace OE1Core
 
 		return false;
 	}
-	bool AssetParser::HasTexture(DataBlock::TextureType _type, Loader::StaticGeometryLoader::TextureSet& _buff)
+	
+	bool AssetParser::HasTexture(DataBlock::TextureType _type, Loader::TextureSet& _buff)
 	{
 		for (auto iter = _buff.begin(); iter != _buff.end(); iter++)
 			if (iter->second == _type)
@@ -223,7 +259,8 @@ namespace OE1Core
 
 		return false;
 	}
-	std::string AssetParser::GetTextureName(DataBlock::TextureType _type, Loader::StaticGeometryLoader::TextureSet& _buff)
+	
+	std::string AssetParser::GetTextureName(DataBlock::TextureType _type, Loader::TextureSet& _buff)
 	{
 		for (auto iter = _buff.begin(); iter != _buff.end(); iter++)
 			if (iter->second == _type)
@@ -231,6 +268,7 @@ namespace OE1Core
 
 		return std::string("%%NO_TEXTURE_FOUND%%");
 	}
+	
 	void AssetParser::Texture2DFilter()
 	{
 		glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
@@ -240,8 +278,12 @@ namespace OE1Core
 		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY, 2);
 	}
-	void AssetParser::BufferIntilization(CoreStaticMeshPkg& _core_mesh)
+
+	void AssetParser::StaticMeshBufferIntilization(CoreRenderableMeshPackage& _core_mesh)
 	{
+		// fetch data
+		auto __geo_ptr = GeometryPacket::GeometryAssetPacketBuffer::GetStaticMeshGeometry(_core_mesh.GeometryPacketID);
+
 		glGenVertexArrays(1, &_core_mesh.VAO);
 		glBindVertexArray(_core_mesh.VAO);
 
@@ -251,10 +293,10 @@ namespace OE1Core
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, _core_mesh.VBO);
-		glBufferData(GL_ARRAY_BUFFER, _core_mesh.VertexData.size() * sizeof(OE1Core::DataBlock::Vertex), &_core_mesh.VertexData[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, __geo_ptr->Vertex.size() * sizeof(OE1Core::DataBlock::Vertex), &__geo_ptr->Vertex[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _core_mesh.EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, _core_mesh.IndiceData.size() * sizeof(uint32_t), &_core_mesh.IndiceData[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, __geo_ptr->Indices.size() * sizeof(uint32_t), &__geo_ptr->Indices[0], GL_STATIC_DRAW);
 
 
 		// Position
@@ -314,5 +356,100 @@ namespace OE1Core
 
 		glBindVertexArray(0);
 	}
+
+	void AssetParser::SkinnedMeshBufferIntilization(CoreRenderableMeshPackage& _core_mesh)
+	{
+		// fetch data
+		auto __geo_ptr = GeometryPacket::GeometryAssetPacketBuffer::GetStaticMeshGeometry(_core_mesh.GeometryPacketID);
+
+		glGenVertexArrays(1, &_core_mesh.VAO);
+		glBindVertexArray(_core_mesh.VAO);
+
+		glGenBuffers(1, &_core_mesh.VBO);
+		glGenBuffers(1, &_core_mesh.EBO);
+		glGenBuffers(1, &_core_mesh.IBO);
+
+
+		glBindBuffer(GL_ARRAY_BUFFER, _core_mesh.VBO);
+		glBufferData(GL_ARRAY_BUFFER, __geo_ptr->Vertex.size() * sizeof(OE1Core::DataBlock::WeightedVertex), &__geo_ptr->Vertex[0], GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _core_mesh.EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, __geo_ptr->Indices.size() * sizeof(uint32_t), &__geo_ptr->Indices[0], GL_STATIC_DRAW);
+
+
+		// Position
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OE1Core::DataBlock::WeightedVertex), (void*)0);
+
+		// Color
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(OE1Core::DataBlock::WeightedVertex), (void*)offsetof(DataBlock::WeightedVertex, DataBlock::WeightedVertex::Color));
+
+		// Normal
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(OE1Core::DataBlock::WeightedVertex), (void*)offsetof(DataBlock::WeightedVertex, DataBlock::WeightedVertex::Normal));
+
+		// Texture Coordinate
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(OE1Core::DataBlock::WeightedVertex), (void*)offsetof(DataBlock::WeightedVertex, DataBlock::WeightedVertex::TextureCoordinate));
+
+		// Tangent
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(OE1Core::DataBlock::WeightedVertex), (void*)offsetof(DataBlock::WeightedVertex, DataBlock::WeightedVertex::Tangent));
+
+		// Bi-Tangent
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(OE1Core::DataBlock::WeightedVertex), (void*)offsetof(DataBlock::WeightedVertex, DataBlock::WeightedVertex::Bitangent));
+
+		// Bone-Index
+		glEnableVertexAttribArray(6);
+		glVertexAttribIPointer(6, 4, GL_INT, sizeof(OE1Core::DataBlock::WeightedVertex), (void*)offsetof(DataBlock::WeightedVertex, DataBlock::WeightedVertex::BoneIndex));
+
+		// Bone-Weight
+		glEnableVertexAttribArray(7);
+		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(OE1Core::DataBlock::WeightedVertex), (void*)offsetof(DataBlock::WeightedVertex, DataBlock::WeightedVertex::Weight));
+
+
+		glBindBuffer(GL_ARRAY_BUFFER, _core_mesh.IBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(DynamicMeshInstancePkg) * ORI_MAX_INSTANCE_PER_MESH, NULL, GL_STATIC_DRAW);
+
+
+
+		glEnableVertexAttribArray(8);
+		glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, sizeof(DynamicMeshInstancePkg), (void*)0);
+		
+		glEnableVertexAttribArray(9);
+		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, sizeof(DynamicMeshInstancePkg), (void*)(sizeof(glm::vec4)));
+		
+		glEnableVertexAttribArray(10);
+		glVertexAttribPointer(10, 4, GL_FLOAT, GL_FALSE, sizeof(DynamicMeshInstancePkg), (void*)(2 * sizeof(glm::vec4)));
+		
+		glEnableVertexAttribArray(11);
+		glVertexAttribPointer(11, 4, GL_FLOAT, GL_FALSE, sizeof(DynamicMeshInstancePkg), (void*)(3 * sizeof(glm::vec4)));
+
+
+		glEnableVertexAttribArray(12);
+		glVertexAttribIPointer(12, 1, GL_INT, sizeof(DynamicMeshInstancePkg), (void*)offsetof(DynamicMeshInstancePkg, DynamicMeshInstancePkg::RenderID));
+
+		glEnableVertexAttribArray(13);
+		glVertexAttribIPointer(13, 1, GL_INT, sizeof(DynamicMeshInstancePkg), (void*)offsetof(DynamicMeshInstancePkg, DynamicMeshInstancePkg::MaterialID));
+
+		glEnableVertexAttribArray(14);
+		glVertexAttribIPointer(14, 1, GL_INT, sizeof(DynamicMeshInstancePkg), (void*)offsetof(DynamicMeshInstancePkg, DynamicMeshInstancePkg::AnimationID));
+
+
+		glVertexAttribDivisor(8, 1); //
+		glVertexAttribDivisor(9, 1); // Instance Materix
+		glVertexAttribDivisor(10, 1); //
+		glVertexAttribDivisor(11, 1); //
+
+		glVertexAttribDivisor(12, 1); // Render ID
+		glVertexAttribDivisor(13, 1); // Material ID
+		glVertexAttribDivisor(14, 1); // Animation ID
+
+
+		glBindVertexArray(0);
+	}
+
 	uint32_t AssetParser::GetAssetID() { return ++s_ASSET_ID; };
 }

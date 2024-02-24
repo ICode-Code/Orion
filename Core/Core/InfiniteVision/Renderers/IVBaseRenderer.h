@@ -4,8 +4,7 @@
 #include "../../Material/MaterialManager.h"
 #include <ShaderManager/ShaderManager.h>
 #include "../../../Common/Shared/ViewportArgs.h"
-#include "../../MeshCluster/CoreStaticMeshPkg.h"
-#include "../../MeshCluster/lwStaticMeshPkg.h"
+#include "../../MeshCluster/IVModel.h"
 #include "../RenderStack/RenderStack.h"
 
 namespace OE1Core

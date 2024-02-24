@@ -21,7 +21,7 @@ namespace OE1Core
 
 		private:
 			inline static Shader* s_LocalShader = nullptr;
-			inline static struct ModelPkg* m_VirtualRenderMesh = nullptr;
+			inline static struct IVModel* m_VirtualRenderMesh = nullptr;
 		};
 	}
 }

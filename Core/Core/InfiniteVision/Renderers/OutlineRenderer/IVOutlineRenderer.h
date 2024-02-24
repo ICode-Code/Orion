@@ -26,6 +26,8 @@ namespace OE1Core
 
 		protected: // Util
 			bool ValidEntityToOutline(EntityType _type);
+
+			IVModel* GetRenderbaleModel(Entity _entity);
 		};
 	}
 }

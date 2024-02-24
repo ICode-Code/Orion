@@ -1,7 +1,9 @@
 #ifndef OE1_DYNAMIC_ASSET_CREATOR_H_
 #define OE1_DYNAMIC_ASSET_CREATOR_H_
 
-#include "../Core/MeshCluster/ModelPkg.h"
+
+#include "../AssetManager/GeometryAssetPacketBuffer/GeometryAssetPacketBuffer.h"
+#include "../Core/MeshCluster/IVModel.h"
 #include "../Core/MeshCluster/StaticMeshInstancePkg.h"
 
 namespace OE1Core
@@ -15,11 +17,11 @@ namespace OE1Core
 			~GeometryCreator() = default;
 
 
-			static ModelPkg GetSphere();
+			static IVModel GetSphere();
 
 
 		private:
-			static void InitGLBuffer(CoreStaticMeshPkg& _core_mesh);
+			static void InitGLBuffer(CoreRenderableMeshPackage& _core_mesh);
 			static int GetPackageID();
 
 		private:

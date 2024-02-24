@@ -14,7 +14,7 @@ namespace OE1Core
 	class MaterialViewWin;
 	class MasterMaterial;
 	class Texture;
-	struct ModelPkg;
+	struct IVModel;
 
 	namespace CommandDef 
 	{
@@ -164,7 +164,16 @@ namespace OE1Core
 				: CommandBase(_file, _line, _func)
 			{}
 
-			ModelPkg* Model = nullptr;
+			IVModel* Model = nullptr;
+		};
+
+		struct DynamicMeshModelPreviewRenderCommandDef : public CommandBase
+		{
+			DynamicMeshModelPreviewRenderCommandDef(std::string _file, int _line, std::string _func)
+				: CommandBase(_file, _line, _func)
+			{}
+
+			IVModel* Model = nullptr;
 		};
 	}
 }

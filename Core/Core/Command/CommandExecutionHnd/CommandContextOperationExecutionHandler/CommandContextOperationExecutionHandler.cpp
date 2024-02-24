@@ -16,7 +16,7 @@ namespace OE1Core
 
 		CommandContextOperationExeHandler::~CommandContextOperationExeHandler()
 		{
-
+			 
 		}
 
 		void CommandContextOperationExeHandler::ProcessQueue()
@@ -34,10 +34,12 @@ namespace OE1Core
 			ProcessMaterialTextureExtractionForPReviewCommand();
 
 			ProcessParseLoadedAssetCommand();
+			ProcessParseLoadedDynamicMeshCommand();
 
 			ProcessMaterialPreviewRenderCommand();
 
 			ProcessModelPreviewRenderCommand();
+			ProcessDynamicMeshPreivewRendererCommand();
 		}
 
 
@@ -127,7 +129,7 @@ namespace OE1Core
 				}
 
 				// Query the target mesh
-				ModelPkg* TARGET_MESH = AssetManager::GetGeometry(commandX.TargetMeshID);
+				IVModel* TARGET_MESH = AssetManager::GetGeometry(commandX.TargetMeshID);
 
 				if (TARGET_MESH)
 				{
@@ -214,7 +216,7 @@ namespace OE1Core
 							_command.Offset = MASTER_MATERIAL->GetOffset();
 							Command::PushMaterialSnapshotCommand(_command);
 
-							Loader::StaticGeometryLoader::PROGRESS_INFO = "Creating Material ... " + _command.Name;
+							Loader::CoreGeometryLoader::PROGRESS_INFO = "Creating Material ... " + _command.Name;
 						}
 
 					// Remove the processed command from the queue
@@ -224,7 +226,7 @@ namespace OE1Core
 					if (Command::s_MaterialCreationCommands.empty())
 					{
 						Command::LockCommand<CommandDef::ModelPreviewRenderCommandDef>(Command::s_ModelPreviewRenderCommands);
-						Loader::StaticGeometryLoader::PROGRESS_INFO = "Creating Preview....";
+						Loader::CoreGeometryLoader::PROGRESS_INFO = "Creating Preview....";
 					}
 				}
 				else
@@ -368,6 +370,30 @@ namespace OE1Core
 					Command::s_ThreadInfoLayerNotifyCallback(false);
 			}
 		}
+		void CommandContextOperationExeHandler::ProcessDynamicMeshPreivewRendererCommand()
+		{
+			const size_t command_count = Command::s_DynamicMeshModelPreviewRenderCommands.size();
+			size_t visited_commnad = 0;
+			while (!Command::s_DynamicMeshModelPreviewRenderCommands.empty())
+			{
+				visited_commnad++;
+				auto& commandX = Command::s_DynamicMeshModelPreviewRenderCommands.front();
+
+				if (!commandX.Lock)
+				{
+					if (visited_commnad >= command_count)
+						break;
+					continue;
+				}
+
+				//Renderer::IVModelPreviewRenderer::Render(*commandX.Model);
+
+				Command::s_DynamicMeshModelPreviewRenderCommands.pop();
+
+				if (Command::s_DynamicMeshModelPreviewRenderCommands.empty())
+					Command::s_ThreadInfoLayerNotifyCallback(false);
+			}
+		}
 		void CommandContextOperationExeHandler::ProcessMaterialPreviewRenderCommand()
 		{
 			const size_t command_count = Command::s_MaterialSnapshotCommands.size();
@@ -404,35 +430,36 @@ namespace OE1Core
 		void CommandContextOperationExeHandler::ProcessParseLoadedAssetCommand()
 		{
 			// Iterate until all mesh sets are processed
-			while (!Loader::GeometryLoader::s_MeshSets.empty())
+			while (!Loader::IVLoadedAsset::s_StaticMeshAsset.empty())
 			{
 				// Retrieve the next mesh set to process
-				auto& AssetPackage = Loader::GeometryLoader::s_MeshSets.front();
+				auto& AssetPackage = Loader::IVLoadedAsset::s_StaticMeshAsset.front();
 
 				// Parse geometry data and get registered packages
-				std::vector<std::string> registered_packages = AssetParser::ParseStaticGeometry(AssetPackage.MeshSet, AssetPackage.TextureBuffer);
+				std::vector<std::string> registered_packages = AssetParser::ParseStaticGeometry(AssetPackage.StaticMeshSet, AssetPackage.Textures);
 
 				// Retrieve load arguments for the current asset package
-				Loader::LoadArgs& load_args = AssetPackage.Args;
+				Loader::LoadArgs& load_args = AssetPackage.LoadArg;
 
 				// Process each registered package
 				for (size_t i = 0; i < registered_packages.size(); i++)
 				{
 					// Construct the full address for the asset file
-					std::string full_address = load_args.DestinationPath + "\\" + registered_packages[i] + ORI_ASSET_POSTFIX;
+					std::string full_address = load_args.DestinationPath + "\\" + registered_packages[i] + ORI_STATIC_MESH_ASSET_POSTFIX;
 
 					// Open the file for writing in binary mode
 					std::ofstream file_macro(full_address, std::ios::out | std::ios::binary);
 
 					// Retrieve model data from asset manager
-					ModelPkg* model = AssetManager::GetGeometry(registered_packages[i]);
+					IVModel* model = AssetManager::GetGeometry(registered_packages[i]);
 
 					// Write metadata to the file
 					WriteBinary(file_macro, "-- ORION ENGINE ASSET -- \n\n\n");
 					WriteBinary(file_macro, "Name:				" + model->Name + "\n");
-					WriteBinary(file_macro, "Vertex Count:		" + std::to_string(model->VertexCount) + "\n");
-					WriteBinary(file_macro, "Indices Count:		" + std::to_string(model->IndicesCount) + "\n");
-					WriteBinary(file_macro, "Triangle Count:	" + std::to_string(model->TriangleCount) + "\n");
+					WriteBinary(file_macro, "Type:				STATIC\n");
+					WriteBinary(file_macro, "Vertex Count:		" + std::to_string(model->TotalVertexCount) + "\n");
+					WriteBinary(file_macro, "Indices Count:		" + std::to_string(model->TotalIndicesCount) + "\n");
+					WriteBinary(file_macro, "Triangle Count:	" + std::to_string(model->TotalTriangleCount) + "\n");
 					WriteBinary(file_macro, "SubMesh Count:		" + std::to_string(model->SubMeshCount) + "\n\n");
 					WriteBinary(file_macro, "--	--	--	--	\n");
 
@@ -446,15 +473,73 @@ namespace OE1Core
 				}
 
 				// Remove the processed mesh set from the queue
-				Loader::GeometryLoader::s_MeshSets.pop();
+				Loader::IVLoadedAsset::s_StaticMeshAsset.pop();
 
 				// Update information
 				Command::s_ContentBrowserLayerNotifyCallback();
 				LogLayer::Pipe("Asset Loaded " + load_args.SourcePath, OELog::INFO);
-				Loader::StaticGeometryLoader::PROGRESS_INFO = "Finalizing Asset....";
+				Loader::CoreGeometryLoader::PROGRESS_INFO = "Finalizing Asset....";
 
 				// If all mesh sets are processed, lock material creation commands
-				if (Loader::GeometryLoader::s_MeshSets.empty())
+				if (Loader::IVLoadedAsset::s_StaticMeshAsset.empty())
+					Command::LockCommand<CommandDef::MaterialCreationCommandDef>(Command::s_MaterialCreationCommands);
+			}
+		}
+		void CommandContextOperationExeHandler::ProcessParseLoadedDynamicMeshCommand()
+		{
+			// Iterate until all mesh sets are processed
+			while (!Loader::IVLoadedAsset::s_SkinnedMeshAsset.empty())
+			{
+				// Retrieve the next mesh set to process
+				auto& AssetPackage = Loader::IVLoadedAsset::s_SkinnedMeshAsset.front();
+
+				// Parse geometry data and get registered packages
+				std::vector<std::string> registered_packages = AssetParser::ParseDynamicGeometry(AssetPackage.SkinnedMeshSet, AssetPackage.Textures);
+
+				// Retrieve load arguments for the current asset package
+				Loader::LoadArgs& load_args = AssetPackage.LoadArg;
+
+				// Process each registered package
+				for (size_t i = 0; i < registered_packages.size(); i++)
+				{
+					// Construct the full address for the asset file
+					std::string full_address = load_args.DestinationPath + "\\" + registered_packages[i] + ORI_DYNAMIC_MESH_ASSET_POSTFIX;
+
+					// Open the file for writing in binary mode
+					std::ofstream file_macro(full_address, std::ios::out | std::ios::binary);
+
+					// Retrieve model data from asset manager
+					IVModel* model = AssetManager::GetGeometry(registered_packages[i]);
+
+					// Write metadata to the file
+					WriteBinary(file_macro, "-- ORION ENGINE ASSET -- \n\n\n");
+					WriteBinary(file_macro, "Name:				" + model->Name + "\n");
+					WriteBinary(file_macro, "Type:				DYNAMIC\n");
+					WriteBinary(file_macro, "Vertex Count:		" + std::to_string(model->TotalVertexCount) + "\n");
+					WriteBinary(file_macro, "Indices Count:		" + std::to_string(model->TotalIndicesCount) + "\n");
+					WriteBinary(file_macro, "Triangle Count:	" + std::to_string(model->TotalTriangleCount) + "\n");
+					WriteBinary(file_macro, "SubMesh Count:		" + std::to_string(model->SubMeshCount) + "\n\n");
+					WriteBinary(file_macro, "--	--	--	--	\n");
+
+					// Close the file
+					file_macro.close();
+
+					// Create and push model preview render command
+					CommandDef::DynamicMeshModelPreviewRenderCommandDef command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
+					command.Model = model;
+					Command::PushDynamicMeshModelPreviewRenderCommand(command);
+				}
+
+				// Remove the processed mesh set from the queue
+				Loader::IVLoadedAsset::s_SkinnedMeshAsset.pop();
+
+				// Update information
+				Command::s_ContentBrowserLayerNotifyCallback();
+				LogLayer::Pipe("Asset Loaded " + load_args.SourcePath, OELog::INFO);
+				Loader::CoreGeometryLoader::PROGRESS_INFO = "Finalizing Asset....";
+
+				// If all mesh sets are processed, lock material creation commands
+				if (Loader::IVLoadedAsset::s_SkinnedMeshAsset.empty())
 					Command::LockCommand<CommandDef::MaterialCreationCommandDef>(Command::s_MaterialCreationCommands);
 			}
 		}
@@ -518,15 +603,15 @@ namespace OE1Core
 			return data;
 
 		}
-		bool CommandContextOperationExeHandler::AssignMaterial(ModelPkg* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id)
+		bool CommandContextOperationExeHandler::AssignMaterial(IVModel* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id)
 		{
 			bool _positive_return = false;
-			for (size_t i = 0; i < _mesh->MeshList.size(); i++)
+			for (size_t i = 0; i < _mesh->SubMeshs.size(); i++)
 			{
-				if (_mesh->MeshList[i].LocalID == _sub_mesh_id)
+				if (_mesh->SubMeshs[i].LocalMeshID == _sub_mesh_id)
 				{
-					_mesh->MeshList[i].Material = _material;
-					_mesh->MeshList[i].MaterialID = _material->GetOffset();
+					_mesh->SubMeshs[i].Material = _material;
+					_mesh->SubMeshs[i].MaterialID = _material->GetOffset();
 					_positive_return = true;
 					break;
 				}

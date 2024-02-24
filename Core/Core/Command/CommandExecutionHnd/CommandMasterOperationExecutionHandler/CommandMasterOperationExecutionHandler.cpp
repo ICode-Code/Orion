@@ -40,7 +40,7 @@ namespace OE1Core
 				Command::s_ThreadInfoLayerNotifyCallback(true);
 				auto commandX = Command::s_Load3DAssetCommands.front();
 				
-				Loader::GeometryLoader::LoadGeometry(commandX);
+				Loader::IVLoader::Import(commandX);
 
 				Command::s_Load3DAssetCommands.pop();
 
@@ -72,7 +72,7 @@ namespace OE1Core
 				}
 
 				// Query the target mesh
-				ModelPkg* TARGET_MESH = AssetManager::GetGeometry(commandX.TargetMeshID);
+				IVModel* TARGET_MESH = AssetManager::GetGeometry(commandX.TargetMeshID);
 
 				if (TARGET_MESH)
 				{
@@ -159,7 +159,7 @@ namespace OE1Core
 						_command.Offset = MASTER_MATERIAL->GetOffset();
 						Command::PushMaterialSnapshotCommand(_command);
 
-						Loader::StaticGeometryLoader::PROGRESS_INFO = "Creating Material ... " + _command.Name;
+						Loader::CoreGeometryLoader::PROGRESS_INFO = "Creating Material ... " + _command.Name;
 					}
 
 					// Remove the processed command from the queue
@@ -169,7 +169,7 @@ namespace OE1Core
 					if (Command::s_MaterialCreationCommands.empty())
 					{
 						Command::LockCommand<CommandDef::ModelPreviewRenderCommandDef>(Command::s_ModelPreviewRenderCommands);
-						Loader::StaticGeometryLoader::PROGRESS_INFO = "Creating Preview....";
+						Loader::CoreGeometryLoader::PROGRESS_INFO = "Creating Preview....";
 					}
 				}
 				else
@@ -212,15 +212,15 @@ namespace OE1Core
 
 			return data;
 		}
-		bool CommandMasterOperationExecutionHandle::AssignMaterial(ModelPkg* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id)
+		bool CommandMasterOperationExecutionHandle::AssignMaterial(IVModel* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id)
 		{
 			bool _positive_return = false;
-			for (size_t i = 0; i < _mesh->MeshList.size(); i++)
+			for (size_t i = 0; i < _mesh->SubMeshs.size(); i++)
 			{
-				if (_mesh->MeshList[i].LocalID == _sub_mesh_id)
+				if (_mesh->SubMeshs[i].LocalMeshID == _sub_mesh_id)
 				{
-					_mesh->MeshList[i].Material = _material;
-					_mesh->MeshList[i].MaterialID = _material->GetOffset();
+					_mesh->SubMeshs[i].Material = _material;
+					_mesh->SubMeshs[i].MaterialID = _material->GetOffset();
 					_positive_return = true;
 					break;
 				}

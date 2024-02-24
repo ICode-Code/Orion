@@ -20,7 +20,8 @@ namespace OE1Core
 		static Scene* GetScene();
 
 		// Entity
-		static Entity CreateRichMeshEntity(ModelPkg* _model_pkg, glm::vec3 _initial_pos = glm::vec3(0.0f));
+		static Entity CreateRichSkinnedMeshEntity(IVModel* _model_package, glm::vec3 _initial_pos = glm::vec3(0.0f));
+		static Entity CreateRichMeshEntity(IVModel* _model_pkg, glm::vec3 _initial_pos = glm::vec3(0.0f));
 		static Entity CreateDefaultCubeEntity();
 		static Entity CreateDefaultPlaneEntity();
 		static Entity CreateEmptyEntity(std::string _name);
@@ -49,8 +50,10 @@ namespace OE1Core
 		static void AddDefaultComponent(Entity& _entity, std::string _name);
 		// This function will register new instance and return the offset in buffer
 		static uint32_t RegisterInstance(StaticMesh* _mesh, Entity& _entity);
+		static uint32_t RegisterInstance(DynamicMesh* _mesh, Entity& _entity);
 		// This dude create Mesh component in simple word will tie the static mesh and mesh component
-		static void CreateRichMeshComponent(ModelPkg* _mesh, uint32_t _offset, Entity& _entity);
+		static void CreateRichMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity);
+		static void CreateRichSkinnedMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity);
 
 
 	protected: // Util

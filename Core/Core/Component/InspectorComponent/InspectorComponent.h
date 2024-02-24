@@ -22,7 +22,7 @@ namespace OE1Core
 			void SetMeshComponent(class MeshComponent* _mesh);
 			void SetCameraControllerComponent(class BaseCameraControllerComponent* _camera_controller);
 			void SetCameraComponent(class CameraComponent* _camera_component);
-
+			void SetSkinnedMeshComponent(class SkinnedMeshComponent* _skinned_mesh_component);
 		protected: // components
 			class TagComponent* m_TagComponent = nullptr;
 			class TransformComponent* m_TransformComponent = nullptr;
@@ -30,6 +30,7 @@ namespace OE1Core
 			class BaseCameraControllerComponent* m_BaseCameraControllerComponent = nullptr;
 			class CameraComponent* m_CameraComponent = nullptr;
 			class CameraPackageComponent* m_CameraPackageComponent = nullptr;
+			class SkinnedMeshComponent* m_SkinnedMeshComponent = nullptr;
 
 		protected: // flag
 			ImGuiTreeNodeFlags m_TreeNodeFlags = ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding;
@@ -41,6 +42,7 @@ namespace OE1Core
 			void ICamController();
 			void ICamera();
 			void ICameraPackage();
+			void ISkinnedMesh();
 
 		};
 	}

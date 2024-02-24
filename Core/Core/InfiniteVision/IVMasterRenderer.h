@@ -15,6 +15,7 @@
 // Render Stack
 #include "RenderStack/RenderStack.h"
 #include "../Mesh/StaticMesh/StaticMesh.h"
+#include "../Mesh/DynamicMesh/DynamicMesh.h"
 
 namespace OE1Core
 {
@@ -38,8 +39,14 @@ namespace OE1Core
 			/// <param name="_prev_mat_type">What was the material type before it get updated, Until this moment the renderer know the original type, even though the material value is chnaged</param>
 			/// <param name="_new_material">and Pointer to the material</param>
 			void ReEvaluateRenderStackMaterial(MasterMaterial* _new_material);
+			
 			void PushToRenderStack(StaticMesh* _mesh);
 			void PurgeFromRenderStack(StaticMesh* _mesh);
+
+			void PushToRenderStack(DynamicMesh* _mesh);
+			void PurgeFromRenderStack(DynamicMesh* _mesh);
+
+
 			void Update(int _width, int _height);
 			void MasterPass(std::map<std::string, CameraParameters>& _cameras);
 			IVForwardMainPassFramebuffer& GetMainPassFramebuffer();

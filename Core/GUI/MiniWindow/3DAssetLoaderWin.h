@@ -6,7 +6,7 @@
 #include "BaseMiniWindw.h"
 #include "Util/NameHandle.h"
 #include "Util/LoadArgs.h"
-#include "Geometry/GeometryLoader.h"
+#include "Geometry/CoreGeometryLoader.h"
 #include <glm/glm.hpp>
 
 #include <filesystem>

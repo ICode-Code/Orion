@@ -27,7 +27,9 @@ namespace OE1Core
 			ICamController();
 			ICamera();
 			IMesh();
+			ISkinnedMesh();
 			ICameraPackage();
+
 
 			ImGui::PopStyleColor(7);
 			ImGui::PopStyleVar(3);
@@ -38,6 +40,9 @@ namespace OE1Core
 		void InspectorComponent::SetMeshComponent(class MeshComponent* _mesh) { m_MeshComponent = _mesh; }
 		void InspectorComponent::SetCameraControllerComponent(class BaseCameraControllerComponent* _camera_controller) { m_BaseCameraControllerComponent = _camera_controller; }
 		void InspectorComponent::SetCameraComponent(class CameraComponent* _camera_component) { m_CameraComponent = _camera_component; }
+		void InspectorComponent::SetSkinnedMeshComponent(class SkinnedMeshComponent* _skinned_mesh_component) { m_SkinnedMeshComponent = _skinned_mesh_component;  };
+
+
 		void InspectorComponent::ITag()
 		{
 			if (!m_TagComponent)
@@ -81,16 +86,16 @@ namespace OE1Core
 			if (ImGui::TreeNodeEx("Mesh Component", m_TreeNodeFlags | ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 4 });
-				ModelPkg* package = AssetManager::GetGeometry(m_MeshComponent->GetPackageID());
+				IVModel* package = AssetManager::GetGeometry(m_MeshComponent->GetPackageID());
 
 
 
-				for (size_t i = 0; i < package->MeshList.size(); i++)
+				for (size_t i = 0; i < package->SubMeshs.size(); i++)
 				{
 					ImGui::Indent(16.0f);
-					if (ImGui::TreeNodeEx(package->MeshList[i].Material->GetName().c_str(), m_TreeNodeFlags + ImGuiTreeNodeFlags_DefaultOpen))
+					if (ImGui::TreeNodeEx(package->SubMeshs[i].Material->GetName().c_str(), m_TreeNodeFlags + ImGuiTreeNodeFlags_DefaultOpen))
 					{
-						MasterMaterial* ActiveMat = package->MeshList[i].Material;
+						MasterMaterial* ActiveMat = package->SubMeshs[i].Material;
 						
 						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.10f, 0.10f, 0.10f, 1.0f });
 						ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 1 });
@@ -101,7 +106,7 @@ namespace OE1Core
 						{
 							if (MaterialManager::GetMaterialView().size() < ORI_MATERIAL_WINDOW_ALLOCATION_THRESHOLD)
 							{
-								MaterialManager::RegisterMaterialView(MaterialManager::GetMaterial(package->MeshList[i].MaterialID));
+								MaterialManager::RegisterMaterialView(MaterialManager::GetMaterial(package->SubMeshs[i].MaterialID));
 							}
 							else
 							{
@@ -123,8 +128,8 @@ namespace OE1Core
 						}
 						
 						ImGui::BeginDisabled();
-						bool has_color_map = package->MeshList[i].Material->HasColorMap();
-						bool has_non_color_map = package->MeshList[i].Material->HasNonColorMap();
+						bool has_color_map = package->SubMeshs[i].Material->HasColorMap();
+						bool has_non_color_map = package->SubMeshs[i].Material->HasNonColorMap();
 						
 						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 2, 2 });
 
@@ -152,14 +157,14 @@ namespace OE1Core
 				CustomFrame::UIEditorTextValue("Unique Instance ID", std::to_string(m_MeshComponent->m_UniqueInstanceID).c_str());
 				CustomFrame::UIEditorTextValue("Buffer Offset", std::to_string(m_MeshComponent->m_Offset).c_str());
 				CustomFrame::UIEditorTextValue("package ID", std::to_string(package->PackageID).c_str());
-				CustomFrame::UIEditorTextValue("Indice Count", std::to_string(package->IndicesCount).c_str());
+				CustomFrame::UIEditorTextValue("Indice Count", std::to_string(package->TotalIndicesCount).c_str());
 				CustomFrame::UIEditorTextValue("SubMesh Count", std::to_string(package->SubMeshCount).c_str());
-				CustomFrame::UIEditorTextValue("Triangle Count", std::to_string(package->TriangleCount).c_str());
-				CustomFrame::UIEditorTextValue("Vertex Count", std::to_string(package->VertexCount).c_str());
+				CustomFrame::UIEditorTextValue("Triangle Count", std::to_string(package->TotalTriangleCount).c_str());
+				CustomFrame::UIEditorTextValue("Vertex Count", std::to_string(package->TotalVertexCount).c_str());
 				CustomFrame::UIEditorTextValue("Material Count", std::to_string(package->SubMeshCount).c_str());
 			
 
-				CustomFrame::UIEditorImage("Preview", (ImTextureID)(uintptr_t)package->SnapShot, { 100, 100 });
+				CustomFrame::UIEditorImage("Preview", (ImTextureID)(uintptr_t)package->Preview, { 100, 100 });
 
 
 				ImGui::PopStyleVar();
@@ -167,6 +172,18 @@ namespace OE1Core
 				ImGui::TreePop();
 			}
 
+		}
+		void InspectorComponent::ISkinnedMesh()
+		{
+			if (!m_SkinnedMeshComponent)
+				return;
+
+			if (ImGui::TreeNodeEx("Skinned Mesh", m_TreeNodeFlags))
+			{
+
+
+				ImGui::TreePop();
+			}
 		}
 		void InspectorComponent::ICameraPackage()
 		{

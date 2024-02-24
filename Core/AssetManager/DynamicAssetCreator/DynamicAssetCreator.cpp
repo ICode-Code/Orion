@@ -3,7 +3,7 @@
 
 namespace OE1Core
 {
-	ModelPkg DAC::GeometryCreator::GetSphere()
+	IVModel DAC::GeometryCreator::GetSphere()
 	{
 		std::vector<glm::vec3> Position;
 		std::vector<glm::vec3> Normal;
@@ -51,21 +51,23 @@ namespace OE1Core
 			oddRow = !oddRow;
 		}
 
-		ModelPkg _model;
+		IVModel _model;
 
 		_model.PackageID = GetPackageID();
-		_model.IndicesCount = (int)Indices.size();
+		_model.TotalIndicesCount = (int)Indices.size();
 		_model.Name = "DGA_SPHERE_ORI";
 		_model.SubMeshCount = 1;
-		_model.TriangleCount = (int)_model.IndicesCount / 3;
-		_model.VertexCount = (int)Position.size();
+		_model.TotalTriangleCount = (int)_model.TotalIndicesCount / 3;
+		_model.TotalVertexCount = (int)Position.size();
 
-		CoreStaticMeshPkg mesh_pkg;
+		CoreRenderableMeshPackage mesh_pkg;
 		mesh_pkg.VertexCount = 0;
-		mesh_pkg.IndiceData = Indices;
-		mesh_pkg.IndiceCount = (int)Indices.size();
+		mesh_pkg.IndicesCount = (int)Indices.size();
 		mesh_pkg.Name = "DGA_SPHERE_ORI";
 		mesh_pkg.PackageID = GetPackageID();
+
+		std::vector<DataBlock::Vertex> _vert;
+		std::vector<unsigned int> _indices(Indices);
 
 		for (size_t i = 0; i < Position.size(); i++)
 		{
@@ -81,11 +83,13 @@ namespace OE1Core
 
 
 			mesh_pkg.VertexCount++;
-			mesh_pkg.VertexData.push_back(Vert);
+			_vert.push_back(Vert);
 		}
 
+		mesh_pkg.GeometryPacketID = GeometryPacket::GeometryAssetPacketBuffer::RegisterStaticMeshGeometry(_vert, _indices);
+
 		InitGLBuffer(mesh_pkg);
-		_model.MeshList.push_back(mesh_pkg);
+		_model.SubMeshs.push_back(mesh_pkg);
 
 		return _model;
 	}
@@ -93,8 +97,10 @@ namespace OE1Core
 	{
 		return ++s_DynamicAssetID;
 	}
-	void DAC::GeometryCreator::InitGLBuffer(CoreStaticMeshPkg& _core_mesh)
+	void DAC::GeometryCreator::InitGLBuffer(CoreRenderableMeshPackage& _core_mesh)
 	{
+		auto __geom = GeometryPacket::GeometryAssetPacketBuffer::GetStaticMeshGeometry(_core_mesh.GeometryPacketID);
+
 		glGenVertexArrays(1, &_core_mesh.VAO);
 		glBindVertexArray(_core_mesh.VAO);
 
@@ -104,10 +110,10 @@ namespace OE1Core
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, _core_mesh.VBO);
-		glBufferData(GL_ARRAY_BUFFER, _core_mesh.VertexData.size() * sizeof(OE1Core::DataBlock::Vertex), &_core_mesh.VertexData[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, __geom->Vertex.size() * sizeof(OE1Core::DataBlock::Vertex), &__geom->Vertex[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _core_mesh.EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, _core_mesh.IndiceData.size() * sizeof(unsigned int), &_core_mesh.IndiceData[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, __geom->Indices.size() * sizeof(unsigned int), &__geom->Indices[0], GL_STATIC_DRAW);
 
 
 		// Position

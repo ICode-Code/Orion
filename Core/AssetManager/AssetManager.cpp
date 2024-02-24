@@ -31,6 +31,7 @@ namespace OE1Core
 		bool name_exist = (s_TextureRegistry.find(_name) != s_TextureRegistry.end());
 		if (name_exist)
 		{
+			LOG_WARRNING(LogLayer::Pipe("Image with the same detected! [" + _name + "]. Returing the original...", OELog::WARNING));
 			return s_TextureRegistry[_name]; // Just ignore it for now
 		}
 
@@ -103,19 +104,19 @@ namespace OE1Core
 	}
 
 
-	ModelPkg* AssetManager::GetGeometry(uint32_t _model_id)
+	IVModel* AssetManager::GetGeometry(uint32_t _model_id)
 	{
 		if(s_RenderableGeometryIDTranslator.find(_model_id) == s_RenderableGeometryIDTranslator.end())
 			return nullptr;
 		return &s_RenderableGeometry[s_RenderableGeometryIDTranslator[_model_id]];
 	}
-	ModelPkg* AssetManager::GetGeometry(std::string _name)
+	IVModel* AssetManager::GetGeometry(std::string _name)
 	{
 		if (s_RenderableGeometry.find(_name) == s_RenderableGeometry.end())
 			return nullptr;
 		return &s_RenderableGeometry[_name];
 	}
-	std::string AssetManager::RegisterGeometry(ModelPkg _model)
+	std::string AssetManager::RegisterGeometry(IVModel _model)
 	{
 		uint32_t model_id = _model.PackageID;
 		std::string model_name = _model.Name;
@@ -128,13 +129,14 @@ namespace OE1Core
 
 		return model_name;
 	}
-	ModelPkg* AssetManager::GetGeometryI(DynamicAssetType _type)
+
+	IVModel* AssetManager::GetGeometryI(DynamicAssetType _type)
 	{
 		if (s_InternalPurposeGeometry.find(_type) == s_InternalPurposeGeometry.end())
 			return nullptr;
 		return &s_InternalPurposeGeometry[_type];
 	}
-	void AssetManager::RegisterGeometryI(ModelPkg _model, DynamicAssetType _type)
+	void AssetManager::RegisterGeometryI(IVModel _model, DynamicAssetType _type)
 	{
 		if (s_InternalPurposeGeometry.find(_type) != s_InternalPurposeGeometry.end())
 		{
@@ -153,12 +155,16 @@ namespace OE1Core
 		return s_TextureInternalRegistry;
 	}
 
-	bool AssetManager::NameExist(std::string _name)
+	bool AssetManager::NameExistStaticGeo(std::string _name)
 	{
 		for (auto iter = s_RenderableGeometry.begin(); iter != s_RenderableGeometry.end(); iter++)
 			if (iter->first == _name)
 				return true;
 
 		return false;
+	}
+	bool AssetManager::NameExist(std::string _name)
+	{
+		return NameExistStaticGeo(_name);
 	}
 }

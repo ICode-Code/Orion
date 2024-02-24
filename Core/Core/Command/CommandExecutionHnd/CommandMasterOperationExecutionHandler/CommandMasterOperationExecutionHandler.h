@@ -3,7 +3,7 @@
 
 #include "../ExeHandleBase/ExeHandleBase.h"
 #include "../AssetManager/AssetParser/AssetParser.h"
-#include "Geometry/GeometryLoader.h"
+#include "Loader/IVLoader.h"
 
 namespace OE1Core
 {
@@ -25,7 +25,7 @@ namespace OE1Core
 			static void ProcessPurgeDynamicViewportCommand();
 
 		private: // Util
-			static bool AssignMaterial(ModelPkg* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id);
+			static bool AssignMaterial(IVModel* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id);
 			static Renderer::CheckMatPreviewTexture FilterMaterialTexture(MasterMaterial* _material);
 		};
 	}

@@ -39,6 +39,9 @@ namespace OE1Core
 		for (auto iter : m_StaticMeshRegistry)
 			delete iter.second;
 
+		for (auto iter : m_DynamicMeshRegistry)
+			delete iter.second;
+
 		for (auto iter : m_SceneBillboardIcon)
 			delete iter.second;
 
@@ -56,6 +59,26 @@ namespace OE1Core
 
 		return false;
 	}
+
+	bool  Scene::PurgeDynamicMesh(uint32_t _package_id)
+	{
+		return false;
+	}
+	DynamicMesh* Scene::QueryDynamicMesh(uint32_t _package_id)
+	{
+		if (!HasDynamicMesh(_package_id))
+		{
+			LOG_ERROR("Failed to query DYNAMIC mesh, registry not found, Package ID: {0}", _package_id);
+			return nullptr;
+		}
+
+		return m_DynamicMeshRegistry[_package_id];
+	}
+	DynamicMesh* Scene::RegisterDynamicMesh(IVModel* _model_pkg)
+	{
+		return nullptr;
+	}
+
 	Entity Scene::CreateEntity()
 	{
 		Entity my_entity(m_EntityRegistry.create(), this);
@@ -126,8 +149,14 @@ namespace OE1Core
 	{
 		return (m_StaticMeshRegistry.find(_package_id) != m_StaticMeshRegistry.end());
 	}
+	bool Scene::HasDynamicMesh(uint32_t _package_id)
+	{
+		return (m_DynamicMeshRegistry.find(_package_id) != m_DynamicMeshRegistry.end());
+	}
+
+
 	ActiveEntity* Scene::GetActiveEntity() { return m_SceneActiveSelection; }
-	StaticMesh* Scene::RegisterStaticMesh(ModelPkg* _model_pkg)
+	StaticMesh* Scene::RegisterStaticMesh(IVModel* _model_pkg)
 	{
 		if (HasStaticMesh(_model_pkg->PackageID))
 		{

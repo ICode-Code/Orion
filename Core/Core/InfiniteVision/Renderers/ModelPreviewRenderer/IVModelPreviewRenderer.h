@@ -5,8 +5,7 @@
 #include "../IVBaseRenderer.h"
 #include "../../../CameraPackage/CameraPackage.h"
 #include "../../DisplayCanavs/IVModelPreviewFramebuffer.h"
-#include "../../../MeshCluster/ModelPkg.h"
-#
+#include "../../../MeshCluster/IVModel.h"
 
 namespace OE1Core
 {
@@ -18,7 +17,7 @@ namespace OE1Core
 			IVModelPreviewRenderer(SDL_Window* _window);
 			~IVModelPreviewRenderer();
 
-			static void Render(ModelPkg& _model_package);
+			static void Render(IVModel& _model_package);
 
 		protected:
 			inline static CameraPackage* s_CameraPackage = nullptr;

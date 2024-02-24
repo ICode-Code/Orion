@@ -28,6 +28,10 @@ namespace OE1Core
 
 				return to;
 			}
+			glm::quat AiQuatToGlm(const aiQuaternion& _from)
+			{
+				return glm::quat(_from.w, _from.x, _from.y, _from.z);
+			}
 		}
 	}
 }

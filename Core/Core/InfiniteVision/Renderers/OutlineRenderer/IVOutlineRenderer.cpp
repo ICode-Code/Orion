@@ -47,45 +47,68 @@ namespace OE1Core
 		void IVOutlineRenderer::IssueProxyRender(Entity _entity, int _camera_idx)
 		{
 			Component::TagComponent& tag = _entity.GetComponent<Component::TagComponent>();
-
-			Component::MeshComponent& mesh = _entity.GetComponent<Component::MeshComponent>();
-			ModelPkg* model = AssetManager::GetGeometry(mesh.GetPackageID());
-
+			
 			Component::TransformComponent& transform = _entity.GetComponent<Component::TransformComponent>();
-
-
 			glm::mat4 world_transform = transform.QueryWorldTransform();
 
-			for (size_t i = 0; i < model->MeshList.size(); i++)
+
+			IVModel* model = GetRenderbaleModel(_entity);
+
+			if (model)
 			{
-				model->MeshList[i].Material->GetShader()->AttachProxy();
-				model->MeshList[i].Material->GetShader()->SetProxyMat4("Model", world_transform);
-				model->MeshList[i].Material->Attach();
+				for (size_t i = 0; i < model->SubMeshs.size(); i++)
+				{
+					model->SubMeshs[i].Material->GetShader()->AttachProxy();
+					model->SubMeshs[i].Material->GetShader()->SetProxyMat4("Model", world_transform);
+					model->SubMeshs[i].Material->Attach();
 
-				glBindVertexArray(model->MeshList[i].VAO);
+					glBindVertexArray(model->SubMeshs[i].VAO);
 
-				glDrawElements(GL_TRIANGLES, model->MeshList[i].IndiceCount, GL_UNSIGNED_INT, 0);
+					glDrawElements(GL_TRIANGLES, model->SubMeshs[i].IndicesCount, GL_UNSIGNED_INT, 0);
 
 
-				model->MeshList[i].Material->GetShader()->Detach();
+					model->SubMeshs[i].Material->GetShader()->Detach();
+				}
 			}
+			
 		}
 		void IVOutlineRenderer::IssueSolidOutLineRender(Entity _entity, int _camera_idx)
 		{
-			Component::MeshComponent& mesh = _entity.GetComponent<Component::MeshComponent>();
-			ModelPkg* model = AssetManager::GetGeometry(mesh.GetPackageID());
+			
 
 			Component::TransformComponent& transform = _entity.GetComponent<Component::TransformComponent>();
 			glm::mat4 world_transform = transform.QueryWorldTransform();
 
-			m_Shader->SetMat4("Model", world_transform);
-			for (size_t i = 0; i < model->MeshList.size(); i++)
-			{
-				glBindVertexArray(model->MeshList[i].VAO);
-				glDrawElements(GL_TRIANGLES, model->MeshList[i].IndiceCount, GL_UNSIGNED_INT, 0);
-			}
-		}
+			IVModel* model = GetRenderbaleModel(_entity);
 
+			if (model)
+			{
+				m_Shader->SetMat4("Model", world_transform);
+				for (size_t i = 0; i < model->SubMeshs.size(); i++)
+				{
+					glBindVertexArray(model->SubMeshs[i].VAO);
+					glDrawElements(GL_TRIANGLES, model->SubMeshs[i].IndicesCount, GL_UNSIGNED_INT, 0);
+				}
+			}
+			
+		}
+		IVModel* IVOutlineRenderer::GetRenderbaleModel(Entity _entity)
+		{
+			IVModel* __model = nullptr;
+
+			if (_entity.HasComponent<Component::MeshComponent>())
+			{
+				Component::MeshComponent& mesh = _entity.GetComponent<Component::MeshComponent>();
+				__model = AssetManager::GetGeometry(mesh.GetPackageID());
+			}
+			else if (_entity.HasComponent<Component::SkinnedMeshComponent>())
+			{
+				Component::SkinnedMeshComponent& mesh = _entity.GetComponent<Component::SkinnedMeshComponent>();
+				__model = AssetManager::GetGeometry(mesh.GetPackageID());
+			}
+
+			return __model;
+		}
 		bool IVOutlineRenderer::ValidEntityToOutline(EntityType _type)
 		{
 			
