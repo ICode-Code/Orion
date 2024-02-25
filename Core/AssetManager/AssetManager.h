@@ -22,6 +22,9 @@ namespace OE1Core
 		// make sure it is not nullptr before using
 		static Texture* GetInternalTexture(std::string _name);
 
+
+		static bool HasTexture(std::string _name);
+		static bool HasTexture(DataBlock::Image2D& _image);
 		// make sure it is not nullptr before using
 		static Texture* GetTexture(std::string _name);
 		// make sure it is not nullptr before using
@@ -47,8 +50,6 @@ namespace OE1Core
 
 		static std::unordered_map<std::string, Texture*>& GetTextureRegistry();
 		static std::unordered_map<std::string, Texture*>& GetTextureInternalRegistry();
-
-		static std::string CreateTextureSeed(DataBlock::Image2D& _image);
 		
 
 

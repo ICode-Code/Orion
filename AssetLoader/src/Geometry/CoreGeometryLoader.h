@@ -2,6 +2,7 @@
 #define OE1_CORE_GEOMETRY_LOADER_H_
 
 
+#include "../Loader/IVLoadedAsset.h"
 #include "LoaderDef.h"
 #include "../Util/LoadArgs.h"
 #include <assimp/Importer.hpp>
@@ -40,10 +41,9 @@ namespace OE1Core
 				TextureSet& _texture_set, 
 				DataBlock::TextureType _oe_texture_type, 
 				aiTextureType _ai_texture_type, 
-				aiMaterial* _material,
-				std::unordered_map<std::string, TexturePkg>& _textures_buffer);
-			static TextureSet GetTextureSet(aiMaterial* _material, std::unordered_map<std::string, TexturePkg>& _textures_buffer);
-			static DataBlock::UnprocessedGeometry GetSingleMesh(aiMesh* _mesh_node, std::unordered_map<std::string, TexturePkg>& _textures_buffer);
+				aiMaterial* _material);
+			static TextureSet GetTextureSet(aiMaterial* _material);
+			static DataBlock::UnprocessedGeometry GetSingleMesh(aiMesh* _mesh_node);
 			static DataBlock::UnprocessedDynamicGeometry CollectSingleMeshBone(aiMesh* _mesh, DataBlock::UnprocessedGeometry& _geom, LoadPackage& _package);
 			static DataBlock::Image2D ReadTextureData(std::string _path);
 

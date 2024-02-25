@@ -2,6 +2,7 @@
 #define OE1_BASE_MINI_WINDOW_H_
 
 
+#include "../src/Loader/IVLoadedAsset.h"
 #include "../../AssetManager/AssetManager.h"
 #include "../../Platform/Win/WindowManager.h"
 #include "../Native/WindowFileDialog.h"

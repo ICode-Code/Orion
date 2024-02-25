@@ -3,7 +3,7 @@
 
 namespace OE1Core
 {
-	std::vector<std::string> AssetParser::ParseStaticGeometry(Loader::MeshSet& _mesh_set, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer)
+	std::vector<std::string> AssetParser::ParseStaticGeometry(Loader::MeshSet& _mesh_set)
 	{
 		std::vector<std::string> packages_names;
 		for (auto& iter : _mesh_set)
@@ -18,7 +18,7 @@ namespace OE1Core
 
 			
 			for (size_t i = 0; i < raw_geometry_data_list.size(); i++)
-				model_package.SubMeshs.push_back(ProcessGeometry(std::get<1>(iter.second)[i], _texture_buffer, model_package.PackageID, (uint32_t)i));
+				model_package.SubMeshs.push_back(ProcessGeometry(std::get<1>(iter.second)[i], model_package.PackageID, (uint32_t)i));
 			
 			model_package.SetMeshType(CoreMeshDescriptor::CoreMeshType::STATIC);
 			ReadModelInfo(model_package);
@@ -28,10 +28,11 @@ namespace OE1Core
 		}
 
 		_mesh_set.clear();
+		s_MappedTexture.clear();
 		return packages_names;
 	}
 	
-	std::vector<std::string> AssetParser::ParseDynamicGeometry(Loader::DynamicMeshSet& _mesh_set, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer)
+	std::vector<std::string> AssetParser::ParseDynamicGeometry(Loader::DynamicMeshSet& _mesh_set)
 	{
 		std::vector<std::string> packages_names;
 		for (auto& iter : _mesh_set)
@@ -45,7 +46,7 @@ namespace OE1Core
 			auto& raw_geometry_data_list = std::get<1>(iter.second);
 
 			for (size_t i = 0; i < raw_geometry_data_list.size(); i++)
-				model_package.SubMeshs.push_back(ProcessGeometry(std::get<1>(iter.second)[i], _texture_buffer, model_package.PackageID, (uint32_t)i));
+				model_package.SubMeshs.push_back(ProcessGeometry(std::get<1>(iter.second)[i], model_package.PackageID, (uint32_t)i));
 
 			model_package.SetMeshType(CoreMeshDescriptor::CoreMeshType::DYNAMIC);
 			ReadModelInfo(model_package);
@@ -55,6 +56,7 @@ namespace OE1Core
 		}
 
 		_mesh_set.clear();
+		s_MappedTexture.clear();
 		return packages_names;
 	}
 	
@@ -85,7 +87,7 @@ namespace OE1Core
 		model_package.SubMeshCount = (int)model_package.SubMeshs.size();
 	}
 	
-	CoreRenderableMeshPackage AssetParser::ProcessGeometry(DataBlock::UnprocessedGeometry& _unprocessed_geometry, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, uint32_t _package_id, uint32_t _local_id, bool _load_mat)
+	CoreRenderableMeshPackage AssetParser::ProcessGeometry(DataBlock::UnprocessedGeometry& _unprocessed_geometry, uint32_t _package_id, uint32_t _local_id, bool _load_mat)
 	{
 		CoreRenderableMeshPackage core_mesh_package;
 
@@ -109,13 +111,13 @@ namespace OE1Core
 
 		if (_load_mat)
 		{
-			CreateMaterial(_unprocessed_geometry.Texture, _texture_buffer, core_mesh_package.Name, core_mesh_package.LocalMeshID, core_mesh_package.PackageID);
+			CreateMaterial(_unprocessed_geometry.Texture, core_mesh_package.Name, core_mesh_package.LocalMeshID, core_mesh_package.PackageID);
 		}
 		
 		return core_mesh_package;
 	}
 	
-	CoreRenderableMeshPackage AssetParser::ProcessGeometry(DataBlock::UnprocessedDynamicGeometry& _unprocessed_geometry, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, uint32_t _package_id, uint32_t _local_id, bool _load_mat)
+	CoreRenderableMeshPackage AssetParser::ProcessGeometry(DataBlock::UnprocessedDynamicGeometry& _unprocessed_geometry, uint32_t _package_id, uint32_t _local_id, bool _load_mat)
 	{
 		CoreRenderableMeshPackage core_mesh_package;
 
@@ -139,7 +141,7 @@ namespace OE1Core
 
 		if (_load_mat)
 		{
-			CreateMaterial(_unprocessed_geometry.Texture, _texture_buffer, core_mesh_package.Name, core_mesh_package.LocalMeshID, core_mesh_package.PackageID);
+			CreateMaterial(_unprocessed_geometry.Texture, core_mesh_package.Name, core_mesh_package.LocalMeshID, core_mesh_package.PackageID);
 		}
 
 		return core_mesh_package;
@@ -179,7 +181,7 @@ namespace OE1Core
 
 	}
 	
-	void AssetParser::CreateMaterial(Loader::TextureSet& _textures, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, std::string _mat_name, uint32_t _local_id, uint32_t _pkg_id)
+	void AssetParser::CreateMaterial(Loader::TextureSet& _textures, std::string _mat_name, uint32_t _local_id, uint32_t _pkg_id)
 	{
 
 		// Which Texture exist which does not
@@ -195,9 +197,13 @@ namespace OE1Core
 		texture_avial_flag.HasAlpha				= s_AvialTextures.HasAlphaMask				= HasTexture(DataBlock::TextureType::OPACITY,			_textures);
 
 		// Build Texture Map
-		std::unordered_map<DataBlock::TextureType, DataBlock::Image2D> Textures;
+		std::unordered_map<DataBlock::TextureType, std::string> Textures;
 
-		if(texture_avial_flag.HasColor)
+		// Flip
+		for (auto iter = _textures.begin(); iter != _textures.end(); iter++)
+			Textures.insert(std::make_pair(iter->second, iter->first));
+
+		/*if(texture_avial_flag.HasColor)
 			FetchTexture(GetTextureName(DataBlock::TextureType::DIFFUSE, _textures), DataBlock::TextureType::DIFFUSE,		_texture_buffer, Textures);
 		if(texture_avial_flag.HasEmission)
 			FetchTexture(GetTextureName(DataBlock::TextureType::EMISSIVE, _textures), DataBlock::TextureType::EMISSIVE,			_texture_buffer, Textures);
@@ -212,9 +218,9 @@ namespace OE1Core
 		if(texture_avial_flag.HasAO)
 			FetchTexture(GetTextureName(DataBlock::TextureType::AO, _textures), DataBlock::TextureType::AO,	_texture_buffer, Textures);
 		if(texture_avial_flag.HasAlpha)
-			FetchTexture(GetTextureName(DataBlock::TextureType::OPACITY, _textures), DataBlock::TextureType::OPACITY,			_texture_buffer, Textures);
+			FetchTexture(GetTextureName(DataBlock::TextureType::OPACITY, _textures), DataBlock::TextureType::OPACITY,			_texture_buffer, Textures);*/
 
-		
+
 		CommandDef::MaterialCreationCommandDef command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
 
 		command.TargetMeshID = _pkg_id;
@@ -254,9 +260,10 @@ namespace OE1Core
 	bool AssetParser::HasTexture(DataBlock::TextureType _type, Loader::TextureSet& _buff)
 	{
 		for (auto iter = _buff.begin(); iter != _buff.end(); iter++)
+		{
 			if (iter->second == _type)
 				return true;
-
+		}
 		return false;
 	}
 	
@@ -360,7 +367,7 @@ namespace OE1Core
 	void AssetParser::SkinnedMeshBufferIntilization(CoreRenderableMeshPackage& _core_mesh)
 	{
 		// fetch data
-		auto __geo_ptr = GeometryPacket::GeometryAssetPacketBuffer::GetStaticMeshGeometry(_core_mesh.GeometryPacketID);
+		auto __geo_ptr = GeometryPacket::GeometryAssetPacketBuffer::GetSkinnedMeshGeometry(_core_mesh.GeometryPacketID);
 
 		glGenVertexArrays(1, &_core_mesh.VAO);
 		glBindVertexArray(_core_mesh.VAO);
@@ -452,4 +459,9 @@ namespace OE1Core
 	}
 
 	uint32_t AssetParser::GetAssetID() { return ++s_ASSET_ID; };
+
+	bool AssetParser::IsTextureAlreadyMapped(std::string _name)
+	{
+		return s_MappedTexture.find(_name) != s_MappedTexture.end();
+	}
 }

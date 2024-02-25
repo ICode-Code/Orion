@@ -78,7 +78,9 @@ namespace OE1Core
 			int Channel = -1;
 			std::string Name = "";
 			std::string Path = "";
+			int RefCount = 1;
 			bool Valid = false;
+			std::string Seed = "";
 		};
 		struct Image2DArray
 		{

@@ -31,7 +31,6 @@ namespace OE1Core
 		{
 			std::unordered_map<int, std::tuple<std::string, std::vector<DataBlock::UnprocessedDynamicGeometry>>> SkinnedMeshSet;
 			std::unordered_map<int, std::tuple<std::string, std::vector<DataBlock::UnprocessedGeometry>>> StaticMeshSet;
-			std::unordered_map<std::string, TexturePkg> Textures;
 			std::map<std::string, DataBlock::BoneInfo> BoneInfoMap;
 			int BoneCounter;
 			bool IsStaticMesh;

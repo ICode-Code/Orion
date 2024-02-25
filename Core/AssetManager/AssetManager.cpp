@@ -33,18 +33,18 @@ namespace OE1Core
 		// make sure this image or at least another image with the same name
 		std::string _name = _image.Name; 
 
-		std::string _texture_seed = AssetManager::CreateTextureSeed(_image).c_str();
-
-		if (!_image.Valid)
+		if (!_image.Valid || !_image.Data)
 			return nullptr;
+		
 		// make sure this image or at least another image with the same name
 		bool name_exist = (s_TextureRegistry.find(_name) != s_TextureRegistry.end());
 		if (name_exist)
 		{
 			// Check seed
-			if (s_TextureRegistry[_name]->GetSeed() == _texture_seed)
+			if (s_TextureRegistry[_name]->GetSeed() == _image.Seed)
 			{
-				LOG_WARRNING(LogLayer::Pipe("Image with the same detected! [" + _name + "]. Returing the original...", OELog::WARNING));
+				LOG_WARRNING(LogLayer::Pipe("Identical Image Detected! : [" + _name + "].", OELog::WARNING));
+
 				return s_TextureRegistry[_name];
 			}
 		}
@@ -56,9 +56,20 @@ namespace OE1Core
 		s_TextureRegistry.insert(std::make_pair(new_name, new Texture(_image)));
 
 		// Set Seed
-		s_TextureRegistry[new_name]->SetSeed(_texture_seed);
+		s_TextureRegistry[new_name]->SetSeed(_image.Seed);
 
 		return s_TextureRegistry[new_name];
+	}
+	bool AssetManager::HasTexture(std::string _name)
+	{
+		return s_TextureRegistry.find(_name) != s_TextureRegistry.end();
+	}
+	bool AssetManager::HasTexture(DataBlock::Image2D& _image)
+	{
+		if (!HasTexture(_image.Name))
+			return false;
+
+		return _image.Seed == s_TextureRegistry[_image.Name]->GetSeed();
 	}
 	void AssetManager::RegisterInternalTexture(std::string _path, std::string _name)
 	{
@@ -183,50 +194,5 @@ namespace OE1Core
 	{
 		return NameExistStaticGeo(_name);
 	}
-	std::string AssetManager::CreateTextureSeed(DataBlock::Image2D& _image)
-	{
-		std::string _seed;
-		// Define the number of samples per diagonal
-		const int numSamples = 10;
 
-		// Calculate the step size for sampling along each diagonal
-		float stepX = static_cast<float>(_image.Width) / numSamples;
-		float stepY = static_cast<float>(_image.Height) / numSamples;
-
-		// Sample pixels along the diagonal from top-left to bottom-right
-		for (int i = 0; i < numSamples; ++i) {
-			int x = static_cast<int>(i * stepX);
-			int y = static_cast<int>(i * stepY);
-
-			// Calculate the index of the pixel
-			int index = (y * _image.Width + x) * _image.Channel;
-
-			// Read pixel values at the calculated index
-			unsigned char* p = _image.Data + index;
-
-			for (int c = 0; c < _image.Channel; ++c) {
-				_seed.append(std::to_string(static_cast<unsigned int>(p[c])));
-			}
-
-			// Process the sampled pixel values here
-		}
-		_seed.append("<-X->");
-		// Sample pixels along the diagonal from top-right to bottom-left
-		for (int i = 0; i < numSamples; ++i) {
-			int x = static_cast<int>(_image.Width - 1 - (i * stepX));
-			int y = static_cast<int>(i * stepY);
-
-			// Calculate the index of the pixel
-			int index = (y * _image.Width + x) * _image.Channel;
-
-			// Read pixel values at the calculated index
-			unsigned char* p = _image.Data + index;
-
-			for (int c = 0; c < _image.Channel; ++c) {
-				_seed.append(std::to_string(static_cast<unsigned int>(p[c])));
-			}
-		}
-
-		return _seed;
-	}
 }

@@ -77,7 +77,7 @@ namespace OE1Core
 			for (unsigned int i = 0; i < _node->mNumMeshes; i++)
 			{
 				aiMesh* mesh = s_Scene->mMeshes[_node->mMeshes[i]];
-				DataBlock::UnprocessedGeometry geom = GetSingleMesh(mesh, _package.Textures);
+				DataBlock::UnprocessedGeometry geom = GetSingleMesh(mesh);
 				geom_group_temp.push_back(geom);
 			}
 
@@ -101,7 +101,7 @@ namespace OE1Core
 			for (unsigned int i = 0; i < _node->mNumMeshes; i++)
 			{
 				aiMesh* mesh = s_Scene->mMeshes[_node->mMeshes[i]];
-				DataBlock::UnprocessedGeometry static_data = GetSingleMesh(mesh, _package.Textures);
+				DataBlock::UnprocessedGeometry static_data = GetSingleMesh(mesh);
 				DataBlock::UnprocessedDynamicGeometry geom = CollectSingleMeshBone(mesh, static_data, _package);
 				geom_group_temp.push_back(geom);
 			}
@@ -119,7 +119,7 @@ namespace OE1Core
 			}
 		}
 		
-		DataBlock::UnprocessedGeometry CoreGeometryLoader::GetSingleMesh(aiMesh* _mesh_node, std::unordered_map<std::string, TexturePkg>& _textures_buffer)
+		DataBlock::UnprocessedGeometry CoreGeometryLoader::GetSingleMesh(aiMesh* _mesh_node)
 		{
 
 			// Progress 
@@ -184,7 +184,7 @@ namespace OE1Core
 
 			// Get Material Reference
 			aiMaterial* crt_mesh_material = s_Scene->mMaterials[_mesh_node->mMaterialIndex];
-			unprocessed_geom.Texture = GetTextureSet(crt_mesh_material, _textures_buffer);
+			unprocessed_geom.Texture = GetTextureSet(crt_mesh_material);
 
 			/*************************************************************************/
 
@@ -198,6 +198,9 @@ namespace OE1Core
 		DataBlock::UnprocessedDynamicGeometry CoreGeometryLoader::CollectSingleMeshBone(aiMesh* _mesh, DataBlock::UnprocessedGeometry& _static_geom, LoadPackage& _package)
 		{
 			DataBlock::UnprocessedDynamicGeometry unprocessed_geom;
+
+
+			unprocessed_geom.Name = _static_geom.Name;
 
 			unprocessed_geom.Indices = _static_geom.Indices;
 			unprocessed_geom.Texture = _static_geom.Texture;
@@ -266,18 +269,18 @@ namespace OE1Core
 			return unprocessed_geom;
 		}
 		
-		TextureSet CoreGeometryLoader::GetTextureSet(aiMaterial* _material, std::unordered_map<std::string, TexturePkg>& _textures_buffer)
+		TextureSet CoreGeometryLoader::GetTextureSet(aiMaterial* _material)
 		{
 			TextureSet texture_set;
 
-			RegisterSingleTexture(texture_set, DataBlock::TextureType::DIFFUSE, aiTextureType_DIFFUSE, _material, _textures_buffer);
-			RegisterSingleTexture(texture_set, DataBlock::TextureType::NORMAL, aiTextureType_NORMALS, _material, _textures_buffer);
-			RegisterSingleTexture(texture_set, DataBlock::TextureType::OPACITY, aiTextureType_OPACITY, _material, _textures_buffer);
-			RegisterSingleTexture(texture_set, DataBlock::TextureType::ROUGHNESS, aiTextureType_SHININESS, _material, _textures_buffer);
-			RegisterSingleTexture(texture_set, DataBlock::TextureType::METAL_ROUGHNESS, aiTextureType_UNKNOWN, _material, _textures_buffer);
-			RegisterSingleTexture(texture_set, DataBlock::TextureType::METAL, aiTextureType_METALNESS, _material, _textures_buffer);
-			RegisterSingleTexture(texture_set, DataBlock::TextureType::EMISSIVE, aiTextureType_EMISSIVE, _material, _textures_buffer);
-			RegisterSingleTexture(texture_set, DataBlock::TextureType::AO, aiTextureType_AMBIENT_OCCLUSION, _material, _textures_buffer);
+			RegisterSingleTexture(texture_set, DataBlock::TextureType::DIFFUSE, aiTextureType_DIFFUSE, _material);
+			RegisterSingleTexture(texture_set, DataBlock::TextureType::NORMAL, aiTextureType_NORMALS, _material);
+			RegisterSingleTexture(texture_set, DataBlock::TextureType::OPACITY, aiTextureType_OPACITY, _material);
+			RegisterSingleTexture(texture_set, DataBlock::TextureType::ROUGHNESS, aiTextureType_SHININESS, _material);
+			RegisterSingleTexture(texture_set, DataBlock::TextureType::METAL_ROUGHNESS, aiTextureType_UNKNOWN, _material);
+			RegisterSingleTexture(texture_set, DataBlock::TextureType::METAL, aiTextureType_METALNESS, _material);
+			RegisterSingleTexture(texture_set, DataBlock::TextureType::EMISSIVE, aiTextureType_EMISSIVE, _material);
+			RegisterSingleTexture(texture_set, DataBlock::TextureType::AO, aiTextureType_AMBIENT_OCCLUSION, _material);
 
 			return texture_set;
 		}
@@ -286,8 +289,7 @@ namespace OE1Core
 			TextureSet& _texture_set, 
 			DataBlock::TextureType _oe_texture_type, 
 			aiTextureType _ai_texture_type, 
-			aiMaterial* _material,
-			std::unordered_map<std::string, TexturePkg>& _textures_buffer)
+			aiMaterial* _material)
 		{
 			int texture_count = _material->GetTextureCount(_ai_texture_type);
 			std::string n = _material->GetName().C_Str();
@@ -299,19 +301,20 @@ namespace OE1Core
 
 				std::string TextureName = GetTextureName(texture_path.C_Str());
 
-				// Now check if the texture is loaded already 
-				if (!IsTextureAlreadyLoaded(TextureName))
-				{
-					TexturePkg pkg;
-					pkg.TexData = ReadTextureData(TextureName);
-					pkg.TexType = _oe_texture_type;
 
-					_textures_buffer.insert(std::make_pair(TextureName, pkg));
+				TexturePkg pkg;
+				pkg.TexData = ReadTextureData(TextureName);
+				pkg.TexData.Name = TextureName;
+				pkg.TexType = _oe_texture_type;
+				pkg.TexData.Seed = Loader::IVLoadedAsset::CreateTextureSeed(pkg.TexData);
 
-					SignTexture(TextureName, _oe_texture_type);
-				}
+				if (Loader::IVLoadedAsset::IsTextueLoaded(pkg.TexData))
+					Loader::IVLoadedAsset::IncreaseTextureRefCount(TextureName);
+				else
+					TextureName = Loader::IVLoadedAsset::RegisterTexture(TextureName, pkg);
 
-				// We register this regardless
+
+				// Mark it
 				_texture_set.insert(std::make_pair(TextureName, _oe_texture_type));
 			}
 		}

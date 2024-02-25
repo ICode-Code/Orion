@@ -83,10 +83,12 @@ namespace OE1Core
 					std::unordered_map<DataBlock::TextureType, std::string> _texture_access;
 					for (auto iter = commandX.Textuers.begin(); iter != commandX.Textuers.end(); iter++)
 					{
-						Texture* _texture =  AssetManager::RegisterTexture(iter->second);
+						
+						Texture* _texture =  AssetManager::RegisterTexture(*Loader::IVLoadedAsset::GetTextureData(iter->second));
+						Loader::IVLoadedAsset::DecreaseTextureRefCount(iter->second);
 						if (!_texture)
 						{
-							LOG_ERROR("Error Processing texture " + iter->second.Name);
+							LOG_ERROR("Error Processing texture " + iter->second);
 							continue;
 						}
 						_texture_access.insert(std::make_pair(iter->first, _texture->GetName()));
@@ -115,7 +117,7 @@ namespace OE1Core
 						}
 					}
 
-					if (!same_material_found)
+					if (!same_material_found) 
 					{
 						// Identify material type based on available textures
 						MaterialType MATERIAL_TYPE = commandX.AvialTextures.GetMaterialType();
@@ -182,6 +184,9 @@ namespace OE1Core
 					// Since the material is ready we can have model preview 
 					if (Command::s_MaterialCreationCommands.empty())
 					{
+						// Sync
+						Loader::IVLoadedAsset::FreeUnusedTexture();
+
 						Command::LockCommand<CommandDef::ModelPreviewRenderCommandDef>(Command::s_ModelPreviewRenderCommands);
 						Loader::CoreGeometryLoader::PROGRESS_INFO = "Creating Preview....";
 					}

@@ -12,7 +12,7 @@ namespace OE1Core
 			if (_package.IsStaticMesh && _package.HasValidData)
 				Loader::IVLoadedAsset::s_StaticMeshAsset.push(_package);
 			else if (!_package.IsStaticMesh && _package.HasValidData)
-				Loader::IVLoadedAsset::s_StaticMeshAsset.push(_package);
+				Loader::IVLoadedAsset::s_SkinnedMeshAsset.push(_package);
 			else
 			{
 				CoreGeometryLoader::PROGRESS_INFO = "Failed to import asset! " + _args.SourcePath;

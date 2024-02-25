@@ -152,7 +152,7 @@ namespace OE1Core
 			MaterialTextureCount TextureCount;
 			MaterialTextureAvailFlags TextureFlag;
 			AvailTexture AvialTextures;
-			std::unordered_map<DataBlock::TextureType, DataBlock::Image2D> Textuers;
+			std::unordered_map<DataBlock::TextureType, std::string> Textuers;
 			std::string MaterialName;
 			uint32_t TargetMeshID;
 			uint32_t LocalSubMeshID;

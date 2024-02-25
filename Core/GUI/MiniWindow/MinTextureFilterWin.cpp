@@ -31,6 +31,42 @@ namespace OE1Core
 		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
 		ImGui::InputText("##filterTextureName", s_TextureNameFilterInputBuffer, IM_ARRAYSIZE(s_TextureNameFilterInputBuffer), flags);
 		ImGui::PopItemWidth();
+
+		ImGui::PushItemWidth(200);
+		
+		
+		if (Loader::IVLoadedAsset::s_TotalRegistedTexture != Loader::IVLoadedAsset::s_TotalRelaesedTexture)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, { 1.0f, 1.0f, 0.2f, 1.0f });
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 0.0f });
+
+			ImGui::TextWrapped(ICON_FA_TRIANGLE_EXCLAMATION"\tScanned Texture [%i] - Freed Texture [%i]\n", Loader::IVLoadedAsset::s_TotalRegistedTexture, Loader::IVLoadedAsset::s_TotalRelaesedTexture);
+			
+
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.2f, 0.2f, 0.2f, 1.0f });
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.3f, 0.5f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0 });
+
+			ImGui::SameLine();
+			if (ImGui::Button(ICON_FA_ARROWS_ROTATE, { 20, 15 }))
+				Loader::IVLoadedAsset::FreeUnusedTexture();
+
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor(4);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("Attention required! Just Click here! If it is in loading process ...[DON'T FUCKING TOUCH THIS]");
+			}
+
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
+
+		}
+
+		ImGui::PopItemWidth();
+		
 		ImGui::Separator();
 
 

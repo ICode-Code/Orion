@@ -22,24 +22,24 @@ namespace OE1Core
 		~AssetParser() = default;
 		
 		// This function need to be called with the thread with active OpenGL context
-		static std::vector<std::string> ParseStaticGeometry(Loader::MeshSet& _mesh_set, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer);
+		static std::vector<std::string> ParseStaticGeometry(Loader::MeshSet& _mesh_set);
 		// This function need to be called with the thread with active OpenGL context
-		static std::vector<std::string> ParseDynamicGeometry(Loader::DynamicMeshSet& _mesh_set, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer);
+		static std::vector<std::string> ParseDynamicGeometry(Loader::DynamicMeshSet& _mesh_set);
 
 
 	protected:
 		static void ReadModelInfo(IVModel& model_package);
 		static void ReadTextureData(DataBlock::Image2D& _image, int _layer, std::string _mat_name);
 		static void Texture2DFilter();
-		static void CreateMaterial(Loader::TextureSet& _textures, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, std::string _name, uint32_t _local_id, uint32_t _pkg_id);
+		static void CreateMaterial(Loader::TextureSet& _textures, std::string _name, uint32_t _local_id, uint32_t _pkg_id);
 		
 		
 		static void StaticMeshBufferIntilization(CoreRenderableMeshPackage& _core_mesh);
 		static void SkinnedMeshBufferIntilization(CoreRenderableMeshPackage& _core_mesh);
 		
 		
-		static CoreRenderableMeshPackage ProcessGeometry(DataBlock::UnprocessedGeometry& _unprocessed_geometry, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, uint32_t _package_id, uint32_t _local_id, bool _load_mat = true);
-		static CoreRenderableMeshPackage ProcessGeometry(DataBlock::UnprocessedDynamicGeometry& _unprocessed_geometry, std::unordered_map<std::string, Loader::TexturePkg>& _texture_buffer, uint32_t _package_id, uint32_t _local_id, bool _load_mat = true);
+		static CoreRenderableMeshPackage ProcessGeometry(DataBlock::UnprocessedGeometry& _unprocessed_geometry, uint32_t _package_id, uint32_t _local_id, bool _load_mat = true);
+		static CoreRenderableMeshPackage ProcessGeometry(DataBlock::UnprocessedDynamicGeometry& _unprocessed_geometry, uint32_t _package_id, uint32_t _local_id, bool _load_mat = true);
 		
 		
 		
@@ -51,6 +51,11 @@ namespace OE1Core
 	private:
 		inline static uint32_t s_ASSET_ID = 0;
 		inline static AvailTexture s_AvialTextures;
+
+
+	private: // Util
+		inline static std::unordered_map<std::string, DataBlock::TextureType> s_MappedTexture;
+		static bool IsTextureAlreadyMapped(std::string _name);
 	};
 }
 

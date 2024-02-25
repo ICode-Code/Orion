@@ -106,136 +106,7 @@ namespace OE1Core
 		}
 		void CommandContextOperationExeHandler::ProcessMaterialCreationCommand()
 		{
-			// Get the initial count of material creation commands
-			const size_t command_count = Command::s_MaterialCreationCommands.size();
-			size_t visited_commands = 0;
-
-			// Process material creation commands until the queue is empty
-			while (!Command::s_MaterialCreationCommands.empty())
-			{
-				// Increment the visited commands count
-				visited_commands++;
-
-				// Retrieve the next material creation command
-				auto& commandX = Command::s_MaterialCreationCommands.front();
-
-				// Skip commands that are not ready
-				if (!commandX.Lock)
-				{
-					// If all commands have been visited and none are ready, exit the loop
-					if (visited_commands >= command_count)
-						break;
-					continue;
-				}
-
-				// Query the target mesh
-				IVModel* TARGET_MESH = AssetManager::GetGeometry(commandX.TargetMeshID);
-
-				if (TARGET_MESH)
-				{
-					bool same_material_found = false;
-
-						// Check if a material with the same texture exists
-						if (commandX.TextureFlag.HasColor)
-						{
-							MasterMaterial* _same_Master_material = nullptr;
-							Texture* query_texture = AssetManager::GetTexture(commandX.Textuers[DataBlock::TextureType::DIFFUSE].Name);
-							if (query_texture)
-							{
-								auto& associate_material_offset = query_texture->AssociateMaterialOffset();
-								for (size_t i = 0; i < associate_material_offset.size(); i++)
-								{
-									_same_Master_material = MaterialManager::GetMaterial(associate_material_offset[i]);
-									if (_same_Master_material)
-										break;
-								}
-
-								if (_same_Master_material)
-								{
-									same_material_found = true;
-									AssignMaterial(TARGET_MESH, _same_Master_material, commandX.LocalSubMeshID);
-								}
-							}
-						}
-
-						if (!same_material_found)
-						{
-							// Identify material type based on available textures
-							MaterialType MATERIAL_TYPE = commandX.AvialTextures.GetMaterialType();
-
-							// Prepare shaders based on the material type
-							std::string VERTEX_SHADER = ShaderGenerator::GetStandardVertexShader();
-							std::string VERTEX_SHADER_PROXY = ShaderGenerator::GetStandardProxyVertexShader();
-							std::string FRAGMENT_SHADER = ShaderGenerator::GetForwardPixelShader(commandX.AvialTextures);
-
-							// Create Master Material
-							MasterMaterial* MASTER_MATERIAL = MaterialManager::RegisterMaterial(
-								commandX.MaterialName, new Shader(VERTEX_SHADER.c_str(), FRAGMENT_SHADER.c_str(), VERTEX_SHADER_PROXY.c_str())
-							);
-
-							// Assign textures to the material and update it
-							if (MATERIAL_TYPE == MaterialType::DEFAULT)
-							{
-								MASTER_MATERIAL->Update();
-								AssignMaterial(TARGET_MESH, MASTER_MATERIAL, commandX.LocalSubMeshID);
-							}
-							else
-							{
-								// Register and assign textures based on flags
-								if (commandX.TextureFlag.HasColor)
-									MASTER_MATERIAL->RegisterAlbedoMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::DIFFUSE]));
-								if (commandX.TextureFlag.HasNormal)
-									MASTER_MATERIAL->RegisterNormalMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::NORMAL]));
-								if (commandX.TextureFlag.HasMetalRoughness)
-									MASTER_MATERIAL->RegisterMetalRoughnessMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::METAL_ROUGHNESS]));
-								else
-								{
-									if (commandX.TextureFlag.HasRoughness)
-										MASTER_MATERIAL->RegisterRoughnessMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::ROUGHNESS]));
-									if (commandX.TextureFlag.HasMetal)
-										MASTER_MATERIAL->RegisterMetalMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::METAL]));
-								}
-								if (commandX.TextureFlag.HasAO)
-									MASTER_MATERIAL->RegisterAOMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::AO]));
-								if (commandX.TextureFlag.HasEmission)
-									MASTER_MATERIAL->RegisterEmissionMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::EMISSIVE]));
-								if (commandX.TextureFlag.HasAlpha)
-									MASTER_MATERIAL->RegisterAlphaMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::OPACITY]));
-
-								// Update the material and assign it to the mesh
-								MASTER_MATERIAL->Update();
-								AssignMaterial(TARGET_MESH, MASTER_MATERIAL, commandX.LocalSubMeshID);
-
-							}
-
-							// Push material snapshot command
-							CommandDef::MaterialSnapShotCommandDefs _command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
-							_command.Material = MASTER_MATERIAL;
-							_command.Lock = true;
-							_command.Name = MASTER_MATERIAL->GetName();
-							_command.Offset = MASTER_MATERIAL->GetOffset();
-							Command::PushMaterialSnapshotCommand(_command);
-
-							Loader::CoreGeometryLoader::PROGRESS_INFO = "Creating Material ... " + _command.Name;
-						}
-
-					// Remove the processed command from the queue
-					Command::s_MaterialCreationCommands.pop();
-
-					// Since the material is ready we can have model preview 
-					if (Command::s_MaterialCreationCommands.empty())
-					{
-						Command::LockCommand<CommandDef::ModelPreviewRenderCommandDef>(Command::s_ModelPreviewRenderCommands);
-						Loader::CoreGeometryLoader::PROGRESS_INFO = "Creating Preview....";
-					}
-				}
-				else
-				{
-					Command::s_ThreadInfoLayerNotifyCallback(false);
-					LOG_ERROR(LogLayer::Pipe("The Queryed Mesh Returned NULL! Which isn't suppost to happen! Material creation command ignored!", OELog::CRITICAL));
-					Command::s_MaterialCreationCommands.pop();
-				}
-			}
+			
 		}
 		void CommandContextOperationExeHandler::ProcessMasterMaterialUpdateCommand()
 		{
@@ -436,7 +307,7 @@ namespace OE1Core
 				auto& AssetPackage = Loader::IVLoadedAsset::s_StaticMeshAsset.front();
 
 				// Parse geometry data and get registered packages
-				std::vector<std::string> registered_packages = AssetParser::ParseStaticGeometry(AssetPackage.StaticMeshSet, AssetPackage.Textures);
+				std::vector<std::string> registered_packages = AssetParser::ParseStaticGeometry(AssetPackage.StaticMeshSet);
 
 				// Retrieve load arguments for the current asset package
 				Loader::LoadArgs& load_args = AssetPackage.LoadArg;
@@ -494,7 +365,7 @@ namespace OE1Core
 				auto& AssetPackage = Loader::IVLoadedAsset::s_SkinnedMeshAsset.front();
 
 				// Parse geometry data and get registered packages
-				std::vector<std::string> registered_packages = AssetParser::ParseDynamicGeometry(AssetPackage.SkinnedMeshSet, AssetPackage.Textures);
+				std::vector<std::string> registered_packages = AssetParser::ParseDynamicGeometry(AssetPackage.SkinnedMeshSet);
 
 				// Retrieve load arguments for the current asset package
 				Loader::LoadArgs& load_args = AssetPackage.LoadArg;

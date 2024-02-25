@@ -32,7 +32,6 @@ namespace OE1Core
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		stbi_image_free(_image_raw.Data);
 	}
 	Texture::Texture(DataBlock::ImageHDRI _image_raw_hdri)
 	{

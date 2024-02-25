@@ -9,7 +9,6 @@ namespace OE1Core
 	class Texture
 	{
 	public:
-		// This constructo call stbi_image_free(...)
 		// so don't even sweat bro
 		Texture(DataBlock::Image2D _image_raw, bool _correct_gamma = false);
 		// This constructo call stbi_image_free(...)
