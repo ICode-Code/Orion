@@ -48,6 +48,7 @@ namespace OE1Core
 		static std::unordered_map<std::string, Texture*>& GetTextureRegistry();
 		static std::unordered_map<std::string, Texture*>& GetTextureInternalRegistry();
 
+		static std::string CreateTextureSeed(DataBlock::Image2D& _image);
 		
 
 
@@ -66,6 +67,7 @@ namespace OE1Core
 	private: // Util function
 		static bool NameExistStaticGeo(std::string _name);
 		static bool NameExist(std::string _name);
+		static bool CheckTextureNameExist(std::string _name);
 	};
 }
 

@@ -78,11 +78,25 @@ namespace OE1Core
 				{
 					bool same_material_found = false;
 
+
+					// Process Texture
+					std::unordered_map<DataBlock::TextureType, std::string> _texture_access;
+					for (auto iter = commandX.Textuers.begin(); iter != commandX.Textuers.end(); iter++)
+					{
+						Texture* _texture =  AssetManager::RegisterTexture(iter->second);
+						if (!_texture)
+						{
+							LOG_ERROR("Error Processing texture " + iter->second.Name);
+							continue;
+						}
+						_texture_access.insert(std::make_pair(iter->first, _texture->GetName()));
+					}
+
 					// Check if a material with the same texture exists
 					if (commandX.TextureFlag.HasColor)
 					{
 						MasterMaterial* _same_Master_material = nullptr;
-						Texture* query_texture = AssetManager::GetTexture(commandX.Textuers[DataBlock::TextureType::DIFFUSE].Name);
+						Texture* query_texture = AssetManager::GetTexture(_texture_access[DataBlock::TextureType::DIFFUSE]);
 						if (query_texture)
 						{
 							auto& associate_material_offset = query_texture->AssociateMaterialOffset();
@@ -126,24 +140,24 @@ namespace OE1Core
 						{
 							// Register and assign textures based on flags
 							if (commandX.TextureFlag.HasColor)
-								MASTER_MATERIAL->RegisterAlbedoMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::DIFFUSE]));
+								MASTER_MATERIAL->RegisterAlbedoMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::DIFFUSE]));
 							if (commandX.TextureFlag.HasNormal)
-								MASTER_MATERIAL->RegisterNormalMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::NORMAL]));
+								MASTER_MATERIAL->RegisterNormalMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::NORMAL]));
 							if (commandX.TextureFlag.HasMetalRoughness)
-								MASTER_MATERIAL->RegisterMetalRoughnessMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::METAL_ROUGHNESS]));
+								MASTER_MATERIAL->RegisterMetalRoughnessMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::METAL_ROUGHNESS]));
 							else
 							{
 								if (commandX.TextureFlag.HasRoughness)
-									MASTER_MATERIAL->RegisterRoughnessMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::ROUGHNESS]));
+									MASTER_MATERIAL->RegisterRoughnessMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::ROUGHNESS]));
 								if (commandX.TextureFlag.HasMetal)
-									MASTER_MATERIAL->RegisterMetalMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::METAL]));
+									MASTER_MATERIAL->RegisterMetalMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::METAL]));
 							}
 							if (commandX.TextureFlag.HasAO)
-								MASTER_MATERIAL->RegisterAOMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::AO]));
+								MASTER_MATERIAL->RegisterAOMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::AO]));
 							if (commandX.TextureFlag.HasEmission)
-								MASTER_MATERIAL->RegisterEmissionMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::EMISSIVE]));
+								MASTER_MATERIAL->RegisterEmissionMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::EMISSIVE]));
 							if (commandX.TextureFlag.HasAlpha)
-								MASTER_MATERIAL->RegisterAlphaMap(AssetManager::RegisterTexture(commandX.Textuers[DataBlock::TextureType::OPACITY]));
+								MASTER_MATERIAL->RegisterAlphaMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::OPACITY]));
 
 							// Update the material and assign it to the mesh
 							MASTER_MATERIAL->Update();

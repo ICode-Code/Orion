@@ -25,32 +25,40 @@ namespace OE1Core
 	Texture* AssetManager::RegisterTexture(std::string _path, std::string _name)
 	{
 		DataBlock::Image2D image_raw = Loader::TextureLoader::OELoadImage(_path);
-		if (!image_raw.Valid)
-			return s_TextureRegistry[_name];
-		// make sure this image or at least another image with the same name
-		bool name_exist = (s_TextureRegistry.find(_name) != s_TextureRegistry.end());
-		if (name_exist)
-		{
-			LOG_WARRNING(LogLayer::Pipe("Image with the same detected! [" + _name + "]. Returing the original...", OELog::WARNING));
-			return s_TextureRegistry[_name]; // Just ignore it for now
-		}
 
-		s_TextureRegistry.insert(std::make_pair(_name, new Texture(image_raw)));
-
-		return s_TextureRegistry[_name];
+		return RegisterTexture(image_raw);
 	}
 	Texture* AssetManager::RegisterTexture(DataBlock::Image2D& _image)
 	{
 		// make sure this image or at least another image with the same name
-		std::string _name = _image.Name;
+		std::string _name = _image.Name; 
+
+		std::string _texture_seed = AssetManager::CreateTextureSeed(_image).c_str();
+
+		if (!_image.Valid)
+			return nullptr;
+		// make sure this image or at least another image with the same name
 		bool name_exist = (s_TextureRegistry.find(_name) != s_TextureRegistry.end());
 		if (name_exist)
 		{
-			return s_TextureRegistry[_name]; // Just ignore it for now
+			// Check seed
+			if (s_TextureRegistry[_name]->GetSeed() == _texture_seed)
+			{
+				LOG_WARRNING(LogLayer::Pipe("Image with the same detected! [" + _name + "]. Returing the original...", OELog::WARNING));
+				return s_TextureRegistry[_name];
+			}
 		}
+		// if it reach here the new image is truly new
+		// Handle name 
+		std::string new_name = Util::UtilFunc::CheckNameCollision(_name, AssetManager::CheckTextureNameExist);
 
-		s_TextureRegistry.insert(std::make_pair(_name, new Texture(_image)));
-		return s_TextureRegistry[_name];
+		_image.Name = new_name;
+		s_TextureRegistry.insert(std::make_pair(new_name, new Texture(_image)));
+
+		// Set Seed
+		s_TextureRegistry[new_name]->SetSeed(_texture_seed);
+
+		return s_TextureRegistry[new_name];
 	}
 	void AssetManager::RegisterInternalTexture(std::string _path, std::string _name)
 	{
@@ -163,8 +171,62 @@ namespace OE1Core
 
 		return false;
 	}
+	bool AssetManager::CheckTextureNameExist(std::string _name)
+	{
+		for (auto iter = s_TextureRegistry.begin(); iter != s_TextureRegistry.end(); iter++)
+			if (iter->first == _name)
+				return true;
+
+		return false;
+	}
 	bool AssetManager::NameExist(std::string _name)
 	{
 		return NameExistStaticGeo(_name);
+	}
+	std::string AssetManager::CreateTextureSeed(DataBlock::Image2D& _image)
+	{
+		std::string _seed;
+		// Define the number of samples per diagonal
+		const int numSamples = 10;
+
+		// Calculate the step size for sampling along each diagonal
+		float stepX = static_cast<float>(_image.Width) / numSamples;
+		float stepY = static_cast<float>(_image.Height) / numSamples;
+
+		// Sample pixels along the diagonal from top-left to bottom-right
+		for (int i = 0; i < numSamples; ++i) {
+			int x = static_cast<int>(i * stepX);
+			int y = static_cast<int>(i * stepY);
+
+			// Calculate the index of the pixel
+			int index = (y * _image.Width + x) * _image.Channel;
+
+			// Read pixel values at the calculated index
+			unsigned char* p = _image.Data + index;
+
+			for (int c = 0; c < _image.Channel; ++c) {
+				_seed.append(std::to_string(static_cast<unsigned int>(p[c])));
+			}
+
+			// Process the sampled pixel values here
+		}
+		_seed.append("<-X->");
+		// Sample pixels along the diagonal from top-right to bottom-left
+		for (int i = 0; i < numSamples; ++i) {
+			int x = static_cast<int>(_image.Width - 1 - (i * stepX));
+			int y = static_cast<int>(i * stepY);
+
+			// Calculate the index of the pixel
+			int index = (y * _image.Width + x) * _image.Channel;
+
+			// Read pixel values at the calculated index
+			unsigned char* p = _image.Data + index;
+
+			for (int c = 0; c < _image.Channel; ++c) {
+				_seed.append(std::to_string(static_cast<unsigned int>(p[c])));
+			}
+		}
+
+		return _seed;
 	}
 }

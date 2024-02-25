@@ -5,6 +5,8 @@ namespace OE1Core
 {
 	Texture::Texture(DataBlock::Image2D _image_raw, bool _correct_gamma)
 	{
+
+
 		m_Width	 = _image_raw.Width;
 		m_Height = _image_raw.Height;
 		m_Name = _image_raw.Name;
@@ -75,6 +77,15 @@ namespace OE1Core
 	std::string Texture::GetName() const
 	{
 		return m_Name;
+	}
+	std::string Texture::GetSeed() const
+	{
+		return m_Seed;
+	}
+	std::string Texture::SetSeed(std::string _seed)
+	{
+		m_Seed = _seed;
+		return m_Seed;
 	}
 	int Texture::GetWidth() const
 	{

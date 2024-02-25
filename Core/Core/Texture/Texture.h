@@ -19,6 +19,8 @@ namespace OE1Core
 
 		GLuint GetTexture() const;
 		std::string GetName() const;
+		std::string GetSeed() const;
+		std::string SetSeed(std::string _seed);
 		int GetWidth() const;
 		int GetHeight() const;
 		float GetSizeMB() const;
@@ -29,6 +31,8 @@ namespace OE1Core
 		std::vector<uint32_t>& AssociateMaterialOffset();
 
 	protected:
+		// Texture Uniquenes
+		std::string m_Seed;
 		GLuint m_Texture;
 		int m_Width;
 		int m_Height;
