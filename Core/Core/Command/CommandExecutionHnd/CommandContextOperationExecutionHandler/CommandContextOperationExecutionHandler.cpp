@@ -257,7 +257,7 @@ namespace OE1Core
 					continue;
 				}
 
-				//Renderer::IVModelPreviewRenderer::Render(*commandX.Model);
+				Renderer::IVModelPreviewRenderer::Render(*commandX.Model);
 
 				Command::s_DynamicMeshModelPreviewRenderCommands.pop();
 

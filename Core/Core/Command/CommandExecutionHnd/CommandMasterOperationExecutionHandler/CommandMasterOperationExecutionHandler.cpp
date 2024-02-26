@@ -188,6 +188,7 @@ namespace OE1Core
 						Loader::IVLoadedAsset::FreeUnusedTexture();
 
 						Command::LockCommand<CommandDef::ModelPreviewRenderCommandDef>(Command::s_ModelPreviewRenderCommands);
+						Command::LockCommand<CommandDef::DynamicMeshModelPreviewRenderCommandDef>(Command::s_DynamicMeshModelPreviewRenderCommands);
 						Loader::CoreGeometryLoader::PROGRESS_INFO = "Creating Preview....";
 					}
 				}
