@@ -72,9 +72,13 @@ namespace OE1Core
 		{
 			ImGui::Indent(s_TreeIndent);
 
-			CustomFrame::UIEditorCheckbox("Has Animation", &s_LoadArgs.HasAnimation);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 6, 1 });
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 15, 5 });
+
+			CustomFrame::UIEditorCheckbox("Load Animation", &s_LoadArgs.HasAnimation);
 			CustomFrame::UIEditorCheckbox("Load Material", &s_LoadArgs.CreateMaterial);
 			CustomFrame::UIEditorCheckbox("Create Directory", &s_CreateSeparateFolder);
+
 
 			if (s_CreateSeparateFolder)
 			{
@@ -85,6 +89,7 @@ namespace OE1Core
 
 			CustomFrame::UIEditorCheckbox("Generate LOD", &s_LoadArgs.GenerateDynamicLOD);
 			
+			ImGui::PopStyleVar(2);
 
 			ImGui::Indent(-s_TreeIndent);
 			ImGui::TreePop();

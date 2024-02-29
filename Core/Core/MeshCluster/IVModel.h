@@ -13,6 +13,8 @@ namespace OE1Core
 		std::string Name;
 
 		uint32_t PackageID;
+
+		uint32_t DataIdx;
 		
 		glm::vec3 Extent;
 		

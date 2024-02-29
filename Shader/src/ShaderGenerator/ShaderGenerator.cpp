@@ -69,6 +69,94 @@ void main()
 
 		return std::exchange(s_Source, "");
 	}
+	std::string ShaderGenerator::GetStandardSkinnedMeshVertexShader()
+	{
+		s_Source.clear();
+
+		s_Source += R"(
+#version 400 core
+
+layout (location = 0) in vec3 i_Position;
+layout (location = 1) in vec3 i_Color;
+layout (location = 2) in vec3 i_Normal;
+layout (location = 3) in vec2 i_TexCoord;
+layout (location = 4) in vec3 i_Tangent;
+layout (location = 5) in vec3 i_Bitangent;
+layout (location = 6) in ivec4 i_BoneIndex;
+layout (location = 7) in vec4  i_BoneWeight;
+layout (location = 8) in mat4 i_InstanceMatrices;
+layout (location = 12) in int i_RenderID;
+layout (location = 13) in int i_MaterialID;
+layout (location = 14) in int i_AnimationID;
+layout (location = 15) in int i_BoneCount;
+
+
+///////////////////////////////////////////////// STANDARD VERTEX SHADER OUTPUT //////////////////////////
+
+out vec2		TexCoord;
+out vec4		FragPosition;
+out vec3		VertNormal;
+out vec3        VertColor;
+out vec3		Tangent;
+out vec3		BiTangent;
+flat out int	MaterialIndex;
+flat out int	RenderID;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////// SCENE TRANSFORM /////////////////////////////////////
+
+#include <../ExternalAsset/Shaders/Header/UniformBlock/scene_transform_uniform_block.h>
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <../ExternalAsset/Shaders/Header/UniformBlock/animation_data_uniform_block.h>
+
+
+///// Entry
+
+void main() 
+{
+	// Compute position
+	vec4 accumulated_position = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	vec3 accumulated_normal = vec3(0.0f, 0.0f, 0.0f);
+
+	for(int i = 0; i < MAX_BONE_WEIGHT; i++) 
+	{
+		if(i_BoneIndex[i] == -1)
+			continue;
+
+		vec4 local_pos = Offset[i_BoneIndex[i]] * vec4(i_Position, 1.0f);
+		accumulated_position += local_pos * i_BoneWeight[i];
+
+	
+		vec3 local_normal = mat3(Offset[i_BoneIndex[i]]) * i_Normal;
+		accumulated_normal += local_normal * i_BoneWeight[i];
+	}
+
+	///////////////////////////////////////// VERETX  FRAGMENT //////////////////////////
+
+			MaterialIndex   = i_MaterialID;
+			RenderID		= i_RenderID;
+			TexCoord		= i_TexCoord;
+			FragPosition	= i_InstanceMatrices * vec4(accumulated_position.xyz, 1.0f);
+			Tangent			= i_Tangent;
+			BiTangent		= i_Bitangent;
+			VertNormal		= mat3(transpose(inverse(i_InstanceMatrices))) * accumulated_normal;
+			VertNormal		= normalize(VertNormal);  
+			VertColor 		= i_Color;
+
+	////////////////////////////////////////////////////////////////////////////////////////
+	
+			gl_Position = SceneCameraTransformBuffer[ActiveCameraIndex].PV * FragPosition;
+
+}
+        )";
+
+
+		return std::exchange(s_Source, "");
+	}
 	std::string ShaderGenerator::GetStandardProxyVertexShader()
 	{
 		s_Source.clear();

@@ -12,6 +12,7 @@
 #include "InspectorComponent/InspectorComponent.h"
 #include "ViewportBillboardComponent/ViewportBillboardComponent.h"
 #include "CameraPackageComponent/CameraPackageComponent.h"
+#include "AnimationComponent/AnimationComponent.h"
 
 #endif // !OE1_ICOMPONENT_H_
  

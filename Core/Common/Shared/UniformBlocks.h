@@ -31,6 +31,17 @@ namespace OE1Core
 		/// ///////////////////////////////////////////////////////////////////
 
 
+		/// //////////////////////////// Animation-Offsets //////////////////////
+
+		struct AnimationOffset
+		{
+			glm::mat4 Offsets;
+		};
+		inline static constexpr size_t s_AnimationOffsetBufferSize = sizeof(AnimationOffset);
+
+		/// ///////////////////////////////////////////////////////////////////
+
+
 
 		/// //////////////////////////////////// Infinte Grid Param /////////////
 		struct InfiniteGrid
@@ -74,7 +85,8 @@ namespace OE1Core
 			ENVIRONMENT_VARIABLES,
 			POINT_LIGHT_REGISTRY,
 			DIRECTIONAL_LIGHT_REGISTRY,
-			LIGHT_UTILITY
+			LIGHT_UTILITY,
+			ANIMATION_REGISTRY
 		};
 
 		/// ///////////////////////////////////////////////////////////////////////////

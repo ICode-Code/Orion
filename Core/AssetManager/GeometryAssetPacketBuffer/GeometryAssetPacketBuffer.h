@@ -2,6 +2,7 @@
 #define OE1_GEOMETRY_BUFFER_H_
 
 
+#include "Animation/Animation.h"
 #include "GeometryAssetPacket.h"
 #include <unordered_map>
 
@@ -13,7 +14,7 @@ namespace OE1Core
 		{
 		public:
 			GeometryAssetPacketBuffer() = delete;
-			~GeometryAssetPacketBuffer() = delete;
+			~GeometryAssetPacketBuffer();
 
 
 			static uint32_t RegisterStaticMeshGeometry(std::vector<DataBlock::Vertex>& _vert, std::vector<uint32_t>& _indices);
@@ -26,13 +27,27 @@ namespace OE1Core
 			static int GetNumberOfSkinnedMeshGeometry();
 			static int GetNumberOfRegistedMeshGeometry();
 
+
+			static uint32_t RegisterSkinnedIVModelCustomData(std::map<std::string, DataBlock::BoneInfo>& _bones, Animation* _animation);
+			static GeometryPacket::IVModelSkinnedModelData* GetSkinnedIVModelCustomData(uint32_t _id);
 		private:
 			inline static std::unordered_map<uint32_t, GeometryPacket::STATIC_MESH> s_StaticMeshGeometryData;
 			inline static std::unordered_map<uint32_t, GeometryPacket::SKINNED_MESH> s_SkinnedMeshGeometryData;
 			
+
 			inline static uint32_t s_GeometryCounter = 0;
 			inline static uint32_t s_StaticMeshGeometryCounter = 0;
 			inline static uint32_t s_SkinnedMeshGeometryCounter = 0;
+
+			// IVModel Custom Data
+			inline static std::unordered_map<uint32_t, GeometryPacket::IVModelSkinnedModelData> s_SkinnedIVModelData;
+			inline static std::unordered_map<uint32_t, GeometryPacket::IVModelStaticModelData> s_StaticIVModelData;
+
+			inline static uint32_t s_IVModelCustomDataCounter = 0;
+			inline static uint32_t s_IVModelSkinnedModelCustomDataCounter = 0;
+			inline static uint32_t s_IVModelStaticModelCustomDataCounter = 0;
+
+		
 		};
 	}
 }

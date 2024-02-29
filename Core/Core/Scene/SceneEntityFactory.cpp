@@ -94,8 +94,9 @@ namespace OE1Core
 
 		if (crt_dynamic_mesh)
 		{
-			uint32_t mem_offset = RegisterInstance(crt_dynamic_mesh, my_entity);
+			uint32_t mem_offset = crt_dynamic_mesh->AddInstance(&my_entity);// RegisterInstance(crt_dynamic_mesh, my_entity);
 			CreateRichSkinnedMeshComponent(_model_pkg, mem_offset, my_entity);
+			CreateAnimationComponent(crt_dynamic_mesh, mem_offset, my_entity);
 		}
 
 		return my_entity;
@@ -237,6 +238,14 @@ namespace OE1Core
 			material_offsets
 		);
 		_entity.GetComponent<Component::InspectorComponent>().SetSkinnedMeshComponent(&_entity.GetComponent<Component::SkinnedMeshComponent>());
+	}
+	void SceneEntityFactory::CreateAnimationComponent(DynamicMesh* _dynamic_mesh, uint32_t _offset, Entity& _entity)
+	{
+		_entity.AddComponent<Component::AnimationComponent>(
+			_dynamic_mesh->m_Animation,
+			_offset,
+			Memory::UniformBlockManager::GetBuffer(Memory::UniformBufferID::ANIMATION_REGISTRY)->Buffer);
+		_entity.GetComponent<Component::InspectorComponent>().SetAnimationComponent(&_entity.GetComponent<Component::AnimationComponent>());
 	}
 
 	std::string SceneEntityFactory::CheckNameCollision(std::string _name)

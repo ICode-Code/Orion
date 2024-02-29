@@ -444,6 +444,9 @@ namespace OE1Core
 		glEnableVertexAttribArray(14);
 		glVertexAttribIPointer(14, 1, GL_INT, sizeof(DynamicMeshInstancePkg), (void*)offsetof(DynamicMeshInstancePkg, DynamicMeshInstancePkg::AnimationID));
 
+		glEnableVertexAttribArray(15);
+		glVertexAttribIPointer(15, 1, GL_INT, sizeof(DynamicMeshInstancePkg), (void*)offsetof(DynamicMeshInstancePkg, DynamicMeshInstancePkg::BoneCount));
+
 
 		glVertexAttribDivisor(8, 1); //
 		glVertexAttribDivisor(9, 1); // Instance Materix
@@ -453,7 +456,7 @@ namespace OE1Core
 		glVertexAttribDivisor(12, 1); // Render ID
 		glVertexAttribDivisor(13, 1); // Material ID
 		glVertexAttribDivisor(14, 1); // Animation ID
-
+		glVertexAttribDivisor(15, 1); // Bone Count
 
 		glBindVertexArray(0);
 	}

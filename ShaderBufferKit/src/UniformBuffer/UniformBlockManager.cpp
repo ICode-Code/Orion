@@ -34,6 +34,7 @@ namespace OE1Core
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::SCENE_TRANSFORM,		Memory::UniformBuffer("SceneCameraTransform")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::MATERIAL_REGISTRY,		Memory::UniformBuffer("MaterialProperties")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::TAI_REGISTRY,			Memory::UniformBuffer("TextureAccessIndex")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::ANIMATION_REGISTRY,		Memory::UniformBuffer("AnimationBuffer")));
 		}
 		void UniformBlockManager::LinkUniformBuffers()
 		{
@@ -42,6 +43,8 @@ namespace OE1Core
 
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::MATERIAL_REGISTRY],	Memory::s_MaterialPropertiesBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::TAI_REGISTRY],		Memory::s_TextureAccessIndexBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);
+
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::ANIMATION_REGISTRY],		Memory::s_TextureAccessIndexBufferSize, ORI_MAX_ANIMATION_PER_UNIFORM_BLOCK);
 		}
 
 		GLuint UniformBlockManager::GetNextBlockBindingPoint() { return s_CurrentBlockBindingPoint++; };

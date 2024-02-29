@@ -11,7 +11,7 @@ namespace OE1Core
 		struct LoadArgs
 		{
 			friend class Asset3DLoaderWin;
-			bool HasAnimation = false;
+			bool HasAnimation = true;
 			// load all texture in a way that makes sense
 			bool CreateMaterial = true;
 			bool GenerateDynamicLOD = false;
@@ -22,7 +22,7 @@ namespace OE1Core
 		private:
 			void Reset()
 			{
-				HasAnimation = false;
+				HasAnimation = true;
 				CreateMaterial = true;
 				GenerateDynamicLOD = false;
 				DestinationPath = "";

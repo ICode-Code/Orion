@@ -105,7 +105,9 @@ namespace OE1Core
 		{
 			CommandHnd::ExeHandleManager::ProcessLowFrequencyCommands();
 
-			std::this_thread::sleep_for(2s);
+
+			SceneManager::GetActiveScene()->UpdateAnimationTransform();
+			//std::this_thread::sleep_for(2s);
 			
 		}
 

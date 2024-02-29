@@ -83,6 +83,9 @@ namespace OE1Core
 		/// </summary>
 		void ResetScene();
 
+		void UpdateAnimationComponents();
+		void UpdateAnimationTransform();
+
 
 		// Scene Renderer stuff
 		SceneCameraManager* GetCameraManager() const;
@@ -111,6 +114,7 @@ namespace OE1Core
 		class ActiveEntity* m_SceneActiveSelection;
 		RenderMode m_RenderMode;
 		Ray* m_SceneRay = nullptr;
+		float m_LastDelta = 0.0f;
 
 	private:
 		void HotComponentUpdate();

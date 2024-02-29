@@ -28,6 +28,7 @@ namespace OE1Core
 		int RenderID = -1;
 		int MaterialID = -1;
 		int AnimationID = -1;
+		int BoneCount = 0;
 
 	};
 

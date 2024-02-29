@@ -2,6 +2,7 @@
 #define OE1_INSPECTOR_COMPONENT_H_
 
 #include <Gui.h>
+#include "Animation/Animation.h"
 #include "../../GUI/CustomFrame/CustomFrame.h"
 #include "../../AssetManager/AssetManager.h"
 
@@ -23,6 +24,7 @@ namespace OE1Core
 			void SetCameraControllerComponent(class BaseCameraControllerComponent* _camera_controller);
 			void SetCameraComponent(class CameraComponent* _camera_component);
 			void SetSkinnedMeshComponent(class SkinnedMeshComponent* _skinned_mesh_component);
+			void SetAnimationComponent(class AnimationComponent* _animation_component);
 		protected: // components
 			class TagComponent* m_TagComponent = nullptr;
 			class TransformComponent* m_TransformComponent = nullptr;
@@ -31,6 +33,7 @@ namespace OE1Core
 			class CameraComponent* m_CameraComponent = nullptr;
 			class CameraPackageComponent* m_CameraPackageComponent = nullptr;
 			class SkinnedMeshComponent* m_SkinnedMeshComponent = nullptr;
+			class AnimationComponent* m_AnimationComponent = nullptr;
 
 		protected: // flag
 			ImGuiTreeNodeFlags m_TreeNodeFlags = ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding;
@@ -43,6 +46,11 @@ namespace OE1Core
 			void ICamera();
 			void ICameraPackage();
 			void ISkinnedMesh();
+			void IAnimationComponent();
+
+		private: // bool
+			void IVModelInspect(IVModel* _model);
+			void IterateBone(struct AnimNode* _node);
 
 		};
 	}

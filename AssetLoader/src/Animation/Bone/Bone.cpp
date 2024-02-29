@@ -5,6 +5,10 @@ namespace OE1Core
 {
 	Bone::Bone(std::string _name, int _id, KeyFrameChannel& _channel)
 	{
+		m_Name = _name;
+		m_ID = _id;
+		m_LocalTransform = glm::mat4(1.0f);
+
 		m_Positions		= _channel.Positions;		m_PositionCount = _channel.Positions.size();
 		m_Rotations		= _channel.Rotations;		m_RotationCount = _channel.Rotations.size();
 		m_Scales		= _channel.Scales;			m_ScaleCount	= _channel.Scales.size();

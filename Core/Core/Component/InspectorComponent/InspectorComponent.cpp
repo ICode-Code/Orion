@@ -28,6 +28,7 @@ namespace OE1Core
 			ICamera();
 			IMesh();
 			ISkinnedMesh();
+			IAnimationComponent();
 			ICameraPackage();
 
 
@@ -41,7 +42,7 @@ namespace OE1Core
 		void InspectorComponent::SetCameraControllerComponent(class BaseCameraControllerComponent* _camera_controller) { m_BaseCameraControllerComponent = _camera_controller; }
 		void InspectorComponent::SetCameraComponent(class CameraComponent* _camera_component) { m_CameraComponent = _camera_component; }
 		void InspectorComponent::SetSkinnedMeshComponent(class SkinnedMeshComponent* _skinned_mesh_component) { m_SkinnedMeshComponent = _skinned_mesh_component;  };
-
+		void InspectorComponent::SetAnimationComponent(class AnimationComponent* _animation_component) { m_AnimationComponent = _animation_component; }
 
 		void InspectorComponent::ITag()
 		{
@@ -88,84 +89,7 @@ namespace OE1Core
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 4 });
 				IVModel* package = AssetManager::GetGeometry(m_MeshComponent->GetPackageID());
 
-
-
-				for (size_t i = 0; i < package->SubMeshs.size(); i++)
-				{
-					ImGui::Indent(16.0f);
-					if (ImGui::TreeNodeEx(package->SubMeshs[i].Material->GetName().c_str(), m_TreeNodeFlags + ImGuiTreeNodeFlags_DefaultOpen))
-					{
-						MasterMaterial* ActiveMat = package->SubMeshs[i].Material;
-						
-						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.10f, 0.10f, 0.10f, 1.0f });
-						ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 1 });
-						ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
-						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 10.0f, 10.0f });
-
-						if (CustomFrame::UIEditorImageButton("Orion Material", (ImTextureID)(uintptr_t)ActiveMat->GetPreviewRef(), { 60, 60 }))
-						{
-							if (MaterialManager::GetMaterialView().size() < ORI_MATERIAL_WINDOW_ALLOCATION_THRESHOLD)
-							{
-								MaterialManager::RegisterMaterialView(MaterialManager::GetMaterial(package->SubMeshs[i].MaterialID));
-							}
-							else
-							{
-								LOG_ERROR("Unable to open a new material window. Please close any existing material windows, as the allocation threshold has reached maximum capacity.");
-							}
-						}
-						ImGui::PopStyleVar(3);
-						ImGui::PopStyleColor();
-
-						if (ImGui::BeginDragDropTarget())
-						{
-
-							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ORI_MATERIAL_PACKAGE_PAYLOAD))
-							{
-								
-							}
-
-							ImGui::EndDragDropTarget();
-						}
-						
-						ImGui::BeginDisabled();
-						bool has_color_map = package->SubMeshs[i].Material->HasColorMap();
-						bool has_non_color_map = package->SubMeshs[i].Material->HasNonColorMap();
-						
-						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 2, 2 });
-
-						CustomFrame::UIEditorCheckbox("Has Color Map", &has_color_map);
-						CustomFrame::UIEditorCheckbox("Has Non-Color Map", &has_non_color_map);
-
-						ImGui::PopStyleVar();
-
-						ImGui::EndDisabled();
-
-						ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.0f });
-						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.0f, 0.0f, 0.0f, 0.0f });
-
-						
-
-						ImGui::PopStyleColor(2);
-
-						ImGui::TreePop();
-					}
-					ImGui::Indent(-16.0f);
-				}
-
-
-				CustomFrame::UIEditorTextValue("Name", package->Name.c_str());
-				CustomFrame::UIEditorTextValue("Unique Instance ID", std::to_string(m_MeshComponent->m_UniqueInstanceID).c_str());
-				CustomFrame::UIEditorTextValue("Buffer Offset", std::to_string(m_MeshComponent->m_Offset).c_str());
-				CustomFrame::UIEditorTextValue("package ID", std::to_string(package->PackageID).c_str());
-				CustomFrame::UIEditorTextValue("Indice Count", std::to_string(package->TotalIndicesCount).c_str());
-				CustomFrame::UIEditorTextValue("SubMesh Count", std::to_string(package->SubMeshCount).c_str());
-				CustomFrame::UIEditorTextValue("Triangle Count", std::to_string(package->TotalTriangleCount).c_str());
-				CustomFrame::UIEditorTextValue("Vertex Count", std::to_string(package->TotalVertexCount).c_str());
-				CustomFrame::UIEditorTextValue("Material Count", std::to_string(package->SubMeshCount).c_str());
-			
-
-				CustomFrame::UIEditorImage("Preview", (ImTextureID)(uintptr_t)package->Preview, { 100, 100 });
-
+				IVModelInspect(package);
 
 				ImGui::PopStyleVar();
 
@@ -178,9 +102,54 @@ namespace OE1Core
 			if (!m_SkinnedMeshComponent)
 				return;
 
-			if (ImGui::TreeNodeEx("Skinned Mesh", m_TreeNodeFlags))
+			if (ImGui::TreeNodeEx("Skinned Mesh Component", m_TreeNodeFlags | ImGuiTreeNodeFlags_DefaultOpen))
 			{
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 4 });
+				IVModel* package = AssetManager::GetGeometry(m_SkinnedMeshComponent->GetPackageID());
 
+				IVModelInspect(package);
+
+				ImGui::PopStyleVar();
+
+				ImGui::TreePop();
+			}
+		}
+		void InspectorComponent::IAnimationComponent()
+		{
+			if (!m_AnimationComponent)
+				return;
+
+			if (ImGui::TreeNodeEx("Animation Component", m_TreeNodeFlags))
+			{
+				ImGui::Indent(16.0f);
+				
+				CustomFrame::UIEditorTextValue("Name", m_AnimationComponent->m_Animation->m_Name.c_str());
+				CustomFrame::UIEditorTextValue("Duration",std::to_string(m_AnimationComponent->m_Animation->GetDuration()).c_str());
+				CustomFrame::UIEditorTextValue("Ticks/Sec",std::to_string(m_AnimationComponent->m_Animation->GetTicksPerSecond()).c_str());
+				CustomFrame::UIEditorTextValue("Bone Count",std::to_string(m_AnimationComponent->m_Animation->GetBoneCount()).c_str());
+
+				ImGui::Separator();
+
+				ImGui::Indent(8.0f);
+
+				IterateBone(&m_AnimationComponent->m_Animation->GetRootNode());
+				
+				ImGui::Indent(-8.0f);
+
+				ImGui::Separator();
+
+				if (ImGui::TreeNodeEx("Bone Set", m_TreeNodeFlags))
+				{
+					for (size_t i = 0; i < m_AnimationComponent->m_Animation->m_Bones.size(); i++)
+					{
+						CustomFrame::UIEditorLabel(m_AnimationComponent->m_Animation->m_Bones[i].m_Name.c_str());
+					}
+
+					ImGui::TreePop();
+				}
+				
+
+				ImGui::Indent(-16.0f);
 
 				ImGui::TreePop();
 			}
@@ -207,6 +176,107 @@ namespace OE1Core
 		{
 			if (!m_CameraComponent)
 				return;
+		}
+
+		void InspectorComponent::IVModelInspect(IVModel* package)
+		{
+			for (size_t i = 0; i < package->SubMeshs.size(); i++)
+			{
+				ImGui::Indent(16.0f);
+				if (ImGui::TreeNodeEx(package->SubMeshs[i].Material->GetName().c_str(), m_TreeNodeFlags + ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					MasterMaterial* ActiveMat = package->SubMeshs[i].Material;
+
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.10f, 0.10f, 0.10f, 1.0f });
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 1 });
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 10.0f, 10.0f });
+
+					if (CustomFrame::UIEditorImageButton("Orion Material", (ImTextureID)(uintptr_t)ActiveMat->GetPreviewRef(), { 60, 60 }))
+					{
+						if (MaterialManager::GetMaterialView().size() < ORI_MATERIAL_WINDOW_ALLOCATION_THRESHOLD)
+						{
+							MaterialManager::RegisterMaterialView(MaterialManager::GetMaterial(package->SubMeshs[i].MaterialID));
+						}
+						else
+						{
+							LOG_ERROR("Unable to open a new material window. Please close any existing material windows, as the allocation threshold has reached maximum capacity.");
+						}
+					}
+					ImGui::PopStyleVar(3);
+					ImGui::PopStyleColor();
+
+					if (ImGui::BeginDragDropTarget())
+					{
+
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ORI_MATERIAL_PACKAGE_PAYLOAD))
+						{
+
+						}
+
+						ImGui::EndDragDropTarget();
+					}
+
+					ImGui::BeginDisabled();
+					bool has_color_map = package->SubMeshs[i].Material->HasColorMap();
+					bool has_non_color_map = package->SubMeshs[i].Material->HasNonColorMap();
+
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 2, 2 });
+
+					CustomFrame::UIEditorCheckbox("Has Color Map", &has_color_map);
+					CustomFrame::UIEditorCheckbox("Has Non-Color Map", &has_non_color_map);
+
+					ImGui::PopStyleVar();
+
+					ImGui::EndDisabled();
+
+					ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.0f });
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.0f, 0.0f, 0.0f, 0.0f });
+
+
+
+					ImGui::PopStyleColor(2);
+
+					ImGui::TreePop();
+				}
+
+				
+				ImGui::Indent(-16.0f);
+			}
+
+			CustomFrame::UIEditorTextValue("Name", package->Name.c_str());
+			//CustomFrame::UIEditorTextValue("Unique Instance ID", std::to_string(m_MeshComponent->m_UniqueInstanceID).c_str());
+			//CustomFrame::UIEditorTextValue("Buffer Offset", std::to_string(m_MeshComponent->m_Offset).c_str());
+			CustomFrame::UIEditorTextValue("package ID", std::to_string(package->PackageID).c_str());
+			CustomFrame::UIEditorTextValue("Indice Count", std::to_string(package->TotalIndicesCount).c_str());
+			CustomFrame::UIEditorTextValue("SubMesh Count", std::to_string(package->SubMeshCount).c_str());
+			CustomFrame::UIEditorTextValue("Triangle Count", std::to_string(package->TotalTriangleCount).c_str());
+			CustomFrame::UIEditorTextValue("Vertex Count", std::to_string(package->TotalVertexCount).c_str());
+			CustomFrame::UIEditorTextValue("Material Count", std::to_string(package->SubMeshCount).c_str());
+
+
+			CustomFrame::UIEditorImage("Preview", (ImTextureID)(uintptr_t)package->Preview, { 100, 100 });
+
+
+		}
+
+		void InspectorComponent::IterateBone(struct AnimNode* _node)
+		{
+			ImGuiTreeNodeFlags flag_mod = (_node->ChildCount == 0 ? ImGuiTreeNodeFlags_Bullet : 0) | ImGuiTreeNodeFlags_Framed;
+			
+			bool is_node_open = ImGui::TreeNodeEx(_node->Name.c_str(), flag_mod, _node->Name.c_str());
+			
+			if (is_node_open)
+			{
+				ImGui::Indent(8.0f);
+
+				for (size_t i = 0; i < _node->ChildCount; i++)
+					IterateBone(&_node->Children[i]);
+
+				ImGui::Indent(-8.0f);
+
+				ImGui::TreePop();
+			}
 		}
 	}
 }

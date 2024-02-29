@@ -1,8 +1,11 @@
 #include "CommandContextOperationExecutionHandler.h"
 #include "LogUI.h"
 
+
 #include "../GUI/Viewport/DynamicViewportManager/DynamicViewportManager.h"
 #include "../Core/InfiniteVision/Renderers/2DTextureArrayExtractQuadRenderer/IV2DTextureArrayExtractQuadRenderer.h"
+
+#include "AnimationLoader/AnimationLoader.h"
 
 namespace OE1Core
 {
@@ -381,6 +384,10 @@ namespace OE1Core
 
 					// Retrieve model data from asset manager
 					IVModel* model = AssetManager::GetGeometry(registered_packages[i]);
+
+					model->DataIdx = GeometryPacket::GeometryAssetPacketBuffer::RegisterSkinnedIVModelCustomData(
+						AssetPackage.BoneInfoMap,
+						Loader::AnimationLoader::LoadAnimation(load_args.SourcePath, AssetPackage.BoneInfoMap));
 
 					// Write metadata to the file
 					WriteBinary(file_macro, "-- ORION ENGINE ASSET -- \n\n\n");

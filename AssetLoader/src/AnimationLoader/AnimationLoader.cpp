@@ -19,6 +19,9 @@ namespace OE1Core
 
 			ParseAnimation(_scene->mAnimations[0], animation_data, _bone_info_map, _scene);
 
+			animation_data->SetBoneCount((int)animation_data->GetBoneMap().size());
+
+			animation_data->UpdateBoneTransformBuffer((size_t)animation_data->GetBoneCount());
 
 			return animation_data;
 		}
@@ -26,6 +29,7 @@ namespace OE1Core
 
 		void AnimationLoader::ParseAnimation(aiAnimation* _src, Animation* _dest, DataBlock::BoneMap& _bone_map, const aiScene* _scene)
 		{
+			_dest->SetName(_src->mName.C_Str());
 			_dest->m_Duration = (float)_src->mDuration;
 			_dest->m_TickPerSecond = (float)_src->mTicksPerSecond;
 

@@ -123,7 +123,12 @@ namespace OE1Core
 						MaterialType MATERIAL_TYPE = commandX.AvialTextures.GetMaterialType();
 
 						// Prepare shaders based on the material type
-						std::string VERTEX_SHADER = ShaderGenerator::GetStandardVertexShader();
+						std::string VERTEX_SHADER;
+						if(TARGET_MESH->Type == CoreMeshDescriptor::CoreMeshType::DYNAMIC)
+							VERTEX_SHADER = ShaderGenerator::GetStandardSkinnedMeshVertexShader();
+						else 
+							VERTEX_SHADER = ShaderGenerator::GetStandardVertexShader();
+
 						std::string VERTEX_SHADER_PROXY = ShaderGenerator::GetStandardProxyVertexShader();
 						std::string FRAGMENT_SHADER = ShaderGenerator::GetForwardPixelShader(commandX.AvialTextures);
 

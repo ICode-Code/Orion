@@ -6,8 +6,10 @@
 
 namespace OE1Core
 {
+	namespace Component { class InspectorComponent; }
 	class Bone
 	{
+		friend class Component::InspectorComponent;
 	public:
 		Bone(std::string name, int ID, KeyFrameChannel& _channels);
 		~Bone();

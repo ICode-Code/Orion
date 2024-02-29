@@ -35,6 +35,12 @@ namespace OE1Core
 		static void AddRigidbodyComponent(Entity& _entity);
 		static void AddProjectileComponent(Entity& _entity);
 
+		// This dude create Mesh component in simple word will tie the static mesh and mesh component
+		static void CreateRichMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity);
+		static void CreateRichSkinnedMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity);
+		static void CreateAnimationComponent(DynamicMesh* _dynamic_mesh, uint32_t _offset, Entity& _entity);
+
+
 
 		// Operation
 		// return cloned entity
@@ -51,10 +57,7 @@ namespace OE1Core
 		// This function will register new instance and return the offset in buffer
 		static uint32_t RegisterInstance(StaticMesh* _mesh, Entity& _entity);
 		static uint32_t RegisterInstance(DynamicMesh* _mesh, Entity& _entity);
-		// This dude create Mesh component in simple word will tie the static mesh and mesh component
-		static void CreateRichMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity);
-		static void CreateRichSkinnedMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity);
-
+		
 
 	protected: // Util
 		static bool NameExist(std::string _name);

@@ -6,7 +6,8 @@ namespace OE1Core
 	DynamicMesh::DynamicMesh(IVModel* _model)
 		: CoreMesh { _model }
 	{
-
+		auto _data = GeometryPacket::GeometryAssetPacketBuffer::GetSkinnedIVModelCustomData(_model->DataIdx);
+		m_Animation = _data->Animation;
 	}
 	DynamicMesh::~DynamicMesh()
 	{
@@ -54,6 +55,15 @@ namespace OE1Core
 			my_mesh.Update();
 		}
 		UpdateInstanceDrawCount(MeshUtil::ICounter::DECREMENT);
+	}
+
+	uint32_t DynamicMesh::GetAnimationBuffer()
+	{
+		return m_AnimationBuffer;
+	}
+	uint32_t DynamicMesh::GetAnimationBuffer() const
+	{
+		return m_AnimationBuffer;
 	}
 
 }

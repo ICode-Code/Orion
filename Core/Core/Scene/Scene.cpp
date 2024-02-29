@@ -48,43 +48,13 @@ namespace OE1Core
 		delete m_CameraManager;
 	}
 
-	bool Scene::PurgeStaticMesh(uint32_t _package_id)
-	{
-		if (m_StaticMeshRegistry.find(_package_id) != m_StaticMeshRegistry.end())
-		{
-			m_MyRenderer->PurgeFromRenderStack(m_StaticMeshRegistry[_package_id]);
-			m_StaticMeshRegistry.erase(_package_id);
-			return true;
-		}
-
-		return false;
-	}
-
-	bool  Scene::PurgeDynamicMesh(uint32_t _package_id)
-	{
-		return false;
-	}
-	DynamicMesh* Scene::QueryDynamicMesh(uint32_t _package_id)
-	{
-		if (!HasDynamicMesh(_package_id))
-		{
-			LOG_ERROR("Failed to query DYNAMIC mesh, registry not found, Package ID: {0}", _package_id);
-			return nullptr;
-		}
-
-		return m_DynamicMeshRegistry[_package_id];
-	}
-	DynamicMesh* Scene::RegisterDynamicMesh(IVModel* _model_pkg)
-	{
-		return nullptr;
-	}
-
 	Entity Scene::CreateEntity()
 	{
 		Entity my_entity(m_EntityRegistry.create(), this);
 		my_entity.AddComponent<Component::InspectorComponent>();
 		return my_entity;
 	}
+	
 	Entity Scene::GetEntity(entt::entity _id)
 	{
 		if (!m_EntityRegistry.valid(_id))
@@ -94,6 +64,7 @@ namespace OE1Core
 		}
 		return Entity(_id, this);
 	}
+	
 	Entity Scene::GetEntity(uint32_t _id, bool _suppress_warning)
 	{
 		if (!m_EntityRegistry.valid((entt::entity)_id))
@@ -104,17 +75,21 @@ namespace OE1Core
 		}
 		return Entity((entt::entity)_id, this);
 	}
+	
 	void Scene::Update(int _width, int _height)
 	{
 		m_MyRenderer->Update(_width, _height);
 		m_MasterCamera->Update(_width, _height);
 		
 	}
+	
 	void Scene::Update(float dt)
 	{
+		m_LastDelta = dt;
 		UpdateAllSceneCameraTransforms(dt);
 		HotComponentUpdate();
 	}
+	
 	void Scene::HotComponentUpdate()
 	{
 		auto BillboatdCompView = m_EntityRegistry.view<Component::ViewportBillboardComponent>();
@@ -126,7 +101,11 @@ namespace OE1Core
 			// Update the billboard
 			billboard.Update(transform, m_MasterCamera->GetCamera()->m_View);
 		}
+
+		UpdateAnimationComponents();
+
 	}
+	
 	void Scene::UpdateAllSceneCameraTransforms(float _dt)
 	{
 		auto& CameraColl = m_CameraManager->GetCameraList();
@@ -141,6 +120,7 @@ namespace OE1Core
 					Memory::s_SceneTransformBufferSize, cam->second.Offset * Memory::s_SceneTransformBufferSize, &cam->second.Camera->GetSceneTransform());
 		}
 	}
+	
 	void Scene::ResetPhysics()
 	{
 
@@ -149,13 +129,66 @@ namespace OE1Core
 	{
 		return (m_StaticMeshRegistry.find(_package_id) != m_StaticMeshRegistry.end());
 	}
+	
 	bool Scene::HasDynamicMesh(uint32_t _package_id)
 	{
 		return (m_DynamicMeshRegistry.find(_package_id) != m_DynamicMeshRegistry.end());
 	}
 
+	bool Scene::PurgeStaticMesh(uint32_t _package_id)
+	{
+		if (m_StaticMeshRegistry.find(_package_id) != m_StaticMeshRegistry.end())
+		{
+			m_MyRenderer->PurgeFromRenderStack(m_StaticMeshRegistry[_package_id]);
+			m_StaticMeshRegistry.erase(_package_id);
+			return true;
+		}
 
+		return false;
+	}
+
+	bool  Scene::PurgeDynamicMesh(uint32_t _package_id)
+	{
+		if (m_DynamicMeshRegistry.find(_package_id) != m_DynamicMeshRegistry.end())
+		{
+			m_MyRenderer->PurgeFromRenderStack(m_DynamicMeshRegistry[_package_id]);
+			m_DynamicMeshRegistry.erase(_package_id);
+			return true;
+		}
+
+		return false;
+	}
+	
+	DynamicMesh* Scene::QueryDynamicMesh(uint32_t _package_id)
+	{
+		if (!HasDynamicMesh(_package_id))
+		{
+			LOG_ERROR("Failed to query DYNAMIC mesh, registry not found, Package ID: {0}", _package_id);
+			return nullptr;
+		}
+
+		return m_DynamicMeshRegistry[_package_id];
+	}
+	
+	DynamicMesh* Scene::RegisterDynamicMesh(IVModel* _model_pkg)
+	{
+		if (HasDynamicMesh(_model_pkg->PackageID))
+		{
+			LOG_ERROR("Skinned Mesh already exist! failed to register model package: {0}", _model_pkg->Name);
+			return nullptr;
+		}
+
+		m_DynamicMeshRegistry.insert(std::make_pair(_model_pkg->PackageID, new DynamicMesh(_model_pkg)));
+
+		m_MyRenderer->PushToRenderStack(m_DynamicMeshRegistry[_model_pkg->PackageID]);
+
+		return m_DynamicMeshRegistry[_model_pkg->PackageID];
+	}
+
+	
+	
 	ActiveEntity* Scene::GetActiveEntity() { return m_SceneActiveSelection; }
+	
 	StaticMesh* Scene::RegisterStaticMesh(IVModel* _model_pkg)
 	{
 		if (HasStaticMesh(_model_pkg->PackageID))
@@ -170,6 +203,7 @@ namespace OE1Core
 
 		return m_StaticMeshRegistry[_model_pkg->PackageID];
 	}
+	
 	ViewportBillboardIcon* Scene::GetBillboardIcon(ViewportIconBillboardType _type)
 	{
 		if (m_SceneBillboardIcon.find(_type) == m_SceneBillboardIcon.end())
@@ -177,10 +211,12 @@ namespace OE1Core
 
 		return m_SceneBillboardIcon[_type];
 	}
+	
 	bool Scene::HasBillboardType(ViewportIconBillboardType _type)
 	{
 		return m_SceneBillboardIcon.find(_type) != m_SceneBillboardIcon.end();
 	}
+	
 	void Scene::RegisterBillboardIcon(ViewportIconBillboardType _type, std::string _texture_name)
 	{
 		if (m_SceneBillboardIcon.find(_type) != m_SceneBillboardIcon.end())
@@ -188,6 +224,7 @@ namespace OE1Core
 
 		m_SceneBillboardIcon.insert(std::make_pair(_type, new ViewportBillboardIcon(AssetManager::GetInternalTexture(_texture_name))));
 	}
+	
 	bool Scene::PurgeBillboardIcon(ViewportIconBillboardType _type)
 	{
 		if (!HasBillboardType(_type))
@@ -196,10 +233,12 @@ namespace OE1Core
 		m_SceneBillboardIcon.erase(_type);
 		return true;
 	}
+	
 	RenderMode& Scene::GetRenderMode()
 	{
 		return m_RenderMode;
 	}
+	
 	StaticMesh* Scene::QueryStaticMesh(uint32_t _package_id)
 	{
 		if (!HasStaticMesh(_package_id))
@@ -210,6 +249,7 @@ namespace OE1Core
 
 		return m_StaticMeshRegistry[_package_id];
 	}
+	
 	void Scene::OnEvent(OECore::IEvent& e)
 	{
 		auto& CameraColl = m_CameraManager->GetCameraList();
@@ -219,19 +259,40 @@ namespace OE1Core
 				cam->second.Camera->OnEvent(e);
 		}
 	}
+	
 	Ray* Scene::GetRay() { return m_SceneRay; }
+	
 	void Scene::ResetScene()
 	{
 		ResetPhysics();
+	}
+	void Scene::UpdateAnimationComponents()
+	{
+		auto animation_com_view = m_EntityRegistry.view<Component::AnimationComponent>();
+		
+		for (auto ent : animation_com_view)
+		{
+			Component::AnimationComponent& Animation = animation_com_view.get<Component::AnimationComponent>(ent);
+	
+			// Update the Animation Buffer
+			Animation.UpdateBuffer();
+		}
+	}
+	void Scene::UpdateAnimationTransform()
+	{
+		for (auto iter = m_DynamicMeshRegistry.begin(); iter != m_DynamicMeshRegistry.end(); iter++)
+			iter->second->m_Animation->UpdateTransform(m_LastDelta);
 	}
 	SceneCameraManager* Scene::GetCameraManager() const
 	{
 		return m_CameraManager;
 	}
+	
 	void Scene::Render()
 	{
 		m_MyRenderer->MasterPass(m_CameraManager->GetCameraList());
 	}
+	
 	Renderer::IVMasterRenderer* Scene::GetRenderer()
 	{
 		return m_MyRenderer;

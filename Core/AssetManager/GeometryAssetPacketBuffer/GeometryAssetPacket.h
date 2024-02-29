@@ -22,6 +22,16 @@ namespace OE1Core
 			std::vector<uint32_t> Indices;
 			uint32_t Nth_Wave;
 		};
+
+		struct IVModelSkinnedModelData
+		{
+			std::map<std::string, DataBlock::BoneInfo> BoneInfoMap;
+			class Animation* Animation;
+		};
+		struct IVModelStaticModelData
+		{
+			int SomeData;
+		};
 	}
 }
 
