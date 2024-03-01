@@ -175,6 +175,17 @@ namespace OE1Core
 
 			IVModel* Model = nullptr;
 		};
+
+		struct AnimationLoadCommandDef : public CommandBase
+		{
+			AnimationLoadCommandDef(std::string _file, int _line, std::string _func)
+				: CommandBase(_file, _line, _func)
+			{}
+			
+			std::string Path;
+			DataBlock::BoneMap bone_map;
+			uint32_t PackageID;
+		};
 	}
 }
 

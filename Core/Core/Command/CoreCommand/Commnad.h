@@ -52,6 +52,7 @@ namespace OE1Core
 		static void PushEntitySelectionCommand(CommandDef::EntitySelectionCommandDef _command);
 		static void PushMaterialTextureUpdateCommand(CommandDef::MaterialtextureUpdateCommandDef _command);
 		static void PushMasterRendererMaterialRefresh(CommandDef::MasterRendererMaterialRefreshCommandDef _command);
+		static void PushAnimationLoadCommand(CommandDef::AnimationLoadCommandDef _command);
 		/// <summary>
 		/// This Command processed at the end
 		/// </summary>
@@ -70,6 +71,7 @@ namespace OE1Core
 		inline static std::queue<CommandDef::MaterialSnapShotCommandDefs> s_MaterialSnapshotCommands;
 		inline static std::queue<CommandDef::ModelPreviewRenderCommandDef> s_ModelPreviewRenderCommands;
 		inline static std::queue<CommandDef::DynamicMeshModelPreviewRenderCommandDef> s_DynamicMeshModelPreviewRenderCommands;
+		inline static std::queue<CommandDef::AnimationLoadCommandDef> s_AnimationLoadCommands;
 	private: // callbacks
 		inline static ContentBrowserLayerNotifyCallback s_ContentBrowserLayerNotifyCallback;
 		inline static ThreadInfoLayerNotifyCallback s_ThreadInfoLayerNotifyCallback;

@@ -37,7 +37,9 @@ namespace OE1Core
 			ProcessMaterialTextureExtractionForPReviewCommand();
 
 			ProcessParseLoadedAssetCommand();
+
 			ProcessParseLoadedDynamicMeshCommand();
+			ProcessAnimationLoadCommand();
 
 			ProcessMaterialPreviewRenderCommand();
 
@@ -384,10 +386,11 @@ namespace OE1Core
 
 					// Retrieve model data from asset manager
 					IVModel* model = AssetManager::GetGeometry(registered_packages[i]);
-
+					auto animations = Loader::AnimationLoader::LoadAnimation(load_args.SourcePath, AssetPackage.BoneInfoMap);
+					AssetManager::RegisterAnimation(animations);
 					model->DataIdx = GeometryPacket::GeometryAssetPacketBuffer::RegisterSkinnedIVModelCustomData(
 						AssetPackage.BoneInfoMap,
-						Loader::AnimationLoader::LoadAnimation(load_args.SourcePath, AssetPackage.BoneInfoMap));
+						animations);
 
 					// Write metadata to the file
 					WriteBinary(file_macro, "-- ORION ENGINE ASSET -- \n\n\n");
@@ -419,6 +422,26 @@ namespace OE1Core
 				// If all mesh sets are processed, lock material creation commands
 				if (Loader::IVLoadedAsset::s_SkinnedMeshAsset.empty())
 					Command::LockCommand<CommandDef::MaterialCreationCommandDef>(Command::s_MaterialCreationCommands);
+			}
+		}
+		void CommandContextOperationExeHandler::ProcessAnimationLoadCommand()
+		{
+			while (!Command::s_AnimationLoadCommands.empty())
+			{
+				auto& commandX = Command::s_AnimationLoadCommands.front();
+
+				IVModel* model = AssetManager::GetGeometry(commandX.PackageID);
+				auto _data = GeometryPacket::GeometryAssetPacketBuffer::GetSkinnedIVModelCustomData(model->DataIdx);
+				
+				auto animations = Loader::AnimationLoader::LoadAnimation(commandX.Path, _data->BoneInfoMap);
+				
+				AssetManager::RegisterAnimation(animations);
+
+				GeometryPacket::GeometryAssetPacketBuffer::UpdateSkinnedIVModelCustomData(model->DataIdx, _data->BoneInfoMap, animations);
+
+				m_Scene->QueryDynamicMesh(commandX.PackageID)->UpdateData(GeometryPacket::GeometryAssetPacketBuffer::GetSkinnedIVModelCustomData(model->DataIdx));
+
+				Command::s_AnimationLoadCommands.pop();
 			}
 		}
 		void CommandContextOperationExeHandler::ProcessOnViewportClickReadbackCommand()

@@ -21,6 +21,10 @@ namespace OE1Core
 		for (auto iter : s_TextureInternalRegistry)
 			delete iter.second;
 		s_TextureInternalRegistry.clear();
+		
+		for (auto iter : s_AnimationRegistry)
+			delete iter.second;
+		s_AnimationRegistry.clear();
 	}
 	Texture* AssetManager::RegisterTexture(std::string _path, std::string _name)
 	{
@@ -193,6 +197,54 @@ namespace OE1Core
 	bool AssetManager::NameExist(std::string _name)
 	{
 		return NameExistStaticGeo(_name);
+	}
+
+
+	Animation* AssetManager::GetAnimation(std::string _name)
+	{
+		if (s_AnimationRegistry.find(_name) == s_AnimationRegistry.end())
+			return nullptr;
+
+		return s_AnimationRegistry[_name];
+	}
+	std::string AssetManager::RegisterAnimation(Animation* _animation)
+	{
+		if (s_AnimationRegistry.find(_animation->GetName()) != s_AnimationRegistry.end())
+			return std::string();
+
+		s_AnimationRegistry.insert(std::make_pair(_animation->GetName(), _animation));
+		return _animation->GetName();
+	}
+	std::vector<std::string> AssetManager::RegisterAnimation(std::vector<Animation*> _animations)
+	{
+		std::vector<std::string> _return_list;
+		std::vector<size_t> _ignore_idx;
+		for (size_t i = 0; i < _animations.size(); i++)
+			if (s_AnimationRegistry.find(_animations[i]->GetName()) != s_AnimationRegistry.end())
+				_ignore_idx.push_back(i);
+
+		if (_ignore_idx.size() == _animations.size())
+			return _return_list;
+
+		for (size_t i = 0; i < _animations.size(); i++)
+		{
+			bool _ignore = false;
+			for (size_t j = 0; j < _ignore_idx.size(); j++)
+				if (_ignore_idx[j] == i)
+					_ignore = true;
+
+			if (!_ignore)
+			{
+				s_AnimationRegistry.insert(std::make_pair(_animations[i]->GetName(), _animations[i]));
+				_return_list.push_back(_animations[i]->GetName());
+			}
+		}
+
+		return _return_list;
+	}
+	std::unordered_map<std::string, Animation*>&  AssetManager::GetAnimationRegistry()
+	{
+		return s_AnimationRegistry;
 	}
 
 }

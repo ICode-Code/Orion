@@ -29,6 +29,7 @@ namespace OE1Core
 			static void ProcessParseLoadedDynamicMeshCommand();
 			static void ProcessTextureLoadCommand();
 			static void ProcessRawDataTextureLoadCommand();
+			static void ProcessAnimationLoadCommand();
 		
 			// Creation
 			static void ProcessMaterialCreationCommand();

@@ -38,7 +38,7 @@ namespace OE1Core
 			if (_anim_time < m_Positions[i + 1].TimeStamp)
 				return (int)i;
 
-		assert(0);
+		//assert(0);
 		return 0;
 	}
 	int Bone::GetRotationIndex(float _anim_time)
@@ -47,7 +47,7 @@ namespace OE1Core
 			if (_anim_time < m_Rotations[i + 1].TimeStamp)
 				return (int)i;
 
-		assert(0);
+		//assert(0);
 		return 0;
 	}
 	int Bone::GetScaleIndex(float _anim_time)
@@ -56,7 +56,7 @@ namespace OE1Core
 			if (_anim_time < m_Scales[i + 1].TimeStamp)
 				return (int)i;
 
-		assert(0);
+		//assert(0);
 		return 0;
 	}
 

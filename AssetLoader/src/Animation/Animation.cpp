@@ -75,7 +75,7 @@ namespace OE1Core
 	{
 		if (!m_Updated)
 			return;
-		m_DeltaTime = dt;
+		m_DeltaTime = dt * m_DeltaFactor;
 		m_CurrentTime += m_TickPerSecond * m_DeltaTime;
 		m_CurrentTime = fmod(m_CurrentTime, m_Duration);
 		ComputeTransform(&m_RootNode, glm::mat4(1.0f));

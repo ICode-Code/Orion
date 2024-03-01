@@ -5,25 +5,34 @@ namespace OE1Core
 {
 	namespace Loader
 	{
-		Animation* AnimationLoader::LoadAnimation(std::string _path, DataBlock::BoneMap _bone_info_map)
+		std::vector<Animation*> AnimationLoader::LoadAnimation(std::string _path, DataBlock::BoneMap _bone_info_map)
 		{
 
+			std::vector<Animation*> _animation_list;
 			Assimp::Importer _importer;
 			const aiScene* _scene = _importer.ReadFile(_path, aiProcess_Triangulate);
 
 			if (!_scene || !_scene->HasAnimations())
 			{
-				return nullptr;
+				return _animation_list;
 			}
-			Animation* animation_data = new Animation();
 
-			ParseAnimation(_scene->mAnimations[0], animation_data, _bone_info_map, _scene);
 
-			animation_data->SetBoneCount((int)animation_data->GetBoneMap().size());
+			for (unsigned int i = 0; i < _scene->mNumAnimations; i++)
+			{
+				Animation* animation_data = new Animation();
 
-			animation_data->UpdateBoneTransformBuffer((size_t)animation_data->GetBoneCount());
+				ParseAnimation(_scene->mAnimations[i], animation_data, _bone_info_map, _scene);
 
-			return animation_data;
+				animation_data->SetBoneCount((int)animation_data->GetBoneMap().size());
+
+				animation_data->UpdateBoneTransformBuffer((size_t)animation_data->GetBoneCount());
+
+				_animation_list.push_back(animation_data);
+			}
+			
+
+			return _animation_list;
 		}
 
 

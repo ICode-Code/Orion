@@ -15,7 +15,7 @@ namespace OE1Core
 		class AnimationLoader
 		{
 		public:
-			static Animation* LoadAnimation(std::string _path, DataBlock::BoneMap _bone_info_map);
+			static std::vector<Animation*> LoadAnimation(std::string _path, DataBlock::BoneMap _bone_info_map);
 
 
 		private:

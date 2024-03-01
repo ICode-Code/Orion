@@ -68,6 +68,7 @@ namespace OE1Core
 		_pkg.SharedContext = s_Window->GetArg().SharedContext;
 
 		SDL_Thread* COMMAND_PROCESSING_THREAD = SDL_CreateThread(__exe_RunTimeCommandProcessingThread, "RunTimeCommand", &_pkg);
+		s_PureComputationThread = std::thread(&CoreEngine::_exe_RunComputeThread);
 
 		while (s_Window->GetArg().Running)
 		{
@@ -89,6 +90,14 @@ namespace OE1Core
 		}
 		__TerminateSharedThread = !__TerminateSharedThread;
 	}
+	void CoreEngine::_exe_RunComputeThread()
+	{
+		s_PureComputationThread.detach();
+		while (!__TerminateSharedThread)
+		{
+			SceneManager::GetActiveScene()->UpdateAnimationTransform();
+		}
+	}
 	int CoreEngine::__exe_RunTimeCommandProcessingThread(void* _data)
 	{
 		ThreadPackage* pkg = static_cast<ThreadPackage*>(_data);
@@ -106,8 +115,8 @@ namespace OE1Core
 			CommandHnd::ExeHandleManager::ProcessLowFrequencyCommands();
 
 
-			SceneManager::GetActiveScene()->UpdateAnimationTransform();
-			//std::this_thread::sleep_for(2s);
+			//SceneManager::GetActiveScene()->UpdateAnimationTransform();
+			std::this_thread::sleep_for(3.5s);
 			
 		}
 

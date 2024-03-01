@@ -28,7 +28,8 @@ namespace OE1Core
 			static int GetNumberOfRegistedMeshGeometry();
 
 
-			static uint32_t RegisterSkinnedIVModelCustomData(std::map<std::string, DataBlock::BoneInfo>& _bones, Animation* _animation);
+			static uint32_t RegisterSkinnedIVModelCustomData(std::map<std::string, DataBlock::BoneInfo>& _bones, std::vector<Animation*> _animations);
+			static void UpdateSkinnedIVModelCustomData(uint32_t _id, std::map<std::string, DataBlock::BoneInfo>& _bones, std::vector<Animation*> _animations, bool _add_animation = true);
 			static GeometryPacket::IVModelSkinnedModelData* GetSkinnedIVModelCustomData(uint32_t _id);
 		private:
 			inline static std::unordered_map<uint32_t, GeometryPacket::STATIC_MESH> s_StaticMeshGeometryData;

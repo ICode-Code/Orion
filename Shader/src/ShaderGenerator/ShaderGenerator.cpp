@@ -111,43 +111,42 @@ flat out int	RenderID;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////////////////////// ANIMATION_BUFFER /////////////////////////////////////
+
 #include <../ExternalAsset/Shaders/Header/UniformBlock/animation_data_uniform_block.h>
+
+/////////////////////////////////////////////////////////////////////////////////////////
 
 
 ///// Entry
 
 void main() 
 {
-	// Compute position
-	vec4 accumulated_position = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-	vec3 accumulated_normal = vec3(0.0f, 0.0f, 0.0f);
-
-	for(int i = 0; i < MAX_BONE_WEIGHT; i++) 
-	{
-		if(i_BoneIndex[i] == -1)
-			continue;
-
-		vec4 local_pos = Offset[i_BoneIndex[i]] * vec4(i_Position, 1.0f);
-		accumulated_position += local_pos * i_BoneWeight[i];
-
 	
-		vec3 local_normal = mat3(Offset[i_BoneIndex[i]]) * i_Normal;
-		accumulated_normal += local_normal * i_BoneWeight[i];
-	}
 
-	///////////////////////////////////////// VERETX  FRAGMENT //////////////////////////
+///////////////////////////////////////// SKALATON ANIMATION //////////////////////////
+
+	mat4 FinalBoneTransformation = Offset[i_BoneIndex[0]] * i_BoneWeight[0];
+	FinalBoneTransformation += Offset[i_BoneIndex[1]] * i_BoneWeight[1];
+	FinalBoneTransformation += Offset[i_BoneIndex[2]] * i_BoneWeight[2];
+	FinalBoneTransformation += Offset[i_BoneIndex[3]] * i_BoneWeight[3];
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////// VERETX  FRAGMENT //////////////////////////
 
 			MaterialIndex   = i_MaterialID;
 			RenderID		= i_RenderID;
 			TexCoord		= i_TexCoord;
-			FragPosition	= i_InstanceMatrices * vec4(accumulated_position.xyz, 1.0f);
+			FragPosition	= i_InstanceMatrices * FinalBoneTransformation * vec4(i_Position.xyz, 1.0f);
 			Tangent			= i_Tangent;
 			BiTangent		= i_Bitangent;
-			VertNormal		= mat3(transpose(inverse(i_InstanceMatrices))) * accumulated_normal;
+			VertNormal		= mat3(transpose(inverse(i_InstanceMatrices * FinalBoneTransformation))) * i_Normal;
 			VertNormal		= normalize(VertNormal);  
 			VertColor 		= i_Color;
 
-	////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 	
 			gl_Position = SceneCameraTransformBuffer[ActiveCameraIndex].PV * FragPosition;
 

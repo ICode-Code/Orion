@@ -51,6 +51,8 @@ namespace OE1Core
 
 
 	private:
+		inline static std::thread s_PureComputationThread;
+		static void _exe_RunComputeThread();
 		static int __exe_RunTimeCommandProcessingThread(void* _data);
 		inline static bool __TerminateSharedThread = false;
 

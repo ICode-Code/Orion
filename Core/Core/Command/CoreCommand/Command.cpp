@@ -63,4 +63,8 @@ namespace OE1Core
 	{
 		s_DynamicMeshModelPreviewRenderCommands.push(_command);
 	}
+	void Command::PushAnimationLoadCommand(CommandDef::AnimationLoadCommandDef _command)
+	{
+		s_AnimationLoadCommands.push(_command);
+	}
 }

@@ -14,7 +14,14 @@ namespace OE1Core
 		{
 			friend class InspectorComponent;
 		public:
-			SkinnedMeshComponent(uint32_t _package_id, uint32_t _unique_instance_id, GLintptr _offset, uint32_t _armature_id, std::vector<GLuint> _geometry_buffers, std::vector<uint32_t> _mat_offsets);
+			SkinnedMeshComponent(
+				uint32_t _package_id, 
+				uint32_t _unique_instance_id, 
+				GLintptr _offset, 
+				uint32_t _armature_id, 
+				int _bone_count,
+				std::vector<GLuint> _geometry_buffers, 
+				std::vector<uint32_t> _mat_offsets);
 			SkinnedMeshComponent(const SkinnedMeshComponent& _other, uint32_t _unique_instance_id, GLintptr _offset);
 			SkinnedMeshComponent(const SkinnedMeshComponent&) = delete;
 			~SkinnedMeshComponent();
@@ -35,6 +42,8 @@ namespace OE1Core
 
 
 		protected:
+			int m_BoneCount = 0;
+
 			GLintptr m_Offset = 0;
 
 			uint32_t m_PackageID = -1;

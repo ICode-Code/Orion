@@ -8,9 +8,6 @@ namespace OE1Core
 	{
 		GeometryAssetPacketBuffer::~GeometryAssetPacketBuffer()
 		{
-			for (auto iter = s_SkinnedIVModelData.begin(); iter != s_SkinnedIVModelData.end(); iter++)
-				delete iter->second.Animation;
-
 			s_SkinnedIVModelData.clear();
 		}
 		uint32_t GeometryAssetPacketBuffer::RegisterStaticMeshGeometry(std::vector<DataBlock::Vertex>& _vert, std::vector<uint32_t>& _indices)
@@ -69,18 +66,32 @@ namespace OE1Core
 		}
 
 
-		uint32_t GeometryAssetPacketBuffer::RegisterSkinnedIVModelCustomData(std::map<std::string, DataBlock::BoneInfo>& _bones, Animation* _animation)
+		uint32_t GeometryAssetPacketBuffer::RegisterSkinnedIVModelCustomData(std::map<std::string, DataBlock::BoneInfo>& _bones, std::vector<Animation*> _animations)
 		{
 			uint32_t __insert_id = s_IVModelCustomDataCounter++;
 
 			GeometryPacket::IVModelSkinnedModelData __data;
 			__data.BoneInfoMap = _bones;
-			__data.Animation = _animation;
+			__data.Animations = _animations;
 
 
 			s_SkinnedIVModelData.insert(std::make_pair(__insert_id, __data));
 
 			return __insert_id;
+		}
+		void GeometryAssetPacketBuffer::UpdateSkinnedIVModelCustomData(uint32_t _id, std::map<std::string, DataBlock::BoneInfo>& _bones, std::vector<Animation*> _animations, bool _add_animation)
+		{
+			if (s_SkinnedIVModelData.find(_id) == s_SkinnedIVModelData.end())
+				return;
+
+			if (_add_animation)
+			{
+				for (size_t i = 0; i < _animations.size(); i++)
+					s_SkinnedIVModelData[_id].Animations.push_back(_animations[i]);
+			}else
+				s_SkinnedIVModelData[_id].Animations = _animations;
+
+			s_SkinnedIVModelData[_id].BoneInfoMap = _bones;
 		}
 		GeometryPacket::IVModelSkinnedModelData* GeometryAssetPacketBuffer::GetSkinnedIVModelCustomData(uint32_t _id)
 		{

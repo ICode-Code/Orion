@@ -49,6 +49,7 @@ namespace OE1Core
 		float m_DeltaTime = 0.0f;
 		float m_CurrentTime = 0.0f;
 		std::vector<glm::mat4>	m_BoneTransform;
+		float m_DeltaFactor = 1.0f;
 
 		int m_BoneCount = 0;
 		float m_Duration;
@@ -57,6 +58,7 @@ namespace OE1Core
 		AnimNode m_RootNode;
 		std::string m_Name = "##";
 		DataBlock::BoneMap m_BoneMap;
+		bool m_HasIssues = false;
 
 		bool m_Play = false;
 

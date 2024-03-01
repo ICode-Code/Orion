@@ -232,8 +232,9 @@ namespace OE1Core
 		_entity.AddComponent<Component::SkinnedMeshComponent>(
 			_mesh->PackageID,
 			(uint32_t)_entity,
-			_offset,
-			_offset,
+			_offset, //  Instance ID
+			_offset, // Memory Buffer
+			(int)GeometryPacket::GeometryAssetPacketBuffer::GetSkinnedIVModelCustomData(_mesh->DataIdx)->BoneInfoMap.size(),
 			geometry_buffer,
 			material_offsets
 		);
@@ -242,7 +243,7 @@ namespace OE1Core
 	void SceneEntityFactory::CreateAnimationComponent(DynamicMesh* _dynamic_mesh, uint32_t _offset, Entity& _entity)
 	{
 		_entity.AddComponent<Component::AnimationComponent>(
-			_dynamic_mesh->m_Animation,
+			_dynamic_mesh->m_ActiveAnimation,
 			_offset,
 			Memory::UniformBlockManager::GetBuffer(Memory::UniformBufferID::ANIMATION_REGISTRY)->Buffer);
 		_entity.GetComponent<Component::InspectorComponent>().SetAnimationComponent(&_entity.GetComponent<Component::AnimationComponent>());

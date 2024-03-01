@@ -252,12 +252,12 @@ namespace OE1Core
 						float weight = bone_weights[k].mWeight;
 
 						// set vertex with the weights
-						for (size_t j = 0; j < MAX_BONE_PER_VERTEX; j++)
+						for (int j = 0; j < MAX_BONE_PER_VERTEX; j++)
 						{
-							if (unprocessed_geom.VertexData[vertex_id].BoneIndex[(int)j] < 0)
+							if (unprocessed_geom.VertexData[vertex_id].BoneIndex[j] < 0)
 							{
-								unprocessed_geom.VertexData[vertex_id].BoneIndex[(int)j] = (int)BoneID;
-								unprocessed_geom.VertexData[vertex_id].Weight[(int)j] = weight;
+								unprocessed_geom.VertexData[vertex_id].BoneIndex[j] = BoneID;
+								unprocessed_geom.VertexData[vertex_id].Weight[j] = weight;
 								break;
 							}
 						}

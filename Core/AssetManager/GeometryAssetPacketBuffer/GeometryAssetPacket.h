@@ -26,7 +26,7 @@ namespace OE1Core
 		struct IVModelSkinnedModelData
 		{
 			std::map<std::string, DataBlock::BoneInfo> BoneInfoMap;
-			class Animation* Animation;
+			std::vector<class Animation*> Animations;
 		};
 		struct IVModelStaticModelData
 		{

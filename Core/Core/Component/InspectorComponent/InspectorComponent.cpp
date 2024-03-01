@@ -121,12 +121,42 @@ namespace OE1Core
 
 			if (ImGui::TreeNodeEx("Animation Component", m_TreeNodeFlags))
 			{
+
 				ImGui::Indent(16.0f);
-				
+
+				if (ImGui::Button("Load..", { 100.0f, 25.0f }))
+				{
+					std::string loaded_file = WindowFileDialog::LoadFile("GLTF and FBX Files (*.gltf;*.glb;*.fbx)\0*.gltf;*.glb;*.fbx\0", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin(), "Load Animation");
+					if (!loaded_file.empty())
+					{
+						CommandDef::AnimationLoadCommandDef _command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
+						_command.Path = loaded_file;
+						_command.PackageID = m_SkinnedMeshComponent->GetPackageID();
+
+						Command::PushAnimationLoadCommand(_command);
+					}
+				}
+
+				if (ImGui::TreeNodeEx("Animation List", m_TreeNodeFlags))
+				{
+
+					for (auto iter = AssetManager::GetAnimationRegistry().begin(); iter != AssetManager::GetAnimationRegistry().end(); iter++)
+					{
+						if (ImGui::Button(iter->first.c_str(), { 200.0f, 25.0f }))
+						{
+							SceneManager::GetActiveScene()->QueryDynamicMesh(m_SkinnedMeshComponent->GetPackageID())->SetActiveAnimation(iter->first);
+							m_AnimationComponent->m_Animation = SceneManager::GetActiveScene()->QueryDynamicMesh(m_SkinnedMeshComponent->GetPackageID())->GetActiveAnimation();
+						}
+					}
+
+
+					ImGui::TreePop();
+				}
 				CustomFrame::UIEditorTextValue("Name", m_AnimationComponent->m_Animation->m_Name.c_str());
 				CustomFrame::UIEditorTextValue("Duration",std::to_string(m_AnimationComponent->m_Animation->GetDuration()).c_str());
 				CustomFrame::UIEditorTextValue("Ticks/Sec",std::to_string(m_AnimationComponent->m_Animation->GetTicksPerSecond()).c_str());
 				CustomFrame::UIEditorTextValue("Bone Count",std::to_string(m_AnimationComponent->m_Animation->GetBoneCount()).c_str());
+				CustomFrame::UIEditorFloat("Speed", &m_AnimationComponent->m_Animation->m_DeltaFactor, 0.2f, 2.0f, "%.3f");
 
 				ImGui::Separator();
 

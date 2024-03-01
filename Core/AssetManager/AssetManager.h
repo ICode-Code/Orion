@@ -1,6 +1,7 @@
 #ifndef OE1_ASSET_MANAGER_H_
 #define OE1_ASSET_MANAGER_H_
 
+#include "Animation/Animation.h"
 #include "../Core/Texture/Texture.h"
 #include "Texture/TextureLoader.h"
 #include "../Core/MeshCluster/IVModel.h"
@@ -38,8 +39,13 @@ namespace OE1Core
 
 		static void RegisterInternalTexture(std::string _path, std::string _name);
 
-		// Static Geometry
+		// Animation
+		static Animation* GetAnimation(std::string _name);
+		static std::string RegisterAnimation(Animation* _animation);
+		static std::vector<std::string> RegisterAnimation(std::vector<Animation*> _animations);
+		static std::unordered_map<std::string, Animation*>& GetAnimationRegistry();
 
+		// Geometry
 		static IVModel* GetGeometry(uint32_t _model_id);
 		static IVModel* GetGeometry(std::string _name);
 		static std::string RegisterGeometry(IVModel _model);
@@ -63,6 +69,9 @@ namespace OE1Core
 		inline static std::unordered_map<DynamicAssetType, IVModel> s_InternalPurposeGeometry;
 
 		inline static std::unordered_map<std::string, Texture*> s_TextureInternalRegistry;
+
+		// any Loaded Animation
+		inline static std::unordered_map<std::string, Animation*> s_AnimationRegistry;
 
 
 	private: // Util function
