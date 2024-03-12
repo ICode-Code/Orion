@@ -124,12 +124,19 @@ namespace OE1Core
 
 						// Prepare shaders based on the material type
 						std::string VERTEX_SHADER;
-						if(TARGET_MESH->Type == CoreMeshDescriptor::CoreMeshType::DYNAMIC)
-							VERTEX_SHADER = ShaderGenerator::GetStandardSkinnedMeshVertexShader();
-						else 
-							VERTEX_SHADER = ShaderGenerator::GetStandardVertexShader();
+						std::string VERTEX_SHADER_PROXY;
 
-						std::string VERTEX_SHADER_PROXY = ShaderGenerator::GetStandardProxyVertexShader();
+						if (TARGET_MESH->Type == CoreMeshDescriptor::CoreMeshType::DYNAMIC)
+						{
+							VERTEX_SHADER = ShaderGenerator::GetStandardSkinnedMeshVertexShader();
+							VERTEX_SHADER_PROXY = ShaderGenerator::GetStandardSkinnedMeshProxyVertexShader();
+						}
+						else
+						{
+							VERTEX_SHADER = ShaderGenerator::GetStandardVertexShader();
+							VERTEX_SHADER_PROXY = ShaderGenerator::GetStandardProxyVertexShader();
+						}
+
 						std::string FRAGMENT_SHADER = ShaderGenerator::GetForwardPixelShader(commandX.AvialTextures);
 
 						// Create Master Material

@@ -67,4 +67,8 @@ namespace OE1Core
 	{
 		s_AnimationLoadCommands.push(_command);
 	}
+	void Command::PushAnimationSwitchCommand(CommandDef::AnimationSwitchCommandDef _command)
+	{
+		s_AnimationSwitchCommands.push(_command);
+	}
 }

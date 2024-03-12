@@ -83,6 +83,7 @@ namespace OE1Core
 
 			if (model)
 			{
+				m_Shader->Set1i("hasAnimation", (model->Type == CoreMeshDescriptor::CoreMeshType::DYNAMIC));
 				m_Shader->SetMat4("Model", world_transform);
 				for (size_t i = 0; i < model->SubMeshs.size(); i++)
 				{

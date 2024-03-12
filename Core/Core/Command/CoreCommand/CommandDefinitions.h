@@ -14,6 +14,7 @@ namespace OE1Core
 	class MaterialViewWin;
 	class MasterMaterial;
 	class Texture;
+	class Animation;
 	struct IVModel;
 
 	namespace CommandDef 
@@ -185,6 +186,16 @@ namespace OE1Core
 			std::string Path;
 			DataBlock::BoneMap bone_map;
 			uint32_t PackageID;
+		};
+
+		struct AnimationSwitchCommandDef : public CommandBase
+		{
+			AnimationSwitchCommandDef(std::string _file, int _line, std::string _func)
+				: CommandBase(_file, _line, _func)
+			{}
+
+			uint32_t EntityID;
+			Animation* TargetAnimation;
 		};
 	}
 }

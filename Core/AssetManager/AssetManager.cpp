@@ -211,7 +211,7 @@ namespace OE1Core
 	{
 		if (s_AnimationRegistry.find(_animation->GetName()) != s_AnimationRegistry.end())
 			return std::string();
-
+		_animation->UpdateTransform(.001f);
 		s_AnimationRegistry.insert(std::make_pair(_animation->GetName(), _animation));
 		return _animation->GetName();
 	}

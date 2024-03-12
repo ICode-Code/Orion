@@ -32,6 +32,8 @@ namespace OE1Core
 			static void LinkShader(Shader* _shader);
 			// This function will return nullptr if the id isn't match up
 			static Memory::UniformBuffer* GetBuffer(Memory::UniformBufferID _id);
+			static Memory::UniformBuffer* GetBuffer(Memory::UniformBufferIDArray _id, int _idx);
+			static std::vector<Memory::UniformBuffer>& GetBuffers(Memory::UniformBufferIDArray _id);
 			// This function assumes that the ID exists; 
 			// Not checking it may lead to crashes.
 			// Use this function with caution.
@@ -39,6 +41,7 @@ namespace OE1Core
 
 		public: 
 			inline static std::unordered_map<Memory::UniformBufferID, Memory::UniformBuffer> s_UniformBuffers;
+			inline static std::unordered_map<Memory::UniformBufferIDArray, std::vector<Memory::UniformBuffer>> s_UniformBuffersArray;
 			inline static Memory::UniformBuffer* s_SceneTransformBuffer = nullptr;
 
 

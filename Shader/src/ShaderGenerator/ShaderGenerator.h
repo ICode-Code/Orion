@@ -19,6 +19,7 @@ namespace OE1Core
 		~ShaderGenerator() = default;
 		static std::string GetStandardVertexShader();
 		static std::string GetStandardSkinnedMeshVertexShader();
+		static std::string GetStandardSkinnedMeshProxyVertexShader();
 		static std::string GetStandardProxyVertexShader();
 		static std::string GetForwardPixelShader(AvailTexture& _texture_set);
 		static std::string GetDeferredPixelShader(AvailTexture& _texture_set);

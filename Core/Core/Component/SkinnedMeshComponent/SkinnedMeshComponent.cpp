@@ -29,7 +29,7 @@ namespace OE1Core
 
 			m_CoreInstanceData.AnimationID = _armature_id;
 			m_CoreInstanceData.RenderID = m_UniqueInstanceID;
-			m_CoreInstanceData.BoneCount = m_BoneCount;
+			m_CoreInstanceData.AnimationBufferIndex = 0;
 		}
 		SkinnedMeshComponent::SkinnedMeshComponent(const SkinnedMeshComponent& _other, uint32_t _unique_instance_id, GLintptr _offset)
 		{
@@ -41,12 +41,11 @@ namespace OE1Core
 
 		SkinnedMeshComponent::~SkinnedMeshComponent()
 		{
-
 		}
 
-		void SkinnedMeshComponent::SetArmatureBufferID(uint32_t _id)
+		void SkinnedMeshComponent::SetArmatureBufferIndex(int _id)
 		{
-
+			m_CoreInstanceData.AnimationBufferIndex = _id;
 		}
 		uint32_t SkinnedMeshComponent::GetArmatureBufferID() const
 		{

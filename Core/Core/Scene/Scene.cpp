@@ -280,11 +280,7 @@ namespace OE1Core
 	}
 	void Scene::UpdateAnimationTransform()
 	{
-		for (auto iter = m_DynamicMeshRegistry.begin(); iter != m_DynamicMeshRegistry.end(); iter++)
-		{
-			if (iter->second->m_ActiveAnimation)
-				iter->second->m_ActiveAnimation->UpdateTransform(m_LastDelta);
-		}
+		SkeletonAnimator::UpdateAnimations(m_LastDelta);
 	}
 	SceneCameraManager* Scene::GetCameraManager() const
 	{

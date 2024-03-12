@@ -8,16 +8,9 @@ namespace OE1Core
 	{
 		auto _data = GeometryPacket::GeometryAssetPacketBuffer::GetSkinnedIVModelCustomData(_model->DataIdx);
 		
-		std::string _first;
 		for (size_t i = 0; i < _data->Animations.size(); i++)
-		{
-			if (i == 0)
-				_first = _data->Animations[i]->GetName();
 			m_AnimationList.insert(std::make_pair(_data->Animations[i]->GetName(), _data->Animations[i]));
-		}
-
-		if (!_first.empty())
-			m_ActiveAnimation = m_AnimationList.at(_first);
+		
 	}
 	DynamicMesh::~DynamicMesh()
 	{
@@ -72,25 +65,6 @@ namespace OE1Core
 		UpdateInstanceDrawCount(MeshUtil::ICounter::DECREMENT);
 	}
 
-	uint32_t DynamicMesh::GetAnimationBuffer()
-	{
-		return m_AnimationBuffer;
-	}
-	uint32_t DynamicMesh::GetAnimationBuffer() const
-	{
-		return m_AnimationBuffer;
-	}
-	void DynamicMesh::SetActiveAnimation(std::string _name)
-	{
-		if (m_AnimationList.find(_name) == m_AnimationList.end())
-			return;
-
-		m_ActiveAnimation = m_AnimationList[_name];
-	}
-	Animation* DynamicMesh::GetActiveAnimation()
-	{
-		return m_ActiveAnimation;
-	}
 	void DynamicMesh::RegisterAnimation(Animation* _animation)
 	{
 		if (m_AnimationList.find(_animation->GetName()) != m_AnimationList.end())
@@ -104,9 +78,6 @@ namespace OE1Core
 		if (m_AnimationList.find(_name) == m_AnimationList.end())
 			return;
 
-		if (m_AnimationList[_name]->GetName() == m_ActiveAnimation->GetName())
-			m_ActiveAnimation = nullptr;
-
 		m_AnimationList.erase(_name);
 	}
 	Animation* DynamicMesh::GetAnimation(std::string _name)
@@ -119,11 +90,6 @@ namespace OE1Core
 	std::unordered_map<std::string, Animation*>& DynamicMesh::GetAnimationList()
 	{
 		return m_AnimationList;
-	}
-
-	void DynamicMesh::InterpolateAnimation(Animation* A, Animation* B, float time)
-	{
-
 	}
 
 }

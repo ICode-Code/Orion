@@ -1,11 +1,14 @@
 #ifndef OE1_ANIMATION_COMPONENT_H_
 #define OE1_ANIMATION_COMPONENT_H_
 
-
+#include "../Core/CoreAnimation/AnimationManager/AnimationManager.h"
+#include "../Common/Shared/UniformBlocks.h"
+#include "../Core/CoreAnimation/MemoryBufferLocator.h"
 #include "Animation/Animation.h"
 #include <GL/glew.h>
 #include <Log.h>
 
+#include <functional>
 
 namespace OE1Core
 {
@@ -15,8 +18,11 @@ namespace OE1Core
 		{
 			friend class InspectorComponent;
 		public:
-			AnimationComponent(Animation* _animation, GLintptr _offset, GLuint _animation_buffer);
+			AnimationComponent(Animation* _animation, uint32_t _entity, MemoryBufferLocator _buffer_locator);
 			~AnimationComponent();
+
+
+			void SetSkinnedMeshComponentCallback(const std::function<void(int)>& _callback);
 
 			GLintptr GetOffset();
 			void SetOffset(GLintptr _offset);
@@ -31,22 +37,16 @@ namespace OE1Core
 			void Update(float _dt);
 			Animation* GetAnimation();
 
+			void SwitchAnimation(Animation* _animation);
+			void SetAnimation(Animation* _animation);
+			void SetUpdateBufferLocator(MemoryBufferLocator _new);
+			MemoryBufferLocator GetBufferLocator();
+
 		private:
 			Animation* m_Animation		= nullptr;
-
-
-			GLintptr m_Offset			= -1;
-			GLuint m_AnimationBuffer	= -1;
-
-			// we don't use this but in case if we want to compute it  right here and now
-			// we can use it
-			std::vector<glm::mat4>		m_BoneTransform;
-			float m_CurrentTime = 0.0f;
-			float m_DeltaTime = 0.0f;
-
-
-		protected:
-			void ComputeTransform(const AnimNode* _node, glm::mat4 _parent);
+			MemoryBufferLocator m_BufferLocator;
+			uint32_t m_EntityID;
+			std::function<void(int)> m_SkinnedMeshComponentUpdateCallback;
 		};
 	}
 }

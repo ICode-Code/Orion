@@ -1,5 +1,6 @@
 #include "UniformBlockManager.h"
 
+#define ORI_MAX_ANIMATION_UNIFORM_BUFFER 1
 namespace OE1Core
 {
 	namespace Memory
@@ -9,7 +10,7 @@ namespace OE1Core
 			s_ShaderInterface =  _shader_interface;
 			RegisterUniformBuffers();
 			LinkUniformBuffers();
-			 
+			
 
 			s_SceneTransformBuffer = &s_UniformBuffers[Memory::UniformBufferID::SCENE_TRANSFORM];
 		}
@@ -24,6 +25,19 @@ namespace OE1Core
 				return nullptr;
 			return &s_UniformBuffers[_id];
 		}
+		Memory::UniformBuffer* UniformBlockManager::GetBuffer(Memory::UniformBufferIDArray _id, int _idx)
+		{
+			if (s_UniformBuffersArray.find(_id) == s_UniformBuffersArray.end())
+				return nullptr;
+
+			return &s_UniformBuffersArray[_id][_idx];
+		}
+		std::vector<Memory::UniformBuffer>& UniformBlockManager::GetBuffers(Memory::UniformBufferIDArray _id)
+		{
+			assert(s_UniformBuffersArray.find(_id) != s_UniformBuffersArray.end());
+
+			return s_UniformBuffersArray[_id];
+		}
 		Memory::UniformBuffer* UniformBlockManager::UseBuffer(Memory::UniformBufferID _id)
 		{
 			return &s_UniformBuffers[_id];
@@ -35,6 +49,14 @@ namespace OE1Core
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::MATERIAL_REGISTRY,		Memory::UniformBuffer("MaterialProperties")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::TAI_REGISTRY,			Memory::UniformBuffer("TextureAccessIndex")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::ANIMATION_REGISTRY,		Memory::UniformBuffer("AnimationBuffer")));
+
+			//// Init Array for Animation buffer
+			//std::vector<Memory::UniformBuffer> _buffers;
+			//for (int i = 0; i < ORI_MAX_ANIMATION_UNIFORM_BUFFER; i++)
+			//	_buffers.push_back(Memory::UniformBuffer("AnimationBuffer"));
+			//s_UniformBuffersArray.insert(std::make_pair(Memory::UniformBufferIDArray::ANIMATION_REGISTRY_ARRAY, _buffers));
+
+			
 		}
 		void UniformBlockManager::LinkUniformBuffers()
 		{
@@ -43,8 +65,16 @@ namespace OE1Core
 
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::MATERIAL_REGISTRY],	Memory::s_MaterialPropertiesBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::TAI_REGISTRY],		Memory::s_TextureAccessIndexBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);
+			
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::ANIMATION_REGISTRY],		Memory::s_AnimationOffsetBufferSize, ORI_MAX_ANIMATION_PER_UNIFORM_BLOCK);
+			
 
-			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::ANIMATION_REGISTRY],		Memory::s_TextureAccessIndexBufferSize, ORI_MAX_ANIMATION_PER_UNIFORM_BLOCK);
+			//// Link Buffer array animtion
+		/*	auto& animation_array = s_UniformBuffersArray[Memory::UniformBufferIDArray::ANIMATION_REGISTRY_ARRAY];
+
+			for (size_t i = 0; i < animation_array.size(); i++)
+				CreateLinkUniformBuffer(animation_array[i], Memory::s_AnimationOffsetBufferSize, (200 * 12));
+		*/
 		}
 
 		GLuint UniformBlockManager::GetNextBlockBindingPoint() { return s_CurrentBlockBindingPoint++; };
@@ -56,9 +86,21 @@ namespace OE1Core
 				if(_shader->HasProxy())
 					RegisterProxyShaderBlock(_shader, _iter.second);
 			}
+
+			for (auto& _iter : s_UniformBuffersArray)
+			{
+				for (size_t i = 0; i < _iter.second.size(); i++)
+				{
+					RegisterShaderBlock(_shader, _iter.second[i]);
+					if (_shader->HasProxy())
+						RegisterProxyShaderBlock(_shader, _iter.second[i]);
+				}
+			}
 		}
 		void UniformBlockManager::CreateLinkUniformBuffer(Memory::UniformBuffer& _buffer, size_t _single_mem_block_size, size_t _total_chunk_memory)
 		{
+			_buffer.SetMaxCapacity(_single_mem_block_size * _total_chunk_memory);
+
 			glGenBuffers(1, &_buffer.Buffer);
 
 			glBindBuffer(GL_UNIFORM_BUFFER, _buffer.Buffer);

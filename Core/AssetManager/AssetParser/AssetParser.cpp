@@ -445,7 +445,7 @@ namespace OE1Core
 		glVertexAttribIPointer(14, 1, GL_INT, sizeof(DynamicMeshInstancePkg), (void*)offsetof(DynamicMeshInstancePkg, DynamicMeshInstancePkg::AnimationID));
 
 		glEnableVertexAttribArray(15);
-		glVertexAttribIPointer(15, 1, GL_INT, sizeof(DynamicMeshInstancePkg), (void*)offsetof(DynamicMeshInstancePkg, DynamicMeshInstancePkg::BoneCount));
+		glVertexAttribIPointer(15, 1, GL_INT, sizeof(DynamicMeshInstancePkg), (void*)offsetof(DynamicMeshInstancePkg, DynamicMeshInstancePkg::AnimationBufferIndex));
 
 
 		glVertexAttribDivisor(8, 1); //

@@ -242,10 +242,19 @@ namespace OE1Core
 	}
 	void SceneEntityFactory::CreateAnimationComponent(DynamicMesh* _dynamic_mesh, uint32_t _offset, Entity& _entity)
 	{
+
+		if (!_entity.HasComponent<Component::SkinnedMeshComponent>())
+		{
+			LOG_ERROR(LogLayer::Pipe("Failed to add animation component, add SkinnedMeshComponent before animation component!", OELog::CRITICAL));
+			return;
+		}
+
+		
 		_entity.AddComponent<Component::AnimationComponent>(
-			_dynamic_mesh->m_ActiveAnimation,
-			_offset,
-			Memory::UniformBlockManager::GetBuffer(Memory::UniformBufferID::ANIMATION_REGISTRY)->Buffer);
+			nullptr, // No Animation by default
+			uint32_t(_entity),
+			MemoryBufferLocator()).SetSkinnedMeshComponentCallback(std::bind(&Component::SkinnedMeshComponent::SetArmatureBufferIndex, &_entity.GetComponent<Component::SkinnedMeshComponent>(), std::placeholders::_1));
+		
 		_entity.GetComponent<Component::InspectorComponent>().SetAnimationComponent(&_entity.GetComponent<Component::AnimationComponent>());
 	}
 

@@ -59,11 +59,23 @@ namespace OE1Core
 
 		struct UniformBuffer
 		{
-			UniformBuffer(std::string name = "#") : Name(name) {};
-
+			UniformBuffer(std::string name = "##") : Name(name) {};
+			size_t				Capacity = 0;
+			size_t				UsedCapacity = 0;
 			std::string			Name;
 			unsigned int		Buffer = 0;
 			unsigned int		BindingPoint = 0;
+
+			/// <summary>
+			/// Add the used capacity out side and send the value
+			/// </summary>
+			/// <param name="_capacity">Used Capacity</param>
+			void SetUsedCapacity(size_t _capacity)
+			{
+				UsedCapacity = _capacity;
+			}
+			void SetMaxCapacity(size_t _capacity) { Capacity = _capacity; }
+
 			void Update(size_t _size, int _offset, void* _data)
 			{
 				glBindBuffer(GL_UNIFORM_BUFFER, Buffer);
@@ -87,6 +99,11 @@ namespace OE1Core
 			DIRECTIONAL_LIGHT_REGISTRY,
 			LIGHT_UTILITY,
 			ANIMATION_REGISTRY
+		};
+
+		enum class UniformBufferIDArray
+		{
+			ANIMATION_REGISTRY_ARRAY = 0
 		};
 
 		/// ///////////////////////////////////////////////////////////////////////////

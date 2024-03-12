@@ -26,7 +26,7 @@ namespace OE1Core
 			SkinnedMeshComponent(const SkinnedMeshComponent&) = delete;
 			~SkinnedMeshComponent();
 
-			void SetArmatureBufferID(uint32_t _id);
+			void SetArmatureBufferIndex(int _id);
 			uint32_t GetArmatureBufferID() const;
 			void SetOffset(GLintptr _offset);
 			GLintptr GetOffset() const;

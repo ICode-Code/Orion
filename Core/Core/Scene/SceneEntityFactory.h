@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "../Component/IComponent.h"
 #include "EntityType.h"
-
+#include "../../Core/CoreAnimation/AnimationManager/AnimationManager.h"
 namespace OE1Core
 {
 	class SceneEntityFactory

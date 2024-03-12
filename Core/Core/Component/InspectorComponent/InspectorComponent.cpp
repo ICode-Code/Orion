@@ -144,42 +144,51 @@ namespace OE1Core
 					{
 						if (ImGui::Button(iter->first.c_str(), { 200.0f, 25.0f }))
 						{
-							SceneManager::GetActiveScene()->QueryDynamicMesh(m_SkinnedMeshComponent->GetPackageID())->SetActiveAnimation(iter->first);
-							m_AnimationComponent->m_Animation = SceneManager::GetActiveScene()->QueryDynamicMesh(m_SkinnedMeshComponent->GetPackageID())->GetActiveAnimation();
+							DynamicMesh* dynamic_mesh = SceneManager::GetActiveScene()->QueryDynamicMesh(m_SkinnedMeshComponent->GetPackageID());
+							
+							Animation* _animation = dynamic_mesh->GetAnimation(iter->first);
+							if(_animation)
+								m_AnimationComponent->SwitchAnimation(_animation);
+
 						}
 					}
 
 
 					ImGui::TreePop();
 				}
-				CustomFrame::UIEditorTextValue("Name", m_AnimationComponent->m_Animation->m_Name.c_str());
-				CustomFrame::UIEditorTextValue("Duration",std::to_string(m_AnimationComponent->m_Animation->GetDuration()).c_str());
-				CustomFrame::UIEditorTextValue("Ticks/Sec",std::to_string(m_AnimationComponent->m_Animation->GetTicksPerSecond()).c_str());
-				CustomFrame::UIEditorTextValue("Bone Count",std::to_string(m_AnimationComponent->m_Animation->GetBoneCount()).c_str());
-				CustomFrame::UIEditorFloat("Speed", &m_AnimationComponent->m_Animation->m_DeltaFactor, 0.2f, 2.0f, "%.3f");
-
-				ImGui::Separator();
-
-				ImGui::Indent(8.0f);
-
-				IterateBone(&m_AnimationComponent->m_Animation->GetRootNode());
-				
-				ImGui::Indent(-8.0f);
-
-				ImGui::Separator();
-
-				if (ImGui::TreeNodeEx("Bone Set", m_TreeNodeFlags))
+				if (m_AnimationComponent->m_Animation)
 				{
-					for (size_t i = 0; i < m_AnimationComponent->m_Animation->m_Bones.size(); i++)
-					{
-						CustomFrame::UIEditorLabel(m_AnimationComponent->m_Animation->m_Bones[i].m_Name.c_str());
-					}
 
-					ImGui::TreePop();
-				}
+					CustomFrame::UIEditorTextValue("Name", m_AnimationComponent->m_Animation->m_Name.c_str());
+					CustomFrame::UIEditorTextValue("Duration",std::to_string(m_AnimationComponent->m_Animation->GetDuration()).c_str());
+					CustomFrame::UIEditorTextValue("Ticks/Sec",std::to_string(m_AnimationComponent->m_Animation->GetTicksPerSecond()).c_str());
+					CustomFrame::UIEditorTextValue("Bone Count",std::to_string(m_AnimationComponent->m_Animation->GetBoneCount()).c_str());
+					CustomFrame::UIEditorFloat("Speed", &m_AnimationComponent->m_Animation->m_DeltaFactor, 0.2f, 2.0f, "%.3f");
+
+					ImGui::Separator();
+
+					ImGui::Indent(8.0f);
+
+					IterateBone(&m_AnimationComponent->m_Animation->GetRootNode());
+				
+					ImGui::Indent(-8.0f);
+
+					ImGui::Separator();
+
+					if (ImGui::TreeNodeEx("Bone Set", m_TreeNodeFlags))
+					{
+						for (size_t i = 0; i < m_AnimationComponent->m_Animation->m_Bones.size(); i++)
+						{
+							CustomFrame::UIEditorLabel(m_AnimationComponent->m_Animation->m_Bones[i].m_Name.c_str());
+						}
+
+						ImGui::TreePop();
+					}
 				
 
-				ImGui::Indent(-16.0f);
+					ImGui::Indent(-16.0f);
+
+				}
 
 				ImGui::TreePop();
 			}

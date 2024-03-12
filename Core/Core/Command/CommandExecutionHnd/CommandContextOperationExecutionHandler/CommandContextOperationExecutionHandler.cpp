@@ -26,6 +26,7 @@ namespace OE1Core
 		{
 			ProcessOnViewportClickReadbackCommand();
 
+
 			// Texture Load Command
 			ProcessTextureLoadCommand();
 			ProcessRawDataTextureLoadCommand();
@@ -39,7 +40,9 @@ namespace OE1Core
 			ProcessParseLoadedAssetCommand();
 
 			ProcessParseLoadedDynamicMeshCommand();
+
 			ProcessAnimationLoadCommand();
+			ProcessAnimationSwitchCommand();
 
 			ProcessMaterialPreviewRenderCommand();
 
@@ -113,6 +116,21 @@ namespace OE1Core
 		{
 			
 		}
+
+		void CommandContextOperationExeHandler::ProcessAnimationSwitchCommand()
+		{
+			while (!Command::s_AnimationSwitchCommands.empty())
+			{
+				auto& command = Command::s_AnimationSwitchCommands.front();
+
+				Entity _entity = m_Scene->GetEntity(command.EntityID);
+
+				_entity.GetComponent<Component::AnimationComponent>().SetAnimation(command.TargetAnimation);
+
+
+				Command::s_AnimationSwitchCommands.pop();
+			}
+		}
 		void CommandContextOperationExeHandler::ProcessMasterMaterialUpdateCommand()
 		{
 			while (!Command::s_MaterialTextureUpdateCommands.empty())
@@ -162,7 +180,7 @@ namespace OE1Core
 					command.Material->m_Shader->UpdateFragmentShader(_new_frag_shader);
 					Memory::UniformBlockManager::LinkShader(command.Material->m_Shader);
 
-					CommandDef::MasterRendererMaterialRefreshCommandDef commandX(ORI_COMMAND_DEF_ARGS(__FUNCTION__));;
+					CommandDef::MasterRendererMaterialRefreshCommandDef commandX(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
 
 					commandX.Name = command.Material->m_Name;
 					commandX.Offset = command.Material->m_Offset;

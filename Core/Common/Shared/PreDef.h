@@ -45,7 +45,7 @@ inline const std::string ORI_ENGEIN_METAL_FILE = ".orion_meta.ini";
 #define ORI_MATERIAL_POSTFIX ".ORIMATERIAL"
 #define ORI_MATERIAL_PREFIX "MAT_ORI_"
 #define ORI_MATERIAL_INSTA_PREFIX "MAT_ORI_INSTA"
-#define ORI_UNIFORM_BLOCK_MEMORY_STRESS 256
+#define ORI_UNIFORM_BLOCK_MEMORY_STRESS 128
 #define ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK ((MaxUniformBlockSize() / Memory::s_MaterialPropertiesBufferSize) - ORI_UNIFORM_BLOCK_MEMORY_STRESS)
 #define ORI_MAX_ANIMATION_PER_UNIFORM_BLOCK ((MaxUniformBlockSize() / Memory::s_AnimationOffsetBufferSize) - ORI_UNIFORM_BLOCK_MEMORY_STRESS)
 

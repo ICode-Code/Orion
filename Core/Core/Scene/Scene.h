@@ -11,7 +11,7 @@
 
 #include "../InfiniteVision/IVMasterRenderer.h"
 #include "../Ray/Ray.h"
-
+#include "../CoreAnimation/Animator/SkeletonAnimator.h"
 #include <Entt/entt.hpp>
 #include "SceneRenderMode.h"
 

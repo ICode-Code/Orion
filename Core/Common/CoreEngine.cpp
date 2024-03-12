@@ -36,6 +36,9 @@ namespace OE1Core
 		// Buffer Manger
 		s_MemeoryManager = new Memory::UniformBlockManager(s_ShaderSystem);
 
+		// Animation Manager
+		s_AnimationManager = new AnimationManager();
+
 		// Create Master Scene
 		SceneManager::RegisterScene("MasterScene", new Scene(s_Window->GetWin()), true);
 
@@ -53,6 +56,7 @@ namespace OE1Core
 		delete s_ShaderSystem;
 		delete s_ShaderManager;
 		delete s_MemeoryManager;
+		delete s_AnimationManager;
 		delete s_ResourceInitializer;
 		delete s_CommandExecutionHandleManager;
 	}

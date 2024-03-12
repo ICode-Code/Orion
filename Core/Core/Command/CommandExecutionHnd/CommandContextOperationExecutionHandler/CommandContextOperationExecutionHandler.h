@@ -39,6 +39,10 @@ namespace OE1Core
 			static void ProcessMaterialReEvaluationCommand();
 			static void ProcessMaterialTextureExtractionForPReviewCommand();
 
+
+			// Animation
+			static void ProcessAnimationSwitchCommand();
+
 			// Fetch Commands
 			static void ProcessOnViewportClickReadbackCommand();
 

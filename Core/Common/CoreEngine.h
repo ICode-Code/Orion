@@ -29,6 +29,7 @@
 
 #include "../Core/Command/ExeHandleManager/ExeHandleManager.h"
 
+#include "../Core/CoreAnimation/AnimationManager/AnimationManager.h"
 
 
 
@@ -76,6 +77,7 @@ namespace OE1Core
 		inline static OE1Core::ResourceInitializer* s_ResourceInitializer = nullptr;
 		inline static OE1Core::ProjectManager* s_ProjectManager = nullptr;
 		inline static OE1Core::CommandHnd::ExeHandleManager* s_CommandExecutionHandleManager = nullptr;
+		inline static OE1Core::AnimationManager* s_AnimationManager = nullptr;
 	};
 }
 

@@ -88,7 +88,7 @@ layout (location = 8) in mat4 i_InstanceMatrices;
 layout (location = 12) in int i_RenderID;
 layout (location = 13) in int i_MaterialID;
 layout (location = 14) in int i_AnimationID;
-layout (location = 15) in int i_BoneCount;
+layout (location = 15) in int i_BufferIdx;
 
 
 ///////////////////////////////////////////////// STANDARD VERTEX SHADER OUTPUT //////////////////////////
@@ -127,10 +127,10 @@ void main()
 
 ///////////////////////////////////////// SKALATON ANIMATION //////////////////////////
 
-	mat4 FinalBoneTransformation = Offset[i_BoneIndex[0]] * i_BoneWeight[0];
-	FinalBoneTransformation += Offset[i_BoneIndex[1]] * i_BoneWeight[1];
-	FinalBoneTransformation += Offset[i_BoneIndex[2]] * i_BoneWeight[2];
-	FinalBoneTransformation += Offset[i_BoneIndex[3]] * i_BoneWeight[3];
+	mat4 FinalBoneTransformation =	Bones[i_BoneIndex[0]] * i_BoneWeight[0];
+	FinalBoneTransformation +=		Bones[i_BoneIndex[1]] * i_BoneWeight[1];
+	FinalBoneTransformation +=		Bones[i_BoneIndex[2]] * i_BoneWeight[2];
+	FinalBoneTransformation +=		Bones[i_BoneIndex[3]] * i_BoneWeight[3];
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -143,6 +143,95 @@ void main()
 			Tangent			= i_Tangent;
 			BiTangent		= i_Bitangent;
 			VertNormal		= mat3(transpose(inverse(i_InstanceMatrices * FinalBoneTransformation))) * i_Normal;
+			VertNormal		= normalize(VertNormal);  
+			VertColor 		= i_Color;
+
+////////////////////////////////////////////////////////////////////////////////////////
+	
+			gl_Position = SceneCameraTransformBuffer[ActiveCameraIndex].PV * FragPosition;
+
+}
+        )";
+
+
+		return std::exchange(s_Source, "");
+	}
+	std::string ShaderGenerator::GetStandardSkinnedMeshProxyVertexShader()
+	{
+		s_Source.clear();
+
+		s_Source += R"(
+#version 400 core
+
+layout (location = 0) in vec3 i_Position;
+layout (location = 1) in vec3 i_Color;
+layout (location = 2) in vec3 i_Normal;
+layout (location = 3) in vec2 i_TexCoord;
+layout (location = 4) in vec3 i_Tangent;
+layout (location = 5) in vec3 i_Bitangent;
+layout (location = 6) in ivec4 i_BoneIndex;
+layout (location = 7) in vec4  i_BoneWeight;
+layout (location = 8) in mat4 i_InstanceMatrices;
+layout (location = 12) in int i_RenderID;
+layout (location = 13) in int i_MaterialID;
+layout (location = 14) in int i_AnimationID;
+layout (location = 15) in int i_BufferIdx;
+
+
+///////////////////////////////////////////////// STANDARD VERTEX SHADER OUTPUT //////////////////////////
+
+out vec2		TexCoord;
+out vec4		FragPosition;
+out vec3		VertNormal;
+out vec3        VertColor;
+out vec3		Tangent;
+out vec3		BiTangent;
+flat out int	MaterialIndex;
+flat out int	RenderID;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////// SCENE TRANSFORM /////////////////////////////////////
+
+#include <../ExternalAsset/Shaders/Header/UniformBlock/scene_transform_uniform_block.h>
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////// ANIMATION_BUFFER /////////////////////////////////////
+
+#include <../ExternalAsset/Shaders/Header/UniformBlock/animation_data_uniform_block.h>
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
+uniform mat4 Model;
+
+///// Entry
+
+void main() 
+{
+	
+
+///////////////////////////////////////// SKALATON ANIMATION //////////////////////////
+
+	mat4 FinalBoneTransformation =	Bones[i_BoneIndex[0]] * i_BoneWeight[0];
+	FinalBoneTransformation +=		Bones[i_BoneIndex[1]] * i_BoneWeight[1];
+	FinalBoneTransformation +=		Bones[i_BoneIndex[2]] * i_BoneWeight[2];
+	FinalBoneTransformation +=		Bones[i_BoneIndex[3]] * i_BoneWeight[3];
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////// VERETX  FRAGMENT //////////////////////////
+
+			MaterialIndex   = i_MaterialID;
+			RenderID		= i_RenderID;
+			TexCoord		= i_TexCoord;
+			FragPosition	= Model * FinalBoneTransformation * vec4(i_Position.xyz, 1.0f);
+			Tangent			= i_Tangent;
+			BiTangent		= i_Bitangent;
+			VertNormal		= mat3(transpose(inverse(Model * FinalBoneTransformation))) * i_Normal;
 			VertNormal		= normalize(VertNormal);  
 			VertColor 		= i_Color;
 

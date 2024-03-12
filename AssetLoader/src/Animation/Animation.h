@@ -4,6 +4,9 @@
 #include "AnimNode.h"
 #include "Bone/Bone.h"
 
+#include <glm/gtx/matrix_decompose.hpp>
+#include <algorithm>
+#include <functional>
 
 namespace OE1Core
 {
@@ -12,16 +15,20 @@ namespace OE1Core
 		class AnimationLoader;
 	}
 	namespace Component { class InspectorComponent; class AnimationComponent; }
+
+
+	typedef std::function<void(std::string, uint32_t)> ANIMATION_SWITCH_COMMAND_CREATOR_CALLBACK;
+
 	class Animation
 	{
 		friend class Loader::AnimationLoader;
 		friend class Component::InspectorComponent;
 		friend class Component::AnimationComponent;
+		friend class SkeletonAnimator;
 	public:
 		Animation() = default;
 		Animation(size_t _bone_count);
 		~Animation();
-
 
 		float GetTicksPerSecond();
 		float GetDuration();
@@ -31,11 +38,21 @@ namespace OE1Core
 		int GetBoneCount();
 		int GetBoneCount() const;
 		void SetBoneCount(int _count);
+		bool& OnTransition();
 		
 		std::string GetName() const;
 		std::string GetName();
 
 		void SetName(std::string _name);
+
+		void SetNextAnimation(Animation* _animation, uint32_t _id);
+		/// <summary>
+		/// Make Sure to set next animation before calling this
+		/// </summary>
+		/// <param name="_next_animation"></param>
+		/// <param name="_dt"></param>
+		/// <param name="_time"></param>
+		void Interpolate(float _dt);
 
 		void UpdateTransform(float dt);
 		void UpdateBoneTransformBuffer(size_t _size);
@@ -43,6 +60,10 @@ namespace OE1Core
 		void Play();
 		void Pause();
 		void Stop();
+
+		// Callbacks
+		void RegisterAnimationSetCallback(const ANIMATION_SWITCH_COMMAND_CREATOR_CALLBACK& _callback);
+		bool HasValidAnimationSetCallback();
 		
 
 	private:
@@ -51,6 +72,8 @@ namespace OE1Core
 		std::vector<glm::mat4>	m_BoneTransform;
 		float m_DeltaFactor = 1.0f;
 
+
+		uint32_t m_TransitionEntityID;
 		int m_BoneCount = 0;
 		float m_Duration;
 		float m_TickPerSecond;
@@ -66,8 +89,17 @@ namespace OE1Core
 		bool m_Computed = false;
 		bool m_Updated = false;
 
+		bool m_OnTransition = false;
+		float m_TransitionTime = 0.0f;
+		float m_TransitionDuration = 0.7f;
+		
+		Animation* m_NextAnimation = nullptr;
+
 	private: // Util
 		void ComputeTransform(const AnimNode* _node, glm::mat4 _parent);
+		void ComputeTransformTransition(const AnimNode* _node, glm::mat4 _parent, Animation* _other, float _time);
+		ANIMATION_SWITCH_COMMAND_CREATOR_CALLBACK m_AnimationSwitchCallback;
+		bool m_ValidAnimSetCallback = false;
 	};
 }
 
