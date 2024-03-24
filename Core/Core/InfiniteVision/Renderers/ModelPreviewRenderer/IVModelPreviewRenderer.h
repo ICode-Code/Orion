@@ -21,6 +21,7 @@ namespace OE1Core
 
 		protected:
 			inline static CameraPackage* s_CameraPackage = nullptr;
+			inline static Component::BaseCameraControllerComponent* s_CameraController = nullptr;
 			inline static Shader* s_LocalShader = nullptr;
 		};
 	}

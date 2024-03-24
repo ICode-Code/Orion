@@ -37,12 +37,12 @@ namespace OE1Core
 		{
 			return m_Name;
 		}
-		void CameraPackageComponent::Update(TransformComponent* _transform)
+		void CameraPackageComponent::Update(TransformComponent* _transform, Component::BaseCameraControllerComponent* _controller)
 		{
 			if (m_Camera->IsPilotMode())
-				_transform->m_Position = m_Camera->m_Controller->m_CurrentPosition;
+				_transform->m_Position = _controller->m_CurrentPosition;
 			else
-				m_Camera->m_Controller->m_FinalPosition = _transform->m_Position;
+				_controller->m_FinalPosition = _transform->m_Position;
 		}
 	}
 }

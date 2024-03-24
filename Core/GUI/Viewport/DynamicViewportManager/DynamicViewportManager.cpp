@@ -30,7 +30,7 @@ namespace OE1Core
 
 		Entity _camera_entity((entt::entity)_camera->GetParentEntity(), SceneManager::GetActiveScene());
 		
-		m_DynamicViewport.insert(std::make_pair(_name, new DynamicViewport(_camera, _name, _camera_entity)));
+		m_DynamicViewport.insert(std::make_pair(_name, new DynamicViewport(_camera, _camera->GetCameraController(), _name, _camera_entity)));
 		return m_DynamicViewport[_name];
 	}
 	DynamicViewport* DynamicViewportManager::GetViewport(std::string _name)

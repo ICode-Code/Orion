@@ -30,6 +30,8 @@ namespace OE1Core
 			ISkinnedMesh();
 			IAnimationComponent();
 			ICameraPackage();
+			IThirdPersonCameraControllerComponent();
+			IThirdPersonCharacterControllerComponent();
 
 
 			ImGui::PopStyleColor(7);
@@ -43,7 +45,8 @@ namespace OE1Core
 		void InspectorComponent::SetCameraComponent(class CameraComponent* _camera_component) { m_CameraComponent = _camera_component; }
 		void InspectorComponent::SetSkinnedMeshComponent(class SkinnedMeshComponent* _skinned_mesh_component) { m_SkinnedMeshComponent = _skinned_mesh_component;  };
 		void InspectorComponent::SetAnimationComponent(class AnimationComponent* _animation_component) { m_AnimationComponent = _animation_component; }
-
+		void InspectorComponent::SetThirdPersonCameraControllerComponent(class ThirdPersonCameraControllerComponent* _tp_camera_Controller_component) { m_ThirdPersonCameraControllerComponent = _tp_camera_Controller_component; };
+		void InspectorComponent::SetThirdPersonCharacterControllerComponent(class ThirdPersonCharacterControllerComponent* _tp_character_Controller_component) { m_ThirdPersonCharacterControllerComponent = _tp_character_Controller_component; };
 		void InspectorComponent::ITag()
 		{
 			if (!m_TagComponent)
@@ -164,6 +167,20 @@ namespace OE1Core
 					CustomFrame::UIEditorTextValue("Ticks/Sec",std::to_string(m_AnimationComponent->m_Animation->GetTicksPerSecond()).c_str());
 					CustomFrame::UIEditorTextValue("Bone Count",std::to_string(m_AnimationComponent->m_Animation->GetBoneCount()).c_str());
 					CustomFrame::UIEditorFloat("Speed", &m_AnimationComponent->m_Animation->m_DeltaFactor, 0.2f, 2.0f, "%.3f");
+					CustomFrame::UIEditorFloat("Blend Speed", &m_AnimationComponent->m_Animation->m_TransitionDuration, 0.0f, 1.0f, "%.5f");
+					//ImGui::ProgressBar(_prog, {0, 5.0f,});
+
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 });
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0 });
+					ImGui::PushStyleColor(ImGuiCol_PlotHistogram, { 0.15f, 0.15f, 0.15f, 1.0f });
+
+					float _prog = (m_AnimationComponent->m_Animation->m_CurrentTime / m_AnimationComponent->m_Animation->m_Duration);
+					ImGui::Text("Timeline:");
+					ImGui::ProgressBar(_prog, { 0.0f, 0.0f });
+
+					ImGui::PopStyleColor();
+					ImGui::PopStyleVar(3);
 
 					ImGui::Separator();
 
@@ -197,14 +214,127 @@ namespace OE1Core
 		{
 			if (!m_CameraPackageComponent)
 				return;
-
-			if (ImGui::TreeNodeEx("Camera View Point", m_TreeNodeFlags))
+			 
+			if (ImGui::TreeNodeEx("Camera", m_TreeNodeFlags))
 			{
-				
-				
+
+				CustomFrame::UIEditorColor3("Background", glm::value_ptr(m_CameraPackageComponent->GetCameraPackage()->m_Camera->m_Background));
+				CustomFrame::UIEditorInt("Field of View", &m_CameraPackageComponent->GetCameraPackage()->m_Camera->m_FieldOfView, 1, 100);
+				CustomFrame::UIEditorFloat("Velocity", &m_CameraPackageComponent->GetCameraPackage()->m_BaseCameraController->m_Speed, 0.0f, 256.0f);
+				CustomFrame::UIEditorFloat("Velocity Factor", &m_CameraPackageComponent->GetCameraPackage()->m_BaseCameraController->m_SpeedFactor, 0.0f, 256.0f);
+
+				ImGui::Indent(16.0f);
+
+				if (ImGui::TreeNodeEx("Clipping Planes", m_TreeNodeFlags))
+				{
+
+					CustomFrame::UIEditorFloatDrag("Near Plane", &m_CameraPackageComponent->GetCameraPackage()->m_Camera->m_Near);
+					CustomFrame::UIEditorFloatDrag("Far Plane", &m_CameraPackageComponent->GetCameraPackage()->m_Camera->m_Far);
+
+					ImGui::TreePop();
+				}
+				ImGui::Indent(-16.0f);
+
+
 				ImGui::TreePop();
 			}
 
+		}
+		void InspectorComponent::IThirdPersonCameraControllerComponent()
+		{
+			if (!m_ThirdPersonCameraControllerComponent)
+				return;
+
+			if (ImGui::TreeNodeEx("TP Camera Controller", m_TreeNodeFlags))
+			{
+
+
+				
+
+				ImGui::Indent(16.0f);
+
+				if (ImGui::TreeNodeEx("Pitch Constrain", m_TreeNodeFlags))
+				{
+
+					CustomFrame::UIEditorFloat("Max", &m_ThirdPersonCameraControllerComponent->m_PitchConstrainMax, 45.0f, 89.0f);
+					CustomFrame::UIEditorFloat("Min", &m_ThirdPersonCameraControllerComponent->m_PitchConstrainMax, -89.0f, 45.0f);
+					ImGui::TreePop();
+				}
+
+				if (ImGui::TreeNodeEx("Control", m_TreeNodeFlags))
+				{
+
+					CustomFrame::UIEditorFloat("Sensitivity", &m_ThirdPersonCameraControllerComponent->m_Sensitivity, 0.001f, 0.5f);
+					CustomFrame::UIEditorCheckbox("Flip Mouse Control", &m_ThirdPersonCameraControllerComponent->m_FlipMouse);
+					
+					CustomFrame::UIEditorFloatDrag("Distance To Target", &m_ThirdPersonCameraControllerComponent->m_DistanceToTarget, 0.1f);
+					CustomFrame::UIEditorFloatDrag("Camera Height", &m_ThirdPersonCameraControllerComponent->m_FocusHeight, 0.1f);
+					CustomFrame::UIEditorFloatDrag("Shift Right Focus", &m_ThirdPersonCameraControllerComponent->m_ShiftRightCameraFocus, 0.1f, -5.0f, 5.0f);
+				
+					ImGui::TreePop();
+				}
+
+				ImGui::Indent(-16.0f);
+
+				ImGui::Separator();
+
+				CustomFrame::UIEditorTextValue("Target Camera", "...");
+
+				if (ImGui::BeginDragDropTarget())
+				{
+
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Camera_Pay_Load"))
+					{
+						Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
+						
+						// get real ptr
+						CameraPackage* camera_pkg_ptr = SceneManager::GetActiveScene()->GetCameraManager()->GetCamera(package->GetCameraPackage()->GetName());
+
+						// Link
+						camera_pkg_ptr->SetCameraController(m_ThirdPersonCameraControllerComponent);
+						m_ThirdPersonCameraControllerComponent->SetCameraComponent(camera_pkg_ptr->GetCamera());
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::TreePop();
+			}
+		}
+		void InspectorComponent::IThirdPersonCharacterControllerComponent()
+		{
+			if (!m_ThirdPersonCharacterControllerComponent)
+				return;
+
+			if (ImGui::TreeNodeEx("TP Character Controller", m_TreeNodeFlags))
+			{
+				CustomFrame::UIEditorFloat("Walk Speed", &m_ThirdPersonCharacterControllerComponent->m_WalkSpeed, 1.0f, 32.0f);
+				CustomFrame::UIEditorFloat("Run Speed", &m_ThirdPersonCharacterControllerComponent->m_SprintSpeed, 1.0f, 128.0f);
+				CustomFrame::UIEditorFloat("Turn Speed", &m_ThirdPersonCharacterControllerComponent->m_TurnSpeed, 10.0f, 360.0f);
+
+
+
+				CustomFrame::UIEditorTextValue("Target Camera", "...");
+
+				if (ImGui::BeginDragDropTarget())
+				{
+
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Camera_Pay_Load"))
+					{
+						Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
+
+						// get real ptr
+						CameraPackage* camera_pkg_ptr = SceneManager::GetActiveScene()->GetCameraManager()->GetCamera(package->GetCameraPackage()->GetName());
+
+						// Link
+						m_ThirdPersonCharacterControllerComponent->SetCameraComponent(camera_pkg_ptr->GetCamera());
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::TreePop();
+			}
 		}
 		void InspectorComponent::ICamController()
 		{

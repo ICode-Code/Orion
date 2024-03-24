@@ -4,11 +4,12 @@
 
 namespace OE1Core
 {
-	DynamicViewport::DynamicViewport(CameraPackage* _camera, std::string _name, Entity _entity)
+	DynamicViewport::DynamicViewport(CameraPackage* _camera, Component::BaseCameraControllerComponent* _camera_controller, std::string _name, Entity _entity)
 	{
 		m_Entity = _entity;
 		m_CameraPackageComponent = &m_Entity.GetComponent<Component::CameraPackageComponent>();
 		m_TransformComponent = &m_Entity.GetComponent<Component::TransformComponent>();
+		m_CameraController = _camera_controller;
 
 		m_Camera = _camera;
 		m_Name = ICON_FA_VIDEO"		";
@@ -22,7 +23,7 @@ namespace OE1Core
 
 	void DynamicViewport::Update()
 	{
-		m_CameraPackageComponent->Update(m_TransformComponent);
+		m_CameraPackageComponent->Update(m_TransformComponent, m_CameraController);
 		m_Entity.Update();
 
 		UpdateViewport(); 

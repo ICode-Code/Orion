@@ -15,7 +15,9 @@ namespace OE1Core
 			friend class InspectorComponent;
 			friend class CameraPackageComponent;
 			friend class FreeLookCameraControllerComponent;
+			friend class ThirdPersonCameraControllerComponent;
 			friend class BaseCameraControllerComponent;
+			friend class ThirdPersonCharacterControllerComponent;
 		public:
 			CameraComponent();
 			~CameraComponent();
@@ -24,6 +26,7 @@ namespace OE1Core
 			glm::vec3 GetPosition() const;
 			void SetResolution(glm::vec2 _res);
 			void Update(glm::vec3 _position);
+			void Update(glm::vec3 _position, glm::vec3 _target_position);
 			void SetPitch(float _pitch);
 			void SetYaw(float _yaw);
 			float GetAspectRatio();
@@ -54,6 +57,7 @@ namespace OE1Core
 			glm::vec3 m_Front;
 			glm::vec3 m_Up;
 			glm::vec3 m_Right;
+			const glm::vec3 m_WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 			float m_Yaw;
 			float m_Pitch;

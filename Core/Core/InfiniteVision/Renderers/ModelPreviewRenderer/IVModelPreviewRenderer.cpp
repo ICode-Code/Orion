@@ -6,12 +6,16 @@ namespace OE1Core
 	{
 		IVModelPreviewRenderer::IVModelPreviewRenderer(SDL_Window* _window)
 		{
-			s_CameraPackage = new CameraPackage(_window, " ");
+			s_CameraPackage = new CameraPackage(_window, CAMERA_TYPE::FREE_LOOK, " ");
 			s_LocalShader = ShaderManager::GetShader(ShaderID::MODEL_PREVIEW);
+			s_CameraController = new Component::FreeLookCameraControllerComponent(_window);
+
+			s_CameraController->SetCameraComponent(s_CameraPackage->GetCamera());
 		}
 		IVModelPreviewRenderer::~IVModelPreviewRenderer()
 		{
 			delete s_CameraPackage;    
+			delete s_CameraController;
 		}
 
 		void IVModelPreviewRenderer::Render(IVModel& _model_package)
@@ -27,10 +31,10 @@ namespace OE1Core
 
 			s_CameraPackage->GetCamera()->SetResolution(glm::vec2(1280, 1024));
 			s_CameraPackage->GetCamera()->m_Near = 0.01f;
-			s_CameraPackage->GetController()->Focus(glm::vec3(0.0f, 0.0f, 0.0f), glm::length(_model_package.Extent * 1.5f));
-			s_CameraPackage->GetController()->UpdateCameraView();
+			s_CameraController->Focus(glm::vec3(0.0f, 0.0f, 0.0f), glm::length(_model_package.Extent * 1.5f));
+			s_CameraController->UpdateCameraView();
 
-			s_CameraPackage->GetCamera()->Update(s_CameraPackage->GetController()->GetCurrentPosition());
+			s_CameraPackage->GetCamera()->Update(s_CameraController->GetCurrentPosition());
 
 			s_LocalShader->SetMat4("Model", glm::mat4(1.0f));
 			s_LocalShader->SetMat4("View", s_CameraPackage->GetCamera()->m_View);

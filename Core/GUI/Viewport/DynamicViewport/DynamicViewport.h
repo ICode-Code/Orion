@@ -12,7 +12,7 @@ namespace OE1Core
 	class DynamicViewport : public BaseViewport
 	{
 	public:
-		DynamicViewport(CameraPackage* _camera, std::string _name, Entity _entity);
+		DynamicViewport(CameraPackage* _camera, Component::BaseCameraControllerComponent* _camera_controller, std::string _name, Entity _entity);
 		~DynamicViewport();
 
 		void Update() override;
@@ -42,6 +42,7 @@ namespace OE1Core
 		ActionButtonBase m_ActionButton;
 
 		Entity m_Entity;
+		Component::BaseCameraControllerComponent* m_CameraController = nullptr;
 		Component::CameraPackageComponent* m_CameraPackageComponent = nullptr;
 		Component::TransformComponent* m_TransformComponent = nullptr;
 	};

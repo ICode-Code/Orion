@@ -14,7 +14,7 @@ namespace OE1Core
 		delete std::get<1>(m_HideTool);
 	}
 
-	void ActionButtonUtilityGroup::Draw(bool& _show_action_button, CameraPackage& _camera)
+	void ActionButtonUtilityGroup::Draw(bool& _show_action_button, Component::CameraComponent* _camera, Component::BaseCameraControllerComponent* _camera_controller)
 	{
 		OpenDefaultActionButtonStyle();
 
@@ -26,11 +26,11 @@ namespace OE1Core
 		if (ImGui::BeginPopup("quick_camera_setting"))
 		{
 
-			CustomFrame::UIEditorFloat("Speed", &_camera.m_Controller->m_Speed, 0.1f, 256.0f, "%.3f",0, 100.0f);
-			CustomFrame::UIEditorFloat("Factor", &_camera.m_Controller->m_SpeedFactor, 1.0f, 128.0f, "%.3f", 0, 100.0f);
+			CustomFrame::UIEditorFloat("Speed", &_camera_controller->m_Speed, 0.1f, 256.0f, "%.3f",0, 100.0f);
+			CustomFrame::UIEditorFloat("Factor", &_camera_controller->m_SpeedFactor, 1.0f, 128.0f, "%.3f", 0, 100.0f);
 			//CustomFrame::UIEditorFloat("Smoothness", &_camera.m_Controller->m_LerpThreshold, 0.01f, 0.5f, "%.3f", 0, 100.0f);
-			CustomFrame::UIEditorInt("FOV", &_camera.m_Camera->m_FieldOfView, 30, 95, "%d", 0, 100);
-			CustomFrame::UIEditorf3<glm::vec3>("Position", _camera.m_Controller->m_FinalPosition, 0.0f, 107.0f);
+			CustomFrame::UIEditorInt("FOV", &_camera->m_FieldOfView, 30, 95, "%d", 0, 100);
+			CustomFrame::UIEditorf3<glm::vec3>("Position", _camera_controller->m_FinalPosition, 0.0f, 107.0f);
 			ImGui::EndPopup();
 		}
 

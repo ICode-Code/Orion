@@ -97,6 +97,18 @@ namespace OE1Core
 			ImGui::EndDragDropSource();
 		}
 
+		if (_entity.HasComponent<Component::CameraPackageComponent>())
+		{
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				ImGui::SetTooltip(tag.m_Identifier.c_str());
+
+				ImGui::SetDragDropPayload("Camera_Pay_Load", &_entity.GetComponent<Component::CameraPackageComponent>(), sizeof(Component::CameraPackageComponent));
+
+				ImGui::EndDragDropSource();
+			}
+		}
+
 
 		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
 		{

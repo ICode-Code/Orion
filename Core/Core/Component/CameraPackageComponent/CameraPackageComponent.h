@@ -19,7 +19,7 @@ namespace OE1Core
 			CameraPackage* GetCameraPackage();
 			const char* GetCameraPackageName();
 
-			void Update(class TransformComponent* _transform);
+			void Update(class TransformComponent* _transform, Component::BaseCameraControllerComponent* _controller);
 
 			
 

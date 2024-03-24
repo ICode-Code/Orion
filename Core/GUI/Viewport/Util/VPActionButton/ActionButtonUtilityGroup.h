@@ -14,7 +14,7 @@ namespace OE1Core
 		ActionButtonUtilityGroup();
 		~ActionButtonUtilityGroup();
 
-		void Draw(bool& _show_action_button, CameraPackage& _camera);
+		void Draw(bool& _show_action_button, Component::CameraComponent* _camera, Component::BaseCameraControllerComponent* _camera_controller);
 
 	protected:
 		std::pair<bool, VPNavButton*> m_QuickCamera;

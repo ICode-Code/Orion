@@ -52,7 +52,7 @@ namespace OE1Core
 		bool CoreGeometryLoader::LoadToMemory(std::string _path)
 		{
 			s_AbsPath = _path;
-
+			//s_Importer.SetPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, aiProcess_ImproveCacheLocality);
 			s_Scene = s_Importer.ReadFile(
 				s_AbsPath,
 				aiProcess_Triangulate |

@@ -84,7 +84,7 @@ namespace OE1Core
 
 		ImGui::SameLine();
 
-		m_UtilityGroup.Draw(m_ShowActionButton, *SceneManager::GetActiveScene()->m_MasterCamera);
+		m_UtilityGroup.Draw(m_ShowActionButton, SceneManager::GetActiveScene()->m_MasterCamera->GetCamera(), SceneManager::GetActiveScene()->m_MasterCameraController);
 	}
 	void MainViewport::HandleGIZMO()
 	{
@@ -190,7 +190,7 @@ namespace OE1Core
 
 			if (SceneManager::GetActiveScene()->GetActiveEntity()->IsHold())
 			{
-				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 6.0f) + SceneManager::GetActiveScene()->m_MasterCamera->GetController()->GetCurrentPosition();
+				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 6.0f) + SceneManager::GetActiveScene()->m_MasterCameraController->GetCurrentPosition();
 				Entity entity = SceneManager::GetActiveScene()->GetActiveEntity()->GetActive();
 				entity.GetComponent<Component::TransformComponent>().m_Position = position;
 			}
@@ -222,7 +222,7 @@ namespace OE1Core
 			{
 				IVModel* package = (IVModel*)payload->Data;
 				
-				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_MasterCamera->GetController()->GetCurrentPosition();
+				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_MasterCameraController->GetCurrentPosition();
 				Entity droped_entity = SceneEntityFactory::CreateRichMeshEntity(package, position);
 				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(droped_entity, true);
 			}
@@ -237,7 +237,7 @@ namespace OE1Core
 			{
 				IVModel* package = (IVModel*)payload->Data;
 
-				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_MasterCamera->GetController()->GetCurrentPosition();
+				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_MasterCameraController->GetCurrentPosition();
 				Entity droped_entity = SceneEntityFactory::CreateRichSkinnedMeshEntity(package, position);
 				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(droped_entity, true);
 			}
@@ -348,7 +348,7 @@ namespace OE1Core
 		{
 			if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
 			{
-				SceneManager::GetActiveScene()->m_MasterCamera->GetController()->Focus(
+				SceneManager::GetActiveScene()->m_MasterCameraController->Focus(
 					SceneManager::GetActiveScene()->GetActiveEntity()->GetActive().GetComponent<Component::TransformComponent>().m_Position
 				);
 			}

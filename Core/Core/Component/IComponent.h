@@ -13,6 +13,8 @@
 #include "ViewportBillboardComponent/ViewportBillboardComponent.h"
 #include "CameraPackageComponent/CameraPackageComponent.h"
 #include "AnimationComponent/AnimationComponent.h"
+#include "CharacterController/ThirdPersonCharacterControllerComponent/ThirdPersonCharacterControllerComponent.h"
+#include "CameraControllerComponent/ThirdPersonCameraControllerComponent/ThirdPersonCameraControllerComponent.h"
 
 #endif // !OE1_ICOMPONENT_H_
  

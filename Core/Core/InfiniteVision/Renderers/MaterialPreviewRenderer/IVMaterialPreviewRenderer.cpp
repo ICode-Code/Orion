@@ -26,17 +26,25 @@ namespace OE1Core
 
 			// Create, setup, and position the camera
 			std::string PREVIEW_CAMERA_TAG = "MaterialPreivewCam";
-			CameraPackage* PREVIEW_CAMERA = _scene->GetCameraManager()->RegisterCamera(PREVIEW_CAMERA_TAG);
+			
+
+			// Create Camera
+			CameraPackage* PREVIEW_CAMERA = _scene->GetCameraManager()->RegisterCamera(PREVIEW_CAMERA_TAG, CAMERA_TYPE::FREE_LOOK);
 			int PREVIEW_CAMERA_TAG_IDX = _scene->GetCameraManager()->GetCameraIndex(PREVIEW_CAMERA_TAG);
 			
+			// Create Camera Controller
+			Component::FreeLookCameraControllerComponent* Controller = new Component::FreeLookCameraControllerComponent(_scene->GetCameraManager()->GetContextWindow());
+			Controller->SetCameraComponent(PREVIEW_CAMERA->GetCamera());
+			PREVIEW_CAMERA->SetCameraController(Controller);
+
 			IVVirtualMaterialSceneFramebuffer m_VirtualMaterialSceneFramebuffer(_material->m_Preview);// = new Renderer::IVVirtualMaterialSceneFramebuffer(_material->GetPreviewRef());
 			m_VirtualMaterialSceneFramebuffer.SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
 			m_VirtualMaterialSceneFramebuffer.Attach();
 
 			
 			PREVIEW_CAMERA->GetCamera()->m_Near = 0.01f;
-			PREVIEW_CAMERA->GetController()->Focus(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
-			PREVIEW_CAMERA->GetController()->UpdateCameraView();
+			Controller->Focus(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
+			Controller->UpdateCameraView();
 			PREVIEW_CAMERA->GetCamera()->Update(glm::vec3(3.0f, 0.0f, 0.0f));
 			PREVIEW_CAMERA->Update(0.1f);
 
@@ -70,6 +78,7 @@ namespace OE1Core
 			s_LocalShader->Detach();
 			m_VirtualMaterialSceneFramebuffer.Detach();
 			_scene->GetCameraManager()->PurgeCamera(PREVIEW_CAMERA_TAG);
+			delete Controller;
 		}
 	}
 }

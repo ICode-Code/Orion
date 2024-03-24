@@ -4,7 +4,8 @@
 #include "../Core/CoreAnimation/AnimationManager/AnimationManager.h"
 #include "../Common/Shared/UniformBlocks.h"
 #include "../Core/CoreAnimation/MemoryBufferLocator.h"
-#include "Animation/Animation.h"
+
+#include "AnimationController/AnimationController.h"
 #include <GL/glew.h>
 #include <Log.h>
 
@@ -41,8 +42,10 @@ namespace OE1Core
 			void SetAnimation(Animation* _animation);
 			void SetUpdateBufferLocator(MemoryBufferLocator _new);
 			MemoryBufferLocator GetBufferLocator();
+			AnimationController* GetAnimationController();
 
 		private:
+			AnimationController* m_AnimationController = nullptr;
 			Animation* m_Animation		= nullptr;
 			MemoryBufferLocator m_BufferLocator;
 			uint32_t m_EntityID;

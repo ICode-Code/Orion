@@ -2,12 +2,12 @@
 
 namespace OE1Core
 {
-	CameraPackage::CameraPackage(SDL_Window* _window, std::string _name)
+	CameraPackage::CameraPackage(SDL_Window* _window, CAMERA_TYPE _type, std::string _name)
 	{
 		m_Name = _name;
 		m_Camera = new Component::CameraComponent();
-		m_Controller = new Component::FreeLookCameraControllerComponent(_window);
-		m_Controller->SetCameraComponent(m_Camera);
+		m_CameraType = _type;
+
 
 		// Init-Framebuffer
 		m_MainPassFramebuffer = new Renderer::IVForwardMainPassFramebuffer(Renderer::IVFrameSize::R_1k);
@@ -15,15 +15,14 @@ namespace OE1Core
 	CameraPackage::~CameraPackage()
 	{
 		delete m_Camera;
-		delete m_Controller;
 		delete m_MainPassFramebuffer;
 	}
 	Component::CameraComponent* CameraPackage::GetCamera() { return m_Camera; }
-	Component::FreeLookCameraControllerComponent* CameraPackage::GetController() { return m_Controller; }
 	void CameraPackage::Update(float _dt)
 	{ 
 		//if(IsPilotMode())
-		m_Controller->UpdateInput(_dt); 
+		if (m_BaseCameraController)
+			m_BaseCameraController->UpdateInput(_dt);
 
 		m_SceneTransform.CameraPosition = m_Camera->GetPosition();
 		m_SceneTransform.Projection = m_Camera->m_Projection;
@@ -55,13 +54,28 @@ namespace OE1Core
 	{
 		return m_SceneTransform;
 	}
-	void CameraPackage::OnEvent(OECore::IEvent& e) { m_Controller->OnEvent(e); }
+
+	Component::BaseCameraControllerComponent* CameraPackage::GetCameraController()
+	{
+		return m_BaseCameraController;
+	}
+	Component::BaseCameraControllerComponent* CameraPackage::SetCameraController(Component::BaseCameraControllerComponent* _controller)
+	{
+		return m_BaseCameraController = _controller;
+	}
+
+	void CameraPackage::OnEvent(OECore::IEvent& e) 
+	{ 
+		if(m_BaseCameraController)
+			m_BaseCameraController->OnEvent(e); 
+	}
 	GLuint CameraPackage::GetRenderedScene() { return m_MainPassFramebuffer->GetAttachment(0); }
 	std::string CameraPackage::GetName() { return m_Name; }
 	Renderer::IVForwardMainPassFramebuffer* CameraPackage::GetMainPassFramebuffer()
 	{
 		return m_MainPassFramebuffer;
 	}
+	CAMERA_TYPE CameraPackage::GetType() { return m_CameraType; };
 	void CameraPackage::PowerOn() { m_PowerState = CameraState::Power::ON; }
 	void CameraPackage::PowerOff() { m_PowerState = CameraState::Power::OFF; }
 	CameraState::Power CameraPackage::GetPowerState() { return m_PowerState; }

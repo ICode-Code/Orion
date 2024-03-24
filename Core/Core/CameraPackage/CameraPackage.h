@@ -2,9 +2,11 @@
 #define OE1_CAMERA_PACKAGE_H_
 
 #include "../Component/CameraControllerComponent/FreeLookCameraControllerComponent/FreeLookCameraControllerComponent.h"
+#include "../Component/CameraControllerComponent/ThirdPersonCameraControllerComponent/ThirdPersonCameraControllerComponent.h"
 #include "../../Common/Shared/UniformBlocks.h"
 #include "../InfiniteVision/DisplayCanavs/IVForwardMainPassFramebuffer.h"
 #include "CameraState.h"
+#include "CameraTypes.h"
 
 namespace OE1Core
 {
@@ -15,15 +17,17 @@ namespace OE1Core
 		friend class Component::CameraPackageComponent;
 		friend class ActionButtonUtilityGroup;
 	public:
-		CameraPackage(SDL_Window* _window, std::string _name);
+		CameraPackage(SDL_Window* _window, CAMERA_TYPE _type, std::string _name);
 		~CameraPackage();
 
 		Component::CameraComponent* GetCamera();
-		Component::FreeLookCameraControllerComponent* GetController();
 		void Update(int _width, int _height);
 		void Update(float _dt);
 		void OnEvent(OECore::IEvent& e);
 		Memory::SceneTransfrom& GetSceneTransform();
+
+		Component::BaseCameraControllerComponent* GetCameraController();
+		Component::BaseCameraControllerComponent* SetCameraController(Component::BaseCameraControllerComponent* _controller);
 
 		Renderer::IVForwardMainPassFramebuffer* GetMainPassFramebuffer();
 		std::string GetName();
@@ -41,6 +45,9 @@ namespace OE1Core
 		bool IsPilotMode();
 		CameraState::Power GetPowerState();
 
+		// This type is set when we create the camera
+		CAMERA_TYPE GetType();
+
 
 		/// <summary>
 		/// Return true if it is a valid offset and applyed correctly
@@ -54,9 +61,10 @@ namespace OE1Core
 
 	protected:
 		Memory::SceneTransfrom m_SceneTransform;
+		Component::BaseCameraControllerComponent* m_BaseCameraController = nullptr;
 		Component::CameraComponent* m_Camera = nullptr;
-		Component::FreeLookCameraControllerComponent* m_Controller;
 
+		CAMERA_TYPE m_CameraType;
 		CameraState::Power m_PowerState = CameraState::Power::OFF;
 		CameraState::FlightState m_FlightState = CameraState::FlightState::REST;
 		GLintptr m_BufferOffset = -1;

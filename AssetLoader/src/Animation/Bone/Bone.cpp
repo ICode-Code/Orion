@@ -17,18 +17,16 @@ namespace OE1Core
 	{
 
 	}
-	bool Bone::OnTransition() { return m_OnTransition; }
 	std::string Bone::GetBoneName() const { return m_Name; }
 	int Bone::GetBoneID() { return m_ID; }
 	glm::mat4 Bone::GetLocalTransform() { return m_LocalTransform; }
-
 
 	void Bone::Update(float _animation_time)
 	{
 		glm::mat4 _trans = InterpolatePosition(_animation_time);
 		glm::mat4 _rot = InterpolateRotation(_animation_time);
 		glm::mat4 _scale = InterpolateScaling(_animation_time);
-
+		//printf("%f\n", _animation_time);
 		m_LocalTransform = _trans * _rot * _scale;
 	}
 	void Bone::Interpolate(Bone& _bone, float _animation_time, float _time)
@@ -65,6 +63,10 @@ namespace OE1Core
 
 		return 0;
 	}
+
+	size_t Bone::GetPositionCount() { return m_PositionCount; }
+	size_t Bone::GetRotationCount() { return m_RotationCount; }
+	size_t Bone::GetScaleCount() { return m_ScaleCount; }
 
 	int Bone::GetPositionIndex(float _anim_time, std::vector<KeyPosition>& _pos)
 	{
@@ -107,6 +109,7 @@ namespace OE1Core
 		int p0 = GetPositionIndex(_anim_time);
 		int p1 = p0 + 1;
 
+
 		float _scale_factor = GetScaleFactor(m_Positions[p0].TimeStamp, m_Positions[p1].TimeStamp, _anim_time);
 
 		glm::vec3 _final_pos = glm::mix(m_Positions[p0].Position, m_Positions[p1].Position, _scale_factor);
@@ -120,6 +123,7 @@ namespace OE1Core
 
 		int p0 = GetRotationIndex(_anim_time);
 		int p1 = p0 + 1;
+
 
 		float _scale_factor = GetScaleFactor(m_Rotations[p0].TimeStamp, m_Rotations[p1].TimeStamp, _anim_time);
 
@@ -149,7 +153,7 @@ namespace OE1Core
 			return glm::translate(glm::mat4(1.0f), m_Positions[0].Position);
 
 		glm::vec3 a =  GetFinalPosition(m_Positions, _anim_time);
-		glm::vec3 b = GetFinalPosition(_bone.m_Positions, _anim_time);
+		glm::vec3 b = _bone.m_Positions[0].Position;//GetFinalPosition(_bone.m_Positions, _anim_time);
 
 		glm::vec3 inter_pos = glm::mix(a, b, _duration);
 
@@ -162,7 +166,7 @@ namespace OE1Core
 
 
 		glm::quat a = GetFinalRotation(m_Rotations, _anim_time);
-		glm::quat b = GetFinalRotation(_bone.m_Rotations, _anim_time);
+		glm::quat b = _bone.m_Rotations[0].Rotation;// GetFinalRotation(_bone.m_Rotations, _anim_time);
 
 		glm::quat inter_rot = glm::slerp(a, b, _duration);
 
@@ -174,7 +178,7 @@ namespace OE1Core
 			return glm::scale(glm::mat4(1.0f), m_Scales[0].Scale);
 
 		glm::vec3 a = GetFinalScale(m_Scales, _anim_time);
-		glm::vec3 b = GetFinalScale(_bone.m_Scales, _anim_time);
+		glm::vec3 b = _bone.m_Scales[0].Scale;// GetFinalScale(_bone.m_Scales, _anim_time);
 
 		glm::vec3 inter_scale = glm::mix(a, b, _duration);
 

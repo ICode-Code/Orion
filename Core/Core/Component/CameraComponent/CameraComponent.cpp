@@ -46,5 +46,11 @@ namespace OE1Core
 			m_Projection	= glm::perspective(glm::radians((float)m_FieldOfView), GetAspectRatio(), m_Near, m_Far);
 			m_View			= glm::lookAt(m_Position, m_Position + m_Front, m_Up);
 		}
+		void CameraComponent::Update(glm::vec3 _position, glm::vec3 _target_position)
+		{
+			m_Position = _position;
+			m_Projection = glm::perspective(glm::radians((float)m_FieldOfView), GetAspectRatio(), m_Near, m_Far);
+			m_View = glm::lookAt(m_Position, _target_position, m_WorldUp);
+		}
 	}
 }

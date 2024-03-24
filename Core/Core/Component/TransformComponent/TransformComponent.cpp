@@ -35,7 +35,7 @@ namespace OE1Core
 				m_HostEntity = new Entity(_owner_entity->GetHandle(), _owner_entity->GetScene());
 			m_Position = glm::vec3(0.0f);
 			m_Scale = glm::vec3(1.0f);
-			m_Euler = glm::vec3(0.0f);
+			m_Euler = glm::vec3(1.0f);
 			m_Quaternion = glm::quat(glm::radians(m_Euler));
 			m_RotationFinal = glm::toMat4(m_Quaternion);
 		}

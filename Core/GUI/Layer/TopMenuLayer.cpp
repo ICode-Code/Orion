@@ -24,6 +24,7 @@ namespace OE1Core
 		this->File();
 		this->Edit();
 		this->Tools();
+		this->Component();
 		this->Debug();
 		this->Window();
 		this->Help();
@@ -175,6 +176,33 @@ namespace OE1Core
 				PreferenceWin::s_ShouldOpen = !PreferenceWin::s_ShouldOpen;
 			}
 
+
+			ImGui::EndMenu();
+		}
+	}
+	void TopMenuLayer::Component()
+	{
+		if (ImGui::BeginMenu("Components"))
+		{
+
+			if (ImGui::MenuItem(ICON_FA_STREET_VIEW"    Third Person Character Controller", "Character movement controller"))
+			{
+				if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+				{
+					SceneEntityFactory::AddThirdPersonCharacterControllerComponent(
+						SceneManager::GetActiveScene()->GetActiveEntity()->GetActive()
+					);
+				}
+			}
+			if (ImGui::MenuItem(ICON_FA_CAMERA_ROTATE"    Third Person Camera Controller", "Camera movement behaviour controller"))
+			{
+				if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+				{
+					SceneEntityFactory::AddThirdPersonCameraControllerComponent(
+						SceneManager::GetActiveScene()->GetActiveEntity()->GetActive()
+					);
+				}
+			}
 
 			ImGui::EndMenu();
 		}

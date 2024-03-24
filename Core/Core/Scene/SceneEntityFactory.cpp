@@ -132,10 +132,16 @@ namespace OE1Core
 
 		// Create Component
 		Component::TagComponent& tag = my_entity.GetComponent<Component::TagComponent>();
-		CameraPackage* camera = m_Scene->GetCameraManager()->RegisterCamera(tag.m_Identifier);
+		CameraPackage* camera = m_Scene->GetCameraManager()->RegisterCamera(tag.m_Identifier, CAMERA_TYPE::FREE_LOOK);
 		camera->PowerOn();
 		camera->SetParentEntityID(my_entity);
-		my_entity.AddComponent<Component::CameraPackageComponent>(camera, tag.m_Identifier);
+
+		Component::CameraPackageComponent& _camera_pkg =  my_entity.AddComponent<Component::CameraPackageComponent>(camera, tag.m_Identifier);
+		Component::FreeLookCameraControllerComponent& controller = my_entity.AddComponent<Component::FreeLookCameraControllerComponent>(m_Scene->GetCameraManager()->GetContextWindow());
+		
+		
+		camera->SetCameraController(&controller);
+		controller.SetCameraComponent(camera->GetCamera());
 
 		// Register Inspector
 		my_entity.GetComponent<Component::InspectorComponent>().SetCameraPackageComponent(
@@ -160,23 +166,78 @@ namespace OE1Core
 
 
 
-	void SceneEntityFactory::AddAudioComponent(Entity& _entity)
+	void SceneEntityFactory::AddAudioComponent(Entity _entity)
 	{
 
 	}
-	void SceneEntityFactory::AddMeshColliderComponent(Entity& _entity)
+	void SceneEntityFactory::AddMeshColliderComponent(Entity _entity)
 	{
 
 	}
-	void SceneEntityFactory::AddRigidbodyComponent(Entity& _entity)
+	void SceneEntityFactory::AddRigidbodyComponent(Entity _entity)
 	{
 
 	}
-	void SceneEntityFactory::AddProjectileComponent(Entity& _entity)
+	void SceneEntityFactory::AddProjectileComponent(Entity _entity)
 	{
 
 	}
+	void SceneEntityFactory::AddThirdPersonCameraControllerComponent(Entity _entity)
+	{
+		if (_entity.HasComponent<Component::ThirdPersonCameraControllerComponent>())
+		{
+			LOG_ERROR(LogLayer::Pipe("[COMPONENT REGISTRY FAILED] :: Entity already have <ThirdPersonCameraControllerComponent>", OELog::WARNING));
+			return;
+		}
 
+		// Query Tranform Component
+		Component::TransformComponent& transform = _entity.GetComponent<Component::TransformComponent>();
+
+		
+		 // Create Camera Controller
+		 Component::ThirdPersonCameraControllerComponent& camera_controller = _entity.AddComponent<Component::ThirdPersonCameraControllerComponent>(m_Scene->GetCameraManager()->GetContextWindow(), &transform);
+
+		 // Bind Controller and the Camera
+		 /*_camera.GetCameraPackage()->SetCameraController(&camera_controller);
+		 camera_controller.SetCameraComponent(_camera.GetCameraPackage()->GetCamera());*/
+
+
+		 // Register inspector so we can twick it
+		_entity.GetComponent<Component::InspectorComponent>().SetThirdPersonCameraControllerComponent(
+			&_entity.GetComponent<Component::ThirdPersonCameraControllerComponent>()
+		);
+	}
+	void SceneEntityFactory::AddThirdPersonCharacterControllerComponent(Entity _entity)
+	{
+		if (_entity.HasComponent<Component::ThirdPersonCharacterControllerComponent>())
+		{
+			LOG_ERROR(LogLayer::Pipe("[COMPONENT REGISTRY FAILED] :: Entity already have <ThirdPersonCharacterControllerComponent>", OELog::WARNING));
+			return;
+		}
+
+		if (!_entity.HasComponent<Component::AnimationComponent>())
+		{
+			LOG_ERROR(LogLayer::Pipe("[COMPONENT REGISTRY FAILED] :: Entity need to have <AnimationComponent> to recieve <ThirdPersonCharacterControllerComponent>", OELog::WARNING));
+			return;
+		}
+
+		// Query Animation Component
+		Component::AnimationComponent& animation = _entity.GetComponent<Component::AnimationComponent>();
+
+		// Query Transform Component
+		Component::TransformComponent& transform = _entity.GetComponent<Component::TransformComponent>();
+		
+
+		// Create Component
+		_entity.AddComponent<Component::ThirdPersonCharacterControllerComponent>(&transform, nullptr, animation.GetAnimationController());
+
+		// Register Inspector
+		_entity.GetComponent<Component::InspectorComponent>().SetThirdPersonCharacterControllerComponent(
+			&_entity.GetComponent<Component::ThirdPersonCharacterControllerComponent>()
+		);
+
+
+	}
 	void SceneEntityFactory::AddDefaultComponent(Entity& _entity, std::string _name)
 	{
 		_entity.AddComponent<Component::TagComponent>(CheckNameCollision(_name));
@@ -393,10 +454,11 @@ namespace OE1Core
 		if (!_src.HasComponent<Component::CameraPackageComponent>())
 			return;
 
+		Component::CameraPackageComponent& _camera_pkg = _src.GetComponent<Component::CameraPackageComponent>();
 
 		// Create Component
 		Component::TagComponent& tag = _dest.GetComponent<Component::TagComponent>();
-		CameraPackage* camera = m_Scene->GetCameraManager()->RegisterCamera(tag.m_Identifier);
+		CameraPackage* camera = m_Scene->GetCameraManager()->RegisterCamera(tag.m_Identifier, _camera_pkg.GetCameraPackage()->GetType());
 		camera->PowerOn();
 		camera->SetParentEntityID(_dest);
 		_dest.AddComponent<Component::CameraPackageComponent>(camera, tag.m_Identifier);

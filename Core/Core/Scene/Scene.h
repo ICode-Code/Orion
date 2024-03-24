@@ -102,6 +102,7 @@ namespace OE1Core
 
 		SceneCameraManager* m_CameraManager = nullptr;
 		CameraPackage* m_MasterCamera = nullptr;
+		Component::FreeLookCameraControllerComponent* m_MasterCameraController = nullptr;
 
 		entt::registry m_EntityRegistry;
 

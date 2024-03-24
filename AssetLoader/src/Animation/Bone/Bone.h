@@ -11,6 +11,7 @@ namespace OE1Core
 	class Bone
 	{
 		friend class Component::InspectorComponent;
+		friend class Animation;
 	public:
 		Bone(std::string name, int ID, KeyFrameChannel& _channels);
 		~Bone();
@@ -20,6 +21,7 @@ namespace OE1Core
 		int GetBoneID();
 		glm::mat4 GetLocalTransform();
 		void Update(float _animation_time);
+		bool IsLastPose();
 
 		void Interpolate(Bone& _bone, float _animation_time, float _time);
 
@@ -30,6 +32,10 @@ namespace OE1Core
 		int GetPositionIndex(float _anim_time, std::vector<KeyPosition>& _pos);
 		int GetRotationIndex(float _anim_time, std::vector<KeyRotation>& _rot);
 		int GetScaleIndex(float _anim_time, std::vector<KeyScale>& _scale);
+
+		size_t GetPositionCount();
+		size_t GetRotationCount();
+		size_t GetScaleCount();
 
 	private:
 		float GetScaleFactor(float _last, float _next, float _current);
@@ -50,8 +56,6 @@ namespace OE1Core
 		glm::mat4 m_LocalTransform;
 		std::string m_Name;
 		int m_ID;
-		float m_TranstionTime = 0.0f;
-		bool m_OnTransition = false;
 
 
 	protected:

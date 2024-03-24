@@ -11,7 +11,16 @@ namespace OE1Core
 		: m_Window{_window}
 	{
 		m_CameraManager = new SceneCameraManager(_window);
+		
+		// MasterCamera is created by default as FREE_LOOK camera type
 		m_MasterCamera = m_CameraManager->GetCamera("MasterCamera");
+
+		// Create Controller sepratly
+		m_MasterCameraController = new Component::FreeLookCameraControllerComponent(_window);
+		
+		m_MasterCamera->SetCameraController(m_MasterCameraController);
+		m_MasterCameraController->SetCameraComponent(m_MasterCamera->GetCamera());
+
 		m_CameraManager->EngagePilotMode("MasterCamera");
 
 		m_MasterCamera->PowerOn();
@@ -24,6 +33,7 @@ namespace OE1Core
 		m_SceneRay = new Ray(m_MasterCamera);
 
 		// Init Icons
+		RegisterBillboardIcon(ViewportIconBillboardType::CAMERA, "Camera");
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::POINT_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("PointLight"))));
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::DIRECTIONAL_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("Sun"))));
 		
@@ -35,6 +45,7 @@ namespace OE1Core
 		delete m_RenderStack;
 		delete m_SceneActiveSelection;
 		delete m_SceneRay;
+		delete m_MasterCameraController;
 
 		for (auto iter : m_StaticMeshRegistry)
 			delete iter.second;
@@ -102,6 +113,13 @@ namespace OE1Core
 			billboard.Update(transform, m_MasterCamera->GetCamera()->m_View);
 		}
 
+		auto tpcc_comp = m_EntityRegistry.view<Component::ThirdPersonCharacterControllerComponent>();
+		for (auto ent : tpcc_comp)
+		{
+			Component::ThirdPersonCharacterControllerComponent& tpcc = tpcc_comp.get<Component::ThirdPersonCharacterControllerComponent>(ent);
+			tpcc.UpdateTargetTransform(m_LastDelta);
+		}
+
 		UpdateAnimationComponents();
 
 	}
@@ -115,6 +133,7 @@ namespace OE1Core
 				continue;
 
 			cam->second.Camera->Update(_dt);
+
 			Memory::UniformBlockManager::UseBuffer(
 				Memory::UniformBufferID::SCENE_TRANSFORM)->Update(
 					Memory::s_SceneTransformBufferSize, cam->second.Offset * Memory::s_SceneTransformBufferSize, &cam->second.Camera->GetSceneTransform());
@@ -257,6 +276,13 @@ namespace OE1Core
 		{
 			if (cam->second.Camera->IsPowerOn() && cam->second.Camera->IsPilotMode())
 				cam->second.Camera->OnEvent(e);
+		}
+
+		auto tpcc_comp = m_EntityRegistry.view<Component::ThirdPersonCharacterControllerComponent>();
+		for (auto ent : tpcc_comp)
+		{
+			Component::ThirdPersonCharacterControllerComponent& tpcc = tpcc_comp.get<Component::ThirdPersonCharacterControllerComponent>(ent);
+			tpcc.OnEvent(e);
 		}
 	}
 	

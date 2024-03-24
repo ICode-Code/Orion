@@ -23,12 +23,13 @@ namespace OE1Core
 		/// <param name="_name"></param>
 		/// <param name="_init_pos"></param>
 		/// <returns></returns>
-		CameraPackage* RegisterCamera(std::string _name, glm::vec3 _init_pos = glm::vec3(0.0f, 5.0f, 0.0f));
+		CameraPackage* RegisterCamera(std::string _name, CAMERA_TYPE _type, glm::vec3 _init_pos = glm::vec3(0.0f, 5.0f, 0.0f));
 
 		CameraPackage* GetCamera(std::string _name);
 
 		void EngagePilotMode(std::string _name);
 		bool PurgeCamera(std::string _name);
+		SDL_Window* GetContextWindow();
 
 		
 		/// <summary>
@@ -46,7 +47,7 @@ namespace OE1Core
 		int GetCameraIndex(std::string _name);
 		bool HasCamera(std::string _name);
 		std::map<std::string, CameraParameters>& GetCameraList(); 
-
+		
 
 	private:
 		std::map<std::string, CameraParameters> m_CameraList;

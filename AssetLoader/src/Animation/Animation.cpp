@@ -6,7 +6,7 @@ namespace OE1Core
 	Animation::Animation(size_t _bone_count)
 	{
 		UpdateBoneTransformBuffer(_bone_count);
-		m_TransitionDuration = 0.2f;
+		m_TransitionDuration = 0.0001f;
 	}
 	Animation::~Animation()
 	{
@@ -78,13 +78,22 @@ namespace OE1Core
 	}
 	void Animation::UpdateTransform(float dt)
 	{
-		if (!m_Updated)
+		if (m_Updated)
 			return;
 		m_DeltaTime = dt * m_DeltaFactor;
 		m_CurrentTime += m_TickPerSecond * m_DeltaTime;
 		m_CurrentTime = fmod(m_CurrentTime, m_Duration);
 		ComputeTransform(&m_RootNode, glm::mat4(1.0f));
-		m_Updated = false;
+
+		m_Updated = true;
+	}
+	void Animation::SetHardCut(bool _val)
+	{
+		m_HardCut = _val;
+	}
+	bool Animation::GetHardCut()
+	{
+		return m_HardCut;
 	}
 	void Animation::ComputeTransform(const AnimNode* _node, glm::mat4 _parent)
 	{
@@ -95,6 +104,7 @@ namespace OE1Core
 
 		if (_bone)
 		{
+			
 			_bone->Update(m_CurrentTime);
 			_node_transform = _bone->GetLocalTransform();
 		}
@@ -146,46 +156,75 @@ namespace OE1Core
 	{
 		if (m_OnTransition)
 			return;
+
+
 		m_TransitionEntityID = _id;
 		m_NextAnimation = _animation;
 		m_OnTransition = true;
-		
-		m_Duration = m_NextAnimation->m_Duration; 
-		m_TickPerSecond = m_NextAnimation->m_TickPerSecond;
 
 	}
 	void Animation::Interpolate(float _dt)
 	{
-		if (!m_Updated)
+		if (m_Updated)
 			return;
-
-		//m_NextAnimation->UpdateTransform(_dt);
 
 		m_DeltaTime = _dt * m_DeltaFactor;
 		m_CurrentTime += m_TickPerSecond * m_DeltaTime;
 		m_CurrentTime = fmod(m_CurrentTime, m_Duration);
 
-		// Ensure time is within valid range [0, 1]
-		m_TransitionTime = std::clamp(m_TransitionTime + _dt, 0.0f, m_TransitionDuration);
-
-		// Compute the interpolation factor based on the transition progress
-		float _time = m_TransitionTime / m_TransitionDuration;
-
-		ComputeTransformTransition(&m_RootNode, glm::mat4(1.0f), m_NextAnimation, _time);
-
-		if (m_TransitionTime >= m_TransitionDuration)
+		if (!IsLastPos(m_CurrentTime) && !m_LockTranstion)
 		{
-			m_TransitionTime = 0.0f;
-			m_OnTransition = false;
-			m_Bones = m_NextAnimation->m_Bones;
-			m_BoneMap = m_NextAnimation->m_BoneMap;
-
-			m_NextAnimation = nullptr;
-			//m_NextAnimation->m_CurrentTime = m_CurrentTime;
-			//m_AnimationSwitchCallback(m_NextAnimation->GetName(), m_TransitionEntityID);
+			ComputeTransform(&m_RootNode, glm::mat4(1.0f));
+			m_Updated = true;
 		}
-		m_Updated = false;
+		else {
 
+			m_LockTranstion = true;
+
+			// Ensure time is within valid range [0, 1]
+			m_TransitionTime = std::clamp(m_TransitionTime + m_DeltaTime, 0.0f, m_TransitionDuration);
+
+			// Compute the interpolation factor based on the transition progress
+			float _time = m_TransitionTime / m_TransitionDuration;
+
+			ComputeTransformTransition(&m_RootNode, glm::mat4(1.0f), m_NextAnimation, _time);
+
+			if (m_TransitionTime >= m_TransitionDuration)
+			{
+				m_LockTranstion = false;
+				m_TransitionTime = 0.0f;
+
+				// We are no longer in transtion mode
+				m_OnTransition = false;
+
+				// Copy the next animtion data
+				m_Duration = m_NextAnimation->m_Duration; 
+				m_TickPerSecond = m_NextAnimation->m_TickPerSecond;
+				m_Bones = m_NextAnimation->m_Bones;
+				m_BoneMap = m_NextAnimation->m_BoneMap;
+
+				// start from the begining
+				m_CurrentTime = 0.0f;
+
+				// and no pending next animtion
+				m_NextAnimation = nullptr;
+			}
+			m_Updated = true;
+		}
+	}
+	bool Animation::IsLastPos(float _anim_time)
+	{
+		for (size_t i = 0; i < m_Bones.size(); i++)
+		{
+			if ((m_Bones[i].GetPositionIndex(_anim_time) + 1) != (m_Bones[i].m_PositionCount - 1))
+				return false;
+			if ((m_Bones[i].GetRotationIndex(_anim_time) + 1) != (m_Bones[i].m_RotationCount-1))
+				return false;
+			if ((m_Bones[i].GetScaleIndex(_anim_time) + 1) != (m_Bones[i].m_ScaleCount-1))
+				return false;
+		}
+
+		return true;
 	}
 	void Animation::RegisterAnimationSetCallback(const ANIMATION_SWITCH_COMMAND_CREATOR_CALLBACK& _animation_callback)
 	{

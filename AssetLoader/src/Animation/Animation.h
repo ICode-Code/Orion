@@ -53,9 +53,13 @@ namespace OE1Core
 		/// <param name="_dt"></param>
 		/// <param name="_time"></param>
 		void Interpolate(float _dt);
+		bool IsLastPos(float _dt);
 
 		void UpdateTransform(float dt);
 		void UpdateBoneTransformBuffer(size_t _size);
+		
+		void SetHardCut(bool _val);
+		bool GetHardCut();
 
 		void Play();
 		void Pause();
@@ -91,7 +95,9 @@ namespace OE1Core
 
 		bool m_OnTransition = false;
 		float m_TransitionTime = 0.0f;
-		float m_TransitionDuration = 0.7f;
+		float m_TransitionDuration = 0.15f;
+		bool m_LockTranstion = false;
+		bool m_HardCut = false;
 		
 		Animation* m_NextAnimation = nullptr;
 

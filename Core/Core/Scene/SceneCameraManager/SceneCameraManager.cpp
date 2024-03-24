@@ -8,7 +8,7 @@ namespace OE1Core
 		m_Context = _context;
 
 		// Create Master Camera
-		RegisterCamera("MasterCamera");
+		RegisterCamera("MasterCamera", CAMERA_TYPE::FREE_LOOK);
 	}
 	SceneCameraManager::~SceneCameraManager()
 	{
@@ -25,14 +25,14 @@ namespace OE1Core
 	{ 
 		return m_CameraList;
 	}
-	CameraPackage* SceneCameraManager::RegisterCamera(std::string _name, glm::vec3 _init_pos)
+	CameraPackage* SceneCameraManager::RegisterCamera(std::string _name, CAMERA_TYPE _type, glm::vec3 _init_pos)
 	{
 		if (HasCamera(_name))
 			return nullptr;
 
 		CameraParameters _params;
 
-		_params.Camera = new CameraPackage(m_Context, _name);
+		_params.Camera = new CameraPackage(m_Context, _type, _name);
 		_params.Offset = static_cast<uint32_t>(m_CameraList.size());
 
 		m_CameraList.insert(std::make_pair(_name, _params));
@@ -46,6 +46,7 @@ namespace OE1Core
 
 		return nullptr;
 	}
+	SDL_Window* SceneCameraManager::GetContextWindow() { return m_Context; };
 	void SceneCameraManager::EngagePilotMode(std::string _name)
 	{
 		if (!HasCamera(_name))

@@ -8,6 +8,7 @@ namespace OE1Core
 		AnimationComponent::AnimationComponent(Animation* _animation, uint32_t _entity, MemoryBufferLocator _buffer_locator)
 			: m_BufferLocator(_buffer_locator), m_EntityID(_entity)
 		{
+			m_AnimationController = new AnimationController();
 			if (_animation)
 			{
 				m_Animation = new Animation(_animation->GetBoneCount());
@@ -18,6 +19,7 @@ namespace OE1Core
 		}
 		AnimationComponent::~AnimationComponent()
 		{
+			delete m_AnimationController;
 			delete m_Animation;
 		}
 		void AnimationComponent::SwitchAnimation(Animation* _animation)
@@ -62,12 +64,18 @@ namespace OE1Core
 
 		void AnimationComponent::UpdateBuffer()
 		{
-			if (!m_Animation)
-				return;
+
+			m_AnimationController->Update();
+
+
+
+			if (!m_Animation) return;
+			if (!m_Animation->m_Updated) return;
 
 			glBindBuffer(GL_UNIFORM_BUFFER, m_BufferLocator.BufferID);
 			glBufferSubData(GL_UNIFORM_BUFFER, m_BufferLocator.BaseOffset, m_BufferLocator.Offset, m_Animation->m_BoneTransform.data());
-			m_Animation->m_Updated = true;
+			
+			m_Animation->m_Updated = false;
 		}
 
 		void AnimationComponent::Update(float _dt)
@@ -80,7 +88,7 @@ namespace OE1Core
 		{ 
 			m_BufferLocator = _new; 
 		}
-
+		AnimationController* AnimationComponent::GetAnimationController() { return m_AnimationController; }
 		MemoryBufferLocator AnimationComponent::GetBufferLocator() { return m_BufferLocator; }
 
 	}

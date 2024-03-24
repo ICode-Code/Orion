@@ -25,6 +25,8 @@ namespace OE1Core
 			void SetCameraComponent(class CameraComponent* _camera_component);
 			void SetSkinnedMeshComponent(class SkinnedMeshComponent* _skinned_mesh_component);
 			void SetAnimationComponent(class AnimationComponent* _animation_component);
+			void SetThirdPersonCameraControllerComponent(class ThirdPersonCameraControllerComponent* _tp_camera_Controller_component);
+			void SetThirdPersonCharacterControllerComponent(class ThirdPersonCharacterControllerComponent* _tp_character_Controller_component);
 		protected: // components
 			class TagComponent* m_TagComponent = nullptr;
 			class TransformComponent* m_TransformComponent = nullptr;
@@ -34,6 +36,8 @@ namespace OE1Core
 			class CameraPackageComponent* m_CameraPackageComponent = nullptr;
 			class SkinnedMeshComponent* m_SkinnedMeshComponent = nullptr;
 			class AnimationComponent* m_AnimationComponent = nullptr;
+			class ThirdPersonCameraControllerComponent* m_ThirdPersonCameraControllerComponent = nullptr;
+			class ThirdPersonCharacterControllerComponent* m_ThirdPersonCharacterControllerComponent = nullptr;
 
 		protected: // flag
 			ImGuiTreeNodeFlags m_TreeNodeFlags = ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding;
@@ -47,6 +51,8 @@ namespace OE1Core
 			void ICameraPackage();
 			void ISkinnedMesh();
 			void IAnimationComponent();
+			void IThirdPersonCameraControllerComponent();
+			void IThirdPersonCharacterControllerComponent();
 
 		private: // bool
 			void IVModelInspect(IVModel* _model);

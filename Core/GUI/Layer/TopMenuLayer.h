@@ -19,6 +19,7 @@ namespace OE1Core
 	protected:
 		void File();
 		void Edit();
+		void Component();
 		void Window();
 		void Tools();
 		void Debug();

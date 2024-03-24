@@ -163,6 +163,7 @@ void OE1Core::CustomFrame::UIEditorTextValue(const char* label, const char* valu
 	_lab.append(label);
 	ImGui::Text(value);
 	ImGui::Columns(1);
+
 }
 
 bool OE1Core::CustomFrame::UIEditorPushButton(const char* label, const char* button_name, const ImVec2& size, float width)
