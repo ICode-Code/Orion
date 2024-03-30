@@ -8,5 +8,6 @@
 #include "RenameWin.h"
 #include "MaterialViewWin.h"
 #include "MinTextureFilterWin.h"
+#include "AnimationStateMachinePad.h"
 
 #endif // !OE1_I_MINI_WIN_H_

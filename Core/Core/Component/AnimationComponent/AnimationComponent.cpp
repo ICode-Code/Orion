@@ -8,7 +8,7 @@ namespace OE1Core
 		AnimationComponent::AnimationComponent(Animation* _animation, uint32_t _entity, MemoryBufferLocator _buffer_locator)
 			: m_BufferLocator(_buffer_locator), m_EntityID(_entity)
 		{
-			m_AnimationController = new AnimationController();
+			m_AnimationController = new AnimationController(m_EntityID);
 			if (_animation)
 			{
 				m_Animation = new Animation(_animation->GetBoneCount());
@@ -26,12 +26,31 @@ namespace OE1Core
 		{
 			if (!m_Animation)
 				SetAnimation(_animation);
+
 			// If the animation manager knows animation with this
 			// EntityID it means this animation pointer is already registered
 			// so we just need to interpolate b/n the new one and the old one
 			if (AnimationManager::HasAnimation(m_EntityID))
 				AnimationManager::UpdateAnimation(_animation, m_EntityID);
-			 
+
+			m_LinkWithStateMachine = false;
+		}
+		void AnimationComponent::LinkStateMachine()
+		{
+			if (m_AnimationController->m_BindedStateAnimations.size() <= 0)
+			{
+
+				return;
+			}
+
+			if (!m_AnimationController->HasDefaultState())
+			{
+
+				return;
+			}
+
+			m_AnimationController->ApplyDefaultState();
+
 		}
 		void AnimationComponent::SetAnimation(Animation* _animation)
 		{ 
@@ -60,7 +79,6 @@ namespace OE1Core
 		void AnimationComponent::SetAnimationBufferID(GLuint _id) { m_BufferLocator.BufferID = _id; }
 
 		GLuint AnimationComponent::GetAnimationBufferID() { return m_BufferLocator.BufferID; }
-
 
 		void AnimationComponent::UpdateBuffer()
 		{

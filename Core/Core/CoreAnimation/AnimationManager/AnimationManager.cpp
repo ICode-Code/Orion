@@ -1,4 +1,5 @@
 #include "AnimationManager.h"
+#include "../GUI/MiniWindow/AnimationStateMachinePad.h"
 #include "LogUI.h"
 
 namespace OE1Core
@@ -79,5 +80,29 @@ namespace OE1Core
 			LOG_ERROR(LogLayer::Pipe("Animation Query returned NULL! now suppost to happen!", OELog::CRITICAL));
 
 		return nullptr;
+	}
+
+
+	std::unordered_map<std::string, AnimationStateMachinePad*>& AnimationManager::GetStateMachineWins()
+	{
+		return s_StateMachineWindows;
+	}
+	bool AnimationManager::RegisterStateMachineWindow(std::string _name, AnimationStateMachinePad* _pad)
+	{
+		if (s_StateMachineWindows.find(_name) != s_StateMachineWindows.end())
+			return false;
+
+		s_StateMachineWindows.insert(std::make_pair(_name, _pad));
+		return true;
+	}
+	bool AnimationManager::PurgeStateMachineWindow(std::string _name)
+	{
+		if (s_StateMachineWindows.find(_name) == s_StateMachineWindows.end())
+			return false;
+
+		delete s_StateMachineWindows[_name];
+		s_StateMachineWindows.erase(_name);
+
+		return true;
 	}
 }

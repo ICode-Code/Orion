@@ -16,6 +16,7 @@ namespace OE1Core
 	class AssetManager
 	{
 		friend class ContentBrowserLayer;
+		friend class AnimationStateMachinePad;
 	public:
 		AssetManager();
 		~AssetManager();

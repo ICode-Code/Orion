@@ -7,6 +7,7 @@ namespace OE1Core
 	{
 		UpdateBoneTransformBuffer(_bone_count);
 		m_TransitionDuration = 0.0001f;
+		m_HardCut = true;
 	}
 	Animation::~Animation()
 	{
@@ -154,10 +155,10 @@ namespace OE1Core
 	}
 	void Animation::SetNextAnimation(Animation* _animation, uint32_t _id)
 	{
-		if (m_OnTransition)
+		if (m_OnTransition || m_Name == _animation->GetName())
 			return;
-
-
+		
+		m_Name = _animation->GetName();
 		m_TransitionEntityID = _id;
 		m_NextAnimation = _animation;
 		m_OnTransition = true;
@@ -171,6 +172,9 @@ namespace OE1Core
 		m_DeltaTime = _dt * m_DeltaFactor;
 		m_CurrentTime += m_TickPerSecond * m_DeltaTime;
 		m_CurrentTime = fmod(m_CurrentTime, m_Duration);
+
+		if (m_HardCut)
+			m_LockTranstion = true;
 
 		if (!IsLastPos(m_CurrentTime) && !m_LockTranstion)
 		{
@@ -191,23 +195,28 @@ namespace OE1Core
 
 			if (m_TransitionTime >= m_TransitionDuration)
 			{
-				m_LockTranstion = false;
 				m_TransitionTime = 0.0f;
 
-				// We are no longer in transtion mode
-				m_OnTransition = false;
 
 				// Copy the next animtion data
+			//	m_HardCut = m_NextAnimation->m_HardCut;
 				m_Duration = m_NextAnimation->m_Duration; 
 				m_TickPerSecond = m_NextAnimation->m_TickPerSecond;
 				m_Bones = m_NextAnimation->m_Bones;
 				m_BoneMap = m_NextAnimation->m_BoneMap;
-
+				
+				//m_HardCut = m_NextAnimation->m_HardCut;
 				// start from the begining
 				m_CurrentTime = 0.0f;
 
 				// and no pending next animtion
 				m_NextAnimation = nullptr;
+
+				m_LockTranstion = false;
+
+				// We are no longer in transtion mode
+				m_OnTransition = false;
+
 			}
 			m_Updated = true;
 		}

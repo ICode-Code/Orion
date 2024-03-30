@@ -29,6 +29,7 @@ namespace OE1Core
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "EmptyProject.png",		"EmptyProject");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "FPSTestProject.png",		"FPSTestProject");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "PBRTestProject.png",		"PBRTestProject");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Pose.png",				"Pose");
 	}
 	void ResourceInitializer::InitBaseMesh()
 	{

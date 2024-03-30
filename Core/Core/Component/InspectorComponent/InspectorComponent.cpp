@@ -1,6 +1,7 @@
 #include "InspectorComponent.h"
 #include "../IComponent.h"
 #include "../Core/Scene/SceneManager.h"
+#include "../GUI/GUIBase.h"
 
 
 namespace OE1Core
@@ -127,7 +128,146 @@ namespace OE1Core
 
 				ImGui::Indent(16.0f);
 
-				if (ImGui::Button("Load..", { 100.0f, 25.0f }))
+				
+				ImGui::SetNextWindowSize({ 300.0f, 400.0f });
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 1);
+
+				if(ImGui::BeginPopup("animation-list"))
+				{
+
+					ImGui::PushStyleColor(ImGuiCol_Button, { 0.15f, 0.15f, 0.15f, 1.0f });
+					ImGui::PushStyleColor(ImGuiCol_Border, { 1.0f, 1.0f, 1.0f, 1.0f });
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 2);
+					ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
+
+					for (auto iter = AssetManager::GetAnimationRegistry().begin(); iter != AssetManager::GetAnimationRegistry().end(); iter++)
+					{
+						std::string _name = ICON_FA_CODE_BRANCH"\t" + iter->first;
+
+						if (ImGui::Button(_name.c_str(), { 290.0f, 0.0f }))
+						{
+							DynamicMesh* dynamic_mesh = SceneManager::GetActiveScene()->QueryDynamicMesh(m_SkinnedMeshComponent->GetPackageID());
+
+							Animation* _animation = dynamic_mesh->GetAnimation(iter->first);
+							if (_animation)
+								m_AnimationComponent->SwitchAnimation(_animation);
+
+						}
+
+
+						if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+						{
+							DynamicMesh* dynamic_mesh = SceneManager::GetActiveScene()->QueryDynamicMesh(m_SkinnedMeshComponent->GetPackageID());
+							Animation* package_payload = dynamic_mesh->GetAnimation(iter->first);
+
+
+							ImGui::SetDragDropPayload("bind_anim_payload", package_payload, sizeof(Animation));
+							
+							ImGui::BeginTooltip();
+
+							ImGui::Text("Name: %s", package_payload->GetName().c_str());
+							ImGui::Text("Bone Count: %i", package_payload->GetBoneCount());
+							ImGui::Text("Duration: %f", package_payload->GetDuration());
+
+							ImGui::EndTooltip();
+
+							ImGui::EndDragDropSource();
+						}
+					}
+					ImGui::PopStyleVar(2);
+					ImGui::PopStyleColor(2);
+
+					ImGui::EndPopup();
+				}
+
+				ImGui::PopStyleVar();
+
+				if (m_AnimationComponent->m_Animation)
+				{
+
+					CustomFrame::UIEditorTextValue("Name", m_AnimationComponent->m_Animation->m_Name.c_str());
+					CustomFrame::UIEditorTextValue("Duration",std::to_string(m_AnimationComponent->m_Animation->GetDuration()).c_str());
+					CustomFrame::UIEditorTextValue("Ticks/Sec",std::to_string(m_AnimationComponent->m_Animation->GetTicksPerSecond()).c_str());
+					CustomFrame::UIEditorTextValue("Bone Count",std::to_string(m_AnimationComponent->m_Animation->GetBoneCount()).c_str());
+					CustomFrame::UIEditorFloat("Speed", &m_AnimationComponent->m_Animation->m_DeltaFactor, 0.2f, 2.0f, "%.3f");
+					CustomFrame::UIEditorFloat("Blend Speed", &m_AnimationComponent->m_Animation->m_TransitionDuration, 0.0f, 1.0f, "%.5f");
+					CustomFrame::UIEditorCheckbox("Hard Cut", &m_AnimationComponent->m_Animation->m_HardCut);
+					
+
+					if (ImGui::TreeNodeEx("Advanced", m_TreeNodeFlags))
+					{
+						ImGui::Indent(16.0f);
+
+						
+						if(ImGui::TreeNodeEx("Playback", m_TreeNodeFlags))
+						{
+							ImGui::Indent(16.0f);
+
+							ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 });
+							ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+							ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0 });
+							ImGui::PushStyleColor(ImGuiCol_PlotHistogram, { 0.15f, 0.15f, 0.15f, 1.0f });
+
+							float _prog = (m_AnimationComponent->m_Animation->m_CurrentTime / m_AnimationComponent->m_Animation->m_Duration);
+							ImGui::Text("Timeline:");
+							ImGui::ProgressBar(_prog, { 0.0f, 0.0f });
+
+							ImGui::PopStyleColor();
+							ImGui::PopStyleVar(3);
+
+							ImGui::Indent(-16.0f);
+
+							ImGui::TreePop();
+						}
+						
+						if (ImGui::TreeNodeEx("Hierarchy", m_TreeNodeFlags))
+						{
+							ImGui::Indent(8.0f);
+
+							IterateBone(&m_AnimationComponent->m_Animation->GetRootNode());
+
+							ImGui::Indent(-8.0f);
+							ImGui::TreePop();
+						}
+
+
+						if (ImGui::TreeNodeEx("Bones", m_TreeNodeFlags))
+						{
+							ImGui::Indent(16.0f);
+							
+							ImGui::PushStyleColor(ImGuiCol_Button, { 0.08f, 0.08f , 0.08f, 1.0f });
+							ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+							ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
+
+							for (size_t i = 0; i < m_AnimationComponent->m_Animation->m_Bones.size(); i++)
+							{
+								std::string _bone_name = ICON_FA_BONE"\t" + m_AnimationComponent->m_Animation->m_Bones[i].m_Name;
+								ImGui::Button(_bone_name.c_str(), { 200.0f, 0.0f });
+							}
+
+							ImGui::PopStyleVar(2);
+							ImGui::PopStyleColor();
+
+							ImGui::Indent(-16.0f);
+							ImGui::TreePop();
+						}
+
+
+						ImGui::Indent(-16.0f);
+						ImGui::TreePop();
+					}
+				
+
+					ImGui::Indent(-16.0f); 
+
+				}
+
+
+				ImGui::PushStyleColor(ImGuiCol_Button, { 0.1f, 0.1f , 0.1f, 1.0f });
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+				ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.5f, 0.5f });
+
+				if (ImGui::Button("Load...", { 80.0f, 0.0f }))
 				{
 					std::string loaded_file = WindowFileDialog::LoadFile("GLTF and FBX Files (*.gltf;*.glb;*.fbx)\0*.gltf;*.glb;*.fbx\0", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin(), "Load Animation");
 					if (!loaded_file.empty())
@@ -140,73 +280,27 @@ namespace OE1Core
 					}
 				}
 
-				if (ImGui::TreeNodeEx("Animation List", m_TreeNodeFlags))
+				ImGui::SameLine();
+
+				if (ImGui::Button("Select Animation", { 80.0f, 0.0f }))
+					ImGui::OpenPopup("animation-list");
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("State Machine", { 80.0f, 0.0f }))
 				{
-
-					for (auto iter = AssetManager::GetAnimationRegistry().begin(); iter != AssetManager::GetAnimationRegistry().end(); iter++)
-					{
-						if (ImGui::Button(iter->first.c_str(), { 200.0f, 25.0f }))
-						{
-							DynamicMesh* dynamic_mesh = SceneManager::GetActiveScene()->QueryDynamicMesh(m_SkinnedMeshComponent->GetPackageID());
-							
-							Animation* _animation = dynamic_mesh->GetAnimation(iter->first);
-							if(_animation)
-								m_AnimationComponent->SwitchAnimation(_animation);
-
-						}
-					}
-
-
-					ImGui::TreePop();
-				}
-				if (m_AnimationComponent->m_Animation)
-				{
-
-					CustomFrame::UIEditorTextValue("Name", m_AnimationComponent->m_Animation->m_Name.c_str());
-					CustomFrame::UIEditorTextValue("Duration",std::to_string(m_AnimationComponent->m_Animation->GetDuration()).c_str());
-					CustomFrame::UIEditorTextValue("Ticks/Sec",std::to_string(m_AnimationComponent->m_Animation->GetTicksPerSecond()).c_str());
-					CustomFrame::UIEditorTextValue("Bone Count",std::to_string(m_AnimationComponent->m_Animation->GetBoneCount()).c_str());
-					CustomFrame::UIEditorFloat("Speed", &m_AnimationComponent->m_Animation->m_DeltaFactor, 0.2f, 2.0f, "%.3f");
-					CustomFrame::UIEditorFloat("Blend Speed", &m_AnimationComponent->m_Animation->m_TransitionDuration, 0.0f, 1.0f, "%.5f");
-					//ImGui::ProgressBar(_prog, {0, 5.0f,});
-
-					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 });
-					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
-					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 0 });
-					ImGui::PushStyleColor(ImGuiCol_PlotHistogram, { 0.15f, 0.15f, 0.15f, 1.0f });
-
-					float _prog = (m_AnimationComponent->m_Animation->m_CurrentTime / m_AnimationComponent->m_Animation->m_Duration);
-					ImGui::Text("Timeline:");
-					ImGui::ProgressBar(_prog, { 0.0f, 0.0f });
-
-					ImGui::PopStyleColor();
-					ImGui::PopStyleVar(3);
-
-					ImGui::Separator();
-
-					ImGui::Indent(8.0f);
-
-					IterateBone(&m_AnimationComponent->m_Animation->GetRootNode());
-				
-					ImGui::Indent(-8.0f);
-
-					ImGui::Separator();
-
-					if (ImGui::TreeNodeEx("Bone Set", m_TreeNodeFlags))
-					{
-						for (size_t i = 0; i < m_AnimationComponent->m_Animation->m_Bones.size(); i++)
-						{
-							CustomFrame::UIEditorLabel(m_AnimationComponent->m_Animation->m_Bones[i].m_Name.c_str());
-						}
-
-						ImGui::TreePop();
-					}
-				
-
-					ImGui::Indent(-16.0f);
-
+					AnimationManager::RegisterStateMachineWindow(m_TagComponent->m_Identifier, new AnimationStateMachinePad(m_AnimationComponent, m_TagComponent->m_Identifier));
 				}
 
+				
+
+
+				ImGui::PopStyleVar(2);
+				ImGui::PopStyleColor();
+
+				/*if (ImGui::Button(ICON_FA_LINK))
+					m_AnimationComponent->LinkStateMachine();*/
+				ImGui::Indent(-16.0f);
 				ImGui::TreePop();
 			}
 		}
@@ -248,16 +342,70 @@ namespace OE1Core
 			if (ImGui::TreeNodeEx("TP Camera Controller", m_TreeNodeFlags))
 			{
 
+				ImGui::Indent(16.0f);
+
+				bool _has_target_camera = m_ThirdPersonCameraControllerComponent->GetCameraComponent() != nullptr;
+
+
+				ImGui::PushStyleColor(ImGuiCol_Text, _has_target_camera ? ImVec4(0.090f, 0.725f, 0.471f, 1.0f) : ImVec4(1.0f, 0.121f, 0.353f, 1.0f));
+				
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.0f, 0.0f, 0.0f, 0.0f });
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.0f });
+
+				ImGui::Button(_has_target_camera ? ICON_FA_CIRCLE_CHECK : ICON_FA_TRIANGLE_EXCLAMATION);
+
+				if (ImGui::IsItemHovered())
+				{
+					if (_has_target_camera)
+						ImGui::SetTooltip(ICON_FA_CIRCLE_INFO"\tCamera-Controller is ready!");
+					else 
+						ImGui::SetTooltip(ICON_FA_CIRCLE_INFO"\tDrag and Drop a target camera here!");
+				}
+
+				ImGui::PopStyleColor(3);
+
+				ImGui::SameLine();
+				static int crt = 0;
+				static std::string _target_name = "...";
+				ImGui::SetNextItemWidth(200);
+
+				ImGui::PushStyleColor(ImGuiCol_Button, { 0.2f, 0.2f , 0.2f, 1.0f });
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+				ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.5f, 0.5f });
+
+				ImGui::Combo("Target Camera", &crt, _target_name.c_str());
+
+				ImGui::PopStyleVar(2);
+				ImGui::PopStyleColor();
+
+				if (ImGui::BeginDragDropTarget())
+				{
+
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Camera_Pay_Load"))
+					{
+						Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
+
+						// get real ptr
+						CameraPackage* camera_pkg_ptr = SceneManager::GetActiveScene()->GetCameraManager()->GetCamera(package->GetCameraPackage()->GetName());
+						_target_name = camera_pkg_ptr->GetName();
+						// Link
+						camera_pkg_ptr->SetCameraController(m_ThirdPersonCameraControllerComponent);
+						m_ThirdPersonCameraControllerComponent->SetCameraComponent(camera_pkg_ptr->GetCamera());
+					}
+
+					ImGui::EndDragDropTarget();
+				}
 
 				
+				
 
-				ImGui::Indent(16.0f);
+
 
 				if (ImGui::TreeNodeEx("Pitch Constrain", m_TreeNodeFlags))
 				{
 
 					CustomFrame::UIEditorFloat("Max", &m_ThirdPersonCameraControllerComponent->m_PitchConstrainMax, 45.0f, 89.0f);
-					CustomFrame::UIEditorFloat("Min", &m_ThirdPersonCameraControllerComponent->m_PitchConstrainMax, -89.0f, 45.0f);
+					CustomFrame::UIEditorFloat("Min", &m_ThirdPersonCameraControllerComponent->m_PitchConstrainMin, -89.0f, 45.0f);
 					ImGui::TreePop();
 				}
 
@@ -276,28 +424,6 @@ namespace OE1Core
 
 				ImGui::Indent(-16.0f);
 
-				ImGui::Separator();
-
-				CustomFrame::UIEditorTextValue("Target Camera", "...");
-
-				if (ImGui::BeginDragDropTarget())
-				{
-
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Camera_Pay_Load"))
-					{
-						Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
-						
-						// get real ptr
-						CameraPackage* camera_pkg_ptr = SceneManager::GetActiveScene()->GetCameraManager()->GetCamera(package->GetCameraPackage()->GetName());
-
-						// Link
-						camera_pkg_ptr->SetCameraController(m_ThirdPersonCameraControllerComponent);
-						m_ThirdPersonCameraControllerComponent->SetCameraComponent(camera_pkg_ptr->GetCamera());
-					}
-
-					ImGui::EndDragDropTarget();
-				}
-
 				ImGui::TreePop();
 			}
 		}
@@ -306,15 +432,46 @@ namespace OE1Core
 			if (!m_ThirdPersonCharacterControllerComponent)
 				return;
 
+
+
+
 			if (ImGui::TreeNodeEx("TP Character Controller", m_TreeNodeFlags))
 			{
-				CustomFrame::UIEditorFloat("Walk Speed", &m_ThirdPersonCharacterControllerComponent->m_WalkSpeed, 1.0f, 32.0f);
-				CustomFrame::UIEditorFloat("Run Speed", &m_ThirdPersonCharacterControllerComponent->m_SprintSpeed, 1.0f, 128.0f);
-				CustomFrame::UIEditorFloat("Turn Speed", &m_ThirdPersonCharacterControllerComponent->m_TurnSpeed, 10.0f, 360.0f);
+
+				bool _has_target_camera = m_ThirdPersonCharacterControllerComponent->GetCameraComponent() != nullptr;
 
 
+				ImGui::PushStyleColor(ImGuiCol_Text, _has_target_camera ? ImVec4(0.090f, 0.725f, 0.471f, 1.0f) : ImVec4(1.0f, 0.121f, 0.353f, 1.0f));
 
-				CustomFrame::UIEditorTextValue("Target Camera", "...");
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.0f, 0.0f, 0.0f, 0.0f });
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.0f });
+
+				ImGui::Button(_has_target_camera ? ICON_FA_CIRCLE_CHECK : ICON_FA_TRIANGLE_EXCLAMATION);
+
+				if (ImGui::IsItemHovered())
+				{
+					if (_has_target_camera) 
+						ImGui::SetTooltip(ICON_FA_CIRCLE_INFO"\tCharacter-Controller is ready!");
+					else
+						ImGui::SetTooltip(ICON_FA_CIRCLE_INFO"\tDrag and Drop a target camera here!");
+				}
+
+				ImGui::PopStyleColor(3);
+
+				ImGui::SameLine();
+				static int crt = 0;
+				static std::string _target_name = "...";
+				ImGui::SetNextItemWidth(200);
+
+				ImGui::PushStyleColor(ImGuiCol_Button, { 0.2f, 0.2f , 0.2f, 1.0f });
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+				ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.5f, 0.5f });
+
+				ImGui::Combo("Target Camera", &crt, _target_name.c_str());
+
+				ImGui::PopStyleVar(2);
+				ImGui::PopStyleColor();
+
 
 				if (ImGui::BeginDragDropTarget())
 				{
@@ -325,13 +482,18 @@ namespace OE1Core
 
 						// get real ptr
 						CameraPackage* camera_pkg_ptr = SceneManager::GetActiveScene()->GetCameraManager()->GetCamera(package->GetCameraPackage()->GetName());
-
+						_target_name = camera_pkg_ptr->GetName();
 						// Link
 						m_ThirdPersonCharacterControllerComponent->SetCameraComponent(camera_pkg_ptr->GetCamera());
 					}
 
 					ImGui::EndDragDropTarget();
 				}
+
+
+				CustomFrame::UIEditorFloat("Walk Speed", &m_ThirdPersonCharacterControllerComponent->m_WalkSpeed, 1.0f, 32.0f);
+				CustomFrame::UIEditorFloat("Run Speed", &m_ThirdPersonCharacterControllerComponent->m_SprintSpeed, 1.0f, 128.0f);
+				CustomFrame::UIEditorFloat("Turn Speed", &m_ThirdPersonCharacterControllerComponent->m_TurnSpeed, 10.0f, 360.0f);
 
 				ImGui::TreePop();
 			}

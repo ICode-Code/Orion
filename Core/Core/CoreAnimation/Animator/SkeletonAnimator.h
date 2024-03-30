@@ -6,9 +6,11 @@
 
 namespace OE1Core
 {
+	namespace Component { class AnimationController; }
 	class SkeletonAnimator
 	{
 		friend class AnimationManager;
+		friend class Component::AnimationController;
 	public:
 		SkeletonAnimator();
 		~SkeletonAnimator();

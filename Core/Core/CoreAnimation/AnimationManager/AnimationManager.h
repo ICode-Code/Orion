@@ -8,6 +8,7 @@
 
 namespace OE1Core
 {
+	class AnimationStateMachinePad;
 	class AnimationManager
 	{
 	public:
@@ -21,8 +22,13 @@ namespace OE1Core
 		static bool HasAnimation(uint32_t _id);
 		static Animation* GetAnimation(uint32_t _id);
 
+		static std::unordered_map<std::string, AnimationStateMachinePad*>& GetStateMachineWins();
+		static bool RegisterStateMachineWindow(std::string _name, AnimationStateMachinePad* _pad);
+		static bool PurgeStateMachineWindow(std::string _name);
+
 
 	private:
+		inline static std::unordered_map<std::string, AnimationStateMachinePad*> s_StateMachineWindows;
 		inline static std::vector<Memory::UniformBuffer> s_AnimationUniformBuffer;
 		inline static Memory::UniformBuffer* s_AnimationBuffer;
 		inline static size_t s_LastEndOffset = 0;

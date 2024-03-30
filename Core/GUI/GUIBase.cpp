@@ -74,6 +74,17 @@ namespace OE1Core
 				MaterialManager::RemoveMaterialView(view.second->GetMaterial());
 		}
 
+		auto animation_state = AnimationManager::GetStateMachineWins();
+
+		for (auto& view : animation_state)
+		{
+			view.second->Render();
+
+			if (!view.second->s_ShouldOpen)
+				AnimationManager::PurgeStateMachineWindow(view.first);
+		}
+
+
 		// Render Additional Viewport
 		for (auto& _dynamic_view_port : DynamicViewportManager::m_DynamicViewport)
 			_dynamic_view_port.second->Render();

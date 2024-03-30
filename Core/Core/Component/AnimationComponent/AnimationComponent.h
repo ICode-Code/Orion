@@ -27,9 +27,11 @@ namespace OE1Core
 
 			GLintptr GetOffset();
 			void SetOffset(GLintptr _offset);
-
+			
 			void SetAnimationBufferID(GLuint _id);
 			GLuint GetAnimationBufferID();
+
+			void LinkStateMachine();
 
 			// This will only update the buffer
 			void UpdateBuffer();
@@ -45,6 +47,7 @@ namespace OE1Core
 			AnimationController* GetAnimationController();
 
 		private:
+			bool m_LinkWithStateMachine = false;
 			AnimationController* m_AnimationController = nullptr;
 			Animation* m_Animation		= nullptr;
 			MemoryBufferLocator m_BufferLocator;

@@ -160,21 +160,24 @@ namespace OE1Core
 					m_CurrentTurnSpeed = (dot_prod >= 0.0f) ? -m_TurnSpeed : m_TurnSpeed;
 			}
 			
+			if (__keypressed)
+			{
+				if (!m_SprintKeyPressed)
+					m_TargetAnimationController->SetActiveState(ANIMATION_STATE::WALK);
+				else 
+					m_TargetAnimationController->SetActiveState(ANIMATION_STATE::RUN);
+			}
+			else
+			{
+				m_TargetAnimationController->SetActiveState(ANIMATION_STATE::IDEL);
+
+			}
+
 			if(!__keypressed)
 			{
 				m_CurrentMoveSpeed = 0.0f;
 				m_CurrentTurnSpeed = 0.0f;
 			}
-			
-
-			/*if (m_TPCCFreeKeyInputState[SDL_SCANCODE_D])
-			{
-				m_CurrentTurnSpeed = -m_TurnSpeed;
-			}
-			else if (m_TPCCFreeKeyInputState[SDL_SCANCODE_A])
-			{
-					m_CurrentTurnSpeed = m_TurnSpeed;
-			}*/
 			
 
 			//if (m_TPCCFreeKeyInputState[SDL_SCANCODE_SPACE])
@@ -188,7 +191,7 @@ namespace OE1Core
 
 
 			m_TargetTransform->m_Euler.y += (m_CurrentTurnSpeed * dt);
-			m_TargetTransform->m_Euler.y = fmod(m_TargetTransform->m_Euler.y, 360.0f);
+			//m_TargetTransform->m_Euler.y = fmod(m_TargetTransform->m_Euler.y, 360.0f);
 			float distance = m_CurrentMoveSpeed * dt;
 
 			float dx = distance * sin(glm::radians(m_TargetTransform->m_Euler.y));
