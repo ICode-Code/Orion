@@ -13,6 +13,7 @@ namespace OE1Core
 		unsigned int IBO;
 
 		int IndiceCount;
+		int VertexCount;
 		int DrawCount;
 
 		uint32_t PackageID;

@@ -348,8 +348,15 @@ namespace OE1Core
 		{
 			if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
 			{
+				Entity _active = SceneManager::GetActiveScene()->GetActiveEntity()->GetActive();
+
+				float distance = 3.5f;
+				if (_active.HasComponent<Component::BoundingVolumeComponent>())
+					distance = glm::length(_active.GetComponent<Component::BoundingVolumeComponent>().GetBound().Max);
+
 				SceneManager::GetActiveScene()->m_MasterCameraController->Focus(
-					SceneManager::GetActiveScene()->GetActiveEntity()->GetActive().GetComponent<Component::TransformComponent>().m_Position
+					SceneManager::GetActiveScene()->GetActiveEntity()->GetActive().GetComponent<Component::TransformComponent>().m_Position, 
+					distance
 				);
 			}
 			

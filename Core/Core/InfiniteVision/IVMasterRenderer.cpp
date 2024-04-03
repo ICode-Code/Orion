@@ -16,6 +16,7 @@ namespace OE1Core
 			m_OutlineRenderer = new IVOutlineRenderer();
 			m_ViewportBillboardRenderer = new IVViewportBillboardIconRenderer();
 			m_MaterialPreviewRenderer = new IVMaterialPreviewRenderer();
+			m_DebugShapeRenderer = new IVDebugShapeRenderer();
 		}
 		IVMasterRenderer::~IVMasterRenderer()
 		{
@@ -138,6 +139,8 @@ namespace OE1Core
 
 
 			m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), ActiveCameraIdx);
+
+			m_DebugShapeRenderer->Render(m_Scene->m_DebugMeshRegistry);
 
 			m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, ActiveCameraIdx);
 

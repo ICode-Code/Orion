@@ -25,6 +25,7 @@ namespace OE1Core
 			mesh_desc.VAO = _model->SubMeshs[i].VAO;
 			mesh_desc.IBO = _model->SubMeshs[i].IBO;
 			mesh_desc.Material = _model->SubMeshs[i].Material;
+			mesh_desc.VertexCount = _model->SubMeshs[i].VertexCount;
 			mesh_desc.IndiceCount = _model->SubMeshs[i].IndicesCount;
 			mesh_desc.Type = _model->SubMeshs[i].MeshType;
 			mesh_desc.MaterialID = _model->SubMeshs[i].MaterialID;

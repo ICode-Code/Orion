@@ -5,6 +5,8 @@
 #include "../Component/IComponent.h"
 #include "EntityType.h"
 #include "../../Core/CoreAnimation/AnimationManager/AnimationManager.h"
+#include "../AssetManager/DynamicAssetCreator/DynamicAssetCreator.h"
+#include <random>
 namespace OE1Core
 {
 	class SceneEntityFactory
@@ -36,6 +38,7 @@ namespace OE1Core
 		static void AddProjectileComponent(Entity _entity);
 		static void AddThirdPersonCameraControllerComponent(Entity _entity);
 		static void AddThirdPersonCharacterControllerComponent(Entity _entity);
+		static void AddBoundingVolumeComponent(Entity _entity, IVModel* _model_package);
 
 		// This dude create Mesh component in simple word will tie the static mesh and mesh component
 		static void CreateRichMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity);
@@ -49,6 +52,13 @@ namespace OE1Core
 		static Entity Clone(Entity _src_entity);
 
 		static bool Purge(Entity _entity);
+
+
+		/// <summary>
+		/// This always reurn unique number
+		/// </summary>
+		/// <returns></returns>
+		static uint64_t GetUniqueID();
 
 	protected:
 		inline static Scene* m_Scene = nullptr;
@@ -75,12 +85,14 @@ namespace OE1Core
 		static void CloneMeshColliderComponent(Entity _src, Entity _dest);
 		static void CloneBillboardComponent(Entity _src, Entity _dest);
 		static void CloneCameraPackageComponent(Entity& _src, Entity _dest);
+		static void CloneBoundingVolume(Entity& _src, Entity _dest);
 
 
-	protected: // Purge Util/ Some component need more that just like remove
+	public: // Purge Util/ Some component need more that just like remove
 		static void RemoveMeshComponent(Entity _entity);
 		static void RemoveBillboardComponent(Entity _entity);
 		static bool RemoveCameraPackageComponent(Entity _entity);
+		static bool RemoveBoundingVolumeComponent(Entity _entity);
 	};
 }
 

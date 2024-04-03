@@ -58,7 +58,8 @@ namespace OE1Core
 				aiProcess_Triangulate |
 				aiProcess_GenSmoothNormals |
 				aiProcess_FlipUVs |
-				aiProcess_CalcTangentSpace
+				aiProcess_CalcTangentSpace | 
+				aiProcess_GenBoundingBoxes
 			);
 
 			if (!s_Scene || !s_Scene->mRootNode)

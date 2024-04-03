@@ -57,6 +57,7 @@ namespace OE1Core
 		private: // bool
 			void IVModelInspect(IVModel* _model);
 			void IterateBone(struct AnimNode* _node);
+			void IVModelBoundVolume(IVModel* _model);
 
 		};
 	}

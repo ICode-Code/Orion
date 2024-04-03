@@ -50,6 +50,9 @@ namespace OE1Core
 		for (auto iter : m_StaticMeshRegistry)
 			delete iter.second;
 
+		for (auto iter : m_DebugMeshRegistry)
+			delete iter.second;
+
 		for (auto iter : m_DynamicMeshRegistry)
 			delete iter.second;
 
@@ -323,5 +326,39 @@ namespace OE1Core
 		return m_MyRenderer;
 	}
 
+	// Debug Mesh
+	bool Scene::PurgeDebugMesh(uint32_t _package_id)
+	{
+		if (!HasDebugMesh(_package_id))
+			return false;
 
+		delete m_DebugMeshRegistry[_package_id];
+		m_DebugMeshRegistry.erase(_package_id);
+
+		return true;
+	}
+	DebugMesh* Scene::QueryDebugMesh(uint32_t _package_id)
+	{
+		if (HasDebugMesh(_package_id))
+			return m_DebugMeshRegistry[_package_id];
+
+		LOG_ERROR("Requested <DebugMesh> not found!, Package ID: {0}", _package_id);
+		return nullptr;
+	}
+	DebugMesh* Scene::RegisterDebugMesh(IVModel* _model_pkg)
+	{
+		if (HasDebugMesh(_model_pkg->PackageID))
+		{
+			LOG_ERROR("Debug Mesh already exist! failed to register Debug Shape: {0}", _model_pkg->Name);
+			return nullptr;
+		}
+
+		m_DebugMeshRegistry.insert(std::make_pair(_model_pkg->PackageID, new DebugMesh(_model_pkg)));
+		
+		return m_DebugMeshRegistry[_model_pkg->PackageID];
+	}
+	bool Scene::HasDebugMesh(uint32_t _package_id)
+	{
+		return m_DebugMeshRegistry.find(_package_id) != m_DebugMeshRegistry.end();
+	}
 }

@@ -42,6 +42,9 @@ namespace OE1Core
 
 
 		protected:
+			bool m_ShowBoundVolume = false;
+
+		protected:
 			int m_BoneCount = 0;
 
 			GLintptr m_Offset = 0;

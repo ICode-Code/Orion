@@ -5,6 +5,10 @@
 
 namespace OE1Core
 {
+	static std::random_device s_RandomDevice;
+	static std::mt19937_64 s_Engine(s_RandomDevice());
+	static std::uniform_int_distribution<uint64_t> s_UniformDistribution;
+
 	SceneEntityFactory::SceneEntityFactory(Scene* _scene)
 	{
 		m_Scene = _scene;
@@ -23,6 +27,7 @@ namespace OE1Core
 		CloneMeshComponent(_src_entity, my_new_entity);
 		CloneBillboardComponent(_src_entity, my_new_entity);
 		CloneCameraPackageComponent(_src_entity, my_new_entity);
+		CloneBoundingVolume(_src_entity, my_new_entity);
 
 
 		return my_new_entity;
@@ -46,6 +51,7 @@ namespace OE1Core
 
 		RemoveBillboardComponent(_entity);
 		RemoveMeshComponent(_entity);
+		RemoveBoundingVolumeComponent(_entity);
 		m_Scene->m_EntityRegistry.destroy(_entity.GetHandle());
 		return true;
 	}
@@ -56,6 +62,9 @@ namespace OE1Core
 	{
 		Entity my_entity = m_Scene->CreateEntity();
 		AddDefaultComponent(my_entity, _model_pkg->Name);
+
+		//AddBoundingVolumeComponent(my_entity, _model_pkg);
+
 		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_STATIC_MESH);
 		my_entity.GetComponent<Component::TransformComponent>().m_Position = _initial_pos;
 
@@ -80,6 +89,9 @@ namespace OE1Core
 	{
 		Entity my_entity = m_Scene->CreateEntity();
 		AddDefaultComponent(my_entity, _model_pkg->Name);
+
+		//AddBoundingVolumeComponent(my_entity, _model_pkg);
+		
 		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_STATIC_MESH);
 		my_entity.GetComponent<Component::TransformComponent>().m_Position = _initial_pos;
 
@@ -246,6 +258,42 @@ namespace OE1Core
 		_entity.AddComponent<Component::TransformComponent>(&_entity);
 		_entity.GetComponent<Component::InspectorComponent>().SetTransformComponent(&_entity.GetComponent<Component::TransformComponent>());
 	}
+	void SceneEntityFactory::AddBoundingVolumeComponent(Entity _entity, IVModel* _model_package)
+	{
+		if (_entity.HasComponent<Component::BoundingVolumeComponent>())
+		{
+			LOG_ERROR(LogLayer::Pipe("[COMPONENT REGISTRY FAILED] :: Entity already  have <BoundingVolumeComponent>", OELog::WARNING));
+			return;
+		}
+		
+		Component::TagComponent& _tag = _entity.GetComponent<Component::TagComponent>();
+
+
+		// Does we have a shape for this entity already
+		IVModel* _debug_shape = AssetManager::GetDebugMesh(_model_package->Name);
+		
+		// IF we don't generate and get a point to the data
+		if (!_debug_shape)
+		{
+			AssetManager::RegisterDebugMesh(_model_package->Name, DAC::GeometryCreator::GetDebugShapeAABB(_model_package->Bound));
+			_debug_shape = AssetManager::GetDebugMesh(_model_package->Name);
+		}
+
+		uint32_t __offset = 0;
+		// Add to the scene so it can get rendered
+		if (m_Scene->HasDebugMesh(_debug_shape->PackageID))
+			__offset = m_Scene->QueryDebugMesh(_debug_shape->PackageID)->AddInstance(&_entity);
+		else
+			__offset = m_Scene->RegisterDebugMesh(_debug_shape)->AddInstance(&_entity);
+
+		std::vector<GLuint> _instance_buffer;
+		for (size_t i = 0; i < _debug_shape->SubMeshs.size(); i++)
+			_instance_buffer.push_back(_debug_shape->SubMeshs[i].IBO);
+
+		// Create Component so it can get controlled
+		_entity.AddComponent<Component::BoundingVolumeComponent>(_debug_shape->PackageID, _instance_buffer, (uint32_t)_entity, (GLintptr)__offset, _model_package->Bound.Min, _model_package->Bound.Max);
+		
+	}
 
 
 
@@ -384,6 +432,17 @@ namespace OE1Core
 		CreateRichMeshComponent(AssetManager::GetGeometry(mesh.GetPackageID()), mem_offset, _dest);
 
 	}
+	void SceneEntityFactory::CloneBoundingVolume(Entity& _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::BoundingVolumeComponent>() || _dest.HasComponent<Component::BoundingVolumeComponent>())
+			return;
+
+		Component::BoundingVolumeComponent& _bound = _src.GetComponent<Component::BoundingVolumeComponent>();
+
+		uint32_t __offset = m_Scene->QueryDebugMesh(_bound.GetPackageID())->AddInstance(&_dest);
+
+		_dest.AddComponent<Component::BoundingVolumeComponent>(_bound, (uint32_t)_dest, __offset);
+	}
 	void SceneEntityFactory::CloneTransformComponent(Entity _src, Entity _dest)
 	{
 		if (!_src.HasComponent<Component::TransformComponent>())
@@ -520,4 +579,30 @@ namespace OE1Core
 
 		return true;
 	}
+	bool SceneEntityFactory::RemoveBoundingVolumeComponent(Entity _entity)
+	{
+		if (!_entity.HasComponent<Component::BoundingVolumeComponent>())
+			return false;
+
+		Component::BoundingVolumeComponent& _volume = _entity.GetComponent<Component::BoundingVolumeComponent>();
+
+		if (!m_Scene->HasDebugMesh(_volume.GetPackageID()))
+			return false;
+
+		m_Scene->QueryDebugMesh(_volume.GetPackageID())->PurgeInstance((uint32_t)_entity, m_Scene);
+
+		if (m_Scene->QueryDebugMesh(_volume.GetPackageID())->GetInstanceCount() <= 0)
+			m_Scene->PurgeDebugMesh(_volume.GetPackageID());
+
+		_entity.RemoveComponent<Component::BoundingVolumeComponent>();
+		return true;
+	}
+
+
+	uint64_t SceneEntityFactory::GetUniqueID()
+	{
+		return s_UniformDistribution(s_Engine);
+	}
+
+
 }

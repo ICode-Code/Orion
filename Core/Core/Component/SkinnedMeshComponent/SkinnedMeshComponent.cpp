@@ -54,7 +54,7 @@ namespace OE1Core
 		void SkinnedMeshComponent::SetOffset(GLintptr _offset)
 		{
 			m_Offset = _offset;
-			m_CoreInstanceData.AnimationID = _offset;
+			m_CoreInstanceData.AnimationID = (int)_offset;
 		}
 		GLintptr SkinnedMeshComponent::GetOffset() const
 		{

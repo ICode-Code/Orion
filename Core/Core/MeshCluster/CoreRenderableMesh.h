@@ -23,7 +23,7 @@ namespace OE1Core
         uint32_t GeometryPacketID;  // Index to get the actual vertex, normal, tangent, etc., data
 
         CoreMeshDescriptor::MeshBound Bound;  // Boundary of the mesh
-        CoreMeshDescriptor::CoreMeshType MeshType;  // Type of the mesh (skinned or not)
+        CoreMeshDescriptor::CoreMeshType MeshType;  // Type of the mesh 
         MasterMaterial* Material = nullptr;  // Material applied to the mesh
         std::string Name;  // Name of the mesh
 

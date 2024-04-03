@@ -32,6 +32,9 @@ namespace OE1Core
 			inline bool operator==(const uint32_t& id) const { return id == m_UniqueInstanceID; }
 			inline bool operator==(uint32_t id) { return id == m_UniqueInstanceID; }
 
+
+		protected:
+			bool m_ShowBoundVolume = false;
 		protected:
 			/**
 			* The offset in the buffer where the mesh data starts. This offset indicates the position within the buffer

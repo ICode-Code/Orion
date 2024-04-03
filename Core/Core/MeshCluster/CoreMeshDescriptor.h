@@ -19,7 +19,9 @@ namespace OE1Core
 		enum class CoreMeshType
 		{
 			STATIC,
-			DYNAMIC
+			DYNAMIC,
+			LOCAL_DEBUG_SHAPE,
+			PHYSICS_DEBUG_SHAPE
 		};
 	}
 }

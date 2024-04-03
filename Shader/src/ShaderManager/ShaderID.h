@@ -14,7 +14,13 @@ namespace OE1Core
 
 		// Preview
 		MODEL_PREVIEW,
-		MATERIAL_PREVIEW
+		MATERIAL_PREVIEW,
+
+
+		LOCAL_DEBUG_SHAPE,
+		PHYSICS_DEBUG_SHAPE
+
+
 	};
 }
 

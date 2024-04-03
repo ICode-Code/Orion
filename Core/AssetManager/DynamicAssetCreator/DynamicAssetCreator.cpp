@@ -93,11 +93,99 @@ namespace OE1Core
 
 		return _model;
 	}
+
+
+	IVModel DAC::GeometryCreator::GetDebugShapeAABB(CoreMeshDescriptor::MeshBound _bound)
+	{
+		return GetDebugShapeAABB(_bound.Min, _bound.Max);
+	}
+	IVModel DAC::GeometryCreator::GetDebugShapeAABB(glm::vec3 _min, glm::vec3 _max)
+	{
+		std::vector<glm::vec3> Position;
+		//std::vector<glm::vec3> Normal;	// no need
+		//std::vector<glm::vec2> UV;		// no need
+		std::vector<unsigned int> Indices;
+
+
+		
+		Position.push_back(glm::vec3(_min.x, _min.y, _max.z));
+		Position.push_back(glm::vec3(_max.x, _min.y, _max.z));
+		Position.push_back(glm::vec3(_max.x, _max.y, _max.z));
+		Position.push_back(glm::vec3(_min.x, _max.y, _max.z));
+
+		Position.push_back(glm::vec3(_max.x, _max.y, _max.z));
+		Position.push_back(glm::vec3(_max.x, _max.y, _max.z));
+		Position.push_back(glm::vec3(_max.x, _max.y, _max.z));
+		Position.push_back(glm::vec3(_max.x, _max.y, _max.z));
+
+		Position.push_back(glm::vec3(_min.x, _max.y, _max.z));
+		Position.push_back(glm::vec3(_max.x, _max.y, _max.z));
+		Position.push_back(glm::vec3(_max.x, _max.y, _min.z));
+		Position.push_back(glm::vec3(_min.x, _max.y, _min.z));
+
+		Position.push_back(glm::vec3(_min.x, _min.y, _min.z));
+		Position.push_back(glm::vec3(_min.x, _max.y, _min.z));
+		Position.push_back(glm::vec3(_max.x, _max.y, _min.z));
+		Position.push_back(glm::vec3(_max.x, _min.y, _min.z));
+
+		Position.push_back(glm::vec3(_min.x, _min.y, _min.z));
+		Position.push_back(glm::vec3(_min.x, _min.y, _max.z));
+		Position.push_back(glm::vec3(_min.x, _max.y, _max.z));
+		Position.push_back(glm::vec3(_min.x, _max.y, _min.z));
+
+		Position.push_back(glm::vec3(_min.x, _min.y, _min.z));
+		Position.push_back(glm::vec3(_max.x, _min.y, _min.z));
+		Position.push_back(glm::vec3(_max.x, _min.y, _max.z));
+		Position.push_back(glm::vec3(_min.x, _min.y, _max.z));
+
+
+		IVModel _model;
+
+		_model.PackageID = GetPackageID();
+		_model.TotalIndicesCount = (int)Indices.size();
+		_model.Name = "_DAS_DEBUG_SHAPE_AABB_";
+		_model.SubMeshCount = 1;
+		_model.TotalTriangleCount = (int)Position.size() / 3;
+		_model.TotalVertexCount = (int)Position.size();
+
+		CoreRenderableMeshPackage mesh_pkg;
+		mesh_pkg.VertexCount = _model.TotalVertexCount;
+		mesh_pkg.IndicesCount = (int)Indices.size();
+		mesh_pkg.Name = "_SHAPE_AABB_";
+		mesh_pkg.PackageID = GetPackageID();
+		mesh_pkg.MeshType = CoreMeshDescriptor::CoreMeshType::LOCAL_DEBUG_SHAPE;
+
+
+		std::vector<DataBlock::Vertex> _vert;
+
+		for (size_t i = 0; i < Position.size(); i++)
+		{
+			DataBlock::Vertex Vert;
+
+			Vert.Position = Position[i];
+			Vert.Normal = glm::vec3(1.0f);
+			Vert.TextureCoordinate = glm::vec2(1.0f);
+			Vert.Color = glm::vec3(0.0f, 1.0f, 0.5f); 
+
+			Vert.Tangent = glm::vec3(1.0f);
+			Vert.Bitangent = glm::vec3(1.0f);
+
+			_vert.push_back(Vert);
+		}
+
+		mesh_pkg.GeometryPacketID = GeometryPacket::GeometryAssetPacketBuffer::RegisterStaticMeshGeometry(_vert, Indices);
+	
+		InitGLBuffer(mesh_pkg, false);
+		_model.SubMeshs.push_back(mesh_pkg);
+
+		return _model;
+	}
+
 	int DAC::GeometryCreator::GetPackageID()
 	{
 		return ++s_DynamicAssetID;
 	}
-	void DAC::GeometryCreator::InitGLBuffer(CoreRenderableMeshPackage& _core_mesh)
+	void DAC::GeometryCreator::InitGLBuffer(CoreRenderableMeshPackage& _core_mesh, bool _use_indices_buffer)
 	{
 		auto __geom = GeometryPacket::GeometryAssetPacketBuffer::GetStaticMeshGeometry(_core_mesh.GeometryPacketID);
 
@@ -105,16 +193,23 @@ namespace OE1Core
 		glBindVertexArray(_core_mesh.VAO);
 
 		glGenBuffers(1, &_core_mesh.VBO);
-		glGenBuffers(1, &_core_mesh.EBO);
+		
+		if(_use_indices_buffer)
+			glGenBuffers(1, &_core_mesh.EBO);
+
 		glGenBuffers(1, &_core_mesh.IBO);
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, _core_mesh.VBO);
 		glBufferData(GL_ARRAY_BUFFER, __geom->Vertex.size() * sizeof(OE1Core::DataBlock::Vertex), &__geom->Vertex[0], GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _core_mesh.EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, __geom->Indices.size() * sizeof(unsigned int), &__geom->Indices[0], GL_STATIC_DRAW);
+		if (_use_indices_buffer)
+		{
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _core_mesh.EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, __geom->Indices.size() * sizeof(unsigned int), &__geom->Indices[0], GL_STATIC_DRAW);
 
+		}
+		
 
 		// Position
 		glEnableVertexAttribArray(0);

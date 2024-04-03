@@ -247,4 +247,26 @@ namespace OE1Core
 		return s_AnimationRegistry;
 	}
 
+
+	// Debug Shapes
+	std::unordered_map<std::string, IVModel>& AssetManager::GetDebugMeshRegistry()
+	{
+		return s_DebugMeshRegistry;
+	}
+	bool AssetManager::RegisterDebugMesh(std::string _name, IVModel _mesh)
+	{
+		if (s_DebugMeshRegistry.find(_name) != s_DebugMeshRegistry.end())
+			return false;
+
+		s_DebugMeshRegistry.insert(std::make_pair(_name, _mesh));
+		return true;
+	}
+	IVModel* AssetManager::GetDebugMesh(std::string _name)
+	{
+		if (s_DebugMeshRegistry.find(_name) == s_DebugMeshRegistry.end())
+			return nullptr;
+		
+		return &s_DebugMeshRegistry[_name];
+	}
+
 }

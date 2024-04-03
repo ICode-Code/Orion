@@ -5,6 +5,7 @@
 #include "../Core/Texture/Texture.h"
 #include "Texture/TextureLoader.h"
 #include "../Core/MeshCluster/IVModel.h"
+#include "../Core/MeshCluster/CoreDebugShape.h"
 #include "DynamicAssetCreator/DynamicAssetType.h"
 
 #include <unordered_map>
@@ -55,8 +56,16 @@ namespace OE1Core
 		static IVModel* GetGeometryI(DynamicAssetType _type);
 		static void RegisterGeometryI(IVModel _model, DynamicAssetType _type);
 
+		// Debug Mesh
+
+		static std::unordered_map<std::string, IVModel>& GetDebugMeshRegistry();
+		static bool RegisterDebugMesh(std::string _name, IVModel _model);
+		static IVModel* GetDebugMesh(std::string _id);
+
+
 		static std::unordered_map<std::string, Texture*>& GetTextureRegistry();
 		static std::unordered_map<std::string, Texture*>& GetTextureInternalRegistry();
+
 		
 
 
@@ -70,6 +79,8 @@ namespace OE1Core
 		inline static std::unordered_map<DynamicAssetType, IVModel> s_InternalPurposeGeometry;
 
 		inline static std::unordered_map<std::string, Texture*> s_TextureInternalRegistry;
+
+		inline static std::unordered_map<std::string, IVModel> s_DebugMeshRegistry;
 
 		// any Loaded Animation
 		inline static std::unordered_map<std::string, Animation*> s_AnimationRegistry;

@@ -79,6 +79,9 @@ namespace OE1Core
 			max_point.y = std::max(max_point.y, model_package.SubMeshs[i].Bound.Max.y);
 			max_point.z = std::max(max_point.z, model_package.SubMeshs[i].Bound.Max.z);
 		}
+		
+		model_package.Bound.Min = min_point;
+		model_package.Bound.Max = max_point;
 
 		glm::vec3 center = (min_point * 0.5f) + (max_point * 0.5f);
 		model_package.Extent = glm::vec3(max_point.x - center.x, max_point.y - center.y, max_point.z - center.z);

@@ -29,12 +29,17 @@ namespace OE1Core
 			glViewport(0, 0, _frame.GetWidth(), _frame.GetHeight());
 			s_LocalShader->Attach();
 
+			float _length = glm::length(_model_package.Bound.Max);
+			s_CameraPackage->GetCamera()->m_FieldOfView = 75;
+			s_CameraPackage->GetCamera()->m_Far = 100000.0f;
 			s_CameraPackage->GetCamera()->SetResolution(glm::vec2(1280, 1024));
 			s_CameraPackage->GetCamera()->m_Near = 0.01f;
-			s_CameraController->Focus(glm::vec3(0.0f, 0.0f, 0.0f), glm::length(_model_package.Extent * 1.5f));
+			s_CameraController->Focus(glm::vec3(0.0f, _length / 2.0f, 0.0f), _length);
 			s_CameraController->UpdateCameraView();
 
-			s_CameraPackage->GetCamera()->Update(s_CameraController->GetCurrentPosition());
+
+			glm::vec3 _pos = glm::vec3(s_CameraController->GetFinalPosition().x, s_CameraController->GetFinalPosition().y, s_CameraController->GetFinalPosition().z);
+			s_CameraPackage->GetCamera()->Update(_pos);
 
 			s_LocalShader->SetMat4("Model", glm::mat4(1.0f));
 			s_LocalShader->SetMat4("View", s_CameraPackage->GetCamera()->m_View);

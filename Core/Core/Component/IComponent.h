@@ -15,6 +15,8 @@
 #include "AnimationComponent/AnimationComponent.h"
 #include "CharacterController/ThirdPersonCharacterControllerComponent/ThirdPersonCharacterControllerComponent.h"
 #include "CameraControllerComponent/ThirdPersonCameraControllerComponent/ThirdPersonCameraControllerComponent.h"
+#include "BoundingVolumeComponent/BoundingVolumeComponent.h"
+
 
 #endif // !OE1_ICOMPONENT_H_
  

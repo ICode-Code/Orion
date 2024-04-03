@@ -5,6 +5,7 @@
 #include "../AssetManager/GeometryAssetPacketBuffer/GeometryAssetPacketBuffer.h"
 #include "../Core/MeshCluster/IVModel.h"
 #include "../Core/MeshCluster/StaticMeshInstancePkg.h"
+#include "../Core/MeshCluster/CoreDebugShape.h"
 
 namespace OE1Core
 {
@@ -16,12 +17,19 @@ namespace OE1Core
 			GeometryCreator() = default;
 			~GeometryCreator() = default;
 
-
+			/// <summary>
+			/// Mesh
+			/// </summary>
+			/// <returns></returns>
 			static IVModel GetSphere();
 
 
+			static IVModel GetDebugShapeAABB(CoreMeshDescriptor::MeshBound _bound);
+			static IVModel GetDebugShapeAABB(glm::vec3 _min, glm::vec3 _max);
+
+
 		private:
-			static void InitGLBuffer(CoreRenderableMeshPackage& _core_mesh);
+			static void InitGLBuffer(CoreRenderableMeshPackage& _core_mesh, bool _use_indices_buffer = true);
 			static int GetPackageID();
 
 		private:

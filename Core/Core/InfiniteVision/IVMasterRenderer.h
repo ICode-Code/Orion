@@ -58,6 +58,7 @@ namespace OE1Core
 			IVOutlineRenderer* m_OutlineRenderer = nullptr;
 			IVViewportBillboardIconRenderer* m_ViewportBillboardRenderer = nullptr;
 			IVMaterialPreviewRenderer* m_MaterialPreviewRenderer = nullptr;
+			IVDebugShapeRenderer* m_DebugShapeRenderer = nullptr;
 
 		protected: // Framebuffer
 			IVForwardMainPassFramebuffer m_MainPassFramebuffer;

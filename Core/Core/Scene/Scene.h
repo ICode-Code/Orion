@@ -6,6 +6,7 @@
 
 #include "../Mesh/StaticMesh/StaticMesh.h"
 #include "../Mesh/DynamicMesh/DynamicMesh.h"
+#include "../Mesh/DebugMesh/DebugMesh.h"
 
 #include "../Grid/Grid.h"
 
@@ -72,6 +73,15 @@ namespace OE1Core
 		bool HasDynamicMesh(uint32_t _package_id);
 
 
+		// DEBUG MESH
+
+		bool  PurgeDebugMesh(uint32_t _package_id);
+		DebugMesh* QueryDebugMesh(uint32_t _package_id);
+		DebugMesh* RegisterDebugMesh(IVModel* _model_pkg);
+		bool HasDebugMesh(uint32_t _package_id);
+
+
+
 		class ActiveEntity* GetActiveEntity(); 
 		void Update(int _width, int _height);
 		void Update(float dt);
@@ -92,6 +102,8 @@ namespace OE1Core
 		void Render();
 		Renderer::IVMasterRenderer* GetRenderer();
 
+		
+
 
 
 
@@ -106,6 +118,7 @@ namespace OE1Core
 
 		entt::registry m_EntityRegistry;
 
+		std::unordered_map<uint32_t, DebugMesh*> m_DebugMeshRegistry;
 		std::unordered_map<uint32_t, DynamicMesh*> m_DynamicMeshRegistry;
 		std::unordered_map<uint32_t, StaticMesh*> m_StaticMeshRegistry;
 		std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*> m_SceneBillboardIcon;
