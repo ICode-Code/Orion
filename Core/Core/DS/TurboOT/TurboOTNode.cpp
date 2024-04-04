@@ -1,11 +1,11 @@
-#include "OTNode.h"
+#include "TurboOTNode.h"
 
 
 namespace OE1Core
 {
 	namespace DS
 	{
-		template <typename T> OTNode<T>::OTNode(glm::vec3 _center, float _size, int _depth, int _child_count)
+		TurboOTNode::TurboOTNode(glm::vec3 _center, float _size, int _depth, int _child_count)
 		{
 			m_Center = _center;
 			m_Size = _size;
@@ -15,8 +15,8 @@ namespace OE1Core
 			m_NumberOfChild = _child_count;
 
 
-			m_Child.reserve(m_NumberOfChild);
-			memset(m_Child, 0, sizeof(m_Child));
+			//m_Child.reserve(m_NumberOfChild);
+			//memset(m_Child, 0, sizeof(m_Child));
 
 			m_Data.reserve(MIN_OBJECT_PER_NODE);
 
@@ -24,12 +24,12 @@ namespace OE1Core
 			m_Max = m_Center + m_HalfSize;
 
 		}
-		template <typename T> OTNode<T>::~OTNode()
+		TurboOTNode::~TurboOTNode()
 		{
 
 		}
 
-		template<typename T> bool OTNode<T>::Has(glm::vec3 _point)
+		bool TurboOTNode::Has(glm::vec3 _point)
 		{
 			return (
 				_point.x >= m_Min.x && _point.x <= m_Max.x &&
@@ -37,13 +37,13 @@ namespace OE1Core
 				_point.z >= m_Min.z && _point.z <= m_Max.z
 				);
 		}
-		template <typename T> bool OTNode<T>::Register(T _data)
+		bool TurboOTNode::Register(glm::vec3 _data)
 		{
 
 			return false;
 		}
 
-		template <typename T> bool OTNode<T>::Purge(T _data)
+		 bool TurboOTNode::Purge(glm::vec3 _data)
 		{
 
 			return false;

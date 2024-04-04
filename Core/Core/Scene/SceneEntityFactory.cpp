@@ -320,13 +320,16 @@ namespace OE1Core
 			geometry_buffer.push_back(_mesh->SubMeshs[i].IBO);
 			material_offsets.push_back(_mesh->SubMeshs[i].MaterialID);
 		}
-		_entity.AddComponent<Component::MeshComponent>(
-			_mesh->PackageID,
-			(uint32_t)_entity,
-			_offset,
-			geometry_buffer,
-			material_offsets
-		);
+
+		Component::CoreMeshArg _arg;
+
+		_arg.PackageID				= _mesh->PackageID;
+		_arg.InstanceID				= (uint32_t)_entity;
+		_arg.Offset					= _offset;
+		_arg.MaterialAccessIndices	= material_offsets;
+		_arg.GeometryBuffer			= geometry_buffer;
+
+		_entity.AddComponent<Component::MeshComponent>(_arg);
 		_entity.GetComponent<Component::InspectorComponent>().SetMeshComponent(&_entity.GetComponent<Component::MeshComponent>());
 	}
 	void SceneEntityFactory::CreateRichSkinnedMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity)
@@ -338,15 +341,19 @@ namespace OE1Core
 			geometry_buffer.push_back(_mesh->SubMeshs[i].IBO);
 			material_offsets.push_back(_mesh->SubMeshs[i].MaterialID);
 		}
-		_entity.AddComponent<Component::SkinnedMeshComponent>(
-			_mesh->PackageID,
-			(uint32_t)_entity,
-			_offset, //  Instance ID
-			_offset, // Memory Buffer
-			(int)GeometryPacket::GeometryAssetPacketBuffer::GetSkinnedIVModelCustomData(_mesh->DataIdx)->BoneInfoMap.size(),
-			geometry_buffer,
-			material_offsets
-		);
+
+		Component::CoreMeshArg _arg;
+
+		_arg.PackageID				= _mesh->PackageID;
+		_arg.InstanceID				= (uint32_t)_entity;
+		_arg.Offset					= _offset;
+		_arg.MaterialAccessIndices	= material_offsets;
+		_arg.GeometryBuffer			= geometry_buffer;
+
+
+		int __bone_count = (int)GeometryPacket::GeometryAssetPacketBuffer::GetSkinnedIVModelCustomData(_mesh->DataIdx)->BoneInfoMap.size();
+		
+		_entity.AddComponent<Component::SkinnedMeshComponent>(_arg, _offset, __bone_count);
 		_entity.GetComponent<Component::InspectorComponent>().SetSkinnedMeshComponent(&_entity.GetComponent<Component::SkinnedMeshComponent>());
 	}
 	void SceneEntityFactory::CreateAnimationComponent(DynamicMesh* _dynamic_mesh, uint32_t _offset, Entity& _entity)
@@ -429,7 +436,11 @@ namespace OE1Core
 
 		
 		uint32_t mem_offset = RegisterInstance(static_mesh, _dest);
-		CreateRichMeshComponent(AssetManager::GetGeometry(mesh.GetPackageID()), mem_offset, _dest);
+
+
+		_dest.AddComponent<Component::MeshComponent>(mesh, (uint32_t)_dest, mem_offset);
+		_dest.GetComponent<Component::InspectorComponent>().SetMeshComponent(&_dest.GetComponent<Component::MeshComponent>());
+		//CreateRichMeshComponent(AssetManager::GetGeometry(mesh.GetPackageID()), mem_offset, _dest);
 
 	}
 	void SceneEntityFactory::CloneBoundingVolume(Entity& _src, Entity _dest)
