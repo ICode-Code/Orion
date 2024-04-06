@@ -5,6 +5,7 @@
 
 namespace OE1Core
 {
+	class Entity;
 	namespace DS
 	{
 		class TurboOT
@@ -14,6 +15,18 @@ namespace OE1Core
 			~TurboOT();
 
 
+			// Add to the structre
+			void Register(Entity _entity);
+
+			// When Entity move around
+			void Update(Entity _entity);
+
+			// remove from the tree
+			void Purge(Entity _entity);
+
+			TurboOTNode& GetRootNode();
+		private:
+			TurboOTNode m_RootNode;
 		};
 	}
 }

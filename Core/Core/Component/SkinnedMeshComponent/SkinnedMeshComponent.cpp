@@ -55,6 +55,7 @@ namespace OE1Core
 				glBufferSubData(GL_ARRAY_BUFFER, m_Offset, DynamicMeshInstancePkgSize, &m_CoreInstanceData);
 			}
 		}
+		void SkinnedMeshComponent::UpdateBuffers() { this->Update(); }
 
 		DynamicMeshInstancePkg SkinnedMeshComponent::GetInstanceData() const { return m_CoreInstanceData; }
 	}

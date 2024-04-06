@@ -27,7 +27,8 @@ namespace OE1Core
 			~MeshComponent();
 
 			virtual void Update(const glm::mat4& _transform) override;
-			virtual void Update() override;;
+			virtual void Update() override;
+			virtual void UpdateBuffers() override;
 
 			StaticMeshInstancePkg GetInstanceData() const;
 

@@ -17,6 +17,7 @@ namespace OE1Core
 			m_ViewportBillboardRenderer = new IVViewportBillboardIconRenderer();
 			m_MaterialPreviewRenderer = new IVMaterialPreviewRenderer();
 			m_DebugShapeRenderer = new IVDebugShapeRenderer();
+			m_SceneDebugShapeRenderer = new IVSceneDebugShapeRenderer();
 		}
 		IVMasterRenderer::~IVMasterRenderer()
 		{
@@ -25,6 +26,7 @@ namespace OE1Core
 			delete m_OutlineRenderer;
 			delete m_ViewportBillboardRenderer;
 			delete m_MaterialPreviewRenderer;
+			delete m_SceneDebugShapeRenderer;
 		}
 		void IVMasterRenderer::PushToRenderStack(StaticMesh* _mesh)
 		{
@@ -140,7 +142,10 @@ namespace OE1Core
 
 			m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), ActiveCameraIdx);
 
+			// Debug
 			m_DebugShapeRenderer->Render(m_Scene->m_DebugMeshRegistry);
+			m_SceneDebugShapeRenderer->Render(m_Scene->m_TurboOctree->GetRootNode());
+
 
 			m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, ActiveCameraIdx);
 

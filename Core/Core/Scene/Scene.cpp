@@ -28,9 +28,18 @@ namespace OE1Core
 		m_Grid = new Grid();
 		m_MyRenderer = new Renderer::IVMasterRenderer(m_Window, this);
 		m_RenderStack = new Renderer::IVRenderStack();
+		
 		m_SceneActiveSelection = new ActiveEntity();
+		m_SceneActiveSelection->SetOnFlushCallback(
+			new std::function<void(std::vector<Entity>&)>(
+				std::bind(&Scene::OnSelectionFlushOperation, this, std::placeholders::_1) 
+			)
+		);
+
 		m_RenderMode = RenderMode::LIT;
 		m_SceneRay = new Ray(m_MasterCamera);
+		m_TurboOctree = new DS::TurboOT();
+
 
 		// Init Icons
 		RegisterBillboardIcon(ViewportIconBillboardType::CAMERA, "Camera");
@@ -45,6 +54,7 @@ namespace OE1Core
 		delete m_RenderStack;
 		delete m_SceneActiveSelection;
 		delete m_SceneRay;
+		delete m_TurboOctree;
 		delete m_MasterCameraController;
 
 		for (auto iter : m_StaticMeshRegistry)
@@ -325,7 +335,7 @@ namespace OE1Core
 	{
 		return m_MyRenderer;
 	}
-
+	DS::TurboOT* Scene::GetTurboOT() { return m_TurboOctree; };
 	// Debug Mesh
 	bool Scene::PurgeDebugMesh(uint32_t _package_id)
 	{
@@ -360,5 +370,10 @@ namespace OE1Core
 	bool Scene::HasDebugMesh(uint32_t _package_id)
 	{
 		return m_DebugMeshRegistry.find(_package_id) != m_DebugMeshRegistry.end();
+	}
+	void Scene::OnSelectionFlushOperation(std::vector<Entity>& _entitys)
+	{
+		for (size_t i = 0; i < _entitys.size(); i++)
+			m_TurboOctree->Update(_entitys[i]);
 	}
 }

@@ -41,6 +41,7 @@ namespace OE1Core
 				glBufferSubData(GL_ARRAY_BUFFER, m_Offset, StaticMeshInstancePkgSize, &m_CoreInstanceData);
 			}
 		}
+		void MeshComponent::UpdateBuffers() { this->Update(); }
 		StaticMeshInstancePkg MeshComponent::GetInstanceData() const { return m_CoreInstanceData; }
 	}
 }

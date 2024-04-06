@@ -16,6 +16,8 @@
 #include <Entt/entt.hpp>
 #include "SceneRenderMode.h"
 
+#include "../DS/TurboOT/TurboOT.h"
+
 #include <unordered_map>
 #include <functional>
 
@@ -101,6 +103,9 @@ namespace OE1Core
 		SceneCameraManager* GetCameraManager() const;
 		void Render();
 		Renderer::IVMasterRenderer* GetRenderer();
+		DS::TurboOT* GetTurboOT();
+
+		void OnSelectionFlushOperation(std::vector<Entity>& _entitys);
 
 		
 
@@ -124,6 +129,7 @@ namespace OE1Core
 		std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*> m_SceneBillboardIcon;
 
 	protected:
+		DS::TurboOT* m_TurboOctree = nullptr;
 		Renderer::IVMasterRenderer* m_MyRenderer;
 		class ActiveEntity* m_SceneActiveSelection;
 		RenderMode m_RenderMode;

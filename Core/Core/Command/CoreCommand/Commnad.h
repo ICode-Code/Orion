@@ -54,6 +54,8 @@ namespace OE1Core
 		static void PushMasterRendererMaterialRefresh(CommandDef::MasterRendererMaterialRefreshCommandDef _command);
 		static void PushAnimationLoadCommand(CommandDef::AnimationLoadCommandDef _command);
 		static void PushAnimationSwitchCommand(CommandDef::AnimationSwitchCommandDef _command);
+		static void PushSceneDebugShapeCreateCommand(CommandDef::SceneDebugShapeCreateCommandDef _command);
+		static void PushSceneDebugShapeUpdateCommand(CommandDef::SceneDebugShapeUpdateCommandDef _command);
 		/// <summary>
 		/// This Command processed at the end
 		/// </summary>
@@ -74,6 +76,8 @@ namespace OE1Core
 		inline static std::queue<CommandDef::DynamicMeshModelPreviewRenderCommandDef> s_DynamicMeshModelPreviewRenderCommands;
 		inline static std::queue<CommandDef::AnimationLoadCommandDef> s_AnimationLoadCommands;
 		inline static std::queue<CommandDef::AnimationSwitchCommandDef> s_AnimationSwitchCommands;
+		inline static std::queue<CommandDef::SceneDebugShapeCreateCommandDef> s_SceneDebugShapeCreateCommands;
+		inline static std::queue<CommandDef::SceneDebugShapeUpdateCommandDef> s_SceneDebugShapeUpdateCommands;
 	private: // callbacks
 		inline static ContentBrowserLayerNotifyCallback s_ContentBrowserLayerNotifyCallback;
 		inline static ThreadInfoLayerNotifyCallback s_ThreadInfoLayerNotifyCallback;

@@ -11,11 +11,13 @@
 #include "Renderers/MeshRenderer/IVMeshRenderer.h"
 #include "Renderers/OutlineRenderer/IVOutlineRenderer.h"
 #include "Renderers/MaterialPreviewRenderer/IVMaterialPreviewRenderer.h"
+#include "Renderers/SceneDebugShapeRenderer/IVSceneDebugShapeRenderer.h"
 
 // Render Stack
 #include "RenderStack/RenderStack.h"
 #include "../Mesh/StaticMesh/StaticMesh.h"
 #include "../Mesh/DynamicMesh/DynamicMesh.h"
+
 
 namespace OE1Core
 {
@@ -58,7 +60,10 @@ namespace OE1Core
 			IVOutlineRenderer* m_OutlineRenderer = nullptr;
 			IVViewportBillboardIconRenderer* m_ViewportBillboardRenderer = nullptr;
 			IVMaterialPreviewRenderer* m_MaterialPreviewRenderer = nullptr;
+
+			// Debug
 			IVDebugShapeRenderer* m_DebugShapeRenderer = nullptr;
+			IVSceneDebugShapeRenderer* m_SceneDebugShapeRenderer = nullptr;
 
 		protected: // Framebuffer
 			IVForwardMainPassFramebuffer m_MainPassFramebuffer;

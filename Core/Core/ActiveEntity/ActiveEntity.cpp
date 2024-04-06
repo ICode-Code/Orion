@@ -8,7 +8,8 @@ namespace OE1Core
 	}
 	ActiveEntity::~ActiveEntity()
 	{
-
+		if (m_OnFlushCallback)
+			delete m_OnFlushCallback;
 	}
 	void ActiveEntity::Hold(bool _val) { m_Hold = _val; }
 	bool ActiveEntity::IsHold() { return m_Hold; }
@@ -40,11 +41,18 @@ namespace OE1Core
 	}
 	void ActiveEntity::FlushSelection()
 	{
+		if (m_OnFlushCallback)
+			(*m_OnFlushCallback)(m_ActiveRegistry);
+
 		m_ActiveRegistry.clear();
 		
 		m_Hold = false;
 		m_BatchMode = false;
 		m_EntitySelected = false;
+	}
+	void ActiveEntity::SetOnFlushCallback(std::function<void(std::vector<Entity>&)>* _flush_list)
+	{
+		m_OnFlushCallback = _flush_list;
 	}
 	bool ActiveEntity::ValidSelection() { return m_EntitySelected; }
 	Entity ActiveEntity::GetActive() { return m_ActiveRegistry.back(); }

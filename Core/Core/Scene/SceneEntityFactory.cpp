@@ -82,6 +82,7 @@ namespace OE1Core
 			CreateRichMeshComponent(_model_pkg, mem_offset, my_entity);
 		}
 
+		m_Scene->GetTurboOT()->Register(my_entity);
 		
 		return my_entity;
 	}
@@ -111,6 +112,7 @@ namespace OE1Core
 			CreateAnimationComponent(crt_dynamic_mesh, mem_offset, my_entity);
 		}
 
+		m_Scene->GetTurboOT()->Register(my_entity);
 		return my_entity;
 
 	}
@@ -441,6 +443,8 @@ namespace OE1Core
 		_dest.AddComponent<Component::MeshComponent>(mesh, (uint32_t)_dest, mem_offset);
 		_dest.GetComponent<Component::InspectorComponent>().SetMeshComponent(&_dest.GetComponent<Component::MeshComponent>());
 		//CreateRichMeshComponent(AssetManager::GetGeometry(mesh.GetPackageID()), mem_offset, _dest);
+
+		m_Scene->GetTurboOT()->Register(_dest);
 
 	}
 	void SceneEntityFactory::CloneBoundingVolume(Entity& _src, Entity _dest)

@@ -51,6 +51,10 @@ namespace OE1Core
 			static void ProcessDynamicMeshPreivewRendererCommand();
 			static void ProcessMaterialPreviewRenderCommand();
 
+			// Debug
+			static void ProcessSceneDebugShapeCreateCommand();
+			static void ProcessSceneDebugShapeUpdateCommand();
+
 
 		private: //Util
 			static bool AssignMaterial(IVModel* _mesh, MasterMaterial* _material, uint32_t _sub_mesh_id);

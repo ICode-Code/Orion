@@ -71,4 +71,12 @@ namespace OE1Core
 	{
 		s_AnimationSwitchCommands.push(_command);
 	}
+	void Command::PushSceneDebugShapeCreateCommand(CommandDef::SceneDebugShapeCreateCommandDef _command)
+	{
+		s_SceneDebugShapeCreateCommands.push(_command);
+	}
+	void Command::PushSceneDebugShapeUpdateCommand(CommandDef::SceneDebugShapeUpdateCommandDef _command)
+	{
+		s_SceneDebugShapeUpdateCommands.push(_command);
+	}
 }

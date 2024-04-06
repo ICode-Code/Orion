@@ -40,6 +40,11 @@ namespace OE1Core
 			virtual void Update(const glm::mat4& _transform) = 0;
 			virtual void Update() = 0;
 
+			/// <summary>
+			/// The same as Update
+			/// </summary>
+			virtual void UpdateBuffers() = 0;
+
 			uint32_t GetPackageID() const;
 			uint32_t GetUniqueInstanceID() const;
 

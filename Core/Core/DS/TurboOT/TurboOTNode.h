@@ -2,24 +2,32 @@
 #define OE1_TURBO_OCTREE_NODE_H_
 
 #include <vector>
-#include <glm/glm.hpp>
+#include "OTEntDiscriptor.h"
 
-#define NUMBER_OF_CHILD 8
-#define MIN_OBJECT_PER_NODE 10000
+#define CHILD_PER_OT_NODE 8
+#define MIN_OBJECT_PER_NODE 50
+#define MAX_SIZE 5
 
 namespace OE1Core
 {
+	namespace Renderer { class IVSceneDebugShapeRenderer; }
 	namespace DS
 	{
+
 		class TurboOTNode
 		{
+			friend class Renderer::IVSceneDebugShapeRenderer;
+			friend class DebugOTInit;
 		public:
-			TurboOTNode(glm::vec3 _center, float _size, int _depth, int _child_count = NUMBER_OF_CHILD);
+			TurboOTNode(glm::vec3 _center, float _size = MAX_SIZE, int _depth = 0, bool _is_root = false);
 			~TurboOTNode();
 
 
-			bool Register(glm::vec3 _data);
-			bool Purge(glm::vec3 _data);
+			bool RegisterChild(OTEntDiscriptor _data);
+			bool PurgeChild(uint32_t _data);
+			bool UpdateChild(uint32_t _id);
+			void CollectData(std::vector<OTEntDiscriptor>& _buffer);
+			OTEntDiscriptor GetData(uint32_t _data_id);
 			
 
 
@@ -28,17 +36,27 @@ namespace OE1Core
 			float m_Size;
 			float m_HalfSize;
 			int m_Depth;
-			int m_NumberOfChild = 0;
+			bool m_IsRoot = false;
 
-			std::vector<TurboOTNode*> m_Child;
-			std::vector<glm::vec3> m_Data;
+			
+			TurboOTNode* m_Child[CHILD_PER_OT_NODE];
+			std::vector<OTEntDiscriptor> m_Data;
 
 			glm::vec3 m_Center;
 			glm::vec3 m_Min;
 			glm::vec3 m_Max;
 
+			unsigned int m_VisualizationVAO = 0;
+			unsigned int m_VisualizationVBO = 0;
+
 		private: // Util
-			bool Has(glm::vec3 _point);
+			bool CanContain(glm::vec3 _point);
+			bool CanContain(OE1Core::CoreMeshDescriptor::MeshBound _boud);
+			void Subdivide();
+			void DistributeData();
+			void ReBuildTree(float _new_size);
+			void ReComputeBound(float _size);
+			void CleanNodes(TurboOTNode* _node);
 		};
 	}
 }

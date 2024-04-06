@@ -17,6 +17,11 @@ namespace OE1Core
 	class Animation;
 	struct IVModel;
 
+	namespace DS
+	{
+		class TurboOTNode;
+	}
+
 	namespace CommandDef 
 	{
 		struct CommandBase
@@ -196,6 +201,21 @@ namespace OE1Core
 
 			uint32_t EntityID;
 			Animation* TargetAnimation;
+		};
+
+		struct SceneDebugShapeCreateCommandDef : public CommandBase
+		{
+			SceneDebugShapeCreateCommandDef(std::string _file, int _line, std::string _func)
+				: CommandBase(_file, _line, _func)
+			{}
+			DS::TurboOTNode* Node;
+		};
+		struct SceneDebugShapeUpdateCommandDef : public CommandBase
+		{
+			SceneDebugShapeUpdateCommandDef(std::string _file, int _line, std::string _func)
+				: CommandBase(_file, _line, _func)
+			{}
+			DS::TurboOTNode* Node;
 		};
 	}
 }

@@ -29,7 +29,7 @@ namespace OE1Core
 
 			virtual void Update(const glm::mat4& _transform) override;
 			virtual void Update() override;
-
+			virtual void UpdateBuffers() override;
 			DynamicMeshInstancePkg GetInstanceData() const;
 
 		protected:

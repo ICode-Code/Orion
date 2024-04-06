@@ -5,6 +5,8 @@
 #include "../GUI/Viewport/DynamicViewportManager/DynamicViewportManager.h"
 #include "../Core/InfiniteVision/Renderers/2DTextureArrayExtractQuadRenderer/IV2DTextureArrayExtractQuadRenderer.h"
 
+#include "../Core/DS/DebugOTInit/DebugOTInit.h"
+
 #include "AnimationLoader/AnimationLoader.h"
 
 namespace OE1Core
@@ -48,6 +50,8 @@ namespace OE1Core
 
 			ProcessModelPreviewRenderCommand();
 			ProcessDynamicMeshPreivewRendererCommand();
+			ProcessSceneDebugShapeCreateCommand();
+			ProcessSceneDebugShapeUpdateCommand();
 		}
 
 
@@ -537,6 +541,28 @@ namespace OE1Core
 			}
 
 			return _positive_return;
+		}
+		void CommandContextOperationExeHandler::ProcessSceneDebugShapeCreateCommand()
+		{
+			while (!Command::s_SceneDebugShapeCreateCommands.empty())
+			{
+				auto& commandX = Command::s_SceneDebugShapeCreateCommands.front();
+
+				DS::DebugOTInit::Init(*commandX.Node);
+
+				Command::s_SceneDebugShapeCreateCommands.pop();
+			}
+		}
+		void CommandContextOperationExeHandler::ProcessSceneDebugShapeUpdateCommand()
+		{
+			while (!Command::s_SceneDebugShapeUpdateCommands.empty())
+			{
+				auto& commandX = Command::s_SceneDebugShapeUpdateCommands.front();
+
+				DS::DebugOTInit::Update(*commandX.Node);
+
+				Command::s_SceneDebugShapeUpdateCommands.pop();
+			}
 		}
 	}
 }

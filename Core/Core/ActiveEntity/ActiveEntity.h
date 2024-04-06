@@ -4,6 +4,7 @@
 #include "../Scene/Entity.h"
 
 #include <vector>
+#include <functional>
 
 namespace OE1Core
 {
@@ -20,6 +21,7 @@ namespace OE1Core
 		bool IsPicked(Entity _entity);
 		void FlushSelection();
 		bool ValidSelection();
+		void SetOnFlushCallback(std::function<void(std::vector<Entity>&)>* _flush_list);
 		Entity GetActive();
 		std::vector<Entity>& GetRegistry();
 		bool IsBatchMode();
@@ -29,7 +31,7 @@ namespace OE1Core
 		bool m_BatchMode = false;
 		bool m_EntitySelected = false;
 		bool m_Hold = false;
-
+		std::function<void(std::vector<Entity>&)>* m_OnFlushCallback = nullptr;
 	};
 }
 
