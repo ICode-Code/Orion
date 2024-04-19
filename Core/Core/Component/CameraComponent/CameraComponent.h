@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <vector>
+#include "../Core/DS/OptStructure/Frustum/Frustum.h"
 
 namespace OE1Core
 {
@@ -31,6 +32,9 @@ namespace OE1Core
 			void SetYaw(float _yaw);
 			float GetAspectRatio();
 			glm::vec2 GetResolution();
+
+			std::vector<glm::vec3>& GetFrustumCorner();
+			Frustum& GetFrustum();
 
 			float GetPitch() const;
 			float GetYaw() const;
@@ -67,6 +71,7 @@ namespace OE1Core
 			bool m_Active = false;
 			bool m_Cull = false;
 			std::vector<glm::vec3> m_FrustumCorner;
+			Frustum m_Frustum;
 		};
 	}
 }

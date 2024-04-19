@@ -51,30 +51,64 @@ namespace OE1Core
 				_point.z >= m_Min.z && _point.z <= m_Max.z
 				);
 		}
-		bool TurboOTNode::CanContain(OE1Core::CoreMeshDescriptor::MeshBound _bound)
+		bool TurboOTNode::CanContain(OE1Core::CoreMeshDescriptor::MeshBound _bound, glm::vec3 _scale)
 		{
-			return glm::length(_bound.Min) >= glm::length(m_Min) && glm::length(_bound.Max) <= glm::length(m_Max);
+
+			m_Min *= _scale;
+			m_Max *= _scale;
+
+			if (_bound.Min.x >= this->m_Min.x &&
+				_bound.Min.y >= this->m_Min.y &&
+				_bound.Min.z >= this->m_Min.z) {
+				// Check if all maximum coordinates of _bound are less than or equal to this->m_Max
+				if (_bound.Max.x <= this->m_Max.x &&
+					_bound.Max.y <= this->m_Max.y &&
+					_bound.Max.z <= this->m_Max.z) {
+					return true; // All conditions met, _bound can be contained
+				}
+			}
+
+			return false;
 		}
 		bool TurboOTNode::RegisterChild(OTEntDiscriptor _data)
 		{
 			bool _can_contain = CanContain(_data.Position);
+			bool _can_conatin_bound = CanContain(_data.Bound, _data.Scale);
 
 			if (!_can_contain && !m_IsRoot)
 				return false;
 
 			// Make sure the main root node can accomodate this node
-			if (!_can_contain && m_IsRoot)
+			if ((!_can_contain && m_IsRoot) || !_can_conatin_bound)
 			{
-				// if this is the root node and can't conatin the entity
-				// we need to scale the root node in otHER WORD WE NEED TO RE_BUILD THE TREE
-
 				// Collect all the data
 				std::vector<OTEntDiscriptor> __data;
 				CollectData(__data);
-				
-				float _distance = glm::length(m_Center - _data.Position);
 
-				ReBuildTree(_distance * 2.0f);
+
+				// if this is the root node and can't conatin the entity
+				// we need to scale the root node in otHER WORD WE NEED TO RE_BUILD THE TREE
+
+				// Calculate the entity bound with scale factor
+				glm::vec3 e_min = _data.Bound.Min * _data.Scale;
+				glm::vec3 e_max = _data.Bound.Max * _data.Scale;
+
+				// combined entity 
+				glm::vec3 _new_min = glm::min(m_Min, e_min);
+				glm::vec3 _new_max = glm::max(m_Max, e_max);
+				glm::vec3 _new_size = _new_max - _new_min;
+
+				// get scaling factor
+				glm::vec3 _current_size = m_Max - m_Min;
+				glm::vec3 _scale_factor = _new_size / _current_size;
+
+				float distance = glm::length(_data.Position - m_Center);
+
+				// Adjust the scaling factor based on the distance
+				float distanceFactor = distance / glm::length(_current_size) * 0.5f;
+				_scale_factor += glm::vec3(distanceFactor);
+
+				ReBuildTree(glm::max(_scale_factor.x, glm::max(_scale_factor.y, _scale_factor.z)));
 
 				for (auto iter : __data)
 					RegisterChild(iter);
@@ -204,7 +238,7 @@ namespace OE1Core
 		 }
 		 void TurboOTNode::ReComputeBound(float _size)
 		 {
-			 m_Size += _size;
+			 m_Size *= _size;
 			 m_HalfSize = m_Size * 0.5f;
 
 			 m_Min = m_Center - m_HalfSize;
@@ -221,6 +255,46 @@ namespace OE1Core
 
 			 delete _node;
 			 _node = nullptr;
+		 }
+
+
+
+		 bool TurboOTNode::FrustumIntersect(Frustum& _frustum)
+		 {
+			 // Iterate over each plane of the frustum
+			 for (int i = 0; i < 6; i++)
+			 {
+				 Plane& plane = _frustum.GetPlane(i);
+
+				 // Find the point in the bounding box that is furthest along the direction of the plane normal
+				 glm::vec3 pointInBox = m_Min;
+				 if (plane.GetNormal().x >= 0)
+					 pointInBox.x = m_Max.x;
+				 if (plane.GetNormal().y >= 0)
+					 pointInBox.y = m_Max.y;
+				 if (plane.GetNormal().z >= 0)
+					 pointInBox.z = m_Max.z;
+
+				 // If the furthest point is behind the plane, the entire bounding box is outside the frustum
+				 if (plane.GetSignedDistanceToPlace(pointInBox) < 0)
+					 return false;
+			 }
+
+			 return true;
+		 }
+		 void TurboOTNode::Filter(Frustum& _frustum, std::unordered_map<uint32_t, std::vector<OTEntDiscriptor>>& _buffers)
+		 {
+			 bool __intersect = FrustumIntersect(_frustum);
+
+			 if (!__intersect)
+				 return;
+
+			 for (size_t i = 0; i < m_Data.size(); i++)
+				 _buffers[m_Data[i].PackageID].push_back(m_Data[i]);
+
+			 if (!m_Leaf)
+				 for (int i = 0; i < CHILD_PER_OT_NODE; i++)
+					 m_Child[i]->Filter(_frustum, _buffers);
 		 }
 	}
 }

@@ -39,6 +39,7 @@ namespace OE1Core
 		m_RenderMode = RenderMode::LIT;
 		m_SceneRay = new Ray(m_MasterCamera);
 		m_TurboOctree = new DS::TurboOT();
+		m_QuickCull = new SceneQuickCull();
 
 
 		// Init Icons
@@ -49,6 +50,7 @@ namespace OE1Core
 	}
 	Scene::~Scene()
 	{
+		delete m_QuickCull;
 		delete m_Grid;
 		delete m_MyRenderer;
 		delete m_RenderStack;
@@ -112,6 +114,7 @@ namespace OE1Core
 		m_LastDelta = dt;
 		UpdateAllSceneCameraTransforms(dt);
 		HotComponentUpdate();
+		UpdateCulledBuffer();
 	}
 	
 	void Scene::HotComponentUpdate()
@@ -134,6 +137,20 @@ namespace OE1Core
 		}
 
 		UpdateAnimationComponents();
+
+	}
+	void Scene::UpdateCulledBuffer()
+	{
+
+		if (m_UtilizeSpecialDataStructureForFrusumCull)
+		{
+			UpdateInistanceGLBuffer(m_TurboOctree->m_CulledBuffer);
+		}
+		else
+		{
+			UpdateInistanceGLBuffer(m_QuickCull->GetCulledBuffer(m_CameraManager->GetCameraList()));
+		}
+		
 
 	}
 	
@@ -371,9 +388,113 @@ namespace OE1Core
 	{
 		return m_DebugMeshRegistry.find(_package_id) != m_DebugMeshRegistry.end();
 	}
-	void Scene::OnSelectionFlushOperation(std::vector<Entity>& _entitys)
+	void Scene::OnSelectionFlushOperation(std::vector<Entity>& _entity)
 	{
-		for (size_t i = 0; i < _entitys.size(); i++)
-			m_TurboOctree->Update(_entitys[i]);
+		if (m_UtilizeSpecialDataStructureForFrusumCull)
+		{
+			for (size_t i = 0; i < _entity.size(); i++)
+				m_TurboOctree->Update(_entity[i]);
+		}
+		else
+		{
+			// Perform Local cull update
+			for (size_t i = 0; i < _entity.size(); i++)
+			{
+				if (IsParsableIntoOTEntDiscriptor(_entity[i]))
+				{
+					m_QuickCull->Update(ParseIntoOTEntDiscriptor(_entity[i]));
+				}
+			}
+		}
+
+		
+	}
+	void Scene::RegisterLoadedEntity(Entity _entity)
+	{
+		if (!IsParsableIntoOTEntDiscriptor(_entity))
+		{
+			LOG_ERROR("Invalid entity to process for culling");
+			return;
+		}
+
+		DS::OTEntDiscriptor __discriptor = ParseIntoOTEntDiscriptor(_entity);
+
+		if (m_UtilizeSpecialDataStructureForFrusumCull)
+			m_TurboOctree->Register(__discriptor);
+		else
+		{
+			m_QuickCull->Register(__discriptor);
+		}
+	}
+	void Scene::PurgeLoadedEntity(Entity _entity)
+	{
+		if (!IsParsableIntoOTEntDiscriptor(_entity))
+		{
+			return;
+		}
+
+		DS::OTEntDiscriptor __discriptor = ParseIntoOTEntDiscriptor(_entity);
+		if (m_UtilizeSpecialDataStructureForFrusumCull)
+			m_TurboOctree->Purge(_entity);
+		else
+		{
+			m_QuickCull->Purge(__discriptor);
+		}
+	}
+	bool Scene::IsParsableIntoOTEntDiscriptor(Entity _entity)
+	{
+		Component::CoreRenderableMeshComponent* _core_mesh_component = nullptr;
+
+		if (_entity.HasComponent<Component::MeshComponent>())
+			_core_mesh_component = &_entity.GetComponent<Component::MeshComponent>();
+
+		if (!_core_mesh_component)
+			return false;
+
+		return true;
+	}
+	DS::OTEntDiscriptor Scene::ParseIntoOTEntDiscriptor(Entity _entity)
+	{
+		if (!IsParsableIntoOTEntDiscriptor(_entity))
+			return DS::OTEntDiscriptor();
+
+		DS::OTEntDiscriptor __discriptor;
+
+		Component::CoreRenderableMeshComponent* _core_mesh_component = nullptr;
+		_core_mesh_component = &_entity.GetComponent<Component::MeshComponent>();
+
+		Component::TransformComponent& __transform = _entity.GetComponent<Component::TransformComponent>();
+		IVModel* _core_model = AssetManager::GetGeometry(_core_mesh_component->GetPackageID());
+		StaticMesh* _static_mesh = this->QueryStaticMesh(_core_mesh_component->GetPackageID());
+
+		__discriptor.EntityID = (uint32_t)_entity;
+		__discriptor.Bound = _core_model->Bound;
+
+		__discriptor.UpdateBuffer = std::bind(&Component::CoreRenderableMeshComponent::UpdateBuffers, _core_mesh_component);
+		__discriptor.UpdateOffset = std::bind(&Component::CoreRenderableMeshComponent::SetOffset, _core_mesh_component, std::placeholders::_1);
+		__discriptor.UpdateInstanceCount = std::bind(&StaticMesh::SetVisibleInstanceCount, _static_mesh, std::placeholders::_1);
+		__discriptor.Position = __transform.m_Position;
+		__discriptor.Scale = __transform.m_Scale;
+		__discriptor.PackageID = _core_model->PackageID;
+		__discriptor.Valid = true;
+
+		return __discriptor;
+	}
+	void Scene::UpdateInistanceGLBuffer(std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& _buffer)
+	{
+		int _item_count = 0;
+		// update buffer
+		for (auto iter = _buffer.begin(); iter != _buffer.end(); iter++)
+		{
+			size_t _insta_count = iter->second.size();
+
+			for (size_t i = 0; i < _insta_count; i++)
+			{
+				iter->second[i].UpdateInstanceCount(_insta_count);
+				iter->second[i].UpdateOffset((int)i * StaticMeshInstancePkgSize);
+				iter->second[i].UpdateBuffer();
+				_item_count++;
+			}
+		}
 	}
 }

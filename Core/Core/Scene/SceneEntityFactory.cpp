@@ -37,6 +37,9 @@ namespace OE1Core
 		if (!m_Scene->m_EntityRegistry.valid(_entity.GetHandle()))
 			return false;
 
+		// Remove from culling structure
+		m_Scene->PurgeLoadedEntity(_entity);
+
 		// If the client request to remove camera component need to be carfully handeled
 		if (!RemoveCameraPackageComponent(_entity))
 			return false;
@@ -82,7 +85,7 @@ namespace OE1Core
 			CreateRichMeshComponent(_model_pkg, mem_offset, my_entity);
 		}
 
-		m_Scene->GetTurboOT()->Register(my_entity);
+		m_Scene->RegisterLoadedEntity(my_entity);
 		
 		return my_entity;
 	}
@@ -112,7 +115,7 @@ namespace OE1Core
 			CreateAnimationComponent(crt_dynamic_mesh, mem_offset, my_entity);
 		}
 
-		m_Scene->GetTurboOT()->Register(my_entity);
+		m_Scene->RegisterLoadedEntity(my_entity);
 		return my_entity;
 
 	}
@@ -444,8 +447,7 @@ namespace OE1Core
 		_dest.GetComponent<Component::InspectorComponent>().SetMeshComponent(&_dest.GetComponent<Component::MeshComponent>());
 		//CreateRichMeshComponent(AssetManager::GetGeometry(mesh.GetPackageID()), mem_offset, _dest);
 
-		m_Scene->GetTurboOT()->Register(_dest);
-
+		m_Scene->RegisterLoadedEntity(_dest);
 	}
 	void SceneEntityFactory::CloneBoundingVolume(Entity& _src, Entity _dest)
 	{

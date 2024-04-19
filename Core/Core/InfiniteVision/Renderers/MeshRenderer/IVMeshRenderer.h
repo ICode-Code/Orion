@@ -15,11 +15,15 @@ namespace OE1Core
 			~IVMeshRenderer();
 
 			void Render(IVRenderStack* _render_stack, int _camera_idx);
+			void ResetDrawCount(IVRenderStack* _render_stack);
 
 		protected:
 			IVOpaqueMeshRenderer* m_OpaqueMeshRenderer = nullptr;
 			IVTransparentMeshRenderer* m_TransparentMeshRenderer = nullptr;
 			IVFlatMaterialMeshRenderer* m_FlatMaterialMeshRenderer = nullptr;
+
+		private:
+			void ResteStaticMeshDrawCount(Core::IVCoreDrawStaticMeshPackage& _draw_pkg);
 		};
 	}
 }

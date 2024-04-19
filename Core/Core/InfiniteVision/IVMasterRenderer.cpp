@@ -118,6 +118,9 @@ namespace OE1Core
 
 			// Update Frame
 			ViewportArgs::FINAL_FRAME = m_MainPassFramebuffer.GetAttachment(0);
+
+			// Reste Draw Count
+			m_MeshRenderer->ResetDrawCount(m_Scene->m_RenderStack);
 		}
 
 		void IVMasterRenderer::CleanGamePass(CameraPackage* _dynamic_camera, int _offset)
@@ -144,7 +147,7 @@ namespace OE1Core
 
 			// Debug
 			m_DebugShapeRenderer->Render(m_Scene->m_DebugMeshRegistry);
-			m_SceneDebugShapeRenderer->Render(m_Scene->m_TurboOctree->GetRootNode());
+			//m_SceneDebugShapeRenderer->Render(m_Scene->m_TurboOctree->GetRootNode());
 
 
 			m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, ActiveCameraIdx);

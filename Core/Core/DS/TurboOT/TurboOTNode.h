@@ -1,11 +1,16 @@
 #ifndef OE1_TURBO_OCTREE_NODE_H_
 #define OE1_TURBO_OCTREE_NODE_H_
 
-#include <vector>
 #include "OTEntDiscriptor.h"
+#include "../OptStructure/Frustum/Frustum.h"
+#include "../Core/CameraPackage/CameraPackage.h"
+
+#include <vector>
+#include <map>
+#include <string>
 
 #define CHILD_PER_OT_NODE 8
-#define MIN_OBJECT_PER_NODE 50
+#define MIN_OBJECT_PER_NODE 5
 #define MAX_SIZE 5
 
 namespace OE1Core
@@ -28,6 +33,7 @@ namespace OE1Core
 			bool UpdateChild(uint32_t _id);
 			void CollectData(std::vector<OTEntDiscriptor>& _buffer);
 			OTEntDiscriptor GetData(uint32_t _data_id);
+			void Filter(Frustum& _frustum, std::unordered_map<uint32_t, std::vector<OTEntDiscriptor>>& _buffers);
 			
 
 
@@ -51,12 +57,15 @@ namespace OE1Core
 
 		private: // Util
 			bool CanContain(glm::vec3 _point);
-			bool CanContain(OE1Core::CoreMeshDescriptor::MeshBound _boud);
+			bool CanContain(OE1Core::CoreMeshDescriptor::MeshBound _bound, glm::vec3 _scale);
 			void Subdivide();
 			void DistributeData();
 			void ReBuildTree(float _new_size);
 			void ReComputeBound(float _size);
 			void CleanNodes(TurboOTNode* _node);
+
+		private: // cull
+			bool FrustumIntersect(Frustum& _frustum);
 		};
 	}
 }

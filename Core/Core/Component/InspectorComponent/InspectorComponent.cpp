@@ -400,6 +400,21 @@ namespace OE1Core
 
 					ImGui::TreePop();
 				}
+
+				if (ImGui::TreeNodeEx("Culling", m_TreeNodeFlags))
+				{
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 1, 1 });
+					ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, { 0.2f, 0.2f, 0.2f, 1.0f });
+					ImGui::PushStyleColor(ImGuiCol_FrameBgActive, { 0.2f, 0.2f, 0.2f, 1.0f });
+
+					CustomFrame::UIEditorCheckbox("Frustum Cull", &m_CameraPackageComponent->GetCameraPackage()->m_Camera->m_Cull);
+					
+					ImGui::PopStyleColor(2);
+					ImGui::PopStyleVar();
+
+					ImGui::TreePop();
+				}
+
 				ImGui::Indent(-16.0f);
 
 

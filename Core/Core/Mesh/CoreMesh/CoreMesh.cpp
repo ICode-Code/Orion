@@ -45,7 +45,12 @@ namespace OE1Core
 	uint32_t CoreMesh::GetPackageID() const { return m_PackageID; }
 	std::string CoreMesh::GetName() const { return m_CoreMeshName; }
 	bool CoreMesh::IsValid() const { return m_Valid; }
-
+	void CoreMesh::SetVisibleInstanceCount(int _val) 
+	{ 
+		for (size_t i = 0; i < m_CoreMeshInstanceDescriptorSet.size(); i++)
+			m_CoreMeshInstanceDescriptorSet[i].DrawCount = (int)_val;
+		m_VisibleInstanceCount = _val;
+	};
 
 	std::vector<CoreMeshInstanceRenderDescriptor>& CoreMesh::GetCoreMeshInstanceDescriptorSet()
 	{

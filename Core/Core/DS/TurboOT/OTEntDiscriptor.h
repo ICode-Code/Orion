@@ -11,10 +11,13 @@ namespace OE1Core
 	{
 		struct OTEntDiscriptor
 		{
+			uint32_t PackageID;
 			uint32_t EntityID;
 			glm::vec3 Position;
+			glm::vec3 Scale;
 			std::function<void(void)> UpdateBuffer;
 			std::function<void(int)> UpdateOffset;
+			std::function<void(int)> UpdateInstanceCount;
 			CoreMeshDescriptor::MeshBound Bound;
 			bool Valid = false;
 		};

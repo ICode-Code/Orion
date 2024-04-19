@@ -15,38 +15,22 @@ namespace OE1Core
 		{
 
 		}
-
-
-		void TurboOT::Register(Entity _entity)
+		void TurboOT::FrustumCull(std::map<std::string, CameraParameters>& _cameras)
 		{
-			Component::CoreRenderableMeshComponent* _core_mesh_component = nullptr;
-
-			
-			if (_entity.HasComponent<Component::MeshComponent>())
-				_core_mesh_component = &_entity.GetComponent<Component::MeshComponent>();
-			else if (_entity.HasComponent<Component::SkinnedMeshComponent>())
-				_core_mesh_component = &_entity.GetComponent<Component::SkinnedMeshComponent>();
-
-			if (!_core_mesh_component)
+			m_CulledBuffer.clear();
+			for (auto iter = _cameras.begin(); iter != _cameras.end(); iter++)
 			{
-				LOG_ERROR("Invalid entity to store in TurboOT");
-				return;
+				if (iter->second.Camera->GetCamera()->ShouldCull())
+				{
+					m_RootNode.Filter(iter->second.Camera->GetCamera()->GetFrustum(), m_CulledBuffer);
+				}
+				break;
 			}
+		}
 
-			OTEntDiscriptor __discriptor;
-			
-			Component::TransformComponent& __transform = _entity.GetComponent<Component::TransformComponent>();
-			IVModel* _core_model = AssetManager::GetGeometry(_core_mesh_component->GetPackageID());
-
-			__discriptor.EntityID = (uint32_t)_entity;
-			__discriptor.Bound = _core_model->Bound;
-
-			__discriptor.UpdateBuffer = std::bind(&Component::CoreRenderableMeshComponent::UpdateBuffers, _core_mesh_component);
-			__discriptor.UpdateOffset = std::bind(&Component::CoreRenderableMeshComponent::SetOffset, _core_mesh_component, std::placeholders::_1);
-			__discriptor.Position = __transform.m_Position;
-			__discriptor.Valid = true;
-
-			m_RootNode.RegisterChild(__discriptor);
+		void TurboOT::Register(OTEntDiscriptor _discriptor)
+		{
+			m_RootNode.RegisterChild(_discriptor);
 
 		}
 		void TurboOT::Update(Entity _entity)
@@ -80,5 +64,6 @@ namespace OE1Core
 
 		}
 		TurboOTNode& TurboOT::GetRootNode() { return m_RootNode; }
+		std::unordered_map<uint32_t, std::vector<OTEntDiscriptor>>& TurboOT::GetCulledBuffer() { return m_CulledBuffer; };
 	}
 }

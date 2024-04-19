@@ -25,6 +25,7 @@ namespace OE1Core
 
 		int GetInstanceCount() const;
 		int GetVisibleInstanceCount() const;
+		void SetVisibleInstanceCount(int _val);
 		int GetIndicesCount() const;
 		uint32_t GetPackageID() const;
 		std::string GetName() const;

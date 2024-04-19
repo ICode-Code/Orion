@@ -17,6 +17,7 @@
 #include "SceneRenderMode.h"
 
 #include "../DS/TurboOT/TurboOT.h"
+#include "SceneQuickCull/SceneQuickCull.h"
 
 #include <unordered_map>
 #include <functional>
@@ -108,6 +109,21 @@ namespace OE1Core
 		void OnSelectionFlushOperation(std::vector<Entity>& _entitys);
 
 		
+		/// <summary>
+		/// This function can be used in d/t senario for now we gone use it to add items into the 
+		/// OT data structure or the local cull buffer list based on the scene configuration
+		/// </summary>
+		/// <param name="_entity"></param>
+		void RegisterLoadedEntity(Entity _entity);
+		void PurgeLoadedEntity(Entity _entity);
+
+		bool IsParsableIntoOTEntDiscriptor(Entity _entity);
+		/// <summary>
+		/// make sure the entity is parsable before trying this or you it will return invalid data
+		/// </summary>
+		/// <param name="_entity"></param>
+		/// <returns></returns>
+		DS::OTEntDiscriptor ParseIntoOTEntDiscriptor(Entity _entity);
 
 
 
@@ -116,6 +132,7 @@ namespace OE1Core
 		class Renderer::IVRenderStack* m_RenderStack = nullptr;
 		Grid* m_Grid = nullptr;
 		SDL_Window* m_Window;
+		bool m_UtilizeSpecialDataStructureForFrusumCull = false;
 
 		SceneCameraManager* m_CameraManager = nullptr;
 		CameraPackage* m_MasterCamera = nullptr;
@@ -129,6 +146,7 @@ namespace OE1Core
 		std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*> m_SceneBillboardIcon;
 
 	protected:
+		SceneQuickCull* m_QuickCull = nullptr;
 		DS::TurboOT* m_TurboOctree = nullptr;
 		Renderer::IVMasterRenderer* m_MyRenderer;
 		class ActiveEntity* m_SceneActiveSelection;
@@ -136,10 +154,13 @@ namespace OE1Core
 		Ray* m_SceneRay = nullptr;
 		float m_LastDelta = 0.0f;
 
+
+
 	private:
 		void HotComponentUpdate();
 		void UpdateAllSceneCameraTransforms(float _dt);
-		
+		void UpdateCulledBuffer();
+		void UpdateInistanceGLBuffer(std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& _buffer);
 	};
 }
 

@@ -25,7 +25,6 @@ namespace OE1Core
 					_draw_pkg.MESH_LIST[i]->Material->Attach();
 					glBindVertexArray(_draw_pkg.MESH_LIST[i]->VAO);
 					glDrawElementsInstanced(GL_TRIANGLES, _draw_pkg.MESH_LIST[i]->IndiceCount, GL_UNSIGNED_INT, 0, _draw_pkg.MESH_LIST[i]->DrawCount);
-
 				}
 			}
 		}
