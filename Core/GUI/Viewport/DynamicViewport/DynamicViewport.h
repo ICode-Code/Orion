@@ -12,7 +12,7 @@ namespace OE1Core
 	class DynamicViewport : public BaseViewport
 	{
 	public:
-		DynamicViewport(CameraPackage* _camera, Component::BaseCameraControllerComponent* _camera_controller, std::string _name, Entity _entity);
+		DynamicViewport(Component::CameraComponent* _camera, std::string _name, Entity _entity);
 		~DynamicViewport();
 
 		void Update() override;
@@ -28,7 +28,6 @@ namespace OE1Core
 		void ShowMinActionButton();
 		void SendPurgeCommand();
 	protected:
-		CameraPackage* m_ViewPoint = nullptr;
 		ImGuiWindowFlags m_LocalViewportFlags =
 			ImGuiWindowFlags_NoScrollbar
 			| ImGuiWindowFlags_NoScrollWithMouse
@@ -37,13 +36,12 @@ namespace OE1Core
 	private:
 		bool m_PurgeCommandSent = false;
 		bool m_Open = false;
-		CameraPackage* m_Camera = nullptr;
+		Component::CameraComponent* m_Camera = nullptr;
 		std::string m_Name = "";
+		std::string m_Tag = "";
 		ActionButtonBase m_ActionButton;
 
 		Entity m_Entity;
-		Component::BaseCameraControllerComponent* m_CameraController = nullptr;
-		Component::CameraPackageComponent* m_CameraPackageComponent = nullptr;
 		Component::TransformComponent* m_TransformComponent = nullptr;
 	};
 }

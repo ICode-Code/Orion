@@ -35,12 +35,6 @@
 
 namespace OE1Core
 {
-	struct ThreadPackage
-	{
-		OE1Core::Window* EngineWindow;
-		SDL_Window* SDLWindow;
-		SDL_GLContext SharedContext;
-	};
 	class CoreEngine
 	{
 	public:
@@ -48,29 +42,27 @@ namespace OE1Core
 		~CoreEngine();
 
 		void Run();
-		void OnEvent(OECore::IEvent& e);
-
 
 	private:
-		inline static std::thread s_PureComputationThread;
-		static void _exe_RunComputeThread();
-		static int __exe_RunTimeCommandProcessingThread(void* _data);
-		inline static bool __TerminateSharedThread = false;
+		void RunEngine();
+		void RunGenesis();
 
-	protected: // Event Handle
-		bool HandleWindowCloseEvent(OECore::WindowCloseEvent& e);
-		bool HandleWindowResizeEvent(OECore::WindowResizeEvent& e);
-		bool HandleWindowMax(OECore::WindowMaximizedEvent& e);
-		bool HandleWindowMin(OECore::WindowMinimizedEvent& e);
-		bool HandleApplicationKeyInput(OECore::KeyPressedEvent& e);
+		void OnEngineEvent(OECore::IEvent& e);
 
+		void OnGenesisEvent(OECore::IEvent& e);
+		void OnGenesisFrameSizeUpdate(int _width, int _height);
+
+	private: // Thread managment
+		static void THREAD_IGNITION();
+		static void RUN_TIME_COMPUTATION_THREAD();
+		static int RUN_TIME_COMMAND_PROCESSING_THREAD(void* _data);
+		inline static std::thread COMPUTATION_THREAD;
+		inline static bool TERMINATE_SHARED_THREAD = false;
 
 	protected:
 		inline static OE1Core::CoreSystem* s_CoreSystem = nullptr;
 		inline static OE1Core::SceneSystem* s_SceneSystem = nullptr;
 		inline static OE1Core::ShaderSystem* s_ShaderSystem = nullptr;
-
-		inline static OE1Core::Window* s_Window = nullptr;
 		inline static OE1Core::GUIBase* s_GuiBase = nullptr;
 		inline static OE1Core::ShaderManager* s_ShaderManager = nullptr;
 		inline static OE1Core::Memory::UniformBlockManager* s_MemeoryManager = nullptr;
@@ -78,6 +70,10 @@ namespace OE1Core
 		inline static OE1Core::ProjectManager* s_ProjectManager = nullptr;
 		inline static OE1Core::CommandHnd::ExeHandleManager* s_CommandExecutionHandleManager = nullptr;
 		inline static OE1Core::AnimationManager* s_AnimationManager = nullptr;
+
+	protected: // Windows
+		inline static OE1Core::EngineWindow* s_EngineWindow = nullptr;
+		inline static OE1Core::GenesisWindow* s_GenesisWindow = nullptr;
 	};
 }
 

@@ -21,7 +21,7 @@ namespace OE1Core
 			void OnEvent(OECore::IEvent& e) override;
 			void UpdateCameraView() override;
 			void UpdateInput(float _dt) override;
-
+			void OverrideFinalPosition(glm::vec3 _final_position, float _dt) override;
 			void SetTargetTransform(Component::TransformComponent* _tranform);
 			Component::TransformComponent* GetTargetTransform();
 

@@ -14,7 +14,10 @@ namespace OE1Core
 			m_WinCenterX /= 2;
 			m_WinCenterY /= 2;
 		}
-
+		void BaseCameraControllerComponent::SwitchContext(SDL_Window* _window)
+		{
+			m_Window = _window;
+		}
 		void BaseCameraControllerComponent::SetControlMouseKey(int _key)
 		{
 

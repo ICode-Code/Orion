@@ -21,6 +21,7 @@ namespace OE1Core
 			void OnEvent(OECore::IEvent& e) override;
 			void UpdateCameraView() override;
 			void UpdateInput(float _dt) override;
+			void OverrideFinalPosition(glm::vec3 _val, float _dt) override;
 
 
 		protected:

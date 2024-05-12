@@ -9,14 +9,13 @@ namespace OE1Core
 	struct WindowArg
 	{
 		const char* UserDataKey = "EventCallback";
-		SDL_Event SDL_Event;
 
 		SDL_GLContext MainContext;
 		SDL_GLContext SharedContext;
-
 		SDL_Window* Win;
 		int Width;
 		int Height;
+		bool Playing = false;
 		bool Running = false;
 		bool Maximized = false;
 		const char* Name;

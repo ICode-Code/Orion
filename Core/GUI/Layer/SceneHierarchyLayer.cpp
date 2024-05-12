@@ -97,13 +97,13 @@ namespace OE1Core
 			ImGui::EndDragDropSource();
 		}
 
-		if (_entity.HasComponent<Component::CameraPackageComponent>())
+		if (_entity.HasComponent<Component::CameraComponent>())
 		{
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 			{
 				ImGui::SetTooltip(tag.m_Identifier.c_str());
 
-				ImGui::SetDragDropPayload("Camera_Pay_Load", &_entity.GetComponent<Component::CameraPackageComponent>(), sizeof(Component::CameraPackageComponent));
+				ImGui::SetDragDropPayload("Camera_Pay_Load", &_entity.GetComponent<Component::CameraComponent>(), sizeof(Component::CameraComponent));
 
 				ImGui::EndDragDropSource();
 			}
@@ -173,6 +173,15 @@ namespace OE1Core
 				if (active.HasComponent<Component::TagComponent>())
 					RenameWin::Open(active.GetComponent<Component::TagComponent>());
 				
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::Button("Mark as player", { m_EntityMiniPopupMenuButtonWidth, 0.0f }))
+			{
+				Entity active = SceneManager::QueryActiveEntity()->GetActive();
+				
+				SceneManager::GetActiveScene()->SetActivePlayerEntity(active);
+
+
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::Button("Copy", { m_EntityMiniPopupMenuButtonWidth, 0.0f }))

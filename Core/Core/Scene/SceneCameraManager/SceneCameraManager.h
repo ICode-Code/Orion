@@ -1,13 +1,40 @@
 #ifndef OE1_SCENE_CAMERA_MANAGER_H_
 #define OE1_SCENE_CAMERA_MANAGER_H_
 
-#include <map>
 
-#include "../../CameraPackage/CameraPackage.h"
+#include "../Core/Component/CameraComponent/CameraComponent.h"
+#include "../Core/Component/CameraControllerComponent/BaseCameraControllerComponent.h"
+#include "../Core/Component/CameraControllerComponent/FreeLookCameraControllerComponent/FreeLookCameraControllerComponent.h"
+#include "../Core/Component/CameraControllerComponent/ThirdPersonCameraControllerComponent/ThirdPersonCameraControllerComponent.h"
+
+#include <map>
+#include "../Core/UUID/UUID.h"
 
 
 namespace OE1Core
 {
+	struct MasterSceneEditorCamera
+	{
+		MasterSceneEditorCamera(SDL_Window* _context)
+		{
+			Camera = new Component::CameraComponent();
+			Controller = new Component::FreeLookCameraControllerComponent(_context);
+			Controller->SetCameraComponent(Camera);
+
+			Camera->SetControllerType(CameraParameter::CAMERA_CONTROLLER_TYPE::FREE_LOOK);
+			Camera->SetPowerState(CameraParameter::CAMERA_POWER_STATE::ON);
+			Camera->SetFlightState(CameraParameter::CAMERA_FLIGHT_STATE::PILOT);
+			Camera->SetTaskType(CameraParameter::CAMERA_TASK_TYPE::EDITOR);
+		}
+		~MasterSceneEditorCamera()
+		{
+			delete Camera;
+			delete Controller;
+		}
+		Component::CameraComponent* Camera = nullptr;
+		Component::FreeLookCameraControllerComponent* Controller = nullptr;
+		UUID ID;
+	};
 	class SceneCameraManager
 	{
 	public:
@@ -16,43 +43,26 @@ namespace OE1Core
 		~SceneCameraManager();
 
 		/// <summary>
-		/// DO NOT CALL THIS FUNCTION INSIDE ATTACHNED
-		/// FRAMEBUFFER, JUST CALL IT BEFORE ATTACHING FRAMBUFFER
-		/// AND ALSO NEED TO BE CALLED WITH ACTIVE OPENGL CONTEXT
+		/// Unleass the camera registed here it will not get buffer id
 		/// </summary>
-		/// <param name="_name"></param>
-		/// <param name="_init_pos"></param>
+		/// <param name="_name">name of the camera</param>
+		/// <param name="_camera"></param>
 		/// <returns></returns>
-		CameraPackage* RegisterCamera(std::string _name, CAMERA_TYPE _type, glm::vec3 _init_pos = glm::vec3(0.0f, 5.0f, 0.0f));
-
-		CameraPackage* GetCamera(std::string _name);
-
-		void EngagePilotMode(std::string _name);
-		bool PurgeCamera(std::string _name);
-		SDL_Window* GetContextWindow();
-
+		static Component::CameraComponent* RegisterCamera(uint64_t _uid, Component::CameraComponent* _camera);
 		
-		/// <summary>
-		/// Make sure it exist before calling this
-		/// or you will crash the program
-		/// </summary>
-		/// <param name="_name"></param>
-		/// <returns></returns>
-		CameraParameters& GetCameraWithParameters(std::string _name);
-		/// <summary>
-		/// This will return -1, if the _name is invalid be Aware
-		/// </summary>
-		/// <param name="_name"></param>
-		/// <returns></returns>
-		int GetCameraIndex(std::string _name);
-		bool HasCamera(std::string _name);
-		std::map<std::string, CameraParameters>& GetCameraList(); 
-		
+		static MasterSceneEditorCamera* GetMasterCamera();
+		static Component::CameraComponent* GetCamera(uint64_t _uid);
+		static bool PurgeCamera(uint64_t _uid);
+		static void EngagePilotMode(uint64_t _uid);
+		static SDL_Window* GetContextWindow();
 
+		static bool HasCamera(uint64_t _uid);
+		static std::map<uint64_t, Component::CameraComponent*>& GetCameraList();
+		
 	private:
-		std::map<std::string, CameraParameters> m_CameraList;
-		SDL_Window* m_Context = nullptr;
-
+		inline static MasterSceneEditorCamera* s_MasterSceneEditorCamera = nullptr;
+		inline static std::map<uint64_t, Component::CameraComponent*> s_CameraCollection;
+		inline static SDL_Window* s_Context = nullptr;
 	};
 }
 

@@ -25,15 +25,15 @@ namespace OE1Core
 	{
 		m_Buffer[_dis.PackageID][_dis.EntityID] = _dis;
 	}
-	std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& SceneQuickCull::GetCulledBuffer(std::map<std::string, CameraParameters>& _cameras)
+	std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& SceneQuickCull::GetCulledBuffer(std::map<uint64_t, Component::CameraComponent*>& _cameras)
 	{
 		m_CulledList.clear();
 
 		for (auto camera_iter = _cameras.begin(); camera_iter != _cameras.end(); camera_iter++)
 		{
-			Frustum& _camera_frust = camera_iter->second.Camera->GetCamera()->GetFrustum();
+			Frustum& _camera_frust = camera_iter->second->GetFrustum();
 
-			if (camera_iter->second.Camera->GetCamera()->ShouldCull())
+			if (camera_iter->second->ShouldCull())
 			{
 				for (auto package_iter = m_Buffer.begin(); package_iter != m_Buffer.end(); package_iter++)
 				{
@@ -45,6 +45,26 @@ namespace OE1Core
 				}
 			}
 			break;
+		}
+
+		return m_CulledList;
+	}
+	std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& SceneQuickCull::GetCulledBuffer(Component::CameraComponent* _camera)
+	{
+		m_CulledList.clear();
+
+		Frustum& _camera_frust = _camera->GetFrustum();
+
+		if (_camera->ShouldCull())
+		{
+			for (auto package_iter = m_Buffer.begin(); package_iter != m_Buffer.end(); package_iter++)
+			{
+				for (auto insta_iter = package_iter->second.begin(); insta_iter != package_iter->second.end(); insta_iter++)
+				{
+					if (FrustumIntersection(_camera_frust, insta_iter->second))
+						m_CulledList[insta_iter->second.PackageID].push_back(insta_iter->second);
+				}
+			}
 		}
 
 		return m_CulledList;

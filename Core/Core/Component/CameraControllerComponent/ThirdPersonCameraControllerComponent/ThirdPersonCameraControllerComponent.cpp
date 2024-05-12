@@ -88,6 +88,19 @@ namespace OE1Core
 			targ.x += m_ShiftRightCameraFocus;
 			m_Camera->Update(m_FinalPosition, targ);
 		}
+		void ThirdPersonCameraControllerComponent::OverrideFinalPosition(glm::vec3 _final_position, float _dt)
+		{
+			/*m_DeltaTime = _dt;
+			m_InitialPosition = m_CurrentPosition;
+
+			float delta_dist = glm::length(_final_position - m_CurrentPosition);
+			if (delta_dist > 0.001f)
+			{
+				m_DeltaPosition = Lerp(m_InitialPosition, _final_position, m_DeltaTime * m_SpeedFactor);
+				m_CurrentPosition = m_DeltaPosition;
+			}
+			m_Camera->Update(m_CurrentPosition);*/
+		}
 		void ThirdPersonCameraControllerComponent::HandleKeyInput() 
 		{
 			//m_FinalPosition = m_TargetTransform->m_Position - (glm::normalize(m_TargetTransform->Getback()) * m_DistanceToTarget);

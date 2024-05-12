@@ -15,7 +15,7 @@ namespace OE1Core
 		DynamicViewportManager();
 		~DynamicViewportManager();
 
-		static DynamicViewport* RegisterDynamicViewport(std::string _name, CameraPackage* _camera);
+		static DynamicViewport* RegisterDynamicViewport(std::string _name, Component::CameraComponent* _camera);
 		static DynamicViewport* GetViewport(std::string _name);
 		static bool PurgeDynamicViewport(std::string _name);
 		static bool HasViewport(std::string _name);

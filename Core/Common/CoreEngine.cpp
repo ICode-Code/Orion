@@ -10,11 +10,14 @@ namespace OE1Core
 		s_ProjectManager = new ProjectManager();
 
 		// Init Window System
-		s_Window = OE1Core::WindowManager::RegisterWindow(ENGINE_MAIN_WINDOW);
-		
-		// Setup the callback
-		s_Window->RegisterEventCallback(std::bind(&CoreEngine::OnEvent, this, std::placeholders::_1));
-		
+		s_EngineWindow = OE1Core::WindowManager::GetEngineWindow();
+		s_EngineWindow->EnableWin();
+
+		// Register ImGui Event Callabck
+		s_EngineWindow->RegisterImGuiSDLEventProcessorCallback(std::bind(ImGui_ImplSDL2_ProcessEvent, std::placeholders::_1));
+		s_EngineWindow->RegisterFollowUpEventCallback(std::bind(&CoreEngine::OnEngineEvent, this, std::placeholders::_1));
+		s_EngineWindow->SetCloseTrigger(&CloseWin::s_ShouldOpen);
+
 		// Load compile all the Shader
 		s_ShaderManager = new OE1Core::ShaderManager();
 
@@ -22,16 +25,14 @@ namespace OE1Core
 		s_ResourceInitializer = new OE1Core::ResourceInitializer();
 
 		// Init UI
-		s_GuiBase = new OE1Core::GUIBase(s_Window->GetWin(), &s_Window->GetArg().MainContext);
-
-		// Register ImGui Event Callabck
-		s_Window->RegisterImGuiSDLEventProcessorCallback(std::bind(ImGui_ImplSDL2_ProcessEvent, std::placeholders::_1));
+		s_GuiBase = new OE1Core::GUIBase(s_EngineWindow->GetWin(), &s_EngineWindow->m_Args.MainContext);
 
 		// Init System Interface
 		// This guys will be imporatnt whe  we have dynamic lib who want to interact with the core
 		s_CoreSystem = new OE1Core::CoreSystem();
 		s_SceneSystem = new OE1Core::SceneSystem();
 		s_ShaderSystem = new OE1Core::ShaderSystem(); 
+		
 
 		// Buffer Manger
 		s_MemeoryManager = new Memory::UniformBlockManager(s_ShaderSystem);
@@ -40,11 +41,12 @@ namespace OE1Core
 		s_AnimationManager = new AnimationManager();
 
 		// Create Master Scene
-		SceneManager::RegisterScene("MasterScene", new Scene(s_Window->GetWin()), true);
+		SceneManager::RegisterScene("MasterScene", new Scene(s_EngineWindow->GetWin()), true);
 
 
 		// command processing
 		s_CommandExecutionHandleManager = new OE1Core::CommandHnd::ExeHandleManager(SceneManager::GetActiveScene());
+
 	}
 
 	CoreEngine::~CoreEngine()
@@ -60,133 +62,136 @@ namespace OE1Core
 		delete s_ResourceInitializer;
 		delete s_CommandExecutionHandleManager;
 	}
-	
-	void CoreEngine::Run()
+	void CoreEngine::RunEngine()
 	{
-		// Enbale the Window
-		s_Window->EnableWin();
 
-		ThreadPackage _pkg;
-		_pkg.EngineWindow = s_Window;
-		_pkg.SDLWindow = s_Window->GetArg().Win;
-		_pkg.SharedContext = s_Window->GetArg().SharedContext;
+		// Prepare window
+		s_EngineWindow->EnableWin();
+		s_EngineWindow->RegisterImGuiSDLEventProcessorCallback(std::bind(ImGui_ImplSDL2_ProcessEvent, std::placeholders::_1));
+		s_EngineWindow->RegisterFollowUpEventCallback(std::bind(&CoreEngine::OnEngineEvent, this, std::placeholders::_1));
+		s_EngineWindow->ResetCallbacks();
+		SceneManager::GetActiveScene()->SwitchContext(s_EngineWindow);
 
-		SDL_Thread* COMMAND_PROCESSING_THREAD = SDL_CreateThread(__exe_RunTimeCommandProcessingThread, "RunTimeCommand", &_pkg);
-		s_PureComputationThread = std::thread(&CoreEngine::_exe_RunComputeThread);
-
-		while (s_Window->GetArg().Running)
+		// Render Loop
+		while (s_EngineWindow->m_Args.Running && !s_EngineWindow->m_Args.Playing)
 		{
-			s_Window->PullEvent();
+			s_EngineWindow->PullEvent();
 
 			// any queued command will be executed here
 			CommandHnd::ExeHandleManager::ProcessContextCommandQueue();
-			
-			SceneManager::UpdateScene(s_Window->GetArg().DeltaTime);
 
-			SceneManager::RenderScenes();
+			SceneManager::UpdateSceneInEngine(s_EngineWindow->m_Args.DeltaTime);
+
+			SceneManager::RenderScenesInEngine();
 
 
 			s_GuiBase->Attach();
 			s_GuiBase->Update();
-			s_GuiBase->Render(s_Window->GetWin(), s_Window->GetArg().MainContext);
+			s_GuiBase->Render(s_EngineWindow->GetWin(), s_EngineWindow->m_Args.MainContext);
 
-			s_Window->SwapBuffer();
+			s_EngineWindow->SwapBuffer();
 		}
-		__TerminateSharedThread = !__TerminateSharedThread;
 	}
-	void CoreEngine::_exe_RunComputeThread()
+	void CoreEngine::RunGenesis()
 	{
-		s_PureComputationThread.detach();
-		while (!__TerminateSharedThread)
+		// Query current window ptr
+		s_GenesisWindow = WindowManager::GetGenesisWindow();
+		
+
+		// Make Sure it is valid
+		if (!s_GenesisWindow)
+			return;
+
+		// Prepare for the render loop
+		s_GenesisWindow->EnableWin();
+		s_GenesisWindow->RegisterImGuiSDLEventProcessorCallback(std::bind(ImGui_ImplSDL2_ProcessEvent, std::placeholders::_1));
+		s_GenesisWindow->RegisterFollowUpEventCallback(std::bind(&CoreEngine::OnGenesisEvent, this, std::placeholders::_1));
+		s_GenesisWindow->RegisterFrameSizeUpdateCallback(std::bind(&CoreEngine::OnGenesisFrameSizeUpdate, this, std::placeholders::_1, std::placeholders::_2));
+		s_GenesisWindow->ResetCallbacks(); 
+		SceneManager::GetActiveScene()->SwitchContext(s_GenesisWindow);
+
+
+		// Render Loop
+		while (s_GenesisWindow->m_Args.Running && s_EngineWindow->m_Args.Playing)
+		{
+			s_GenesisWindow->PullEvent();
+
+
+			// any queued command will be executed here
+			CommandHnd::ExeHandleManager::ProcessContextCommandQueue();
+
+			SceneManager::UpdateSceneInGame(s_GenesisWindow->m_Args.DeltaTime);
+
+
+			SceneManager::RenderScenesInGame();
+
+			s_GenesisWindow->SwapBuffer();
+		}
+
+		// On exist we destory the window 
+		WindowManager::DestroyGenesisWindow();
+	}
+	void CoreEngine::Run()
+	{
+
+		THREAD_IGNITION();
+		
+
+		while (s_EngineWindow->m_Args.Running)
+		{
+			RunEngine();
+
+			RunGenesis();
+		}
+
+
+		TERMINATE_SHARED_THREAD = !TERMINATE_SHARED_THREAD;
+	}
+	void CoreEngine::RUN_TIME_COMPUTATION_THREAD()
+	{
+		COMPUTATION_THREAD.detach();
+		while (!TERMINATE_SHARED_THREAD)
 		{
 			SceneManager::GetActiveScene()->UpdateAnimationTransform();
 		}
 	}
-	int CoreEngine::__exe_RunTimeCommandProcessingThread(void* _data)
+	int CoreEngine::RUN_TIME_COMMAND_PROCESSING_THREAD(void* _data)
 	{
-		ThreadPackage* pkg = static_cast<ThreadPackage*>(_data);
+		WindowArg* pkg = static_cast<WindowArg*>(_data);
 
-		int __thread_share = SDL_GL_MakeCurrent(pkg->EngineWindow->GetArg().Win, pkg->EngineWindow->GetArg().SharedContext);
+		int __thread_share = SDL_GL_MakeCurrent(pkg->Win, pkg->SharedContext);
 		if (__thread_share != 0)
 		{
 			LOG_ERROR("Unable to Shader Context! Processing Low Frequency Command is not possible! aborting...");
-			pkg->EngineWindow->Close();
+			s_EngineWindow->Close();
 			return 0;
 		}
 
-		while (!__TerminateSharedThread)
+		while (!TERMINATE_SHARED_THREAD)
 		{
 			CommandHnd::ExeHandleManager::ProcessLowFrequencyCommands();
-
-
-			//SceneManager::GetActiveScene()->UpdateAnimationTransform();
 			std::this_thread::sleep_for(3.5s);
-			
 		}
 
 		return 0;
 	}
-
-	void CoreEngine::OnEvent(OECore::IEvent& e) 
+	void CoreEngine::THREAD_IGNITION()
 	{
-		// Create dispacther and dispatch event
-		OECore::IEventDispatcher event_dispatcher(e);
-
-		// handle close window event right here
-		event_dispatcher.Dispatch<OECore::WindowCloseEvent>(std::bind(&CoreEngine::HandleWindowCloseEvent, this, std::placeholders::_1));
-		
-		// Resize Event
-		event_dispatcher.Dispatch<OECore::WindowResizeEvent>(std::bind(&CoreEngine::HandleWindowResizeEvent, this, std::placeholders::_1));
-
-		// Key Event
-		event_dispatcher.Dispatch<OECore::KeyPressedEvent>(std::bind(&CoreEngine::HandleApplicationKeyInput, this, std::placeholders::_1));
-
-		// Maximized Event
-		event_dispatcher.Dispatch<OECore::WindowMaximizedEvent>(std::bind(&CoreEngine::HandleWindowMax, this, std::placeholders::_1));
-
-
-		// Minimized Event
-		event_dispatcher.Dispatch<OECore::WindowMinimizedEvent>(std::bind(&CoreEngine::HandleWindowMin, this, std::placeholders::_1));
-
-		if(!e.Handled())
-			s_GuiBase->OnEvent(e);
+		SDL_Thread* COMMAND_PROCESSING_THREAD = SDL_CreateThread(RUN_TIME_COMMAND_PROCESSING_THREAD, "RunTimeCommand", &s_EngineWindow->m_Args);
+		COMPUTATION_THREAD = std::thread(&CoreEngine::RUN_TIME_COMPUTATION_THREAD);
+	}
+	void CoreEngine::OnEngineEvent(OECore::IEvent& e)
+	{
+		s_GuiBase->OnEvent(e);
 		if (!e.Handled())
 			SceneManager::OnEvent(e);
 	}
-	bool CoreEngine::HandleWindowCloseEvent(OECore::WindowCloseEvent& e)
+	void CoreEngine::OnGenesisEvent(OECore::IEvent& e)
 	{
-		CloseWin::s_ShouldOpen = !CloseWin::s_ShouldOpen;
-		return true;
+		SceneManager::OnEvent(e);
 	}
-	bool CoreEngine::HandleWindowResizeEvent(OECore::WindowResizeEvent& e)
+	void CoreEngine::OnGenesisFrameSizeUpdate(int _width, int _height)
 	{
-		return false;
-	}
-	bool CoreEngine::HandleWindowMax(OECore::WindowMaximizedEvent& e)
-	{
-		return false;
-	}
-	bool CoreEngine::HandleWindowMin(OECore::WindowMinimizedEvent& e)
-	{
-		return false;
-	}
-	bool CoreEngine::HandleApplicationKeyInput(OECore::KeyPressedEvent& e)
-	{
-		if (e.GetKeyCode() == SDLK_F11)
-		{
-			if (s_Window->GetArg().Maximized)
-			{
-				SDL_RestoreWindow(s_Window->GetWin()); 
-				SDL_SetWindowFullscreen(s_Window->GetWin(), SDL_WINDOW_MAXIMIZED);
-			}
-			else
-				SDL_SetWindowFullscreen(s_Window->GetWin(), SDL_WINDOW_FULLSCREEN_DESKTOP);
-
-			s_Window->GetArg().Maximized = !s_Window->GetArg().Maximized;
-
-			return true;
-		}
-
-		return false;
+		SceneManager::GetActiveScene()->UpdateGameFrame(_width, _height);
 	}
 }

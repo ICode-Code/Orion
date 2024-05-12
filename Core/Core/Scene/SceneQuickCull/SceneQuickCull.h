@@ -1,8 +1,8 @@
 #ifndef OE1_SCENE_QUICK_CULL_H_
 #define OE1_SCENE_QUICK_CULL_H_
 
-#include "../../CameraPackage/CameraPackage.h"
 #include "../../DS/TurboOT/OTEntDiscriptor.h"
+#include "../../Component/CameraComponent/CameraComponent.h"
 
 #include <map>
 #include <unordered_map>
@@ -21,7 +21,8 @@ namespace OE1Core
 		void Register(DS::OTEntDiscriptor _data);
 		void Purge(DS::OTEntDiscriptor _dis);
 		void Update(DS::OTEntDiscriptor _entity);
-		std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& GetCulledBuffer(std::map<std::string, CameraParameters>& _camera);
+		std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& GetCulledBuffer(std::map<uint64_t, Component::CameraComponent*>& _camera);
+		std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& GetCulledBuffer(Component::CameraComponent* _camera);
 
 	private:
 		std::unordered_map<uint32_t, std::unordered_map<uint32_t, DS::OTEntDiscriptor>> m_Buffer;

@@ -1,5 +1,5 @@
 #include "CameraComponent.h"
-
+#include "../CameraControllerComponent/BaseCameraControllerComponent.h"
 
 namespace OE1Core
 {
@@ -16,31 +16,58 @@ namespace OE1Core
 			m_Pitch = -40.0f;
 			m_AspectRatio = 1.0f;
 			m_Cull = true;
+
+			m_PowerState = CameraParameter::CAMERA_POWER_STATE::OFF;
+
+			// Init-Framebuffer
+			m_MainPassFramebuffer = new Renderer::IVForwardMainPassFramebuffer(Renderer::IVFrameSize::R_1k);
 		}
 		CameraComponent::~CameraComponent()
 		{
+			delete m_MainPassFramebuffer;
+		}
 
-		}
-		bool CameraComponent::ShouldCull()
+		void CameraComponent::SetBufferOffset(int _offset)
 		{
-			return m_Cull;
+			m_BufferOffset = _offset;
 		}
+		int CameraComponent::GetBuffertOffset() { return m_BufferOffset; }
+		bool CameraComponent::ShouldCull() { return m_Cull; }
 		void CameraComponent::SetPitch(float _pitch) { m_Pitch = _pitch; }
 		void CameraComponent::SetYaw(float _yaw) { m_Yaw = _yaw; }
-
 		float CameraComponent::GetPitch() const { return m_Pitch; };
 		float CameraComponent::GetYaw() const { return m_Yaw; };
-
 		glm::vec3 CameraComponent::GetPosition() const { return m_Position; }
-		void CameraComponent::SetResolution(glm::vec2 _res)
+
+
+		void CameraComponent::UpdateRenderFrameSize(int _width, int _height)
 		{
-			m_Resolution = _res;
+			if (!Renderer::Policy::ValidateResolution(_width, _height))
+				return;
+
+			m_Resolution = glm::ivec2(_width, _height);
+			m_MainPassFramebuffer->Update(_width, _height);
 		}
+		void CameraComponent::UpdateBuffer(float _dt)
+		{
+			m_BufferTransform.CameraPosition = m_Position;
+			m_BufferTransform.Projection = m_Projection;
+			m_BufferTransform.View = m_View;
+			m_BufferTransform.PV = m_Projection * m_View;
+			m_BufferTransform.Delta = _dt;
+
+			Memory::UniformBlockManager::UseBuffer(
+				Memory::UniformBufferID::SCENE_TRANSFORM)->Update(
+					Memory::s_SceneTransformBufferSize, m_BufferOffset * Memory::s_SceneTransformBufferSize, &m_BufferTransform);
+
+		}
+		GLuint CameraComponent::GetRenderedScene() { return m_MainPassFramebuffer->GetAttachment(0); }
+		Renderer::IVForwardMainPassFramebuffer* CameraComponent::MainFB() { return m_MainPassFramebuffer;  };
 		float CameraComponent::GetAspectRatio()
 		{
-			return m_AspectRatio = m_Resolution.x / m_Resolution.y;
+			return m_AspectRatio = (float)m_Resolution.x / (float)m_Resolution.y;
 		}
-		glm::vec2 CameraComponent::GetResolution() { return m_Resolution; }
+		glm::ivec2 CameraComponent::GetResolution() { return m_Resolution; }
 		void CameraComponent::Update(glm::vec3 _position)
 		{
 			m_Position		= _position;
@@ -112,6 +139,7 @@ namespace OE1Core
 
 			return m_FrustumCorner;
 		}
+
 		Frustum& CameraComponent::GetFrustum()
 		{
 			const float halfVSide = m_Far * tanf(glm::radians((float)m_FieldOfView) * 0.5f);
@@ -139,6 +167,60 @@ namespace OE1Core
 			m_Frustum.m_Plane[5] = Plane(m_Position, glm::cross(frontMultFar + m_Up * halfVSide, m_Right));
 
 			return m_Frustum;
+		}
+
+		CameraParameter::CAMERA_CONTROLLER_TYPE CameraComponent::GetControllerType() { return m_ControllerType; }
+		CameraParameter::CAMERA_FLIGHT_STATE CameraComponent::GetFlightState() { return m_FlightState; }
+		CameraParameter::CAMERA_POWER_STATE CameraComponent::GetPowerState() { return m_PowerState; }
+		CameraParameter::CAMERA_TASK_TYPE CameraComponent::GetTaskType() { return m_TaskType; }
+
+		void CameraComponent::SetControllerType(CameraParameter::CAMERA_CONTROLLER_TYPE _val)
+		{
+			m_ControllerType = _val;
+		}
+		void CameraComponent::SetFlightState(CameraParameter::CAMERA_FLIGHT_STATE _val)
+		{
+			m_FlightState = _val;
+		}
+		void CameraComponent::SetPowerState(CameraParameter::CAMERA_POWER_STATE _val)
+		{
+			m_PowerState = _val;
+		}
+		void CameraComponent::SetTaskType(CameraParameter::CAMERA_TASK_TYPE _val)
+		{
+			m_TaskType = _val;
+		}
+
+
+		bool CameraComponent::HasParent() { return m_HasParentEntity; };
+		uint64_t CameraComponent::GetID() { return m_UUID; }
+		uint32_t CameraComponent::GetParentID() { return m_ParentID; }
+		void CameraComponent::SetID(uint64_t _val)
+		{
+			m_UUID = _val;
+		}
+		void CameraComponent::SetParentID(uint32_t _val)
+		{
+			m_HasParentEntity = true;
+			m_ParentID = _val;
+		}
+		void CameraComponent::NullifyParentID()
+		{
+			m_HasParentEntity = false;
+			m_ParentID = 0;
+		}
+
+		void CameraComponent::SetController(BaseCameraControllerComponent* _camera_controller)
+		{
+			m_BaseController = _camera_controller;
+		}
+		/// <summary>
+		/// Base Controller
+		/// </summary>
+		/// <returns></returns>
+		BaseCameraControllerComponent* CameraComponent::GetController()
+		{
+			return m_BaseController;
 		}
 	}
 }

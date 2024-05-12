@@ -84,7 +84,7 @@ namespace OE1Core
 				}*/
 
 				//std::string loaded_file = WindowFileDialog::LoadFile("GLTF Files (*.gltf;*.glb)\0*.gltf;*.glb\0FBX Files (*.fbx)\0*.fbx\0", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin());
-				std::string loaded_file = WindowFileDialog::LoadFile("GLTF and FBX Files (*.gltf;*.glb;*.fbx)\0*.gltf;*.glb;*.fbx\0", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin(), "Load 3D Asset");
+				std::string loaded_file = WindowFileDialog::LoadFile("GLTF and FBX Files (*.gltf;*.glb;*.fbx)\0*.gltf;*.glb;*.fbx\0", WindowManager::GetEngineWindow()->GetWin(), "Load 3D Asset");
 				if (!loaded_file.empty())
 				{
 					Asset3DLoaderWin::Open(loaded_file);
@@ -93,7 +93,7 @@ namespace OE1Core
 			}
 			if (ImGui::MenuItem(ICON_FA_IMAGE"   Import Texture..."))
 			{
-				std::string file_path = WindowFileDialog::LoadFile("png and jpg Files (*.png;*.jpg;)\0*.png;*.jpg\0", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin(), "Load Textures");
+				std::string file_path = WindowFileDialog::LoadFile("png and jpg Files (*.png;*.jpg;)\0*.png;*.jpg\0", WindowManager::GetEngineWindow()->GetWin(), "Load Textures");
 				if (!file_path.empty())
 				{
 					CommandDef::TextureLoadCommandDef command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
@@ -185,24 +185,55 @@ namespace OE1Core
 		if (ImGui::BeginMenu("Components"))
 		{
 
-			if (ImGui::MenuItem(ICON_FA_STREET_VIEW"    Third Person Character Controller", "Character movement controller"))
+			if (ImGui::BeginMenu(ICON_FA_MOUNTAIN_SUN"	Camera-Controller"))
 			{
-				if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+				if (ImGui::MenuItem(ICON_FA_CAMERA_ROTATE"    Third-Person Controller", "Camera movement behaviour controller"))
 				{
-					SceneEntityFactory::AddThirdPersonCharacterControllerComponent(
-						SceneManager::GetActiveScene()->GetActiveEntity()->GetActive()
-					);
+					if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+					{
+						SceneEntityFactory::AddThirdPersoneCameraController(
+							SceneManager::GetActiveScene()->GetActiveEntity()->GetActive()
+						);
+					}
 				}
+
+				if (ImGui::MenuItem(ICON_FA_CAMERA_ROTATE"    Free-Look Controller", "Camera movement behaviour controller"))
+				{
+					if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+					{
+						SceneEntityFactory::AddFreeLookCameraController(
+							SceneManager::GetActiveScene()->GetActiveEntity()->GetActive()
+						);
+					}
+				}
+
+				ImGui::EndMenu();
 			}
-			if (ImGui::MenuItem(ICON_FA_CAMERA_ROTATE"    Third Person Camera Controller", "Camera movement behaviour controller"))
+
+			if (ImGui::BeginMenu(ICON_FA_MOUNTAIN_SUN"	Character-Controller"))
 			{
-				if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+				if (ImGui::MenuItem(ICON_FA_STREET_VIEW"    Third-Person Controller", "Character movement controller"))
 				{
-					SceneEntityFactory::AddThirdPersonCameraControllerComponent(
-						SceneManager::GetActiveScene()->GetActiveEntity()->GetActive()
-					);
+					if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+					{
+						SceneEntityFactory::AddThirdPersonCharacterControllerComponent(
+							SceneManager::GetActiveScene()->GetActiveEntity()->GetActive()
+						);
+					}
 				}
+
+				if (ImGui::MenuItem(ICON_FA_STREET_VIEW"    FPS Controller", "Character movement controller"))
+				{
+					if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+					{
+
+					}
+				}
+
+				ImGui::EndMenu();
 			}
+			
+			
 
 			ImGui::EndMenu();
 		}
@@ -225,21 +256,21 @@ namespace OE1Core
 
 			if (ImGui::BeginMenu("Viewport"))
 			{
-				auto& cameraList = SceneManager::GetActiveScene()->GetCameraManager()->GetCameraList();
-				if (cameraList.size() > 1)
+				Scene* __scene = SceneManager::GetActiveScene();
+				auto __camera_component_view = __scene->m_EntityRegistry.view<Component::CameraComponent>();
+				for (auto ent : __camera_component_view)
 				{
-					auto begin = std::next(cameraList.begin());
-					for (auto cam = begin; cam != cameraList.end(); cam++)
+					Component::TagComponent& _tag = __scene->m_EntityRegistry.get<Component::TagComponent>(ent);
+					
+
+					std::string _name = ICON_FA_VIDEO"		" + _tag.m_Identifier;
+
+					if (ImGui::MenuItem(_name.c_str(), "    "))
 					{
-						std::string _name = ICON_FA_VIDEO"		";
-						_name.append(cam->first);
-						if (ImGui::MenuItem(_name.c_str(), "    "))
-						{
-							DynamicViewport* res = DynamicViewportManager::RegisterDynamicViewport(cam->first, cam->second.Camera);
-							if (res)
-								res->Open();
-							
-						}
+						DynamicViewport* res = DynamicViewportManager::RegisterDynamicViewport(_tag.m_Identifier, &__camera_component_view.get<Component::CameraComponent>(ent));
+						if (res)
+							res->Open();
+
 					}
 				}
 
@@ -317,6 +348,24 @@ namespace OE1Core
 	{
 		if (ImGui::BeginMenu("Debug"))
 		{
+			if (ImGui::MenuItem(ICON_FA_PLAY"   Run / Debug", "        -        "))
+			{
+				if (!WindowManager::GetGenesisWindow())
+				{
+					/*WindowManager::IgniteGenesisWindow();
+
+					auto& _cameras = SceneManager::GetActiveScene()->m_CameraManager->GetCameraList();
+					for (auto iter = _cameras.begin(); iter != _cameras.end(); iter++)
+					{
+						if (iter->second.Camera->GetTag() == CAMERA_TASK_TYPE::PLAYER)
+						{
+							SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(iter->second.Camera->GetName());
+							break;
+						}
+					}*/
+
+				}
+			}
 
 			ImGui::EndMenu();
 		}

@@ -12,6 +12,7 @@
 #include "Renderers/OutlineRenderer/IVOutlineRenderer.h"
 #include "Renderers/MaterialPreviewRenderer/IVMaterialPreviewRenderer.h"
 #include "Renderers/SceneDebugShapeRenderer/IVSceneDebugShapeRenderer.h"
+#include "Renderers/FullScreenQuadRenderer/IVFullScreenQuadRenderer.h"
 
 // Render Stack
 #include "RenderStack/RenderStack.h"
@@ -48,9 +49,14 @@ namespace OE1Core
 			void PushToRenderStack(DynamicMesh* _mesh);
 			void PurgeFromRenderStack(DynamicMesh* _mesh);
 
-
 			void Update(int _width, int _height);
-			void MasterPass(std::map<std::string, CameraParameters>& _cameras);
+			void ClientCameraPass(Component::CameraComponent* _clinet_camera);
+			void MasterCameraPass(Component::CameraComponent* _camera);
+
+			/// <summary>
+			/// Must be called after all render command
+			/// </summary>
+			void FlushRenderCommand();
 			IVForwardMainPassFramebuffer& GetMainPassFramebuffer();
 			inline IVGridRenderer& GetGridRenderer() { return m_GridRenderer; }; 
 		protected: // Renderer
@@ -60,6 +66,7 @@ namespace OE1Core
 			IVOutlineRenderer* m_OutlineRenderer = nullptr;
 			IVViewportBillboardIconRenderer* m_ViewportBillboardRenderer = nullptr;
 			IVMaterialPreviewRenderer* m_MaterialPreviewRenderer = nullptr;
+			IVFullScreenQuadRenderer* m_FullScreenQuadRenderer = nullptr;
 
 			// Debug
 			IVDebugShapeRenderer* m_DebugShapeRenderer = nullptr;
@@ -70,9 +77,8 @@ namespace OE1Core
 			class OE1Core::Scene* m_Scene = nullptr;
 
 
-		protected: // Pass
-			void CleanGamePass(CameraPackage* _dynamic_camera, int _offset);
-			void MainViewportPass(CameraPackage* _master_camera, int _offset);
+		protected:
+			void RenderFullScreenQuadToDefaultFramebuffer(GLuint _texture, Component::CameraComponent* _camera);
 		};
 	}
 }

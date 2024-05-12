@@ -26,33 +26,27 @@ namespace OE1Core
 
 			// Create, setup, and position the camera
 			std::string PREVIEW_CAMERA_TAG = "MaterialPreivewCam";
+			uint64_t uid = 808080;
 			
 
 			// Create Camera
-			CameraPackage* PREVIEW_CAMERA = _scene->GetCameraManager()->RegisterCamera(PREVIEW_CAMERA_TAG, CAMERA_TYPE::FREE_LOOK);
-			int PREVIEW_CAMERA_TAG_IDX = _scene->GetCameraManager()->GetCameraIndex(PREVIEW_CAMERA_TAG);
+			Component::CameraComponent* PREVIEW_CAMERA = new Component::CameraComponent();
+			_scene->GetCameraManager()->RegisterCamera(uid, PREVIEW_CAMERA);
 			
 			// Create Camera Controller
 			Component::FreeLookCameraControllerComponent* Controller = new Component::FreeLookCameraControllerComponent(_scene->GetCameraManager()->GetContextWindow());
-			Controller->SetCameraComponent(PREVIEW_CAMERA->GetCamera());
-			PREVIEW_CAMERA->SetCameraController(Controller);
+			Controller->SetCameraComponent(PREVIEW_CAMERA);
 
 			IVVirtualMaterialSceneFramebuffer m_VirtualMaterialSceneFramebuffer(_material->m_Preview);// = new Renderer::IVVirtualMaterialSceneFramebuffer(_material->GetPreviewRef());
 			m_VirtualMaterialSceneFramebuffer.SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
 			m_VirtualMaterialSceneFramebuffer.Attach();
 
 			
-			PREVIEW_CAMERA->GetCamera()->m_Near = 0.01f;
+			PREVIEW_CAMERA->m_Near = 0.01f;
 			Controller->Focus(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
 			Controller->UpdateCameraView();
-			PREVIEW_CAMERA->GetCamera()->Update(glm::vec3(3.0f, 0.0f, 0.0f));
-			PREVIEW_CAMERA->Update(0.1f);
-
-			Memory::UniformBlockManager::UseBuffer(
-				Memory::UniformBufferID::SCENE_TRANSFORM)->Update(
-					Memory::s_SceneTransformBufferSize,
-					PREVIEW_CAMERA_TAG_IDX * Memory::s_SceneTransformBufferSize,
-					&PREVIEW_CAMERA->GetSceneTransform());
+			PREVIEW_CAMERA->Update(glm::vec3(3.0f, 0.0f, 0.0f));
+			PREVIEW_CAMERA->UpdateBuffer(0.1f);
 
 
 			s_LocalShader->Attach();
@@ -60,7 +54,7 @@ namespace OE1Core
 			Model = glm::rotate(Model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 			Model = glm::rotate(Model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			s_LocalShader->SetMat4("Model", Model);
-			s_LocalShader->Set1i("ActiveCameraIndex", PREVIEW_CAMERA_TAG_IDX);
+			s_LocalShader->Set1i("ActiveCameraIndex", PREVIEW_CAMERA->GetBuffertOffset());
 
 			s_LocalShader->Set1i("matIndex", _material->GetOffset());
 			s_LocalShader->Set1i("hasTexture", true);
@@ -77,8 +71,9 @@ namespace OE1Core
 
 			s_LocalShader->Detach();
 			m_VirtualMaterialSceneFramebuffer.Detach();
-			_scene->GetCameraManager()->PurgeCamera(PREVIEW_CAMERA_TAG);
+			_scene->GetCameraManager()->PurgeCamera(uid);
 			delete Controller;
+			delete PREVIEW_CAMERA;
 		}
 	}
 }

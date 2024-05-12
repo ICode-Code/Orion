@@ -50,7 +50,7 @@ namespace OE1Core
 		ImGui::SetCursorPos({ 0.0f, 0.0f });
 		m_Offset = ImGui::GetCursorPos();
 
-		ImGui::Image((ImTextureID)(intptr_t)SceneManager::GetActiveScene()->m_MasterCamera->GetRenderedScene(), m_ViewportSize, {0, 1}, {1, 0});
+		ImGui::Image((ImTextureID)(intptr_t)SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->GetRenderedScene(), m_ViewportSize, {0, 1}, {1, 0});
 		
 
 		HandleClickOverViewport();
@@ -84,7 +84,7 @@ namespace OE1Core
 
 		ImGui::SameLine();
 
-		m_UtilityGroup.Draw(m_ShowActionButton, SceneManager::GetActiveScene()->m_MasterCamera->GetCamera(), SceneManager::GetActiveScene()->m_MasterCameraController);
+		m_UtilityGroup.Draw(m_ShowActionButton, SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera, SceneManager::GetActiveScene()->m_MasterSceneCamera->Controller);
 	}
 	void MainViewport::HandleGIZMO()
 	{
@@ -98,7 +98,7 @@ namespace OE1Core
 		
 		glm::mat4 object_transform = transform_component.QueryWorldTransform();
 		
-		CameraPackage& scene_camera = *SceneManager::GetActiveScene()->m_MasterCamera;
+		Component::CameraComponent* scene_camera = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera;
 		
 		PrepareGIZMO();
 
@@ -106,8 +106,8 @@ namespace OE1Core
 		
 		m_SnapValue = glm::vec3(m_Operation == ImGuizmo::OPERATION::ROTATE ? m_SnapRotation : m_SnapTranslation);
 		ImGuizmo::Manipulate(
-			glm::value_ptr(scene_camera.GetCamera()->m_View),
-			glm::value_ptr(scene_camera.GetCamera()->m_Projection),
+			glm::value_ptr(scene_camera->m_View),
+			glm::value_ptr(scene_camera->m_Projection),
 			m_Operation, m_Mode, glm::value_ptr(object_transform), nullptr, m_EnableSnap ? glm::value_ptr(m_SnapValue) : nullptr
 		);
 
@@ -190,7 +190,7 @@ namespace OE1Core
 
 			if (SceneManager::GetActiveScene()->GetActiveEntity()->IsHold())
 			{
-				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 6.0f) + SceneManager::GetActiveScene()->m_MasterCameraController->GetCurrentPosition();
+				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 6.0f) + SceneManager::GetActiveScene()->m_MasterSceneCamera->Controller->GetCurrentPosition();
 				Entity entity = SceneManager::GetActiveScene()->GetActiveEntity()->GetActive();
 				entity.GetComponent<Component::TransformComponent>().m_Position = position;
 			}
@@ -222,7 +222,7 @@ namespace OE1Core
 			{
 				IVModel* package = (IVModel*)payload->Data;
 				
-				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_MasterCameraController->GetCurrentPosition();
+				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_MasterSceneCamera->Controller->GetCurrentPosition();
 				Entity droped_entity = SceneEntityFactory::CreateRichMeshEntity(package, position);
 				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(droped_entity, true);
 			}
@@ -237,7 +237,7 @@ namespace OE1Core
 			{
 				IVModel* package = (IVModel*)payload->Data;
 
-				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_MasterCameraController->GetCurrentPosition();
+				glm::vec3 position = (SceneManager::GetActiveScene()->GetRay()->GetRayDirection(m_MousePosition) * 10.0f) + SceneManager::GetActiveScene()->m_MasterSceneCamera->Controller->GetCurrentPosition();
 				Entity droped_entity = SceneEntityFactory::CreateRichSkinnedMeshEntity(package, position);
 				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(droped_entity, true);
 			}
@@ -249,10 +249,10 @@ namespace OE1Core
 	bool MainViewport::HandlMouseClick(OECore::MouseButtonPressedEvent& e)
 	{
 
-		if (m_MouseOverViewport && (e.GetButton() == SDL_BUTTON_RIGHT) && !SceneManager::GetActiveScene()->m_MasterCamera->IsPilotMode())
+		if (m_MouseOverViewport && (e.GetButton() == SDL_BUTTON_RIGHT) && !(SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->GetFlightState() == CameraParameter::CAMERA_FLIGHT_STATE::PILOT))
 		{
 			SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(
-				SceneManager::GetActiveScene()->m_MasterCamera->GetName()
+				SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->GetID()
 			);
 		}
 		
@@ -354,7 +354,7 @@ namespace OE1Core
 				if (_active.HasComponent<Component::BoundingVolumeComponent>())
 					distance = glm::length(_active.GetComponent<Component::BoundingVolumeComponent>().GetBound().Max);
 
-				SceneManager::GetActiveScene()->m_MasterCameraController->Focus(
+				SceneManager::GetActiveScene()->m_MasterSceneCamera->Controller->Focus(
 					SceneManager::GetActiveScene()->GetActiveEntity()->GetActive().GetComponent<Component::TransformComponent>().m_Position, 
 					distance
 				);

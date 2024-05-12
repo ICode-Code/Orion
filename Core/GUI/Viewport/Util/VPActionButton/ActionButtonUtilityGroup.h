@@ -3,7 +3,8 @@
 
 
 #include "ActionButtonBase.h"
-#include "../Core/CameraPackage/CameraPackage.h"
+#include "../Core/Component/CameraComponent/CameraComponent.h"
+#include "../Core/Component/CameraControllerComponent/BaseCameraControllerComponent.h"
 
 
 namespace OE1Core

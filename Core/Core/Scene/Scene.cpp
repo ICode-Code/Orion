@@ -3,51 +3,44 @@
 #include "../ActiveEntity/ActiveEntity.h"
 #include "../InfiniteVision/IVMasterRenderer.h"
 #include "../InfiniteVision/RenderStack/RenderStack.h"
+#include "LogUI.h"
 
 
 namespace OE1Core
 {
 	Scene::Scene(SDL_Window* _window)
-		: m_Window{_window}
+		: m_Window{ _window }
 	{
 		m_CameraManager = new SceneCameraManager(_window);
-		
-		// MasterCamera is created by default as FREE_LOOK camera type
-		m_MasterCamera = m_CameraManager->GetCamera("MasterCamera");
+		m_MasterSceneCamera = m_CameraManager->GetMasterCamera();
 
-		// Create Controller sepratly
-		m_MasterCameraController = new Component::FreeLookCameraControllerComponent(_window);
-		
-		m_MasterCamera->SetCameraController(m_MasterCameraController);
-		m_MasterCameraController->SetCameraComponent(m_MasterCamera->GetCamera());
-
-		m_CameraManager->EngagePilotMode("MasterCamera");
-
-		m_MasterCamera->PowerOn();
 
 		m_Grid = new Grid();
 		m_MyRenderer = new Renderer::IVMasterRenderer(m_Window, this);
 		m_RenderStack = new Renderer::IVRenderStack();
-		
+
 		m_SceneActiveSelection = new ActiveEntity();
 		m_SceneActiveSelection->SetOnFlushCallback(
 			new std::function<void(std::vector<Entity>&)>(
-				std::bind(&Scene::OnSelectionFlushOperation, this, std::placeholders::_1) 
+				std::bind(&Scene::OnSelectionFlushOperation, this, std::placeholders::_1)
 			)
 		);
 
 		m_RenderMode = RenderMode::LIT;
-		m_SceneRay = new Ray(m_MasterCamera);
+		m_SceneRay = new Ray(m_MasterSceneCamera->Camera);
 		m_TurboOctree = new DS::TurboOT();
 		m_QuickCull = new SceneQuickCull();
 
+		m_InputController = new InputController(this);
+		m_RenderController = new RenderController(this);
 
 		// Init Icons
 		RegisterBillboardIcon(ViewportIconBillboardType::CAMERA, "Camera");
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::POINT_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("PointLight"))));
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::DIRECTIONAL_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("Sun"))));
-		
+
 	}
+
 	Scene::~Scene()
 	{
 		delete m_QuickCull;
@@ -57,7 +50,9 @@ namespace OE1Core
 		delete m_SceneActiveSelection;
 		delete m_SceneRay;
 		delete m_TurboOctree;
-		delete m_MasterCameraController;
+		delete m_CameraManager;
+		delete m_InputController;
+		delete m_RenderController;
 
 		for (auto iter : m_StaticMeshRegistry)
 			delete iter.second;
@@ -71,52 +66,32 @@ namespace OE1Core
 		for (auto iter : m_SceneBillboardIcon)
 			delete iter.second;
 
-		delete m_CameraManager;
-	}
 
-	Entity Scene::CreateEntity()
-	{
-		Entity my_entity(m_EntityRegistry.create(), this);
-		my_entity.AddComponent<Component::InspectorComponent>();
-		return my_entity;
+		if (m_ActivePlayerEntity)
+			delete m_ActivePlayerEntity;
 	}
-	
-	Entity Scene::GetEntity(entt::entity _id)
+	void Scene::InputUpdate(float _dt)
 	{
-		if (!m_EntityRegistry.valid(_id))
-		{
-			LOG_ERROR("Unable to retrive entity: Invalid ID");
-			return Entity();
-		}
-		return Entity(_id, this);
-	}
-	
-	Entity Scene::GetEntity(uint32_t _id, bool _suppress_warning)
-	{
-		if (!m_EntityRegistry.valid((entt::entity)_id))
-		{
-			if(!_suppress_warning)
-				LOG_ERROR("Unable to retrive entity: Invalid ID");
-			return Entity();
-		}
-		return Entity((entt::entity)_id, this);
-	}
-	
-	void Scene::Update(int _width, int _height)
-	{
-		m_MyRenderer->Update(_width, _height);
-		m_MasterCamera->Update(_width, _height);
-		
-	}
-	
-	void Scene::Update(float dt)
-	{
-		m_LastDelta = dt;
-		UpdateAllSceneCameraTransforms(dt);
+		m_LastDelta = _dt;
+
 		HotComponentUpdate();
+		UpdateAnimationComponents();
 		UpdateCulledBuffer();
+
+		m_InputController->QuickInputUpdateControllerComponent(_dt);
+		m_InputController->QuickInputUpdateMasterCamera(_dt);
 	}
-	
+	void Scene::BufferUpdate(float _dt)
+	{
+		m_InputController->ControllerComponentBufferUpdate(_dt);
+		m_InputController->MasterCameraBufferUpdate(_dt);
+	}
+	void Scene::InitRender()
+	{
+		m_RenderController->RenderMasterCameraScene();
+		m_RenderController->RenderClientCameraScene();
+		m_RenderController->FlushRenderCommand();
+	}
 	void Scene::HotComponentUpdate()
 	{
 		auto BillboatdCompView = m_EntityRegistry.view<Component::ViewportBillboardComponent>();
@@ -126,19 +101,10 @@ namespace OE1Core
 			Component::TransformComponent& transform = m_EntityRegistry.get<Component::TransformComponent>(ent);
 
 			// Update the billboard
-			billboard.Update(transform, m_MasterCamera->GetCamera()->m_View);
+			billboard.Update(transform, m_MasterSceneCamera->Camera->m_View);
 		}
-
-		auto tpcc_comp = m_EntityRegistry.view<Component::ThirdPersonCharacterControllerComponent>();
-		for (auto ent : tpcc_comp)
-		{
-			Component::ThirdPersonCharacterControllerComponent& tpcc = tpcc_comp.get<Component::ThirdPersonCharacterControllerComponent>(ent);
-			tpcc.UpdateTargetTransform(m_LastDelta);
-		}
-
-		UpdateAnimationComponents();
-
 	}
+	
 	void Scene::UpdateCulledBuffer()
 	{
 
@@ -150,177 +116,23 @@ namespace OE1Core
 		{
 			UpdateInistanceGLBuffer(m_QuickCull->GetCulledBuffer(m_CameraManager->GetCameraList()));
 		}
-		
-
 	}
-	
-	void Scene::UpdateAllSceneCameraTransforms(float _dt)
+	void Scene::UpdateCulledBuffer(Component::CameraComponent* _camera)
 	{
-		auto& CameraColl = m_CameraManager->GetCameraList();
-		for (auto cam = CameraColl.begin(); cam != CameraColl.end(); cam++)
-		{
-			if (!cam->second.Camera->IsPowerOn())
-				continue;
-
-			cam->second.Camera->Update(_dt);
-
-			Memory::UniformBlockManager::UseBuffer(
-				Memory::UniformBufferID::SCENE_TRANSFORM)->Update(
-					Memory::s_SceneTransformBufferSize, cam->second.Offset * Memory::s_SceneTransformBufferSize, &cam->second.Camera->GetSceneTransform());
-		}
+		UpdateInistanceGLBuffer(m_QuickCull->GetCulledBuffer(_camera));
 	}
-	
 	void Scene::ResetPhysics()
 	{
 
 	}
-	bool Scene::HasStaticMesh(uint32_t _package_id)
-	{
-		return (m_StaticMeshRegistry.find(_package_id) != m_StaticMeshRegistry.end());
-	}
-	
-	bool Scene::HasDynamicMesh(uint32_t _package_id)
-	{
-		return (m_DynamicMeshRegistry.find(_package_id) != m_DynamicMeshRegistry.end());
-	}
-
-	bool Scene::PurgeStaticMesh(uint32_t _package_id)
-	{
-		if (m_StaticMeshRegistry.find(_package_id) != m_StaticMeshRegistry.end())
-		{
-			m_MyRenderer->PurgeFromRenderStack(m_StaticMeshRegistry[_package_id]);
-			m_StaticMeshRegistry.erase(_package_id);
-			return true;
-		}
-
-		return false;
-	}
-
-	bool  Scene::PurgeDynamicMesh(uint32_t _package_id)
-	{
-		if (m_DynamicMeshRegistry.find(_package_id) != m_DynamicMeshRegistry.end())
-		{
-			m_MyRenderer->PurgeFromRenderStack(m_DynamicMeshRegistry[_package_id]);
-			m_DynamicMeshRegistry.erase(_package_id);
-			return true;
-		}
-
-		return false;
-	}
-	
-	DynamicMesh* Scene::QueryDynamicMesh(uint32_t _package_id)
-	{
-		if (!HasDynamicMesh(_package_id))
-		{
-			LOG_ERROR("Failed to query DYNAMIC mesh, registry not found, Package ID: {0}", _package_id);
-			return nullptr;
-		}
-
-		return m_DynamicMeshRegistry[_package_id];
-	}
-	
-	DynamicMesh* Scene::RegisterDynamicMesh(IVModel* _model_pkg)
-	{
-		if (HasDynamicMesh(_model_pkg->PackageID))
-		{
-			LOG_ERROR("Skinned Mesh already exist! failed to register model package: {0}", _model_pkg->Name);
-			return nullptr;
-		}
-
-		m_DynamicMeshRegistry.insert(std::make_pair(_model_pkg->PackageID, new DynamicMesh(_model_pkg)));
-
-		m_MyRenderer->PushToRenderStack(m_DynamicMeshRegistry[_model_pkg->PackageID]);
-
-		return m_DynamicMeshRegistry[_model_pkg->PackageID];
-	}
-
-	
-	
-	ActiveEntity* Scene::GetActiveEntity() { return m_SceneActiveSelection; }
-	
-	StaticMesh* Scene::RegisterStaticMesh(IVModel* _model_pkg)
-	{
-		if (HasStaticMesh(_model_pkg->PackageID))
-		{
-			LOG_ERROR("Static Mesh already exist! failed to register model package: {0}", _model_pkg->Name);
-			return nullptr;
-		}
-
-		m_StaticMeshRegistry.insert(std::make_pair(_model_pkg->PackageID, new StaticMesh(_model_pkg)));
-
-		m_MyRenderer->PushToRenderStack(m_StaticMeshRegistry[_model_pkg->PackageID]);
-
-		return m_StaticMeshRegistry[_model_pkg->PackageID];
-	}
-	
-	ViewportBillboardIcon* Scene::GetBillboardIcon(ViewportIconBillboardType _type)
-	{
-		if (m_SceneBillboardIcon.find(_type) == m_SceneBillboardIcon.end())
-			return nullptr;
-
-		return m_SceneBillboardIcon[_type];
-	}
-	
-	bool Scene::HasBillboardType(ViewportIconBillboardType _type)
-	{
-		return m_SceneBillboardIcon.find(_type) != m_SceneBillboardIcon.end();
-	}
-	
-	void Scene::RegisterBillboardIcon(ViewportIconBillboardType _type, std::string _texture_name)
-	{
-		if (m_SceneBillboardIcon.find(_type) != m_SceneBillboardIcon.end())
-			return; // Already Exist
-
-		m_SceneBillboardIcon.insert(std::make_pair(_type, new ViewportBillboardIcon(AssetManager::GetInternalTexture(_texture_name))));
-	}
-	
-	bool Scene::PurgeBillboardIcon(ViewportIconBillboardType _type)
-	{
-		if (!HasBillboardType(_type))
-			return false;
-
-		m_SceneBillboardIcon.erase(_type);
-		return true;
-	}
-	
-	RenderMode& Scene::GetRenderMode()
-	{
-		return m_RenderMode;
-	}
-	
-	StaticMesh* Scene::QueryStaticMesh(uint32_t _package_id)
-	{
-		if (!HasStaticMesh(_package_id))
-		{
-			LOG_ERROR("Failed to query static mesh, registry not found, Package ID: {0}", _package_id);
-			return nullptr;
-		}
-
-		return m_StaticMeshRegistry[_package_id];
-	}
-	
 	void Scene::OnEvent(OECore::IEvent& e)
 	{
-		auto& CameraColl = m_CameraManager->GetCameraList();
-		for (auto cam = CameraColl.begin(); cam != CameraColl.end(); cam++)
-		{
-			if (cam->second.Camera->IsPowerOn() && cam->second.Camera->IsPilotMode())
-				cam->second.Camera->OnEvent(e);
-		}
+		m_InputController->OnEventMasterCamera(e);
+		
+		if (e.Handled())
+			return;
 
-		auto tpcc_comp = m_EntityRegistry.view<Component::ThirdPersonCharacterControllerComponent>();
-		for (auto ent : tpcc_comp)
-		{
-			Component::ThirdPersonCharacterControllerComponent& tpcc = tpcc_comp.get<Component::ThirdPersonCharacterControllerComponent>(ent);
-			tpcc.OnEvent(e);
-		}
-	}
-	
-	Ray* Scene::GetRay() { return m_SceneRay; }
-	
-	void Scene::ResetScene()
-	{
-		ResetPhysics();
+		m_InputController->OnEventControllerComponent(e);
 	}
 	void Scene::UpdateAnimationComponents()
 	{
@@ -338,148 +150,6 @@ namespace OE1Core
 	{
 		SkeletonAnimator::UpdateAnimations(m_LastDelta);
 	}
-	SceneCameraManager* Scene::GetCameraManager() const
-	{
-		return m_CameraManager;
-	}
-	
-	void Scene::Render()
-	{
-		m_MyRenderer->MasterPass(m_CameraManager->GetCameraList());
-	}
-	
-	Renderer::IVMasterRenderer* Scene::GetRenderer()
-	{
-		return m_MyRenderer;
-	}
-	DS::TurboOT* Scene::GetTurboOT() { return m_TurboOctree; };
-	// Debug Mesh
-	bool Scene::PurgeDebugMesh(uint32_t _package_id)
-	{
-		if (!HasDebugMesh(_package_id))
-			return false;
-
-		delete m_DebugMeshRegistry[_package_id];
-		m_DebugMeshRegistry.erase(_package_id);
-
-		return true;
-	}
-	DebugMesh* Scene::QueryDebugMesh(uint32_t _package_id)
-	{
-		if (HasDebugMesh(_package_id))
-			return m_DebugMeshRegistry[_package_id];
-
-		LOG_ERROR("Requested <DebugMesh> not found!, Package ID: {0}", _package_id);
-		return nullptr;
-	}
-	DebugMesh* Scene::RegisterDebugMesh(IVModel* _model_pkg)
-	{
-		if (HasDebugMesh(_model_pkg->PackageID))
-		{
-			LOG_ERROR("Debug Mesh already exist! failed to register Debug Shape: {0}", _model_pkg->Name);
-			return nullptr;
-		}
-
-		m_DebugMeshRegistry.insert(std::make_pair(_model_pkg->PackageID, new DebugMesh(_model_pkg)));
-		
-		return m_DebugMeshRegistry[_model_pkg->PackageID];
-	}
-	bool Scene::HasDebugMesh(uint32_t _package_id)
-	{
-		return m_DebugMeshRegistry.find(_package_id) != m_DebugMeshRegistry.end();
-	}
-	void Scene::OnSelectionFlushOperation(std::vector<Entity>& _entity)
-	{
-		if (m_UtilizeSpecialDataStructureForFrusumCull)
-		{
-			for (size_t i = 0; i < _entity.size(); i++)
-				m_TurboOctree->Update(_entity[i]);
-		}
-		else
-		{
-			// Perform Local cull update
-			for (size_t i = 0; i < _entity.size(); i++)
-			{
-				if (IsParsableIntoOTEntDiscriptor(_entity[i]))
-				{
-					m_QuickCull->Update(ParseIntoOTEntDiscriptor(_entity[i]));
-				}
-			}
-		}
-
-		
-	}
-	void Scene::RegisterLoadedEntity(Entity _entity)
-	{
-		if (!IsParsableIntoOTEntDiscriptor(_entity))
-		{
-			LOG_ERROR("Invalid entity to process for culling");
-			return;
-		}
-
-		DS::OTEntDiscriptor __discriptor = ParseIntoOTEntDiscriptor(_entity);
-
-		if (m_UtilizeSpecialDataStructureForFrusumCull)
-			m_TurboOctree->Register(__discriptor);
-		else
-		{
-			m_QuickCull->Register(__discriptor);
-		}
-	}
-	void Scene::PurgeLoadedEntity(Entity _entity)
-	{
-		if (!IsParsableIntoOTEntDiscriptor(_entity))
-		{
-			return;
-		}
-
-		DS::OTEntDiscriptor __discriptor = ParseIntoOTEntDiscriptor(_entity);
-		if (m_UtilizeSpecialDataStructureForFrusumCull)
-			m_TurboOctree->Purge(_entity);
-		else
-		{
-			m_QuickCull->Purge(__discriptor);
-		}
-	}
-	bool Scene::IsParsableIntoOTEntDiscriptor(Entity _entity)
-	{
-		Component::CoreRenderableMeshComponent* _core_mesh_component = nullptr;
-
-		if (_entity.HasComponent<Component::MeshComponent>())
-			_core_mesh_component = &_entity.GetComponent<Component::MeshComponent>();
-
-		if (!_core_mesh_component)
-			return false;
-
-		return true;
-	}
-	DS::OTEntDiscriptor Scene::ParseIntoOTEntDiscriptor(Entity _entity)
-	{
-		if (!IsParsableIntoOTEntDiscriptor(_entity))
-			return DS::OTEntDiscriptor();
-
-		DS::OTEntDiscriptor __discriptor;
-
-		Component::CoreRenderableMeshComponent* _core_mesh_component = nullptr;
-		_core_mesh_component = &_entity.GetComponent<Component::MeshComponent>();
-
-		Component::TransformComponent& __transform = _entity.GetComponent<Component::TransformComponent>();
-		IVModel* _core_model = AssetManager::GetGeometry(_core_mesh_component->GetPackageID());
-		StaticMesh* _static_mesh = this->QueryStaticMesh(_core_mesh_component->GetPackageID());
-
-		__discriptor.EntityID = (uint32_t)_entity;
-		__discriptor.Bound = _core_model->Bound;
-
-		__discriptor.UpdateBuffer = std::bind(&Component::CoreRenderableMeshComponent::UpdateBuffers, _core_mesh_component);
-		__discriptor.UpdateOffset = std::bind(&Component::CoreRenderableMeshComponent::SetOffset, _core_mesh_component, std::placeholders::_1);
-		__discriptor.UpdateInstanceCount = std::bind(&StaticMesh::SetVisibleInstanceCount, _static_mesh, std::placeholders::_1);
-		__discriptor.Position = __transform.m_Position;
-		__discriptor.Scale = __transform.m_Scale;
-		__discriptor.PackageID = _core_model->PackageID;
-		__discriptor.Valid = true;
-
-		return __discriptor;
-	}
 	void Scene::UpdateInistanceGLBuffer(std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& _buffer)
 	{
 		int _item_count = 0;
@@ -490,11 +160,12 @@ namespace OE1Core
 
 			for (size_t i = 0; i < _insta_count; i++)
 			{
-				iter->second[i].UpdateInstanceCount(_insta_count);
+				iter->second[i].UpdateInstanceCount((int)_insta_count);
 				iter->second[i].UpdateOffset((int)i * StaticMeshInstancePkgSize);
 				iter->second[i].UpdateBuffer();
 				_item_count++;
 			}
 		}
 	}
+	
 }

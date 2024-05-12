@@ -17,7 +17,7 @@ namespace OE1Core
 			~TurboOT();
 
 
-			void FrustumCull(std::map<std::string, CameraParameters>& _cameras);
+			void FrustumCull(std::map<uint64_t, Component::CameraComponent*>& _cameras);
 			// Add to the structre
 			void Register(OTEntDiscriptor _discriptor);
 

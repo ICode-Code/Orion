@@ -5,79 +5,68 @@ namespace OE1Core
 {
 	SceneCameraManager::SceneCameraManager(SDL_Window* _context)
 	{
-		m_Context = _context;
+		s_Context = _context;
+		s_MasterSceneEditorCamera = new MasterSceneEditorCamera(s_Context);
 
-		// Create Master Camera
-		RegisterCamera("MasterCamera", CAMERA_TYPE::FREE_LOOK);
+		RegisterCamera(s_MasterSceneEditorCamera->ID, s_MasterSceneEditorCamera->Camera);
 	}
 	SceneCameraManager::~SceneCameraManager()
 	{
-		for (auto _camera : m_CameraList)
-			delete _camera.second.Camera;
-
-		m_CameraList.clear();
+		s_CameraCollection.clear();
+		delete s_MasterSceneEditorCamera;
 	}
-	bool SceneCameraManager::HasCamera(std::string _name)
+	MasterSceneEditorCamera* SceneCameraManager::GetMasterCamera() { return s_MasterSceneEditorCamera; };
+	bool SceneCameraManager::HasCamera(uint64_t _uid)
 	{
-		return m_CameraList.find(_name) != m_CameraList.end();
+		return s_CameraCollection.find(_uid) != s_CameraCollection.end();
 	}
-	std::map<std::string, CameraParameters>& SceneCameraManager::GetCameraList()
+	std::map<uint64_t, Component::CameraComponent*>& SceneCameraManager::GetCameraList()
 	{ 
-		return m_CameraList;
+		return s_CameraCollection;
 	}
-	CameraPackage* SceneCameraManager::RegisterCamera(std::string _name, CAMERA_TYPE _type, glm::vec3 _init_pos)
+	Component::CameraComponent* SceneCameraManager::RegisterCamera(uint64_t _uid, Component::CameraComponent* _camera)
 	{
-		if (HasCamera(_name))
+		if (HasCamera(_uid))
 			return nullptr;
 
-		CameraParameters _params;
 
-		_params.Camera = new CameraPackage(m_Context, _type, _name);
-		_params.Offset = static_cast<uint32_t>(m_CameraList.size());
+		int next_offset = (int)s_CameraCollection.size();
+		_camera->SetBufferOffset(next_offset);
+		_camera->SetID(_uid);
+		s_CameraCollection.insert(std::make_pair(_uid, _camera));
 
-		m_CameraList.insert(std::make_pair(_name, _params));
-
-		return m_CameraList[_name].Camera;
+		return s_CameraCollection[_uid];
 	}
-	CameraPackage* SceneCameraManager::GetCamera(std::string _name)
+	Component::CameraComponent* SceneCameraManager::GetCamera(uint64_t _uid)
 	{
-		if (HasCamera(_name))
-			return m_CameraList[_name].Camera;
+		if (HasCamera(_uid))
+			return s_CameraCollection[_uid];
 
 		return nullptr;
 	}
-	SDL_Window* SceneCameraManager::GetContextWindow() { return m_Context; };
-	void SceneCameraManager::EngagePilotMode(std::string _name)
+	SDL_Window* SceneCameraManager::GetContextWindow() { return s_Context; };
+
+	void SceneCameraManager::EngagePilotMode(uint64_t _uid)
 	{
-		if (!HasCamera(_name))
+		if (!HasCamera(_uid))
 			return;
 
 		// Set all camera in rest mode
-		for (auto cam = m_CameraList.begin(); cam != m_CameraList.end(); cam++)
-			cam->second.Camera->DeactivatePilotMode();
+		for (auto cam = s_CameraCollection.begin(); cam != s_CameraCollection.end(); cam++)
+		{
+			cam->second->SetFlightState(CameraParameter::CAMERA_FLIGHT_STATE::IDEL);
+		}
 
-		m_CameraList[_name].Camera->ActivatePilotCamera();
-		m_CameraList[_name].Camera->PowerOn();
+		s_CameraCollection[_uid]->SetFlightState(CameraParameter::CAMERA_FLIGHT_STATE::PILOT);
+		s_CameraCollection[_uid]->SetPowerState(CameraParameter::CAMERA_POWER_STATE::ON);
 	}
-	bool SceneCameraManager::PurgeCamera(std::string _name)
+	bool SceneCameraManager::PurgeCamera(uint64_t _uid)
 	{
-		if (!HasCamera(_name))
+		if (!HasCamera(_uid))
 			return false;
 
-		delete m_CameraList[_name].Camera;
-		m_CameraList.erase(_name);
+		s_CameraCollection.erase(_uid);
 		return true;
-	}
-	CameraParameters& SceneCameraManager::GetCameraWithParameters(std::string _name)
-	{
-		return m_CameraList[_name];
-	}
-	int SceneCameraManager::GetCameraIndex(std::string _name)
-	{
-		if (HasCamera(_name))
-			return m_CameraList[_name].Offset;
-
-		return -1;
 	}
 
 

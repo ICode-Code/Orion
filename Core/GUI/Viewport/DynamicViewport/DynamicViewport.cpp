@@ -1,17 +1,17 @@
 #include "DynamicViewport.h"
 #include "../../../Core/Scene/Entity.h"
+#include "LogUI.h"
 
 
 namespace OE1Core
 {
-	DynamicViewport::DynamicViewport(CameraPackage* _camera, Component::BaseCameraControllerComponent* _camera_controller, std::string _name, Entity _entity)
+	DynamicViewport::DynamicViewport(Component::CameraComponent* _camera, std::string _name, Entity _entity)
 	{
 		m_Entity = _entity;
-		m_CameraPackageComponent = &m_Entity.GetComponent<Component::CameraPackageComponent>();
 		m_TransformComponent = &m_Entity.GetComponent<Component::TransformComponent>();
-		m_CameraController = _camera_controller;
 
 		m_Camera = _camera;
+		m_Tag = _name;
 		m_Name = ICON_FA_VIDEO"		";
 		m_Name.append(_name).append("@").append("VIEW-POINT");
 		m_ViewportSize = { 700, 500};
@@ -23,7 +23,6 @@ namespace OE1Core
 
 	void DynamicViewport::Update()
 	{
-		m_CameraPackageComponent->Update(m_TransformComponent, m_CameraController);
 		m_Entity.Update();
 
 		UpdateViewport(); 
@@ -68,10 +67,11 @@ namespace OE1Core
 	void DynamicViewport::SendPurgeCommand()
 	{
 		// Turn off the camera
-		m_Camera->PowerOff();
+		m_Camera->SetPowerState(CameraParameter::CAMERA_POWER_STATE::OFF);
+		m_Camera->SetFlightState(CameraParameter::CAMERA_FLIGHT_STATE::IDEL);
 
 		CommandDef::PurgeDynamicViewportCommandDef command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
-		command.Name = m_Camera->GetName();
+		command.Name = m_Tag;
 		Command::PushDynamicViewportPurgeCommand(command);
 		m_PurgeCommandSent = true;
 	}
@@ -88,7 +88,7 @@ namespace OE1Core
 		m_ActionButton.OpenDefaultActionButtonStyle();
 
 		std::string ButtonName;
-		if (m_Camera->IsPilotMode())
+		if (m_Camera->GetFlightState() == CameraParameter::CAMERA_FLIGHT_STATE::PILOT)
 		{
 			ButtonName = ICON_FA_PLANE_LOCK" ";
 		}
@@ -97,13 +97,32 @@ namespace OE1Core
 			ButtonName = ICON_FA_PLANE_DEPARTURE" ";
 		}
 		ButtonName.append("Pilot Camera  ");
-		if (!m_Camera->IsPowerOn())
-			ButtonName.append(ICON_FA_POWER_OFF);
-
+		
 		if (ImGui::Button(ButtonName.c_str(), {100.0f, 0.0f}))
 		{
-			SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(m_Camera->GetName());
+				SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(m_Camera->GetID());
+
+			if (!m_Camera->GetController())
+				LogLayer::Pipe("Camera cannot be piloted: No attached controller found.", OELog::CRITICAL);
 		}
+
+		ImGui::SameLine();
+
+		if (m_Camera->GetPowerState() == CameraParameter::CAMERA_POWER_STATE::ON)
+			ImGui::PushStyleColor(ImGuiCol_Text, { 0.3f, 0.9f, 0.3f, 1.0f });
+		else 
+			ImGui::PushStyleColor(ImGuiCol_Text, { 0.9f, 0.3f, 0.3f, 1.0f });
+
+		if (ImGui::Button(ICON_FA_POWER_OFF, { 30.0f, 0.0f }))
+		{
+			if (m_Camera->GetPowerState() == CameraParameter::CAMERA_POWER_STATE::ON)
+				m_Camera->SetPowerState(CameraParameter::CAMERA_POWER_STATE::OFF);
+			else 
+				m_Camera->SetPowerState(CameraParameter::CAMERA_POWER_STATE::ON);
+		}
+
+		ImGui::PopStyleColor();
+
 
 		m_ActionButton.CloseDefaultActionButtonStyle();
 	}
@@ -115,6 +134,6 @@ namespace OE1Core
 		if ((m_ViewportSize.x == current_size.x) && m_ViewportSize.y == current_size.y)
 			return;
 		m_ViewportSize = current_size;
-		m_Camera->Update((int)m_ViewportSize.x, (int)m_ViewportSize.y);
+		m_Camera->UpdateRenderFrameSize((int)m_ViewportSize.x, (int)m_ViewportSize.y);
 	}
 }

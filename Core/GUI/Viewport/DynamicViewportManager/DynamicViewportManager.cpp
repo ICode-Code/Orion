@@ -14,7 +14,7 @@ namespace OE1Core
 		m_DynamicViewport.clear();
 	}
 
-	DynamicViewport* DynamicViewportManager::RegisterDynamicViewport(std::string _name, CameraPackage* _camera)
+	DynamicViewport* DynamicViewportManager::RegisterDynamicViewport(std::string _name, Component::CameraComponent* _camera)
 	{
 		if (m_DynamicViewport.find(_name) != m_DynamicViewport.end())
 		{
@@ -22,15 +22,15 @@ namespace OE1Core
 			return nullptr;
 		}
 
-		if (!_camera->HasParentEntity())
+		if (!_camera->HasParent())
 		{
 			LOG_ERROR(LogLayer::Pipe("Unable to create viewport! Invalid Camera Property!", OELog::CRITICAL));
 			return nullptr;
 		}
 
-		Entity _camera_entity((entt::entity)_camera->GetParentEntity(), SceneManager::GetActiveScene());
+		Entity _camera_entity((entt::entity)_camera->GetParentID(), SceneManager::GetActiveScene());
 		
-		m_DynamicViewport.insert(std::make_pair(_name, new DynamicViewport(_camera, _camera->GetCameraController(), _name, _camera_entity)));
+		m_DynamicViewport.insert(std::make_pair(_name, new DynamicViewport(_camera, _name, _camera_entity)));
 		return m_DynamicViewport[_name];
 	}
 	DynamicViewport* DynamicViewportManager::GetViewport(std::string _name)

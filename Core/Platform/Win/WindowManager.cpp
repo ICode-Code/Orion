@@ -7,12 +7,20 @@ namespace OE1Core
 	WindowManager::WindowManager()
 	{
 		InitSDL();
+
+		s_EngineWindow = new EngineWindow(&s_Event);
+
+		InitGLEW();
+		ShowSystemLog();
 	}
 
 	WindowManager::~WindowManager()
 	{
-		for (auto win : s_Windows)
-			delete win.second;
+		if(s_GenesisWindow)
+			delete s_GenesisWindow;
+
+		delete s_EngineWindow;
+
 		SDL_Quit();
 	}
 
@@ -35,43 +43,30 @@ namespace OE1Core
 		}
 
 	}
-	Window* WindowManager::GetWindow(std::string _name)
+	EngineWindow* WindowManager::GetEngineWindow() { return s_EngineWindow; }
+
+	GenesisWindow* WindowManager::GetGenesisWindow() { return s_GenesisWindow; }
+	GenesisWindow* WindowManager::IgniteGenesisWindow()
 	{
-		if (s_Windows.find(_name) == s_Windows.end())
-		{
-			LOG_ERROR("No Window registed with the name {0}", _name);
-			return nullptr;
-		}
-		return s_Windows[_name];
+		s_GenesisWindow = new GenesisWindow(&s_Event, s_EngineWindow->m_Args.MainContext);
+
+		// Update State
+		s_EngineWindow->m_Args.Playing = true;
+		s_GenesisWindow->m_Args.Running = true;
+
+		return s_GenesisWindow;
 	}
-	void WindowManager::PurgWindow(std::string _name)
+	void WindowManager::DestroyGenesisWindow()
 	{
-		if (s_Windows.find(_name) == s_Windows.end())
+		if (s_GenesisWindow)
 		{
-			LOG_ERROR("Failed to Purge Window: No Window registed with the name {0}", _name);
-			return;
+			// Update State
+			s_EngineWindow->m_Args.Playing = false;
+
+			s_GenesisWindow->Close();
+			delete s_GenesisWindow;
+			s_GenesisWindow = nullptr;
 		}
-
-		s_Windows.erase(_name);
-	}
-	Window* WindowManager::RegisterWindow(std::string _name, int _width, int _height)
-	{
-		if (s_Windows.find(_name) != s_Windows.end())
-		{
-			LOG_ERROR("Failed to register new window: Window name already exists.");
-			return nullptr;
-		}
-
-		s_Windows.insert(std::make_pair(_name.c_str(), new Window(_name.c_str(), _width, _height)));
-
-		if (!s_HasValidContext)
-		{
-			s_HasValidContext = true;
-			InitGLEW();
-			ShowSystemLog();
-		}
-
-		return s_Windows[_name.c_str()];
 	}
 	void WindowManager::ShowSystemLog()
 	{

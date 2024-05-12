@@ -34,7 +34,7 @@ namespace OE1Core
 			ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x * 0.5f - 120.0f);
 			if (ImGui::Button("Cosmic Checkout", ImVec2(120, 0)))
 			{
-				WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->Close();
+				WindowManager::GetEngineWindow()->Close();
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SetItemDefaultFocus();

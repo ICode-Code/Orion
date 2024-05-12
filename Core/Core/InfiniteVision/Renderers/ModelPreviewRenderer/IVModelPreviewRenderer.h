@@ -3,7 +3,7 @@
 
 
 #include "../IVBaseRenderer.h"
-#include "../../../CameraPackage/CameraPackage.h"
+#include "../../Core/Component/CameraControllerComponent/FreeLookCameraControllerComponent/FreeLookCameraControllerComponent.h"
 #include "../../DisplayCanavs/IVModelPreviewFramebuffer.h"
 #include "../../../MeshCluster/IVModel.h"
 
@@ -20,7 +20,7 @@ namespace OE1Core
 			static void Render(IVModel& _model_package);
 
 		protected:
-			inline static CameraPackage* s_CameraPackage = nullptr;
+			inline static Component::CameraComponent* s_Camera = nullptr;
 			inline static Component::BaseCameraControllerComponent* s_CameraController = nullptr;
 			inline static Shader* s_LocalShader = nullptr;
 		};

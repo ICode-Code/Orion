@@ -19,6 +19,10 @@
 #include "../DS/TurboOT/TurboOT.h"
 #include "SceneQuickCull/SceneQuickCull.h"
 
+// Action Controller
+#include "InputController/InputController.h"
+#include "RenderController/RenderController.h"
+
 #include <unordered_map>
 #include <functional>
 
@@ -29,6 +33,8 @@ namespace OE1Core
 	class Scene
 	{
 		friend Renderer::IVMasterRenderer;
+		friend class InputController;
+		friend class RenderController;
 	public:
 		Scene(SDL_Window* _window);
 		~Scene();
@@ -87,7 +93,6 @@ namespace OE1Core
 
 		class ActiveEntity* GetActiveEntity(); 
 		void Update(int _width, int _height);
-		void Update(float dt);
 		void ResetPhysics();
 		void OnEvent(OECore::IEvent& e);
 		Ray* GetRay();
@@ -99,15 +104,18 @@ namespace OE1Core
 		void UpdateAnimationComponents();
 		void UpdateAnimationTransform();
 
+		void SwitchContext(BaseWindow* _window);
+
 
 		// Scene Renderer stuff
 		SceneCameraManager* GetCameraManager() const;
-		void Render();
 		Renderer::IVMasterRenderer* GetRenderer();
 		DS::TurboOT* GetTurboOT();
 
 		void OnSelectionFlushOperation(std::vector<Entity>& _entitys);
 
+		Entity* GetActivePlayerEntity();
+		void SetActivePlayerEntity(Entity _entity);
 		
 		/// <summary>
 		/// This function can be used in d/t senario for now we gone use it to add items into the 
@@ -125,8 +133,11 @@ namespace OE1Core
 		/// <returns></returns>
 		DS::OTEntDiscriptor ParseIntoOTEntDiscriptor(Entity _entity);
 
+		void InputUpdate(float _dt);
+		void BufferUpdate(float _dt);
+		void InitRender();
 
-
+		void UpdateGameFrame(int _width, int _height);
 
 	public:
 		class Renderer::IVRenderStack* m_RenderStack = nullptr;
@@ -135,8 +146,7 @@ namespace OE1Core
 		bool m_UtilizeSpecialDataStructureForFrusumCull = false;
 
 		SceneCameraManager* m_CameraManager = nullptr;
-		CameraPackage* m_MasterCamera = nullptr;
-		Component::FreeLookCameraControllerComponent* m_MasterCameraController = nullptr;
+		MasterSceneEditorCamera* m_MasterSceneCamera = nullptr;
 
 		entt::registry m_EntityRegistry;
 
@@ -146,6 +156,8 @@ namespace OE1Core
 		std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*> m_SceneBillboardIcon;
 
 	protected:
+		RenderController* m_RenderController = nullptr;
+		InputController* m_InputController = nullptr;
 		SceneQuickCull* m_QuickCull = nullptr;
 		DS::TurboOT* m_TurboOctree = nullptr;
 		Renderer::IVMasterRenderer* m_MyRenderer;
@@ -153,13 +165,14 @@ namespace OE1Core
 		RenderMode m_RenderMode;
 		Ray* m_SceneRay = nullptr;
 		float m_LastDelta = 0.0f;
+		Entity* m_ActivePlayerEntity = nullptr;
 
 
 
 	private:
 		void HotComponentUpdate();
-		void UpdateAllSceneCameraTransforms(float _dt);
 		void UpdateCulledBuffer();
+		void UpdateCulledBuffer(Component::CameraComponent* _camera);
 		void UpdateInistanceGLBuffer(std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& _buffer);
 	};
 }

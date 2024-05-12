@@ -81,6 +81,20 @@ namespace OE1Core
 			}
 			m_Camera->Update(m_CurrentPosition);
 		}
+		void FreeLookCameraControllerComponent::OverrideFinalPosition(glm::vec3 _final_position, float _dt)
+		{
+			m_DeltaTime = _dt;
+			m_FinalPosition = _final_position;
+			m_InitialPosition = m_CurrentPosition;
+
+			float delta_dist = glm::length(m_FinalPosition - m_CurrentPosition);
+			if (delta_dist > 0.001f)
+			{
+				m_DeltaPosition = Lerp(m_InitialPosition, m_FinalPosition, m_DeltaTime * m_SpeedFactor);
+				m_CurrentPosition = m_DeltaPosition;
+			}
+			m_Camera->Update(m_CurrentPosition);
+		}
 
 		bool FreeLookCameraControllerComponent::MousePosition(OECore::MouseMovedEvent& e)
 		{

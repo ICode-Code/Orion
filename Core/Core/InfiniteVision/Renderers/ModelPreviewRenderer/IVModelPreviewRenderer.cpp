@@ -6,15 +6,15 @@ namespace OE1Core
 	{
 		IVModelPreviewRenderer::IVModelPreviewRenderer(SDL_Window* _window)
 		{
-			s_CameraPackage = new CameraPackage(_window, CAMERA_TYPE::FREE_LOOK, " ");
+			s_Camera = new Component::CameraComponent();
 			s_LocalShader = ShaderManager::GetShader(ShaderID::MODEL_PREVIEW);
 			s_CameraController = new Component::FreeLookCameraControllerComponent(_window);
 
-			s_CameraController->SetCameraComponent(s_CameraPackage->GetCamera());
+			s_CameraController->SetCameraComponent(s_Camera);
 		}
 		IVModelPreviewRenderer::~IVModelPreviewRenderer()
 		{
-			delete s_CameraPackage;    
+			delete s_Camera;
 			delete s_CameraController;
 		}
 
@@ -30,20 +30,20 @@ namespace OE1Core
 			s_LocalShader->Attach();
 
 			float _length = glm::length(_model_package.Bound.Max);
-			s_CameraPackage->GetCamera()->m_FieldOfView = 75;
-			s_CameraPackage->GetCamera()->m_Far = 100000.0f;
-			s_CameraPackage->GetCamera()->SetResolution(glm::vec2(1280, 1024));
-			s_CameraPackage->GetCamera()->m_Near = 0.01f;
+			s_Camera->m_FieldOfView = 75;
+			s_Camera->m_Far = 100000.0f;
+			s_Camera->UpdateRenderFrameSize(1280, 1024);
+			s_Camera->m_Near = 0.01f;
 			s_CameraController->Focus(glm::vec3(0.0f, _length / 2.0f, 0.0f), _length);
 			s_CameraController->UpdateCameraView();
 
 
 			glm::vec3 _pos = glm::vec3(s_CameraController->GetFinalPosition().x, s_CameraController->GetFinalPosition().y, s_CameraController->GetFinalPosition().z);
-			s_CameraPackage->GetCamera()->Update(_pos);
+			s_Camera->Update(_pos);
 
 			s_LocalShader->SetMat4("Model", glm::mat4(1.0f));
-			s_LocalShader->SetMat4("View", s_CameraPackage->GetCamera()->m_View);
-			s_LocalShader->SetMat4("Projection", s_CameraPackage->GetCamera()->m_Projection);
+			s_LocalShader->SetMat4("View", s_Camera->m_View);
+			s_LocalShader->SetMat4("Projection", s_Camera->m_Projection);
 
 
 			for (size_t i = 0; i < _model_package.SubMeshs.size(); i++)

@@ -15,9 +15,9 @@ namespace OE1Core
 		{
 
 		}
-		void TurboOT::FrustumCull(std::map<std::string, CameraParameters>& _cameras)
+		void TurboOT::FrustumCull(std::map<uint64_t, Component::CameraComponent*>& _cameras)
 		{
-			m_CulledBuffer.clear();
+			/*m_CulledBuffer.clear();
 			for (auto iter = _cameras.begin(); iter != _cameras.end(); iter++)
 			{
 				if (iter->second.Camera->GetCamera()->ShouldCull())
@@ -25,7 +25,7 @@ namespace OE1Core
 					m_RootNode.Filter(iter->second.Camera->GetCamera()->GetFrustum(), m_CulledBuffer);
 				}
 				break;
-			}
+			}*/
 		}
 
 		void TurboOT::Register(OTEntDiscriptor _discriptor)

@@ -39,6 +39,8 @@ namespace OE1Core
 		static void AddThirdPersonCameraControllerComponent(Entity _entity);
 		static void AddThirdPersonCharacterControllerComponent(Entity _entity);
 		static void AddBoundingVolumeComponent(Entity _entity, IVModel* _model_package);
+		static void AddThirdPersoneCameraController(Entity _entity);
+		static void AddFreeLookCameraController(Entity _entity);
 
 		// This dude create Mesh component in simple word will tie the static mesh and mesh component
 		static void CreateRichMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity);

@@ -25,6 +25,7 @@ namespace OE1Core
 		AddShaderFromDefaultPath("OES_MaterialPreview.shader", ShaderID::MATERIAL_PREVIEW);
 		AddShaderFromDefaultPath("OES_LocalDebugShape.shader", ShaderID::LOCAL_DEBUG_SHAPE);
 		AddShaderFromDefaultPath("OES_SceneDebugShape.shader", ShaderID::SCENE_DEBUG_SHAPE);
+		AddShaderFromDefaultPath("OES_FullScreenQuad.shader", ShaderID::FULL_SCREEN_QUAD);
 	}
 	void ShaderManager::AddShader(std::string _path, ShaderID _id, std::string _name)
 	{

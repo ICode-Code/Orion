@@ -3,7 +3,6 @@
 
 #include "OTEntDiscriptor.h"
 #include "../OptStructure/Frustum/Frustum.h"
-#include "../Core/CameraPackage/CameraPackage.h"
 
 #include <vector>
 #include <map>

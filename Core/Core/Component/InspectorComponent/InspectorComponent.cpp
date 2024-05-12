@@ -30,7 +30,6 @@ namespace OE1Core
 			IMesh();
 			ISkinnedMesh();
 			IAnimationComponent();
-			ICameraPackage();
 			IThirdPersonCameraControllerComponent();
 			IThirdPersonCharacterControllerComponent();
 
@@ -38,7 +37,6 @@ namespace OE1Core
 			ImGui::PopStyleColor(7);
 			ImGui::PopStyleVar(3);
 		}
-		void InspectorComponent::SetCameraPackageComponent(class CameraPackageComponent* _camera_package_component) { m_CameraPackageComponent = _camera_package_component;}
 		void InspectorComponent::SetTagComponent(class TagComponent* _tag_component) { m_TagComponent = _tag_component; }
 		void InspectorComponent::SetTransformComponent(class TransformComponent* _transform) { m_TransformComponent = _transform; };
 		void InspectorComponent::SetMeshComponent(class MeshComponent* _mesh) { m_MeshComponent = _mesh; }
@@ -122,6 +120,15 @@ namespace OE1Core
 					ImGui::PopStyleColor(2);
 					ImGui::PopStyleVar();
 					
+
+
+					ImGui::Indent(-16.0f);
+					ImGui::TreePop();
+				}
+
+				if (ImGui::TreeNodeEx("LOD", m_TreeNodeFlags))
+				{
+					ImGui::Indent(16.0f);
 
 
 					ImGui::Indent(-16.0f);
@@ -342,7 +349,7 @@ namespace OE1Core
 
 				if (ImGui::Button("Load...", { 80.0f, 0.0f }))
 				{
-					std::string loaded_file = WindowFileDialog::LoadFile("GLTF and FBX Files (*.gltf;*.glb;*.fbx)\0*.gltf;*.glb;*.fbx\0", WindowManager::GetWindow(ENGINE_MAIN_WINDOW)->GetWin(), "Load Animation");
+					std::string loaded_file = WindowFileDialog::LoadFile("GLTF and FBX Files (*.gltf;*.glb;*.fbx)\0*.gltf;*.glb;*.fbx\0", WindowManager::GetEngineWindow()->GetWin(), "Load Animation");
 					if (!loaded_file.empty())
 					{
 						CommandDef::AnimationLoadCommandDef _command(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
@@ -377,51 +384,14 @@ namespace OE1Core
 				ImGui::TreePop();
 			}
 		}
-		void InspectorComponent::ICameraPackage()
+		/*void InspectorComponent::ICameraPackage()
 		{
 			if (!m_CameraPackageComponent)
 				return;
 			 
-			if (ImGui::TreeNodeEx("Camera", m_TreeNodeFlags))
-			{
+			
 
-				CustomFrame::UIEditorColor3("Background", glm::value_ptr(m_CameraPackageComponent->GetCameraPackage()->m_Camera->m_Background));
-				CustomFrame::UIEditorInt("Field of View", &m_CameraPackageComponent->GetCameraPackage()->m_Camera->m_FieldOfView, 1, 100);
-				CustomFrame::UIEditorFloat("Velocity", &m_CameraPackageComponent->GetCameraPackage()->m_BaseCameraController->m_Speed, 0.0f, 256.0f);
-				CustomFrame::UIEditorFloat("Velocity Factor", &m_CameraPackageComponent->GetCameraPackage()->m_BaseCameraController->m_SpeedFactor, 0.0f, 256.0f);
-
-				ImGui::Indent(16.0f);
-
-				if (ImGui::TreeNodeEx("Clipping Planes", m_TreeNodeFlags))
-				{
-
-					CustomFrame::UIEditorFloatDrag("Near Plane", &m_CameraPackageComponent->GetCameraPackage()->m_Camera->m_Near);
-					CustomFrame::UIEditorFloatDrag("Far Plane", &m_CameraPackageComponent->GetCameraPackage()->m_Camera->m_Far);
-
-					ImGui::TreePop();
-				}
-
-				if (ImGui::TreeNodeEx("Culling", m_TreeNodeFlags))
-				{
-					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 1, 1 });
-					ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, { 0.2f, 0.2f, 0.2f, 1.0f });
-					ImGui::PushStyleColor(ImGuiCol_FrameBgActive, { 0.2f, 0.2f, 0.2f, 1.0f });
-
-					CustomFrame::UIEditorCheckbox("Frustum Cull", &m_CameraPackageComponent->GetCameraPackage()->m_Camera->m_Cull);
-					
-					ImGui::PopStyleColor(2);
-					ImGui::PopStyleVar();
-
-					ImGui::TreePop();
-				}
-
-				ImGui::Indent(-16.0f);
-
-
-				ImGui::TreePop();
-			}
-
-		}
+		}*/
 		void InspectorComponent::IThirdPersonCameraControllerComponent()
 		{
 			if (!m_ThirdPersonCameraControllerComponent)
@@ -471,14 +441,17 @@ namespace OE1Core
 
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Camera_Pay_Load"))
 					{
-						Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
+						//Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
 
-						// get real ptr
-						CameraPackage* camera_pkg_ptr = SceneManager::GetActiveScene()->GetCameraManager()->GetCamera(package->GetCameraPackage()->GetName());
-						_target_name = camera_pkg_ptr->GetName();
-						// Link
-						camera_pkg_ptr->SetCameraController(m_ThirdPersonCameraControllerComponent);
-						m_ThirdPersonCameraControllerComponent->SetCameraComponent(camera_pkg_ptr->GetCamera());
+						//// get real ptr
+						//CameraPackage* camera_pkg_ptr = SceneManager::GetActiveScene()->GetCameraManager()->GetCamera(package->GetCameraPackage()->GetName());
+						//_target_name = camera_pkg_ptr->GetName();
+						//// Link
+						//camera_pkg_ptr->SetCameraController(m_ThirdPersonCameraControllerComponent);
+						//m_ThirdPersonCameraControllerComponent->SetCameraComponent(camera_pkg_ptr->GetCamera());
+
+						//SceneManager::GetActiveScene()->GetCameraManager()->RegisterActiveGameCamera(camera_pkg_ptr->GetName());
+					
 					}
 
 					ImGui::EndDragDropTarget();
@@ -533,6 +506,7 @@ namespace OE1Core
 
 			if (ImGui::TreeNodeEx("TP Character Controller", m_TreeNodeFlags))
 			{
+				ImGui::Indent(16.0f);
 
 				bool _has_target_camera = m_ThirdPersonCharacterControllerComponent->GetCameraComponent() != nullptr;
 
@@ -574,13 +548,15 @@ namespace OE1Core
 
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Camera_Pay_Load"))
 					{
-						Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
+					//	Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
 
-						// get real ptr
-						CameraPackage* camera_pkg_ptr = SceneManager::GetActiveScene()->GetCameraManager()->GetCamera(package->GetCameraPackage()->GetName());
-						_target_name = camera_pkg_ptr->GetName();
-						// Link
-						m_ThirdPersonCharacterControllerComponent->SetCameraComponent(camera_pkg_ptr->GetCamera());
+					//	// get real ptr
+					//	CameraPackage* camera_pkg_ptr = SceneManager::GetActiveScene()->GetCameraManager()->GetCamera(package->GetCameraPackage()->GetName());
+					//	_target_name = camera_pkg_ptr->GetName();
+					//	camera_pkg_ptr->SetCameraTag(CAMERA_TASK_TYPE::PLAYER);
+					//	// Link
+					//	m_ThirdPersonCharacterControllerComponent->SetCameraComponent(camera_pkg_ptr->GetCamera());
+					//
 					}
 
 					ImGui::EndDragDropTarget();
@@ -591,6 +567,8 @@ namespace OE1Core
 				CustomFrame::UIEditorFloat("Run Speed", &m_ThirdPersonCharacterControllerComponent->m_SprintSpeed, 1.0f, 128.0f);
 				CustomFrame::UIEditorFloat("Turn Speed", &m_ThirdPersonCharacterControllerComponent->m_TurnSpeed, 10.0f, 360.0f);
 
+				ImGui::Indent(-16.0f);
+
 				ImGui::TreePop();
 			}
 		}
@@ -598,11 +576,60 @@ namespace OE1Core
 		{
 			if (!m_BaseCameraControllerComponent)
 				return;
+
+
+			if (ImGui::TreeNodeEx("X-Controller", m_TreeNodeFlags))
+			{
+
+				CustomFrame::UIEditorFloat("Velocity", &m_BaseCameraControllerComponent->m_Speed, 0.0f, 256.0f);
+				CustomFrame::UIEditorFloat("Velocity Factor", &m_BaseCameraControllerComponent->m_SpeedFactor, 0.0f, 256.0f);
+
+
+				ImGui::TreePop();
+			}
+
 		}
 		void InspectorComponent::ICamera()
 		{
 			if (!m_CameraComponent)
 				return;
+
+			if (ImGui::TreeNodeEx("Camera", m_TreeNodeFlags))
+			{
+
+				CustomFrame::UIEditorColor3("Background", glm::value_ptr(m_CameraComponent->m_Background));
+				CustomFrame::UIEditorInt("Field of View", &m_CameraComponent->m_FieldOfView, 1, 100);
+				
+				ImGui::Indent(16.0f);
+
+				if (ImGui::TreeNodeEx("Clipping Planes", m_TreeNodeFlags))
+				{
+
+					CustomFrame::UIEditorFloatDrag("Near Plane", &m_CameraComponent->m_Near);
+					CustomFrame::UIEditorFloatDrag("Far Plane", &m_CameraComponent->m_Far);
+
+					ImGui::TreePop();
+				}
+
+				if (ImGui::TreeNodeEx("Culling", m_TreeNodeFlags))
+				{
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 1, 1 });
+					ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, { 0.2f, 0.2f, 0.2f, 1.0f });
+					ImGui::PushStyleColor(ImGuiCol_FrameBgActive, { 0.2f, 0.2f, 0.2f, 1.0f });
+
+					CustomFrame::UIEditorCheckbox("Frustum Cull", &m_CameraComponent->m_Cull);
+
+					ImGui::PopStyleColor(2);
+					ImGui::PopStyleVar();
+
+					ImGui::TreePop();
+				}
+
+				ImGui::Indent(-16.0f);
+
+
+				ImGui::TreePop();
+			}
 		}
 
 		void InspectorComponent::IVModelInspect(IVModel* package)

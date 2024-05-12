@@ -28,9 +28,14 @@ namespace OE1Core
 		static void RegisterScene(std::string _name, Scene* _scene, bool _set_active = false);
 		static void ActivateScene(std::string _name);
 		static Scene* GetActiveScene();
-		static void UpdateScene(float _dt);
 		static void OnEvent(OECore::IEvent& e);
-		static void RenderScenes();
+
+		static void UpdateSceneInEngine(float _dt);
+		static void RenderScenesInEngine();
+
+		static void UpdateSceneInGame(float _dt);
+		static void RenderScenesInGame();
+
 		/// <summary>
 		/// Nothing
 		/// </summary>

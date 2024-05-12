@@ -14,22 +14,9 @@ namespace OE1Core
 	{
 		return s_ActiveScene;
 	}
-	void SceneManager::UpdateScene(float _dt)
-	{
-		// Update Active Entity
-		if (s_ActiveScene->GetActiveEntity()->ValidSelection())
-			s_ActiveScene->GetActiveEntity()->GetActive().Update();
-
-
-		 s_ActiveScene->Update(_dt);
-	}
 	void SceneManager::OnEvent(OECore::IEvent& e)
 	{
 		s_ActiveScene->OnEvent(e);
-	}
-	void SceneManager::RenderScenes()
-	{
-		s_ActiveScene->Render();
 	}
 	int SceneManager::RenderThreadCall(SDL_Window* _window, SDL_GLContext _context)
 	{
@@ -72,5 +59,32 @@ namespace OE1Core
 		}
 		else
 			s_ActiveScene = s_Scenes[_name];
+	}
+
+	//// Engine Update
+	void SceneManager::UpdateSceneInEngine(float _dt)
+	{
+		// Update Active Entity
+		if (s_ActiveScene->GetActiveEntity()->ValidSelection())
+			s_ActiveScene->GetActiveEntity()->GetActive().Update();
+
+
+		s_ActiveScene->InputUpdate(_dt);
+		s_ActiveScene->BufferUpdate(_dt);
+	}
+	void SceneManager::RenderScenesInEngine()
+	{
+		s_ActiveScene->InitRender();
+	}
+
+
+	// Game Update
+	void SceneManager::UpdateSceneInGame(float _dt)
+	{
+
+	}
+	void SceneManager::RenderScenesInGame()
+	{
+
 	}
 }

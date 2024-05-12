@@ -18,6 +18,7 @@ namespace OE1Core
 			m_MaterialPreviewRenderer = new IVMaterialPreviewRenderer();
 			m_DebugShapeRenderer = new IVDebugShapeRenderer();
 			m_SceneDebugShapeRenderer = new IVSceneDebugShapeRenderer();
+			m_FullScreenQuadRenderer = new IVFullScreenQuadRenderer();
 		}
 		IVMasterRenderer::~IVMasterRenderer()
 		{
@@ -27,6 +28,7 @@ namespace OE1Core
 			delete m_ViewportBillboardRenderer;
 			delete m_MaterialPreviewRenderer;
 			delete m_SceneDebugShapeRenderer;
+			delete m_FullScreenQuadRenderer;
 		}
 		void IVMasterRenderer::PushToRenderStack(StaticMesh* _mesh)
 		{
@@ -99,46 +101,14 @@ namespace OE1Core
 			m_MainPassFramebuffer.Update(_width, _height);
 		}
 		IVForwardMainPassFramebuffer& IVMasterRenderer::GetMainPassFramebuffer() { return m_MainPassFramebuffer; }
-		void IVMasterRenderer::MasterPass(std::map<std::string, CameraParameters>& _cameras)
+
+
+		void IVMasterRenderer::MasterCameraPass(Component::CameraComponent* _master_camera)
 		{
-			 
-			MainViewportPass(m_Scene->m_MasterCamera, 0);
 
-			auto cam_iteration_alpha = std::next(_cameras.begin()); // Ignore the main camera
+			_master_camera->MainFB()->Attach();
 
-			for (auto cam = cam_iteration_alpha; cam != _cameras.end(); cam++)
-			{
-				if (!cam->second.Camera->IsPowerOn())
-					continue;
-
-				CleanGamePass(cam->second.Camera, cam->second.Offset);
-			}
-
-
-
-			// Update Frame
-			ViewportArgs::FINAL_FRAME = m_MainPassFramebuffer.GetAttachment(0);
-
-			// Reste Draw Count
-			m_MeshRenderer->ResetDrawCount(m_Scene->m_RenderStack);
-		}
-
-		void IVMasterRenderer::CleanGamePass(CameraPackage* _dynamic_camera, int _offset)
-		{
-			_dynamic_camera->AttachFramebuffer();
-
-			int ActiveCameraIdx = _offset;
-
-			m_MeshRenderer->Render(m_Scene->m_RenderStack, ActiveCameraIdx);
-
-
-			_dynamic_camera->DetachFramebuffer();
-		}
-		void IVMasterRenderer::MainViewportPass(CameraPackage* _master_camera, int _offset)
-		{
-			_master_camera->AttachFramebuffer();
-
-			int ActiveCameraIdx = _offset;
+			int ActiveCameraIdx = _master_camera->GetBuffertOffset();
 
 			m_MeshRenderer->Render(m_Scene->m_RenderStack, ActiveCameraIdx);
 
@@ -154,7 +124,38 @@ namespace OE1Core
 
 			m_GridRenderer.Render(*m_Scene->m_Grid, ActiveCameraIdx);
 
-			_master_camera->DetachFramebuffer();
+			_master_camera->MainFB()->Detach();
+		}
+		void IVMasterRenderer::ClientCameraPass(Component::CameraComponent* _clinet_camera)
+		{
+			// IOF the camer is power off return
+			if (_clinet_camera->GetPowerState() == CameraParameter::CAMERA_POWER_STATE::OFF)
+				return;
+
+			_clinet_camera->MainFB()->Attach();
+
+			m_MeshRenderer->Render(m_Scene->m_RenderStack, _clinet_camera->GetBuffertOffset());
+
+			_clinet_camera->MainFB()->Detach();
+		}
+		void IVMasterRenderer::FlushRenderCommand()
+		{
+			m_MeshRenderer->ResetDrawCount(m_Scene->m_RenderStack);
+		}
+
+		void IVMasterRenderer::RenderFullScreenQuadToDefaultFramebuffer(GLuint _texture, Component::CameraComponent* _camera)
+		{
+			auto frame_buffer = _camera->MainFB();
+			
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			
+			glViewport(0, 0, frame_buffer->GetWidth(), frame_buffer->GetHeight());
+			
+			// Clear Default framebuffer
+			frame_buffer->Clean(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+			m_FullScreenQuadRenderer->Render(_texture);
 		}
 	}
 }

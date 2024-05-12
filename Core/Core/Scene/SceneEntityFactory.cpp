@@ -144,25 +144,22 @@ namespace OE1Core
 		transform.Update();
 
 		Component::ViewportBillboardComponent& billboard = my_entity.AddComponent<Component::ViewportBillboardComponent>(m_Scene->GetBillboardIcon(ViewportIconBillboardType::CAMERA), (uint32_t)my_entity, ViewportIconBillboardType::CAMERA);
-		billboard.Update(transform, m_Scene->m_MasterCamera->GetCamera()->m_View);
+		billboard.Update(transform, m_Scene->m_MasterSceneCamera->Camera->m_View);
 
 
 		// Create Component
 		Component::TagComponent& tag = my_entity.GetComponent<Component::TagComponent>();
-		CameraPackage* camera = m_Scene->GetCameraManager()->RegisterCamera(tag.m_Identifier, CAMERA_TYPE::FREE_LOOK);
-		camera->PowerOn();
-		camera->SetParentEntityID(my_entity);
 
-		Component::CameraPackageComponent& _camera_pkg =  my_entity.AddComponent<Component::CameraPackageComponent>(camera, tag.m_Identifier);
-		Component::FreeLookCameraControllerComponent& controller = my_entity.AddComponent<Component::FreeLookCameraControllerComponent>(m_Scene->GetCameraManager()->GetContextWindow());
-		
-		
-		camera->SetCameraController(&controller);
-		controller.SetCameraComponent(camera->GetCamera());
+		// Create Camera Component
+		my_entity.AddComponent<Component::CameraComponent>().SetParentID(my_entity);
+
+		Component::CameraComponent* camera_component = &my_entity.GetComponent<Component::CameraComponent>();
+
+		m_Scene->GetCameraManager()->RegisterCamera(tag.m_UID, camera_component);
 
 		// Register Inspector
-		my_entity.GetComponent<Component::InspectorComponent>().SetCameraPackageComponent(
-			&my_entity.GetComponent<Component::CameraPackageComponent>()
+		my_entity.GetComponent<Component::InspectorComponent>().SetCameraComponent(
+			&my_entity.GetComponent<Component::CameraComponent>()
 		);
 
 		return my_entity;
@@ -298,6 +295,93 @@ namespace OE1Core
 		// Create Component so it can get controlled
 		_entity.AddComponent<Component::BoundingVolumeComponent>(_debug_shape->PackageID, _instance_buffer, (uint32_t)_entity, (GLintptr)__offset, _model_package->Bound.Min, _model_package->Bound.Max);
 		
+	}
+	void SceneEntityFactory::AddThirdPersoneCameraController(Entity _entity)
+	{
+		if (!_entity.HasComponent<Component::CameraComponent>())
+		{
+			LogLayer::Pipe("Unable to attach <ThirdPersonCameraControllerComponent> to a non-camera entity.", OELog::CRITICAL);
+			return;
+		}
+
+		Component::CameraComponent* __camera = &_entity.GetComponent<Component::CameraComponent>();
+		Component::TransformComponent* __trasnform = &_entity.GetComponent<Component::TransformComponent>();
+		// Add Camera Controller Component
+
+		if (_entity.HasComponent<Component::ThirdPersonCameraControllerComponent>())
+		{
+			LogLayer::Pipe("Camera already have <ThirdPersonCameraControllerComponent> ..!!", OELog::WARNING);
+			return;
+		}
+
+		if (_entity.HasComponent<Component::FreeLookCameraControllerComponent>())
+		{
+			_entity.RemoveComponent<Component::FreeLookCameraControllerComponent>();
+			LogLayer::Pipe("Camera Controller Swaped from <FreeLookCameraControllerComponent> to <ThirdPersonCameraControllerComponent> ..!!", OELog::WARNING);
+		}
+
+		_entity.AddComponent<Component::ThirdPersonCameraControllerComponent>(m_Scene->GetCameraManager()->GetContextWindow(), __trasnform);
+		
+		Component::ThirdPersonCameraControllerComponent* _controller = &_entity.GetComponent<Component::ThirdPersonCameraControllerComponent>();
+		
+
+		// Tie
+		__camera->SetController(_controller);
+		_controller->SetCameraComponent(__camera);
+
+		// Set Camera State
+		__camera->SetControllerType(CameraParameter::CAMERA_CONTROLLER_TYPE::THIRD_PERSON);
+		__camera->SetPowerState(CameraParameter::CAMERA_POWER_STATE::OFF);
+		__camera->SetFlightState(CameraParameter::CAMERA_FLIGHT_STATE::IDEL);
+		__camera->SetTaskType(CameraParameter::CAMERA_TASK_TYPE::EDITOR);
+
+		//Inspector
+		_entity.GetComponent<Component::InspectorComponent>().SetThirdPersonCameraControllerComponent(_controller);
+		_entity.GetComponent<Component::InspectorComponent>().SetCameraControllerComponent(_controller);
+
+	}
+	void SceneEntityFactory::AddFreeLookCameraController(Entity _entity)
+	{
+		if (!_entity.HasComponent<Component::CameraComponent>())
+		{
+			LogLayer::Pipe("Unable to attach <FreeLookCameraControllerComponent> to a non-camera entity.", OELog::CRITICAL);
+			return;
+		}
+
+		Component::CameraComponent* __camera = &_entity.GetComponent<Component::CameraComponent>();
+
+		// Add Camera Controller Component
+
+		if (_entity.HasComponent<Component::FreeLookCameraControllerComponent>())
+		{
+			LogLayer::Pipe("Camera already have <FreeLookCameraControllerComponent> ..!!", OELog::WARNING);
+			return;
+		}
+
+		if (_entity.HasComponent<Component::ThirdPersonCameraControllerComponent>())
+		{
+			_entity.RemoveComponent<Component::ThirdPersonCameraControllerComponent>();
+			LogLayer::Pipe("Camera Controller Swaped from <ThirdPersonCameraControllerComponent> to <FreeLookCameraControllerComponent> ..!!", OELog::WARNING);
+		}
+
+		_entity.AddComponent<Component::FreeLookCameraControllerComponent>(m_Scene->GetCameraManager()->GetContextWindow());
+
+		Component::FreeLookCameraControllerComponent* _controller = &_entity.GetComponent<Component::FreeLookCameraControllerComponent>();
+
+
+		// Tie
+		__camera->SetController(_controller);
+		_controller->SetCameraComponent(__camera);
+
+		// Set Camera State
+		__camera->SetControllerType(CameraParameter::CAMERA_CONTROLLER_TYPE::FREE_LOOK);
+		__camera->SetPowerState(CameraParameter::CAMERA_POWER_STATE::OFF);
+		__camera->SetFlightState(CameraParameter::CAMERA_FLIGHT_STATE::IDEL);
+		__camera->SetTaskType(CameraParameter::CAMERA_TASK_TYPE::EDITOR);
+
+		//Inspector
+		_entity.GetComponent<Component::InspectorComponent>().SetCameraControllerComponent(_controller);
+
 	}
 
 
@@ -527,26 +611,23 @@ namespace OE1Core
 	}
 	void SceneEntityFactory::CloneCameraPackageComponent(Entity& _src, Entity _dest)
 	{
-		if (!_src.HasComponent<Component::CameraPackageComponent>())
+		if (!_src.HasComponent<Component::CameraComponent>())
 			return;
 
-		Component::CameraPackageComponent& _camera_pkg = _src.GetComponent<Component::CameraPackageComponent>();
-
-		// Create Component
+		// Query Tag component
 		Component::TagComponent& tag = _dest.GetComponent<Component::TagComponent>();
-		CameraPackage* camera = m_Scene->GetCameraManager()->RegisterCamera(tag.m_Identifier, _camera_pkg.GetCameraPackage()->GetType());
-		camera->PowerOn();
-		camera->SetParentEntityID(_dest);
-		_dest.AddComponent<Component::CameraPackageComponent>(camera, tag.m_Identifier);
+
+		// Create Camera Component
+		_dest.AddComponent<Component::CameraComponent>().SetParentID(_dest);
+		Component::CameraComponent* camera_component = &_dest.GetComponent<Component::CameraComponent>();
+		
+		m_Scene->GetCameraManager()->RegisterCamera(tag.m_UID, camera_component);
 
 		// Register Inspector
-		_dest.GetComponent<Component::InspectorComponent>().SetCameraPackageComponent(
-			&_dest.GetComponent<Component::CameraPackageComponent>()
+		_dest.GetComponent<Component::InspectorComponent>().SetCameraComponent(
+			&_dest.GetComponent<Component::CameraComponent>()
 		);
-
 	}
-
-
 
 	/////////// PURG
 
@@ -580,19 +661,19 @@ namespace OE1Core
 	}
 	bool SceneEntityFactory::RemoveCameraPackageComponent(Entity _entity)
 	{
-		if (!_entity.HasComponent<Component::CameraPackageComponent>())
-			return true;
-
-		Component::CameraPackageComponent& _camera = _entity.GetComponent<Component::CameraPackageComponent>();
-
-		if (_camera.GetCameraPackage()->IsPilotMode() || _camera.GetCameraPackage()->IsPowerOn())
-		{
-			LOG_WARRNING(LogLayer::Pipe("Close viewport before purgeing the camera! PLEASE", OELog::WARNING));
+		if (!_entity.HasComponent<Component::CameraComponent>())
 			return false;
-		}
 
-		Component::TagComponent& tag = _entity.GetComponent<Component::TagComponent>();
-		m_Scene->GetCameraManager()->PurgeCamera(tag.m_Identifier);
+		_entity.RemoveComponent<Component::CameraComponent>();
+
+		if(_entity.HasComponent<Component::ThirdPersonCameraControllerComponent>())
+			_entity.RemoveComponent<Component::ThirdPersonCameraControllerComponent>();
+
+		if (_entity.HasComponent<Component::FreeLookCameraControllerComponent>())
+			_entity.RemoveComponent<Component::FreeLookCameraControllerComponent>();
+
+		Component::TagComponent& _tag = _entity.GetComponent<Component::TagComponent>();
+		m_Scene->GetCameraManager()->PurgeCamera(_tag.m_UID);
 
 		return true;
 	}

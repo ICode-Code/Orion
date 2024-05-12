@@ -24,8 +24,10 @@ namespace OE1Core
 			BaseCameraControllerComponent(SDL_Window* _active_context);
 			virtual ~BaseCameraControllerComponent() = default;
 
+			virtual void SwitchContext(SDL_Window* _window);
 			virtual void UpdateCameraView() = 0;
 			virtual void UpdateInput(float _dt) = 0;
+			virtual void OverrideFinalPosition(glm::vec3 _val, float _dt) = 0;
 			virtual void OnEvent(OECore::IEvent& _e) = 0;
 			virtual void HandleKeyInput() = 0;
 		

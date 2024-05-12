@@ -11,12 +11,13 @@
 #include "SkinnedMeshComponent/SkinnedMeshComponent.h"
 #include "InspectorComponent/InspectorComponent.h"
 #include "ViewportBillboardComponent/ViewportBillboardComponent.h"
-#include "CameraPackageComponent/CameraPackageComponent.h"
 #include "AnimationComponent/AnimationComponent.h"
 #include "CharacterController/ThirdPersonCharacterControllerComponent/ThirdPersonCharacterControllerComponent.h"
 #include "CameraControllerComponent/ThirdPersonCameraControllerComponent/ThirdPersonCameraControllerComponent.h"
 #include "BoundingVolumeComponent/BoundingVolumeComponent.h"
 
+#include "PlayerInteractionComponent/AIControlledPlayerComponent/AIControlledPlayerComponent.h"
+#include "PlayerInteractionComponent/HumanControlledPlayerComponent/HumanControlledPlayerComponent.h"
 
 #endif // !OE1_ICOMPONENT_H_
  
