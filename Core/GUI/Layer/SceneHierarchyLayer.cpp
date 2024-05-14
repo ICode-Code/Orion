@@ -103,7 +103,19 @@ namespace OE1Core
 			{
 				ImGui::SetTooltip(tag.m_Identifier.c_str());
 
-				ImGui::SetDragDropPayload("Camera_Pay_Load", &_entity.GetComponent<Component::CameraComponent>(), sizeof(Component::CameraComponent));
+				ImGui::SetDragDropPayload("CameraPayload", &_entity.GetComponent<Component::SelfComponent>(), sizeof(Component::SelfComponent));
+
+				ImGui::EndDragDropSource();
+			}
+		}
+
+		if (_entity.HasComponent<Component::ThirdPersonCharacterControllerComponent>())
+		{
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				ImGui::SetTooltip(tag.m_Identifier.c_str());
+				
+				ImGui::SetDragDropPayload("ActorPayload", &_entity.GetComponent<Component::SelfComponent>(), sizeof(Component::SelfComponent));
 
 				ImGui::EndDragDropSource();
 			}

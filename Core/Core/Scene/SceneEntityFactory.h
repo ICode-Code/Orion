@@ -22,6 +22,7 @@ namespace OE1Core
 		static Scene* GetScene();
 
 		// Entity
+		static Entity CreateActor();
 		static Entity CreateRichSkinnedMeshEntity(IVModel* _model_package, glm::vec3 _initial_pos = glm::vec3(0.0f));
 		static Entity CreateRichMeshEntity(IVModel* _model_pkg, glm::vec3 _initial_pos = glm::vec3(0.0f));
 		static Entity CreateDefaultCubeEntity();
@@ -88,6 +89,7 @@ namespace OE1Core
 		static void CloneBillboardComponent(Entity _src, Entity _dest);
 		static void CloneCameraPackageComponent(Entity& _src, Entity _dest);
 		static void CloneBoundingVolume(Entity& _src, Entity _dest);
+		static void CloneActorComponent(Entity _src, Entity _dest);
 
 
 	public: // Purge Util/ Some component need more that just like remove

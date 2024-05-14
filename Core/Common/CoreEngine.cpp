@@ -162,7 +162,7 @@ namespace OE1Core
 		int __thread_share = SDL_GL_MakeCurrent(pkg->Win, pkg->SharedContext);
 		if (__thread_share != 0)
 		{
-			LOG_ERROR("Unable to Shader Context! Processing Low Frequency Command is not possible! aborting...");
+			LOG_ERROR("Unable to Share Context! Processing Low Frequency Command is not possible! aborting...");
 			s_EngineWindow->Close();
 			return 0;
 		}
@@ -188,10 +188,10 @@ namespace OE1Core
 	}
 	void CoreEngine::OnGenesisEvent(OECore::IEvent& e)
 	{
-		SceneManager::OnEvent(e);
+		SceneManager::OnEventGenesis(e);
 	}
 	void CoreEngine::OnGenesisFrameSizeUpdate(int _width, int _height)
 	{
-		SceneManager::GetActiveScene()->UpdateGameFrame(_width, _height);
+		SceneManager::GetActiveScene()->UpdateFrameRes_Genesis(_width, _height);
 	}
 }

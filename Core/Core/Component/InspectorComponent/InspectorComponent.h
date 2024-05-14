@@ -26,6 +26,7 @@ namespace OE1Core
 			void SetAnimationComponent(class AnimationComponent* _animation_component);
 			void SetThirdPersonCameraControllerComponent(class ThirdPersonCameraControllerComponent* _tp_camera_Controller_component);
 			void SetThirdPersonCharacterControllerComponent(class ThirdPersonCharacterControllerComponent* _tp_character_Controller_component);
+			void SetActorComponent(class ActorComponent* _actor);
 		protected: // components
 			class TagComponent* m_TagComponent = nullptr;
 			class TransformComponent* m_TransformComponent = nullptr;
@@ -36,7 +37,7 @@ namespace OE1Core
 			class AnimationComponent* m_AnimationComponent = nullptr;
 			class ThirdPersonCameraControllerComponent* m_ThirdPersonCameraControllerComponent = nullptr;
 			class ThirdPersonCharacterControllerComponent* m_ThirdPersonCharacterControllerComponent = nullptr;
-
+			class ActorComponent* m_ActorComponent = nullptr;
 		protected: // flag
 			ImGuiTreeNodeFlags m_TreeNodeFlags = ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding;
 
@@ -44,6 +45,7 @@ namespace OE1Core
 			void ITag();
 			void ITransform();
 			void IMesh();
+			void IActor();
 			void ICamController();
 			void ICamera();
 			void ISkinnedMesh();

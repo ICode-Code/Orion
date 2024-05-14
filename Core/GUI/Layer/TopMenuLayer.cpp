@@ -24,6 +24,7 @@ namespace OE1Core
 		this->File();
 		this->Edit();
 		this->Tools();
+		this->Import();
 		this->Component();
 		this->Debug();
 		this->Window();
@@ -298,36 +299,63 @@ namespace OE1Core
 		if (ImGui::BeginMenu("Tools"))
 		{
 			//ImGui::BeginDisabled(mRenderLayer->m_ActiveScene->GetSceneState() == LandscapeTopologyEdit || mRenderLayer->m_ActiveScene->GetSceneState() == LandscapeMaterialEdit);
-			if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Point Light", "        GameObject        "))
-			{
-				
-			}
-			if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Directional Light", "        GameObject        "))
+			
+			if (ImGui::MenuItem(ICON_FA_MOUNTAIN"   Landscape Tool", "        GameObject        "))
 			{
 
 			}
-			ImGui::Separator();
-			if (ImGui::MenuItem(ICON_FA_CUBE"   Empty", "        GameObject        "))
+
+			ImGui::EndMenu();
+		}
+	}
+	void TopMenuLayer::Import()
+	{
+		if (ImGui::BeginMenu("Import"))
+		{
+			if (ImGui::BeginMenu("Scene Light"))
+			{
+				if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Point Light", "        GameObject        "))
+				{
+
+				}
+				if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Spot Light", "        GameObject        "))
+				{
+
+				}
+				if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Directional Light", "        GameObject        "))
+				{
+
+				}
+
+				ImGui::EndMenu();
+			}
+			
+			if (ImGui::BeginMenu("Simple Mesh"))
+			{
+				if (ImGui::MenuItem(ICON_FA_CUBE"   Cube", "        GameObject        "))
+				{
+
+				}
+				if (ImGui::MenuItem(ICON_FA_CUBE"   Plane", "        GameObject        "))
+				{
+
+				}
+				if (ImGui::MenuItem(ICON_FA_CUBE"   Sphere", "        GameObject        "))
+				{
+
+				}
+				if (ImGui::MenuItem(ICON_FA_CUBE"   Cylinder", "        GameObject        "))
+				{
+
+				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::MenuItem(ICON_FA_BOX_OPEN"   Empty", "        GameObject        "))
 			{
 
 			}
-			if (ImGui::MenuItem(ICON_FA_CUBE"   Cube", "        GameObject        "))
-			{
-
-			}
-			if (ImGui::MenuItem(ICON_FA_CUBE"   Plane", "        GameObject        "))
-			{
-
-			}
-			if (ImGui::MenuItem(ICON_FA_CUBE"   Sphere", "        GameObject        "))
-			{
-
-			}
-			if (ImGui::MenuItem(ICON_FA_CUBE"   Cylinder", "        GameObject        "))
-			{
-
-			}
-			ImGui::Separator();
 			if (ImGui::MenuItem(ICON_FA_VIDEO"   Camera", "        GameObject        "))
 			{
 				if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::CAMERA))
@@ -335,10 +363,10 @@ namespace OE1Core
 
 				SceneEntityFactory::CreateSceneCamera();
 			}
-			ImGui::Separator();
-			if (ImGui::MenuItem(ICON_FA_MOUNTAIN"   Landscape Tool", "        GameObject        "))
-			{
 
+			if (ImGui::MenuItem(ICON_FA_FLAG_CHECKERED"   Actor", "        Player Template        "))
+			{
+				SceneEntityFactory::CreateActor();
 			}
 
 			ImGui::EndMenu();

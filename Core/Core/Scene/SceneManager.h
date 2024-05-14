@@ -29,6 +29,7 @@ namespace OE1Core
 		static void ActivateScene(std::string _name);
 		static Scene* GetActiveScene();
 		static void OnEvent(OECore::IEvent& e);
+		static void OnEventGenesis(OECore::IEvent& e);
 
 		static void UpdateSceneInEngine(float _dt);
 		static void RenderScenesInEngine();

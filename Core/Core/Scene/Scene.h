@@ -22,6 +22,7 @@
 // Action Controller
 #include "InputController/InputController.h"
 #include "RenderController/RenderController.h"
+#include "GenesisController/GenesisController.h"
 
 #include <unordered_map>
 #include <functional>
@@ -35,6 +36,7 @@ namespace OE1Core
 		friend Renderer::IVMasterRenderer;
 		friend class InputController;
 		friend class RenderController;
+		friend class GenesisController;
 	public:
 		Scene(SDL_Window* _window);
 		~Scene();
@@ -137,7 +139,12 @@ namespace OE1Core
 		void BufferUpdate(float _dt);
 		void InitRender();
 
-		void UpdateGameFrame(int _width, int _height);
+		void InputUpdate_Genesis(float _dt);
+		void BufferUpdate_Genesis(float _dt);
+		void OnEvent_Genesis(OECore::IEvent& e);
+		void InitRender_Genesis();
+		void UpdateFrameRes_Genesis(int _width, int _height);
+
 
 	public:
 		class Renderer::IVRenderStack* m_RenderStack = nullptr;
@@ -156,6 +163,8 @@ namespace OE1Core
 		std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*> m_SceneBillboardIcon;
 
 	protected:
+		Component::ActorComponent* m_Protagonist = nullptr;
+		GenesisController* m_GenesisController = nullptr;
 		RenderController* m_RenderController = nullptr;
 		InputController* m_InputController = nullptr;
 		SceneQuickCull* m_QuickCull = nullptr;

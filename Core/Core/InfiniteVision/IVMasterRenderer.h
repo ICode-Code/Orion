@@ -49,7 +49,6 @@ namespace OE1Core
 			void PushToRenderStack(DynamicMesh* _mesh);
 			void PurgeFromRenderStack(DynamicMesh* _mesh);
 
-			void Update(int _width, int _height);
 			void ClientCameraPass(Component::CameraComponent* _clinet_camera);
 			void MasterCameraPass(Component::CameraComponent* _camera);
 
@@ -57,7 +56,6 @@ namespace OE1Core
 			/// Must be called after all render command
 			/// </summary>
 			void FlushRenderCommand();
-			IVForwardMainPassFramebuffer& GetMainPassFramebuffer();
 			inline IVGridRenderer& GetGridRenderer() { return m_GridRenderer; }; 
 		protected: // Renderer
 			IVGridRenderer m_GridRenderer;
@@ -72,13 +70,20 @@ namespace OE1Core
 			IVDebugShapeRenderer* m_DebugShapeRenderer = nullptr;
 			IVSceneDebugShapeRenderer* m_SceneDebugShapeRenderer = nullptr;
 
-		protected: // Framebuffer
-			IVForwardMainPassFramebuffer m_MainPassFramebuffer;
+		protected:
 			class OE1Core::Scene* m_Scene = nullptr;
 
 
-		protected:
-			void RenderFullScreenQuadToDefaultFramebuffer(GLuint _texture, Component::CameraComponent* _camera);
+		public:
+			
+			/// <summary>
+			/// This function will take the camera and render the rendered scene into the default frambuffer
+			/// with screen full quad, REMEMBER this will clone rendered camera resolution and everything
+			/// it will try to render attachment 0 by default, you can pass secode argument to spacify attachment index
+			/// </summary>
+			/// <param name="_camera">Target Camera</param>
+			/// <param name="_attachment_idx">Which Framebuffer Attachment to render. Color, Depth, Stecil if you have any</param>
+			void RenderFullScreenQuadToDefaultFramebuffer(Component::CameraComponent* _camera, int _attachment_idx = 0);
 		};
 	}
 }

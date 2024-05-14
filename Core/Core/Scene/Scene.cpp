@@ -33,6 +33,7 @@ namespace OE1Core
 
 		m_InputController = new InputController(this);
 		m_RenderController = new RenderController(this);
+		m_GenesisController = new GenesisController(this);
 
 		// Init Icons
 		RegisterBillboardIcon(ViewportIconBillboardType::CAMERA, "Camera");
@@ -53,6 +54,7 @@ namespace OE1Core
 		delete m_CameraManager;
 		delete m_InputController;
 		delete m_RenderController;
+		delete m_GenesisController;
 
 		for (auto iter : m_StaticMeshRegistry)
 			delete iter.second;

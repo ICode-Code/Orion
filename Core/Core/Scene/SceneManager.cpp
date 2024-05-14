@@ -18,6 +18,10 @@ namespace OE1Core
 	{
 		s_ActiveScene->OnEvent(e);
 	}
+	void SceneManager::OnEventGenesis(OECore::IEvent& e)
+	{
+		s_ActiveScene->OnEvent_Genesis(e);
+	}
 	int SceneManager::RenderThreadCall(SDL_Window* _window, SDL_GLContext _context)
 	{
 		return -1;
@@ -81,10 +85,11 @@ namespace OE1Core
 	// Game Update
 	void SceneManager::UpdateSceneInGame(float _dt)
 	{
-
+		s_ActiveScene->InputUpdate_Genesis(_dt);
+		s_ActiveScene->BufferUpdate_Genesis(_dt);
 	}
 	void SceneManager::RenderScenesInGame()
 	{
-
+		s_ActiveScene->InitRender_Genesis();
 	}
 }

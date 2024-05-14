@@ -364,7 +364,6 @@ namespace OE1Core
 	}
 	void Scene::Update(int _width, int _height)
 	{
-		m_MyRenderer->Update(_width, _height);
 		m_MasterSceneCamera->Camera->UpdateRenderFrameSize(_width, _height);
 	}
 }

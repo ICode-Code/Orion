@@ -28,6 +28,7 @@ namespace OE1Core
 		CloneBillboardComponent(_src_entity, my_new_entity);
 		CloneCameraPackageComponent(_src_entity, my_new_entity);
 		CloneBoundingVolume(_src_entity, my_new_entity);
+		CloneActorComponent(_src_entity, my_new_entity);
 
 
 		return my_new_entity;
@@ -88,6 +89,23 @@ namespace OE1Core
 		m_Scene->RegisterLoadedEntity(my_entity);
 		
 		return my_entity;
+	}
+	Entity SceneEntityFactory::CreateActor()
+	{
+		Entity my_entity = m_Scene->CreateEntity();
+		AddDefaultComponent(my_entity, "Actor");
+
+		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_PLAYER);
+		my_entity.GetComponent<Component::TransformComponent>().m_Position = glm::vec3(0.0f, 5.0f, 0.0f);
+
+		my_entity.AddComponent<Component::ActorComponent>(nullptr, nullptr);
+
+		my_entity.GetComponent<Component::InspectorComponent>().SetActorComponent(
+			&my_entity.GetComponent<Component::ActorComponent>()
+		);
+
+		return my_entity;
+
 	}
 	Entity SceneEntityFactory::CreateRichSkinnedMeshEntity(IVModel* _model_pkg, glm::vec3 _initial_pos)
 	{
@@ -256,7 +274,7 @@ namespace OE1Core
 	{
 		_entity.AddComponent<Component::TagComponent>(CheckNameCollision(_name));
 		_entity.GetComponent<Component::InspectorComponent>().SetTagComponent(&_entity.GetComponent<Component::TagComponent>());
-
+		_entity.AddComponent<Component::SelfComponent>(&_entity, m_Scene);
 		_entity.AddComponent<Component::TransformComponent>(&_entity);
 		_entity.GetComponent<Component::InspectorComponent>().SetTransformComponent(&_entity.GetComponent<Component::TransformComponent>());
 	}
@@ -543,6 +561,17 @@ namespace OE1Core
 		uint32_t __offset = m_Scene->QueryDebugMesh(_bound.GetPackageID())->AddInstance(&_dest);
 
 		_dest.AddComponent<Component::BoundingVolumeComponent>(_bound, (uint32_t)_dest, __offset);
+	}
+	void SceneEntityFactory::CloneActorComponent(Entity _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::ActorComponent>())
+			return;
+
+		_dest.AddComponent<Component::ActorComponent>(nullptr, nullptr);
+
+		_dest.GetComponent<Component::InspectorComponent>().SetActorComponent(
+			&_dest.GetComponent<Component::ActorComponent>()
+		);
 	}
 	void SceneEntityFactory::CloneTransformComponent(Entity _src, Entity _dest)
 	{

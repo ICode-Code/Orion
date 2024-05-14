@@ -22,6 +22,7 @@ namespace OE1Core
 		void Component();
 		void Window();
 		void Tools();
+		void Import();
 		void Debug();
 		void Help();
 

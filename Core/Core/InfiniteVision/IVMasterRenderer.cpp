@@ -9,7 +9,7 @@ namespace OE1Core
 	namespace Renderer
 	{
 		IVMasterRenderer::IVMasterRenderer(SDL_Window* _window, class OE1Core::Scene* _scene)
-			: m_MainPassFramebuffer{ IVFrameSize::R_1k }, m_Scene{ _scene }
+			: m_Scene{ _scene }
 		{
 			m_ModelPreviewRenderer = new IVModelPreviewRenderer(_window);
 			m_MeshRenderer = new IVMeshRenderer();
@@ -96,13 +96,6 @@ namespace OE1Core
 					m_Scene->m_RenderStack->RegisterOpaqueStaticMesh(re_evalutaion_buffer[i], re_evalutaion_buffer[i]->PackageID);
 			}
 		}
-		void IVMasterRenderer::Update(int _width, int _height)
-		{
-			m_MainPassFramebuffer.Update(_width, _height);
-		}
-		IVForwardMainPassFramebuffer& IVMasterRenderer::GetMainPassFramebuffer() { return m_MainPassFramebuffer; }
-
-
 		void IVMasterRenderer::MasterCameraPass(Component::CameraComponent* _master_camera)
 		{
 
@@ -143,10 +136,11 @@ namespace OE1Core
 			m_MeshRenderer->ResetDrawCount(m_Scene->m_RenderStack);
 		}
 
-		void IVMasterRenderer::RenderFullScreenQuadToDefaultFramebuffer(GLuint _texture, Component::CameraComponent* _camera)
+		void IVMasterRenderer::RenderFullScreenQuadToDefaultFramebuffer(Component::CameraComponent* _camera, int _attachment_idx)
 		{
 			auto frame_buffer = _camera->MainFB();
 			
+			// BIND DEFAULT FRAMEBUFFER
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			
 			glViewport(0, 0, frame_buffer->GetWidth(), frame_buffer->GetHeight());
@@ -155,7 +149,7 @@ namespace OE1Core
 			frame_buffer->Clean(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-			m_FullScreenQuadRenderer->Render(_texture);
+			m_FullScreenQuadRenderer->Render(frame_buffer->GetAttachment(_attachment_idx));
 		}
 	}
 }

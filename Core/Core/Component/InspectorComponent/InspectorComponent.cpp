@@ -27,6 +27,7 @@ namespace OE1Core
 			ITransform();
 			ICamController();
 			ICamera();
+			IActor();
 			IMesh();
 			ISkinnedMesh();
 			IAnimationComponent();
@@ -37,15 +38,16 @@ namespace OE1Core
 			ImGui::PopStyleColor(7);
 			ImGui::PopStyleVar(3);
 		}
-		void InspectorComponent::SetTagComponent(class TagComponent* _tag_component) { m_TagComponent = _tag_component; }
-		void InspectorComponent::SetTransformComponent(class TransformComponent* _transform) { m_TransformComponent = _transform; };
-		void InspectorComponent::SetMeshComponent(class MeshComponent* _mesh) { m_MeshComponent = _mesh; }
-		void InspectorComponent::SetCameraControllerComponent(class BaseCameraControllerComponent* _camera_controller) { m_BaseCameraControllerComponent = _camera_controller; }
-		void InspectorComponent::SetCameraComponent(class CameraComponent* _camera_component) { m_CameraComponent = _camera_component; }
-		void InspectorComponent::SetSkinnedMeshComponent(class SkinnedMeshComponent* _skinned_mesh_component) { m_SkinnedMeshComponent = _skinned_mesh_component;  };
-		void InspectorComponent::SetAnimationComponent(class AnimationComponent* _animation_component) { m_AnimationComponent = _animation_component; }
-		void InspectorComponent::SetThirdPersonCameraControllerComponent(class ThirdPersonCameraControllerComponent* _tp_camera_Controller_component) { m_ThirdPersonCameraControllerComponent = _tp_camera_Controller_component; };
-		void InspectorComponent::SetThirdPersonCharacterControllerComponent(class ThirdPersonCharacterControllerComponent* _tp_character_Controller_component) { m_ThirdPersonCharacterControllerComponent = _tp_character_Controller_component; };
+		void InspectorComponent::SetTagComponent(TagComponent* _tag_component) { m_TagComponent = _tag_component; }
+		void InspectorComponent::SetTransformComponent(TransformComponent* _transform) { m_TransformComponent = _transform; };
+		void InspectorComponent::SetMeshComponent(MeshComponent* _mesh) { m_MeshComponent = _mesh; }
+		void InspectorComponent::SetCameraControllerComponent(BaseCameraControllerComponent* _camera_controller) { m_BaseCameraControllerComponent = _camera_controller; }
+		void InspectorComponent::SetCameraComponent(CameraComponent* _camera_component) { m_CameraComponent = _camera_component; }
+		void InspectorComponent::SetSkinnedMeshComponent(SkinnedMeshComponent* _skinned_mesh_component) { m_SkinnedMeshComponent = _skinned_mesh_component;  };
+		void InspectorComponent::SetAnimationComponent(AnimationComponent* _animation_component) { m_AnimationComponent = _animation_component; }
+		void InspectorComponent::SetThirdPersonCameraControllerComponent(ThirdPersonCameraControllerComponent* _tp_camera_Controller_component) { m_ThirdPersonCameraControllerComponent = _tp_camera_Controller_component; };
+		void InspectorComponent::SetThirdPersonCharacterControllerComponent(ThirdPersonCharacterControllerComponent* _tp_character_Controller_component) { m_ThirdPersonCharacterControllerComponent = _tp_character_Controller_component; };
+		void InspectorComponent::SetActorComponent(ActorComponent* _actor) { m_ActorComponent = _actor; };
 		void InspectorComponent::ITag()
 		{
 			if (!m_TagComponent)
@@ -81,6 +83,74 @@ namespace OE1Core
 				ImGui::TreePop();
 			}
 
+		}
+		void InspectorComponent::IActor()
+		{
+			if (!m_ActorComponent)
+				return;
+
+			if (ImGui::TreeNodeEx("Actor", m_TreeNodeFlags | ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				ImGui::Indent(16.0f);
+
+				static int crt = 0;
+				static std::string _target_camera_name = "Drop Camera Here..";
+				static std::string _target_chararacter_name = "Drop Character Here..";
+				ImGui::SetNextItemWidth(200);
+
+				ImGui::PushStyleColor(ImGuiCol_Button, { 0.2f, 0.2f , 0.2f, 1.0f });
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+				ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.5f, 0.5f });
+
+				ImGui::Combo("Target Camera", &crt, _target_camera_name.c_str());
+				
+
+				if (ImGui::BeginDragDropTarget())
+				{
+
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CameraPayload"))
+					{
+						Component::SelfComponent* _self = static_cast<Component::SelfComponent*>(payload->Data);
+
+						if (_self)
+						{
+							Entity _entity((entt::entity)_self->GetEntityID(), SceneManager::GetActiveScene());
+							_target_camera_name = _entity.GetComponent<Component::TagComponent>().m_Identifier;
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::SetNextItemWidth(200);
+
+				ImGui::Combo("Target Chararcter", &crt, _target_chararacter_name.c_str());
+				
+				if (ImGui::BeginDragDropTarget())
+				{
+
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ActorPayload"))
+					{
+						Component::SelfComponent* _self = static_cast<Component::SelfComponent*>(payload->Data);
+						if (_self)
+						{
+							Entity _entity((entt::entity)_self->GetEntityID(), SceneManager::GetActiveScene());
+							_target_chararacter_name = _entity.GetComponent<Component::TagComponent>().m_Identifier;
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::PopStyleVar(2);
+				ImGui::PopStyleColor();
+
+				
+
+				ImGui::Indent(-16.0f);
+
+				ImGui::TreePop();
+			}
 		}
 		void InspectorComponent::IMesh()
 		{
@@ -439,7 +509,7 @@ namespace OE1Core
 				if (ImGui::BeginDragDropTarget())
 				{
 
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Camera_Pay_Load"))
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CameraPayload"))
 					{
 						//Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
 
@@ -546,7 +616,7 @@ namespace OE1Core
 				if (ImGui::BeginDragDropTarget())
 				{
 
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Camera_Pay_Load"))
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CameraPayload"))
 					{
 					//	Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
 

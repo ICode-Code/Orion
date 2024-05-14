@@ -6,11 +6,25 @@ namespace OE1Core
 {
 
 
-	void Scene::UpdateGameFrame(int _width, int _height)
+	void Scene::UpdateFrameRes_Genesis(int _width, int _height)
 	{
-		if (!m_ActivePlayerEntity)
-			return;
+		m_GenesisController->UpdateFrameRes(_width, _height);
+	}
 
-		m_ActivePlayerEntity->GetComponent<Component::ThirdPersonCharacterControllerComponent>().GetCameraComponent()->UpdateRenderFrameSize(_width, _height);
+	void Scene::InputUpdate_Genesis(float _dt)
+	{
+		m_GenesisController->InputUpdate(_dt);
+	}
+	void Scene::BufferUpdate_Genesis(float _dt)
+	{
+		m_GenesisController->UpdateBuffer(_dt);
+	}
+	void Scene::InitRender_Genesis()
+	{
+		m_GenesisController->InitRender();
+	}
+	void Scene::OnEvent_Genesis(OECore::IEvent& e)
+	{
+		m_GenesisController->OnEvent(e);
 	}
 }

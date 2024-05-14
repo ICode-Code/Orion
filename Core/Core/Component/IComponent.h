@@ -15,6 +15,8 @@
 #include "CharacterController/ThirdPersonCharacterControllerComponent/ThirdPersonCharacterControllerComponent.h"
 #include "CameraControllerComponent/ThirdPersonCameraControllerComponent/ThirdPersonCameraControllerComponent.h"
 #include "BoundingVolumeComponent/BoundingVolumeComponent.h"
+#include "ActorComponent/ActorComponent.h"
+#include "SelfComponent/SelfComponent.h"
 
 #include "PlayerInteractionComponent/AIControlledPlayerComponent/AIControlledPlayerComponent.h"
 #include "PlayerInteractionComponent/HumanControlledPlayerComponent/HumanControlledPlayerComponent.h"
