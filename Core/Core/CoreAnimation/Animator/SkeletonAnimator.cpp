@@ -17,9 +17,9 @@ namespace OE1Core
 		for (auto iter = s_AnimationSet.begin(); iter != s_AnimationSet.end(); iter++)
 		{
 			if(iter->second->m_OnTransition)
-				iter->second->Interpolate(_dt);
+				iter->second->Interpolate(1.0f / iter->second->m_TickPerSecond);
 			else
-				iter->second->UpdateTransform(_dt);
+				iter->second->UpdateTransform(1.0f / iter->second->m_TickPerSecond);
 		}
 	}
 	bool SkeletonAnimator::HasAnimation(uint32_t _id)

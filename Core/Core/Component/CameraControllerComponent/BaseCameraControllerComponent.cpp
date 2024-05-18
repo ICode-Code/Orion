@@ -13,6 +13,7 @@ namespace OE1Core
 			SDL_GetWindowSize(m_Window, &m_WinCenterX, &m_WinCenterY);
 			m_WinCenterX /= 2;
 			m_WinCenterY /= 2;
+			m_LerpThreshold = 1.0f;
 		}
 		void BaseCameraControllerComponent::SwitchContext(SDL_Window* _window)
 		{
@@ -29,7 +30,7 @@ namespace OE1Core
 		void BaseCameraControllerComponent::SetCameraComponent(Component::CameraComponent* _camera)
 		{
 			m_Camera = _camera;
-			UpdateCameraView();
+			//UpdateCameraView();
 			m_Camera->Update(m_CurrentPosition);
 		}
 

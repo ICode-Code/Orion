@@ -62,6 +62,7 @@ namespace OE1Core
 			glm::vec3 m_InitialPosition = glm::vec3(0.0f);
 			glm::vec3 m_CurrentPosition = glm::vec3(0.0f);
 			glm::vec2 m_LastMousePosition = glm::vec2(0.0f);
+			glm::vec3 m_TargetPosition = glm::vec3(0.0f);
 
 			// Flag
 			bool m_LockMouseAtCenter = true;

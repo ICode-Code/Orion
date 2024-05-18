@@ -10,11 +10,11 @@ namespace OE1Core
 	public:
 		PreferenceWin();
 		~PreferenceWin();
-
 		virtual void Render() override;
 		inline static bool s_ShouldOpen = false;
 	private:
 		virtual void Update() override;
+		class Scene* m_Scene = nullptr;
 
 	};
 }

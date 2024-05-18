@@ -15,13 +15,13 @@ namespace OE1Core
 			m_TargetCamera = _camera;
 			m_TargetAnimationController = _controller;
 
-			if(!m_TargetCamera)
+			/*if(!m_TargetCamera)
 				LOG_ERROR(LogLayer::Pipe("[ ThirdPersonCharacterControllerComponent ] initilized with <NULL> Camera Target!", OELog::CRITICAL));
 			if(!m_TargetAnimationController)
 				LOG_ERROR(LogLayer::Pipe("[ ThirdPersonCharacterControllerComponent ] initilized with <NULL> Animation Controller!", OELog::CRITICAL));
 
 			if(!m_TargetTransform)
-				LOG_ERROR(LogLayer::Pipe("[ ThirdPersonCharacterControllerComponent ] initilized with <NULL> Target Transform!", OELog::CRITICAL));
+				LOG_ERROR(LogLayer::Pipe("[ ThirdPersonCharacterControllerComponent ] initilized with <NULL> Target Transform!", OELog::CRITICAL));*/
 		}
 		ThirdPersonCharacterControllerComponent::~ThirdPersonCharacterControllerComponent()
 		{

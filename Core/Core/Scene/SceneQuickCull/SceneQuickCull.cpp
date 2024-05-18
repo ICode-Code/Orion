@@ -74,19 +74,17 @@ namespace OE1Core
 
 		glm::vec3 i_min = (__discriptor.Bound.Min * __discriptor.Scale) + __discriptor.Position;
 		glm::vec3 i_max = (__discriptor.Bound.Max * __discriptor.Scale) + __discriptor.Position;
+
 		// Iterate over each plane of the frustum
 		for (int i = 0; i < 6; i++)
 		{
-			Plane& plane = _frustum.GetPlane(i);
+			const Plane& plane = _frustum.GetPlane(i);
+			glm::vec3 pointInBox = i_min;
 
 			// Find the point in the bounding box that is furthest along the direction of the plane normal
-			glm::vec3 pointInBox = i_min;
-			if (plane.GetNormal().x >= 0)
-				pointInBox.x = i_max.x;
-			if (plane.GetNormal().y >= 0)
-				pointInBox.y = i_max.y;
-			if (plane.GetNormal().z >= 0)
-				pointInBox.z = i_max.z;
+			if (plane.GetNormal().x >= 0) pointInBox.x = i_max.x;
+			if (plane.GetNormal().y >= 0) pointInBox.y = i_max.y;
+			if (plane.GetNormal().z >= 0) pointInBox.z = i_max.z;
 
 			// If the furthest point is behind the plane, the entire bounding box is outside the frustum
 			if (plane.GetSignedDistanceToPlace(pointInBox) < 0)

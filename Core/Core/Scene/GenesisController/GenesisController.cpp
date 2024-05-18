@@ -21,17 +21,25 @@ namespace OE1Core
 		if (!m_Scene->m_Protagonist->GetCamera()) return;
 		if (!m_Scene->m_Protagonist->GetActorEntity()) return;
 
+
 		Component::CameraComponent* _camera = m_Scene->m_Protagonist->GetCamera();
+		
+		// Cull
+		m_Scene->UpdateCulledBuffer(_camera);
+		
+		
 		Entity* _target_entity = m_Scene->m_Protagonist->GetActorEntity();
 		
 		if (_camera->GetController())
 			_camera->GetController()->UpdateInput(_dt);
 
-
 		if (_target_entity->HasComponent<Component::ThirdPersonCharacterControllerComponent>())
-			_target_entity->GetComponent<Component::ThirdPersonCameraControllerComponent>().UpdateInput(_dt);
+			_target_entity->GetComponent<Component::ThirdPersonCharacterControllerComponent>().UpdateTargetTransform(_dt);
 
 		_target_entity->Update();
+
+		if (m_Scene->ShouldUseRenderThreadForAnimationUpdate())
+			m_Scene->UpdateAnimationTransform();
 	}
 	void GenesisController::UpdateBuffer(float _dt)
 	{
@@ -41,6 +49,8 @@ namespace OE1Core
 		Component::CameraComponent* _camera = m_Scene->m_Protagonist->GetCamera();
 
 		_camera->UpdateBuffer(_dt);
+
+		m_Scene->UpdateAnimationComponents();
 	}
 	void GenesisController::InitRender()
 	{

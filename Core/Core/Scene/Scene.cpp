@@ -78,10 +78,13 @@ namespace OE1Core
 
 		HotComponentUpdate();
 		UpdateAnimationComponents();
-		UpdateCulledBuffer();
+		UpdateCulledBuffer(m_MasterSceneCamera->Camera);
 
 		m_InputController->QuickInputUpdateControllerComponent(_dt);
 		m_InputController->QuickInputUpdateMasterCamera(_dt);
+
+		if (m_UseActiveThreadForAnimation)
+			UpdateAnimationTransform();
 	}
 	void Scene::BufferUpdate(float _dt)
 	{
@@ -150,7 +153,7 @@ namespace OE1Core
 	}
 	void Scene::UpdateAnimationTransform()
 	{
-		SkeletonAnimator::UpdateAnimations(m_LastDelta);
+		SkeletonAnimator::UpdateAnimations(1.0f / 30.0f);
 	}
 	void Scene::UpdateInistanceGLBuffer(std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& _buffer)
 	{
@@ -169,5 +172,7 @@ namespace OE1Core
 			}
 		}
 	}
+	void Scene::SetProtagonist(Component::ActorComponent* _actor) {  m_Protagonist = _actor; }
+	Component::ActorComponent* Scene::GetProtagonist() { return m_Protagonist; }
 	
 }

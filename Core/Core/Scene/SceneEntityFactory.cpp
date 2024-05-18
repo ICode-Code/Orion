@@ -100,6 +100,11 @@ namespace OE1Core
 
 		my_entity.AddComponent<Component::ActorComponent>(nullptr, nullptr);
 
+		// When I add the first actore component it will be the protagonist
+		// It will be the default
+		if (!m_Scene->GetProtagonist())
+			m_Scene->SetProtagonist(&my_entity.GetComponent<Component::ActorComponent>());
+
 		my_entity.GetComponent<Component::InspectorComponent>().SetActorComponent(
 			&my_entity.GetComponent<Component::ActorComponent>()
 		);
@@ -338,7 +343,7 @@ namespace OE1Core
 			LogLayer::Pipe("Camera Controller Swaped from <FreeLookCameraControllerComponent> to <ThirdPersonCameraControllerComponent> ..!!", OELog::WARNING);
 		}
 
-		_entity.AddComponent<Component::ThirdPersonCameraControllerComponent>(m_Scene->GetCameraManager()->GetContextWindow(), __trasnform);
+		_entity.AddComponent<Component::ThirdPersonCameraControllerComponent>(m_Scene->GetCameraManager()->GetContextWindow(), nullptr);
 		
 		Component::ThirdPersonCameraControllerComponent* _controller = &_entity.GetComponent<Component::ThirdPersonCameraControllerComponent>();
 		
@@ -691,7 +696,7 @@ namespace OE1Core
 	bool SceneEntityFactory::RemoveCameraPackageComponent(Entity _entity)
 	{
 		if (!_entity.HasComponent<Component::CameraComponent>())
-			return false;
+			return true;
 
 		_entity.RemoveComponent<Component::CameraComponent>();
 

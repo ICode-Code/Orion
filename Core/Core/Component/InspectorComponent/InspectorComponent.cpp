@@ -25,12 +25,12 @@ namespace OE1Core
 
 			ITag();
 			ITransform();
-			ICamController();
 			ICamera();
 			IActor();
 			IMesh();
 			ISkinnedMesh();
 			IAnimationComponent();
+			ICamController();
 			IThirdPersonCameraControllerComponent();
 			IThirdPersonCharacterControllerComponent();
 
@@ -115,7 +115,12 @@ namespace OE1Core
 						if (_self)
 						{
 							Entity _entity((entt::entity)_self->GetEntityID(), SceneManager::GetActiveScene());
-							_target_camera_name = _entity.GetComponent<Component::TagComponent>().m_Identifier;
+
+							if(SceneManager::GetActiveScene()->GetProtagonist())
+							{
+								_target_camera_name = _entity.GetComponent<Component::TagComponent>().m_Identifier;
+								SceneManager::GetActiveScene()->GetProtagonist()->SetCamera(&_entity.GetComponent<Component::CameraComponent>());
+							}
 						}
 					}
 
@@ -135,7 +140,11 @@ namespace OE1Core
 						if (_self)
 						{
 							Entity _entity((entt::entity)_self->GetEntityID(), SceneManager::GetActiveScene());
-							_target_chararacter_name = _entity.GetComponent<Component::TagComponent>().m_Identifier;
+							if (SceneManager::GetActiveScene()->GetProtagonist())
+							{
+								_target_chararacter_name = _entity.GetComponent<Component::TagComponent>().m_Identifier;
+								SceneManager::GetActiveScene()->GetProtagonist()->SetActorEntity(&_entity);
+							}
 						}
 					}
 
@@ -472,22 +481,22 @@ namespace OE1Core
 
 				ImGui::Indent(16.0f);
 
-				bool _has_target_camera = m_ThirdPersonCameraControllerComponent->GetCameraComponent() != nullptr;
+				bool _has_target_to_follow = m_ThirdPersonCameraControllerComponent->GetTargetTransform() != nullptr;
 
 
-				ImGui::PushStyleColor(ImGuiCol_Text, _has_target_camera ? ImVec4(0.090f, 0.725f, 0.471f, 1.0f) : ImVec4(1.0f, 0.121f, 0.353f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_Text, _has_target_to_follow ? ImVec4(0.090f, 0.725f, 0.471f, 1.0f) : ImVec4(1.0f, 0.121f, 0.353f, 1.0f));
 				
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.0f, 0.0f, 0.0f, 0.0f });
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.0f });
 
-				ImGui::Button(_has_target_camera ? ICON_FA_CIRCLE_CHECK : ICON_FA_TRIANGLE_EXCLAMATION);
+				ImGui::Button(_has_target_to_follow ? ICON_FA_CIRCLE_CHECK : ICON_FA_TRIANGLE_EXCLAMATION);
 
 				if (ImGui::IsItemHovered())
 				{
-					if (_has_target_camera)
-						ImGui::SetTooltip(ICON_FA_CIRCLE_INFO"\tCamera-Controller is ready!");
+					if (_has_target_to_follow)
+						ImGui::SetTooltip(ICON_FA_CIRCLE_INFO"\tReady!");
 					else 
-						ImGui::SetTooltip(ICON_FA_CIRCLE_INFO"\tDrag and Drop a target camera here!");
+						ImGui::SetTooltip(ICON_FA_CIRCLE_INFO"\tTarget to Follow");
 				}
 
 				ImGui::PopStyleColor(3);
@@ -501,16 +510,47 @@ namespace OE1Core
 				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
 				ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.5f, 0.5f });
 
-				ImGui::Combo("Target Camera", &crt, _target_name.c_str());
+				ImGui::Combo("Target to Follow", &crt, _target_name.c_str());
 
 				ImGui::PopStyleVar(2);
 				ImGui::PopStyleColor();
 
 				if (ImGui::BeginDragDropTarget())
 				{
-
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CameraPayload"))
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ActorPayload"))
 					{
+						Component::SelfComponent* _self = static_cast<Component::SelfComponent*>(payload->Data);
+						if (_self)
+						{
+
+							Entity _entity((entt::entity)_self->GetEntityID(), SceneManager::GetActiveScene());
+
+							if (_entity.HasComponent<Component::ThirdPersonCharacterControllerComponent>())
+							{
+								_target_name = _entity.GetComponent<Component::TagComponent>().m_Identifier;
+								m_ThirdPersonCameraControllerComponent->SetTargetTransform(&_entity.GetComponent<Component::TransformComponent>());
+								
+								_entity.GetComponent<Component::ThirdPersonCharacterControllerComponent>().SetCameraComponent(m_ThirdPersonCameraControllerComponent->GetCameraComponent());
+							}
+							else
+							{
+								LogLayer::Pipe("Entity Doesn't Have Any <CharacterControllerComponent>", OELog::WARNING);
+							}
+
+						}
+
+					}
+					/*if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CameraPayload"))
+					{
+						Component::SelfComponent* _self = static_cast<Component::SelfComponent*>(payload->Data);
+						if (_self)
+						{
+							Entity _entity((entt::entity)_self->GetEntityID(), SceneManager::GetActiveScene());
+
+							Component::CameraComponent* _camera = &_entity.GetComponent<Component::CameraComponent>();
+							_camera->SetController(m_ThirdPersonCameraControllerComponent);
+							m_ThirdPersonCameraControllerComponent->SetCameraComponent(_camera);
+						}*/
 						//Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
 
 						//// get real ptr
@@ -522,7 +562,7 @@ namespace OE1Core
 
 						//SceneManager::GetActiveScene()->GetCameraManager()->RegisterActiveGameCamera(camera_pkg_ptr->GetName());
 					
-					}
+					//}
 
 					ImGui::EndDragDropTarget();
 				}
@@ -578,7 +618,7 @@ namespace OE1Core
 			{
 				ImGui::Indent(16.0f);
 
-				bool _has_target_camera = m_ThirdPersonCharacterControllerComponent->GetCameraComponent() != nullptr;
+				/*bool _has_target_camera = m_ThirdPersonCharacterControllerComponent->GetCameraComponent() != nullptr;
 
 
 				ImGui::PushStyleColor(ImGuiCol_Text, _has_target_camera ? ImVec4(0.090f, 0.725f, 0.471f, 1.0f) : ImVec4(1.0f, 0.121f, 0.353f, 1.0f));
@@ -618,19 +658,16 @@ namespace OE1Core
 
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CameraPayload"))
 					{
-					//	Component::CameraPackageComponent* package = (Component::CameraPackageComponent*)payload->Data;
-
-					//	// get real ptr
-					//	CameraPackage* camera_pkg_ptr = SceneManager::GetActiveScene()->GetCameraManager()->GetCamera(package->GetCameraPackage()->GetName());
-					//	_target_name = camera_pkg_ptr->GetName();
-					//	camera_pkg_ptr->SetCameraTag(CAMERA_TASK_TYPE::PLAYER);
-					//	// Link
-					//	m_ThirdPersonCharacterControllerComponent->SetCameraComponent(camera_pkg_ptr->GetCamera());
-					//
+						Component::SelfComponent* _self = static_cast<Component::SelfComponent*>(payload->Data);
+						if (_self)
+						{
+							Entity _entity((entt::entity)_self->GetEntityID(), SceneManager::GetActiveScene());
+							m_ThirdPersonCharacterControllerComponent->SetCameraComponent(&_entity.GetComponent<Component::CameraComponent>());
+						}
 					}
 
 					ImGui::EndDragDropTarget();
-				}
+				}*/
 
 
 				CustomFrame::UIEditorFloat("Walk Speed", &m_ThirdPersonCharacterControllerComponent->m_WalkSpeed, 1.0f, 32.0f);
@@ -648,9 +685,10 @@ namespace OE1Core
 				return;
 
 
-			if (ImGui::TreeNodeEx("X-Controller", m_TreeNodeFlags))
+			if (ImGui::TreeNodeEx("Base Controller", m_TreeNodeFlags))
 			{
-
+				
+				CustomFrame::UIEditorFloat("Smoothness", &m_BaseCameraControllerComponent->m_LerpThreshold, 0.01f, 2.0f);
 				CustomFrame::UIEditorFloat("Velocity", &m_BaseCameraControllerComponent->m_Speed, 0.0f, 256.0f);
 				CustomFrame::UIEditorFloat("Velocity Factor", &m_BaseCameraControllerComponent->m_SpeedFactor, 0.0f, 256.0f);
 

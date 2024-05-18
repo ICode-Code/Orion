@@ -13,9 +13,10 @@ namespace OE1Core
 		Plane(const glm::vec3 p, const glm::vec3 normal);
 
 		glm::vec3 PointOnPlane() const;
-		float GetSignedDistanceToPlace(const glm::vec3& _point);
+		const float GetSignedDistanceToPlace(const glm::vec3& _point) const;
 
 		glm::vec3& GetNormal();
+		const glm::vec3& GetNormal() const;
 		float GetDistance();
 
 	protected:

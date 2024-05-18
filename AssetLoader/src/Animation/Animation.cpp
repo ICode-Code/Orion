@@ -79,8 +79,6 @@ namespace OE1Core
 	}
 	void Animation::UpdateTransform(float dt)
 	{
-		if (m_Updated)
-			return;
 		m_DeltaTime = dt * m_DeltaFactor;
 		m_CurrentTime += m_TickPerSecond * m_DeltaTime;
 		m_CurrentTime = fmod(m_CurrentTime, m_Duration);
@@ -166,9 +164,6 @@ namespace OE1Core
 	}
 	void Animation::Interpolate(float _dt)
 	{
-		if (m_Updated)
-			return;
-
 		m_DeltaTime = _dt * m_DeltaFactor;
 		m_CurrentTime += m_TickPerSecond * m_DeltaTime;
 		m_CurrentTime = fmod(m_CurrentTime, m_Duration);

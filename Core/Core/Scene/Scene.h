@@ -37,6 +37,7 @@ namespace OE1Core
 		friend class InputController;
 		friend class RenderController;
 		friend class GenesisController;
+		friend class PreferenceWin;
 	public:
 		Scene(SDL_Window* _window);
 		~Scene();
@@ -44,6 +45,8 @@ namespace OE1Core
 		Entity CreateEntity();
 		Entity GetEntity(entt::entity _id);
 		Entity GetEntity(uint32_t _id, bool _suppress_warning = false);
+
+		bool ShouldUseRenderThreadForAnimationUpdate();
 
 		/// <summary>
 		/// This dude might return nullptrs
@@ -144,6 +147,8 @@ namespace OE1Core
 		void OnEvent_Genesis(OECore::IEvent& e);
 		void InitRender_Genesis();
 		void UpdateFrameRes_Genesis(int _width, int _height);
+		void SetProtagonist(Component::ActorComponent* _actor);
+		Component::ActorComponent* GetProtagonist();
 
 
 	public:
@@ -175,6 +180,7 @@ namespace OE1Core
 		Ray* m_SceneRay = nullptr;
 		float m_LastDelta = 0.0f;
 		Entity* m_ActivePlayerEntity = nullptr;
+		bool m_UseActiveThreadForAnimation = false;
 
 
 

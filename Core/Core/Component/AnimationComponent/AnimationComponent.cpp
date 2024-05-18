@@ -85,10 +85,7 @@ namespace OE1Core
 
 			m_AnimationController->Update();
 
-
-
 			if (!m_Animation) return;
-			if (!m_Animation->m_Updated) return;
 
 			glBindBuffer(GL_UNIFORM_BUFFER, m_BufferLocator.BufferID);
 			glBufferSubData(GL_UNIFORM_BUFFER, m_BufferLocator.BaseOffset, m_BufferLocator.Offset, m_Animation->m_BoneTransform.data());

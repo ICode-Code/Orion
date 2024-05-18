@@ -71,7 +71,7 @@ namespace OE1Core
 		s_EngineWindow->RegisterFollowUpEventCallback(std::bind(&CoreEngine::OnEngineEvent, this, std::placeholders::_1));
 		s_EngineWindow->ResetCallbacks();
 		SceneManager::GetActiveScene()->SwitchContext(s_EngineWindow);
-
+		SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->GetID());
 		// Render Loop
 		while (s_EngineWindow->m_Args.Running && !s_EngineWindow->m_Args.Playing)
 		{
@@ -152,7 +152,8 @@ namespace OE1Core
 		COMPUTATION_THREAD.detach();
 		while (!TERMINATE_SHARED_THREAD)
 		{
-			SceneManager::GetActiveScene()->UpdateAnimationTransform();
+			if(!SceneManager::GetActiveScene()->ShouldUseRenderThreadForAnimationUpdate())
+				SceneManager::GetActiveScene()->UpdateAnimationTransform();
 		}
 	}
 	int CoreEngine::RUN_TIME_COMMAND_PROCESSING_THREAD(void* _data)

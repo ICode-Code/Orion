@@ -33,7 +33,7 @@ namespace OE1Core
 		return Entity((entt::entity)_id, this);
 	}
 
-
+	bool Scene::ShouldUseRenderThreadForAnimationUpdate() { return m_UseActiveThreadForAnimation; };
 	void Scene::SetActivePlayerEntity(Entity _entity)
 	{
 

@@ -15,8 +15,9 @@ namespace OE1Core
 
 			m_FullMouseControl = false;
 			LockMouse(m_FullMouseControl);
-			if (!m_TargetTransform)
-				LOG_ERROR(LogLayer::Pipe("[ ThirdPersonCameraControllerComponent ] initilized with <NULL> Target Tranform!", OELog::CRITICAL));
+
+			/*if (!m_TargetTransform)
+				LOG_ERROR(LogLayer::Pipe("[ ThirdPersonCameraControllerComponent ] initilized with <NULL> Target Tranform!", OELog::CRITICAL));*/
 		}
 
 		ThirdPersonCameraControllerComponent::~ThirdPersonCameraControllerComponent()
@@ -55,19 +56,25 @@ namespace OE1Core
 			float horizonatlDistance = m_DistanceToTarget * cos(glm::radians(m_Camera->m_Pitch));
 			float verticalDistance = m_DistanceToTarget * sin(glm::radians(m_Camera->m_Pitch));
 
-			//m_TargetTransform->m_Euler.y = m_Camera->m_Yaw;
 
-			float theta = m_Camera->m_Yaw;// glm::mix(m_TargetTransform->m_Euler.y, , 0.4f);
-			 
+			float theta = m_Camera->m_Yaw;
+
 			float offsetX = horizonatlDistance * sin(glm::radians(theta));
 			float offsetZ = horizonatlDistance * cos(glm::radians(theta));
 
+			m_TargetPosition = m_TargetTransform->m_Position;
+			m_TargetPosition.y += m_FocusHeight;
+			m_TargetPosition.x += m_ShiftRightCameraFocus;
 
-			m_FinalPosition.x = m_TargetTransform->m_Position.x - offsetX;
-			m_FinalPosition.y = m_TargetTransform->m_Position.y + verticalDistance;
-			m_FinalPosition.z = m_TargetTransform->m_Position.z - offsetZ;
 
-			m_Camera->m_Front = m_TargetTransform->m_Position;
+			m_FinalPosition.x = m_TargetPosition.x - offsetX;
+			m_FinalPosition.y = m_TargetPosition.y + verticalDistance;
+			m_FinalPosition.z = m_TargetPosition.z - offsetZ;
+
+			
+			m_Camera->m_Front = glm::normalize(m_TargetPosition - m_CurrentPosition);
+			m_Camera->m_Right = glm::normalize(glm::cross(m_Camera->m_Front, m_Camera->m_WorldUp));
+			m_Camera->m_Up = glm::normalize(glm::cross(m_Camera->m_Right, m_Camera->m_Front));
 		}
 		void ThirdPersonCameraControllerComponent::UpdateInput(float _dt)
 		{
@@ -80,26 +87,15 @@ namespace OE1Core
 			float delta_dist = glm::length(m_FinalPosition - m_CurrentPosition);
 			if (delta_dist > 0.001f)
 			{
-				m_DeltaPosition = Lerp(m_InitialPosition, m_FinalPosition, m_DeltaTime * m_SpeedFactor);
+				m_DeltaPosition = Lerp(m_InitialPosition, m_FinalPosition, (m_DeltaTime * m_SpeedFactor) * m_LerpThreshold);
 				m_CurrentPosition = m_DeltaPosition;
 			}
-			glm::vec3 targ = m_TargetTransform->m_Position;
-			targ.y += m_FocusHeight;
-			targ.x += m_ShiftRightCameraFocus;
-			m_Camera->Update(m_FinalPosition, targ);
+
+			m_Camera->Update(m_CurrentPosition, m_TargetPosition);
 		}
 		void ThirdPersonCameraControllerComponent::OverrideFinalPosition(glm::vec3 _final_position, float _dt)
 		{
-			/*m_DeltaTime = _dt;
-			m_InitialPosition = m_CurrentPosition;
-
-			float delta_dist = glm::length(_final_position - m_CurrentPosition);
-			if (delta_dist > 0.001f)
-			{
-				m_DeltaPosition = Lerp(m_InitialPosition, _final_position, m_DeltaTime * m_SpeedFactor);
-				m_CurrentPosition = m_DeltaPosition;
-			}
-			m_Camera->Update(m_CurrentPosition);*/
+			
 		}
 		void ThirdPersonCameraControllerComponent::HandleKeyInput() 
 		{

@@ -380,18 +380,11 @@ namespace OE1Core
 			{
 				if (!WindowManager::GetGenesisWindow())
 				{
-					/*WindowManager::IgniteGenesisWindow();
+					WindowManager::IgniteGenesisWindow();
 
-					auto& _cameras = SceneManager::GetActiveScene()->m_CameraManager->GetCameraList();
-					for (auto iter = _cameras.begin(); iter != _cameras.end(); iter++)
-					{
-						if (iter->second.Camera->GetTag() == CAMERA_TASK_TYPE::PLAYER)
-						{
-							SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(iter->second.Camera->GetName());
-							break;
-						}
-					}*/
-
+					if (SceneManager::GetActiveScene()->GetProtagonist())
+						if (SceneManager::GetActiveScene()->GetProtagonist()->GetCamera())
+							SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(SceneManager::GetActiveScene()->GetProtagonist()->GetCamera()->GetID());
 				}
 			}
 
