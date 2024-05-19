@@ -153,7 +153,7 @@ namespace OE1Core
 	}
 	void Scene::UpdateAnimationTransform()
 	{
-		SkeletonAnimator::UpdateAnimations(1.0f / 30.0f);
+		SkeletonAnimator::UpdateAnimations(m_LastDelta);
 	}
 	void Scene::UpdateInistanceGLBuffer(std::unordered_map<uint32_t, std::vector<DS::OTEntDiscriptor>>& _buffer)
 	{
