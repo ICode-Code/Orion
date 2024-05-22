@@ -37,15 +37,14 @@ namespace OE1Core
 			Component::FreeLookCameraControllerComponent* Controller = new Component::FreeLookCameraControllerComponent(_scene->GetCameraManager()->GetContextWindow());
 			Controller->SetCameraComponent(PREVIEW_CAMERA);
 
-			IVVirtualMaterialSceneFramebuffer m_VirtualMaterialSceneFramebuffer(_material->m_Preview);// = new Renderer::IVVirtualMaterialSceneFramebuffer(_material->GetPreviewRef());
-			m_VirtualMaterialSceneFramebuffer.SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
-			m_VirtualMaterialSceneFramebuffer.Attach();
+			IVVirtualMaterialSceneFramebuffer* m_VirtualMaterialSceneFramebuffer = new Renderer::IVVirtualMaterialSceneFramebuffer(_material->GetPreviewRef());
+			m_VirtualMaterialSceneFramebuffer->SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
+			m_VirtualMaterialSceneFramebuffer->Attach();
 
 			
 			PREVIEW_CAMERA->m_Near = 0.01f;
 			Controller->Focus(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
-			Controller->UpdateCameraView();
-			PREVIEW_CAMERA->Update(glm::vec3(3.0f, 0.0f, 0.0f));
+			Controller->UpdateInput(0.1f);
 			PREVIEW_CAMERA->UpdateBuffer(0.1f);
 
 
@@ -70,7 +69,8 @@ namespace OE1Core
 			}
 
 			s_LocalShader->Detach();
-			m_VirtualMaterialSceneFramebuffer.Detach();
+			m_VirtualMaterialSceneFramebuffer->Detach();
+			delete m_VirtualMaterialSceneFramebuffer;
 			_scene->GetCameraManager()->PurgeCamera(uid);
 			delete Controller;
 			delete PREVIEW_CAMERA;

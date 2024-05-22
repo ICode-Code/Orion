@@ -27,7 +27,7 @@ namespace OE1Core
 		int TotalTriangleCount = 0;
 		
 
-		unsigned int Preview;
+		unsigned int Preview = 0;
 
 		std::vector<CoreRenderableMeshPackage> SubMeshs;
 

@@ -11,6 +11,15 @@ namespace OE1Core
 			s_CameraController = new Component::FreeLookCameraControllerComponent(_window);
 
 			s_CameraController->SetCameraComponent(s_Camera);
+
+
+			float _length = glm::length(3.0f);
+			s_Camera->m_FieldOfView = 75;
+			s_Camera->m_Far = 100000.0f;
+			s_Camera->UpdateRenderFrameSize(1280, 1024);
+			s_Camera->m_Near = 0.01f;
+			s_CameraController->Focus(glm::vec3(0.0f, _length / 2.0f, 0.0f), _length);
+			s_CameraController->UpdateCameraView();
 		}
 		IVModelPreviewRenderer::~IVModelPreviewRenderer()
 		{
@@ -24,7 +33,7 @@ namespace OE1Core
 			glGetIntegerv(GL_VIEWPORT, viewport);
 
 			IVModelPreviewFramebuffer _frame(_model_package.Preview);
-			_frame.SetClearColor({ 0.0f, 0.0f, 0.0f, 0.0f });
+			_frame.SetClearColor({ 0.1f, 0.1f, 0.1f, 0.0f }); 
 			_frame.Attach();
 			glViewport(0, 0, _frame.GetWidth(), _frame.GetHeight());
 			s_LocalShader->Attach();

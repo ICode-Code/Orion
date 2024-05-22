@@ -204,8 +204,8 @@ namespace OE1Core
 			ImGui::PushID(s_ASSET_DRAG_ID++);
 
 			PushPanalItemStyle();
-			
-			ImGui::ImageButton((ImTextureID)(uintptr_t)AssetManager::s_RenderableGeometry[m_StaticMeshEntry[i].first.Name].Preview, { m_ThumbnailSize, m_ThumbnailSize }, {0, 1}, {1, 0});
+			unsigned int __preview = AssetManager::s_RenderableGeometry[m_StaticMeshEntry[i].first.Name].Preview;
+			ImGui::ImageButton((ImTextureID)(uintptr_t)__preview, { m_ThumbnailSize, m_ThumbnailSize }, {0, 1}, {1, 0});
 
 			PopPanalItemStyle();
 
@@ -256,8 +256,8 @@ namespace OE1Core
 			ImGui::PushID(s_ASSET_DRAG_ID++); 
 
 			PushPanalItemStyle({0.4f, 0.7f, 0.4f, 0.05f});
-
-			ImGui::ImageButton((ImTextureID)(uintptr_t)MaterialManager::GetMaterial(m_MaterialEntry[i].first.Name)->GetPreviewRef(), {m_ThumbnailSize, m_ThumbnailSize}, {0, 1}, {1, 0});
+			GLuint preview = MaterialManager::GetMaterial(m_MaterialEntry[i].first.Name)->GetPreviewRef();
+			ImGui::ImageButton((ImTextureID)(uintptr_t)preview, {m_ThumbnailSize, m_ThumbnailSize}, {0, 1}, {1, 0});
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
