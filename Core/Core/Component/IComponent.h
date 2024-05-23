@@ -21,5 +21,9 @@
 #include "PlayerInteractionComponent/AIControlledPlayerComponent/AIControlledPlayerComponent.h"
 #include "PlayerInteractionComponent/HumanControlledPlayerComponent/HumanControlledPlayerComponent.h"
 
+
+// Light
+#include "LightComponent/PointLightComponent/PointLightComponent.h"
+
 #endif // !OE1_ICOMPONENT_H_
  

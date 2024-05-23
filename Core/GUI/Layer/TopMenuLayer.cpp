@@ -316,7 +316,7 @@ namespace OE1Core
 			{
 				if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Point Light", "        GameObject        "))
 				{
-
+					SceneEntityFactory::CreatePointLight();
 				}
 				if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Spot Light", "        GameObject        "))
 				{

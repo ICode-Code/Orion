@@ -37,6 +37,7 @@ namespace OE1Core
 
 		// Init Icons
 		RegisterBillboardIcon(ViewportIconBillboardType::CAMERA, "Camera");
+		RegisterBillboardIcon(ViewportIconBillboardType::POINT_LIGHT, "PointLight");
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::POINT_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("PointLight"))));
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::DIRECTIONAL_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("Sun"))));
 

@@ -75,7 +75,7 @@ namespace OE1Core
 
 
 		public:
-			
+			void DefferedLightPass(Component::CameraComponent* _camera);
 			/// <summary>
 			/// This function will take the camera and render the rendered scene into the default frambuffer
 			/// with screen full quad, REMEMBER this will clone rendered camera resolution and everything

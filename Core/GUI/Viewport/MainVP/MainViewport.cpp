@@ -50,7 +50,35 @@ namespace OE1Core
 		ImGui::SetCursorPos({ 0.0f, 0.0f });
 		m_Offset = ImGui::GetCursorPos();
 
-		ImGui::Image((ImTextureID)(intptr_t)SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->GetRenderedScene(), m_ViewportSize, {0, 1}, {1, 0});
+		GLuint __taget_frame = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->GetRenderedScene();
+		switch (SceneManager::GetActiveScene()->GetRenderMode())
+		{
+		case RenderMode::BASE_COLOR:
+			__taget_frame = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->MainFB()->m_Color;
+			break;
+		case RenderMode::NORMAL:
+			__taget_frame = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->MainFB()->m_Normal;
+			break;
+		case RenderMode::AO:
+			__taget_frame = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->MainFB()->m_MetalRougnessAOAlpha;
+			break;
+		case RenderMode::METAL:
+			__taget_frame = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->MainFB()->m_MetalRougnessAOAlpha;
+			break;
+		case RenderMode::ROUGHNESS:
+			__taget_frame = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->MainFB()->m_MetalRougnessAOAlpha;
+			break;
+		case RenderMode::ALPHA:
+			__taget_frame = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->MainFB()->m_MetalRougnessAOAlpha;
+			break;
+		case RenderMode::EMISSION:
+			__taget_frame = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->MainFB()->m_Emission;
+			break;
+		default:
+			break;
+		}
+		 
+		ImGui::Image((ImTextureID)(intptr_t)__taget_frame, m_ViewportSize, {0, 1}, {1, 0});
 		
 
 		HandleClickOverViewport();

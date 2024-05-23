@@ -151,5 +151,10 @@ namespace OE1Core
 
 			m_FullScreenQuadRenderer->Render(frame_buffer->GetAttachment(_attachment_idx));
 		}
+
+		void IVMasterRenderer::DefferedLightPass(Component::CameraComponent* _camera)
+		{
+
+		}
 	}
 }

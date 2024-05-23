@@ -50,6 +50,12 @@ namespace OE1Core
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::TAI_REGISTRY,			Memory::UniformBuffer("TextureAccessIndex")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::ANIMATION_REGISTRY,		Memory::UniformBuffer("AnimationBuffer")));
 
+			// Light
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::POINT_LIGHT_REGISTRY,			Memory::UniformBuffer("PointLightBuffer")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::DIRECTIONAL_LIGHT_REGISTRY,		Memory::UniformBuffer("DirectionalLightBuffer")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::SPOT_LIGHT_REGISTRY,			Memory::UniformBuffer("SpotLightBuffer")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::LIGHT_UTILITY,					Memory::UniformBuffer("LightUtilityBuffer")));
+
 			//// Init Array for Animation buffer
 			//std::vector<Memory::UniformBuffer> _buffers;
 			//for (int i = 0; i < ORI_MAX_ANIMATION_UNIFORM_BUFFER; i++)
@@ -67,6 +73,14 @@ namespace OE1Core
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::TAI_REGISTRY],		Memory::s_TextureAccessIndexBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);
 			
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::ANIMATION_REGISTRY],		Memory::s_AnimationOffsetBufferSize, ORI_MAX_ANIMATION_PER_UNIFORM_BLOCK);
+
+
+			// Light
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::POINT_LIGHT_REGISTRY],			Memory::s_CoreLightPackageBufferSize, ORI_MAX_SCENE_POINT_LIGHT);
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::DIRECTIONAL_LIGHT_REGISTRY],		Memory::s_CoreLightPackageBufferSize, ORI_MAX_SCENE_DIRECTIONAL_LIGHT);
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::SPOT_LIGHT_REGISTRY],				Memory::s_CoreLightPackageBufferSize, ORI_MAX_SCENE_SPOT_LIGHT);
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::LIGHT_UTILITY],					Memory::s_CoreLightPackageBufferSize, 1);
+
 			
 
 			//// Link Buffer array animtion

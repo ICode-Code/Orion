@@ -25,6 +25,13 @@ namespace OE1Core
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Color, 0);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_UID, 0);
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_Position, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_Normal, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, m_MetalRougnessAOAlpha, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, m_Emission, 0);
+
+
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Depth);
 		}
 		void IVForwardMainPassFramebuffer::Update(int _width, int _height)
@@ -37,11 +44,29 @@ namespace OE1Core
 			glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer);
 			glViewport(0, 0, m_Width, m_Height);
 
+			// COLOR
 			glBindTexture(GL_TEXTURE_2D, m_Color);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
 
+			// ID
 			glBindTexture(GL_TEXTURE_2D, m_UID);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_R32I, m_Width, m_Height, 0, GL_RED_INTEGER, GL_INT, NULL);
+
+			// POSITION
+			glBindTexture(GL_TEXTURE_2D, m_Position);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+
+			// NORMAL
+			glBindTexture(GL_TEXTURE_2D, m_Normal);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+
+			// METAL, ROUGHNESS, AO and ALPHA
+			glBindTexture(GL_TEXTURE_2D, m_MetalRougnessAOAlpha);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+
+			// EMISSION
+			glBindTexture(GL_TEXTURE_2D, m_Emission);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
 
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
@@ -67,6 +92,32 @@ namespace OE1Core
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_R32I, m_Width, m_Height, 0, GL_RED_INTEGER, GL_INT, NULL);
 			DefaultTextureFilter();
 
+
+			// Position
+			glGenTextures(1, &m_Position);
+			glBindTexture(GL_TEXTURE_2D, m_Position);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			DefaultTextureFilter();
+
+			// Normal
+			glGenTextures(1, &m_Normal);
+			glBindTexture(GL_TEXTURE_2D, m_Normal);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			DefaultTextureFilter();
+
+			// METAL_ROUGHNESS_AO_ALPHA
+			glGenTextures(1, &m_MetalRougnessAOAlpha);
+			glBindTexture(GL_TEXTURE_2D, m_MetalRougnessAOAlpha);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			DefaultTextureFilter();
+
+
+			// Emission
+			glGenTextures(1, &m_Emission);
+			glBindTexture(GL_TEXTURE_2D, m_Emission);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			DefaultTextureFilter();
+
 			// Depth
 			glGenRenderbuffers(1, &m_Depth);
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
@@ -78,7 +129,7 @@ namespace OE1Core
 
 			SetBufferAttachment();
 
-			SetDrawBuffers(2);
+			SetDrawBuffers(6);
 
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 				LogError("IVFMainCanavs");

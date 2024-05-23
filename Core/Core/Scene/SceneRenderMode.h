@@ -7,8 +7,16 @@ namespace OE1Core
 	enum class RenderMode : int
 	{
 		LIT,
-		MATERIAL,
-		XRAY
+		XRAY,
+
+		BASE_COLOR,
+		NORMAL,
+		METAL,
+		ROUGHNESS,
+		EMISSION,
+		ALPHA,
+		AO
+
 	};
 }
 

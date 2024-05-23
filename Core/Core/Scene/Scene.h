@@ -86,6 +86,11 @@ namespace OE1Core
 		DynamicMesh* RegisterDynamicMesh(IVModel* _model_pkg);
 		bool HasDynamicMesh(uint32_t _package_id);
 
+		// Point Light
+		bool PurgePointLight(uint32_t _entity_id);
+		Component::PointLightComponent* QueryPointLight(uint32_t _entity_id);
+		void RegisterPointLight(uint32_t _entity_id, Component::PointLightComponent* _light);
+
 
 		// DEBUG MESH
 
@@ -161,6 +166,9 @@ namespace OE1Core
 		MasterSceneEditorCamera* m_MasterSceneCamera = nullptr;
 
 		entt::registry m_EntityRegistry;
+
+		// Light
+		std::map<uint32_t, Component::PointLightComponent*> m_PointLightRegistry;
 
 		std::unordered_map<uint32_t, DebugMesh*> m_DebugMeshRegistry;
 		std::unordered_map<uint32_t, DynamicMesh*> m_DynamicMeshRegistry;

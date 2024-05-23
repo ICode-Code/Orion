@@ -23,7 +23,8 @@ namespace OE1Core
 		std::pair<RenderMode, VPNavButton*> m_WireFrame;
 
 	protected:
-		void DrawButton(std::pair<RenderMode, VPNavButton*>& _button, RenderMode& _value);
+		bool DrawButton(std::pair<RenderMode, VPNavButton*>& _button, RenderMode& _value);
+		bool DrawButton_EXT(std::pair<RenderMode, VPNavButton*>& _button, RenderMode& _value);
 
 	};
 }

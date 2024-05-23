@@ -342,6 +342,53 @@ namespace OE1Core
 		return m_DynamicMeshRegistry[_model_pkg->PackageID];
 	}
 
+
+
+
+///////////////////////////////////////////////////////////////////////// POINT-LIGHT-START /////////////////////////////////////////
+
+	bool Scene::PurgePointLight(uint32_t _entity_id)
+	{
+		if (m_PointLightRegistry.find(_entity_id) == m_PointLightRegistry.end())
+		{
+			LOG_ERROR("No Point Light exist! ID:{0}", _entity_id);
+			return false;
+		}
+
+		m_PointLightRegistry.erase(_entity_id);
+
+		// Update each buffer
+		int _idx = 0;
+		for (auto iter = m_PointLightRegistry.begin(); iter != m_PointLightRegistry.end(); iter++, _idx++)
+		{
+			iter->second->SetIndex(_idx);
+			iter->second->UpdateBuffer();
+		}
+
+		return true;
+	}
+	Component::PointLightComponent* Scene::QueryPointLight(uint32_t _entity_id)
+	{
+		if (m_PointLightRegistry.find(_entity_id) == m_PointLightRegistry.end())
+			return nullptr;
+
+		return m_PointLightRegistry[_entity_id];
+	}
+	void Scene::RegisterPointLight(uint32_t _entity_id, Component::PointLightComponent* _light)
+	{
+		if (m_PointLightRegistry.find(_entity_id) != m_PointLightRegistry.end())
+		{
+			LOG_ERROR("Point Light already exist! ID:{0}", _entity_id);
+			return;
+		}
+
+		_light->SetIndex(static_cast<int>(m_PointLightRegistry.size()));
+		m_PointLightRegistry.insert(std::make_pair(_entity_id, _light));
+		_light->UpdateBuffer();
+	}
+
+	///////////////////////////////////////////////////////////////////// POINT_LIGHT_END  ///////////////////////////////////////////
+
 	Ray* Scene::GetRay() { return m_SceneRay; }
 
 	void Scene::SwitchContext(BaseWindow* _window)

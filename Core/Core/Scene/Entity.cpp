@@ -37,6 +37,10 @@ namespace OE1Core
 		if(HasComponent<Component::BoundingVolumeComponent>())
 			GetComponent<Component::BoundingVolumeComponent>().Update(_transform);
 
+		if(HasComponent<Component::PointLightComponent>())
+			GetComponent<Component::PointLightComponent>().Update(_transform[3]);
+			
+
 
 	/*	if(HasComponent<Component::CameraPackageComponent>())
 			GetComponent<Component::CameraPackageComponent>().Update(&GetComponent<Component::TransformComponent>());*/

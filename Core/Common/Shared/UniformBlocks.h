@@ -55,6 +55,48 @@ namespace OE1Core
 		/// //////////////////////////////////////////////////////////////////////////
 
 
+		/// //////////////////////////////////// Core Light Pkg /////////////
+		struct CoreLight
+		{
+			glm::vec4 Position;
+			glm::vec4 Color;
+			// for Dir light
+			// Args[0] ShadowMap Index, Args[1] BufferDataIndex, Args[2] CascadeCount, Args[3] Shadow Resolution
+			//
+			// For PointLight
+			// Args[0] ShadowMap Index, 
+			glm::ivec4 Args;
+			float Radius;
+			float Intensity;
+			float ShadowBias;
+			float TempratureFactor;
+			bool  AffectWorld;
+			bool  Static;
+			bool  CastShadow;
+			bool  SoftShadow;
+			bool  UseTemprature;
+		};
+		inline static constexpr size_t s_CoreLightPackageBufferSize = sizeof(CoreLight);
+
+		/// //////////////////////////////////////////////////////////////////////////
+
+
+		/// //////////////////////////////////// Light Util Param /////////////
+		struct LightUtil
+		{
+			int PointLightCount;
+			int ActivePointLightCount;
+
+			int DirectionalLightCount;
+			int ActiveDirectionalLightCount;
+
+			int SpotLightCount;
+			int ActiveSpotLight;
+		};
+		inline static constexpr size_t s_LightUtilPackageBufferSize = sizeof(LightUtil);
+
+		/// //////////////////////////////////////////////////////////////////////////
+
 		/// ////////////////////////////////////// Block-structure ///////////////////////////////
 
 		struct UniformBuffer
@@ -97,6 +139,7 @@ namespace OE1Core
 			ENVIRONMENT_VARIABLES,
 			POINT_LIGHT_REGISTRY,
 			DIRECTIONAL_LIGHT_REGISTRY,
+			SPOT_LIGHT_REGISTRY,
 			LIGHT_UTILITY,
 			ANIMATION_REGISTRY
 		};

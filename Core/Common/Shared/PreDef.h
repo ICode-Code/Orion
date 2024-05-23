@@ -51,6 +51,12 @@ inline const std::string ORI_ENGEIN_METAL_FILE = ".orion_meta.ini";
 
 #define ORI_MAX_SCENE_CAMERA 128
 
+
+// Light
+#define ORI_MAX_SCENE_DIRECTIONAL_LIGHT 8
+#define ORI_MAX_SCENE_SPOT_LIGHT 64
+#define ORI_MAX_SCENE_POINT_LIGHT 128
+
 // payloads
 #define ORI_STATIC_MESH_PACKAGE_PAYLOAD			"Static_Mesh_Package_Payload"
 #define ORI_DYNAMIC_MESH_PACKAGE_PAYLOAD		"Dynamic_Mesh_Package_Payload"

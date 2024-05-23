@@ -31,6 +31,11 @@ namespace OE1Core
 		static Entity CreateFolderEntity(std::string _name);
 		static Entity CreateSceneCamera(std::string _name = "Scene Camera");
 
+		// Light Entity
+		static Entity CreatePointLight();
+		static Entity CreateDirectionalLight();
+		static Entity CreateSpotLight();
+
 
 		// Component
 		static void AddAudioComponent(Entity _entity);
@@ -93,6 +98,7 @@ namespace OE1Core
 
 
 	public: // Purge Util/ Some component need more that just like remove
+		static void RemovePointLightComponent(Entity _entity);
 		static void RemoveMeshComponent(Entity _entity);
 		static void RemoveBillboardComponent(Entity _entity);
 		static bool RemoveCameraPackageComponent(Entity _entity);

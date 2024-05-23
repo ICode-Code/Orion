@@ -142,6 +142,55 @@ namespace OE1Core
 		return my_entity;
 
 	}
+
+	///////////////////////////////////////////////////////////// LIGHT ///////////////////////////////////
+	Entity SceneEntityFactory::CreatePointLight()
+	{
+		Entity my_entity = m_Scene->CreateEntity();
+		AddDefaultComponent(my_entity, "Scene Point Light");
+
+		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_POINT_LIGHT);
+
+		
+		Component::PointLightComponent& _poit_light = my_entity.AddComponent<Component::PointLightComponent>(
+			Memory::UniformBlockManager::GetBuffer(
+				Memory::UniformBufferID::POINT_LIGHT_REGISTRY)->Buffer);
+
+		m_Scene->RegisterPointLight(static_cast<uint32_t>(my_entity), &my_entity.GetComponent<Component::PointLightComponent>());
+
+		Component::TransformComponent& transform = my_entity.GetComponent<Component::TransformComponent>();
+		transform.m_Position = _poit_light.GetLight().Position;
+		transform.Update();
+
+		Component::ViewportBillboardComponent& billboard = my_entity.AddComponent<Component::ViewportBillboardComponent>(m_Scene->GetBillboardIcon(ViewportIconBillboardType::POINT_LIGHT), (uint32_t)my_entity, ViewportIconBillboardType::CAMERA);
+		billboard.Update(transform, m_Scene->m_MasterSceneCamera->Camera->m_View);
+
+
+		my_entity.GetComponent<Component::InspectorComponent>().SetPointLightComponent(
+			&my_entity.GetComponent<Component::PointLightComponent>()
+		);
+
+		return my_entity;
+	}
+	Entity SceneEntityFactory::CreateDirectionalLight()
+	{
+		return Entity();
+
+		Entity my_entity = m_Scene->CreateEntity();
+		AddDefaultComponent(my_entity, "Scene Directional Light");
+	}
+	Entity SceneEntityFactory::CreateSpotLight()
+	{
+		return Entity();
+
+		Entity my_entity = m_Scene->CreateEntity();
+		AddDefaultComponent(my_entity, "Scene Spot Light");
+	}
+
+
+	////////////////////////////////////////////////////////////// END LIGHT ////////////////////////////////
+
+
 	Entity SceneEntityFactory::CreateDefaultCubeEntity()
 	{
 		return Entity();
@@ -664,7 +713,14 @@ namespace OE1Core
 	}
 
 	/////////// PURG
+	void SceneEntityFactory::RemovePointLightComponent(Entity _entity)
+	{
+		if (!_entity.HasComponent<Component::PointLightComponent>())
+			return;
 
+		m_Scene->PurgePointLight(static_cast<uint32_t>(_entity));
+		_entity.RemoveComponent<Component::PointLightComponent>();
+	}
 	void SceneEntityFactory::RemoveMeshComponent(Entity _entity)
 	{
 		if (!_entity.HasComponent<Component::MeshComponent>())

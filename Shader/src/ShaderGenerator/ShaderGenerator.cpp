@@ -368,6 +368,11 @@ void main()
 
 layout(location = 0) out vec4 PixelColor;
 layout(location = 1) out int UID;
+
+layout(location = 2) out vec4 oPosition;
+layout(location = 3) out vec4 oNormal;
+layout(location = 4) out vec4 oMetalRougnessAOAlpha;
+layout(location = 5) out vec4 oEmission;
 )";
 	}
 	void ShaderGenerator::CM_OpenMainPixelShader()
@@ -554,8 +559,15 @@ Emission = Materials[MaterialIndex].EmissionColor.rgb;
 	void ShaderGenerator::FR_ComputeFinalPixel()
 	{
 		s_Source += R"(
-PixelColor = vec4(pow(Color, vec3(1.0)/2.2f), 1.0f);
-UID = RenderID;
+	float Depth = (gl_FragCoord.z / gl_FragCoord.w);
+	PixelColor = vec4(Color, 1.0f);
+	UID = RenderID;
+
+	oPosition = FragPosition;
+	oNormal = vec4(Normal, 1.0f);
+	oMetalRougnessAOAlpha = vec4(Metal, Roughness, AO, Alpha);
+	oEmission = vec4(Emission, 1.0f);
+	//oEmission.w = EmissionStength;
 
 )";
 	}

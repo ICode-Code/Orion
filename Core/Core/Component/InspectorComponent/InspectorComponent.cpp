@@ -33,6 +33,7 @@ namespace OE1Core
 			ICamController();
 			IThirdPersonCameraControllerComponent();
 			IThirdPersonCharacterControllerComponent();
+			IPointLight();
 
 
 			ImGui::PopStyleColor(7);
@@ -48,6 +49,7 @@ namespace OE1Core
 		void InspectorComponent::SetThirdPersonCameraControllerComponent(ThirdPersonCameraControllerComponent* _tp_camera_Controller_component) { m_ThirdPersonCameraControllerComponent = _tp_camera_Controller_component; };
 		void InspectorComponent::SetThirdPersonCharacterControllerComponent(ThirdPersonCharacterControllerComponent* _tp_character_Controller_component) { m_ThirdPersonCharacterControllerComponent = _tp_character_Controller_component; };
 		void InspectorComponent::SetActorComponent(ActorComponent* _actor) { m_ActorComponent = _actor; };
+		void InspectorComponent::SetPointLightComponent(PointLightComponent* _point_light) { m_PointLightComponent = _point_light; };
 		void InspectorComponent::ITag()
 		{
 			if (!m_TagComponent)
@@ -889,6 +891,23 @@ namespace OE1Core
 
 
 				ImGui::EndDisabled();
+				ImGui::Indent(-16.0f);
+				ImGui::TreePop();
+			}
+		}
+
+		void InspectorComponent::IPointLight()
+		{
+			if (!m_PointLightComponent)
+				return;
+
+
+			if (ImGui::TreeNodeEx("Point Light", m_TreeNodeFlags))
+			{
+				ImGui::Indent(16.0f);
+
+				CustomFrame::UIEditorColor4("Color", glm::value_ptr(m_PointLightComponent->GetLight().Color));
+
 				ImGui::Indent(-16.0f);
 				ImGui::TreePop();
 			}
