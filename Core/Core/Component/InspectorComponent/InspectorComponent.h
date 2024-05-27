@@ -27,7 +27,10 @@ namespace OE1Core
 			void SetThirdPersonCameraControllerComponent(class ThirdPersonCameraControllerComponent* _tp_camera_Controller_component);
 			void SetThirdPersonCharacterControllerComponent(class ThirdPersonCharacterControllerComponent* _tp_character_Controller_component);
 			void SetActorComponent(class ActorComponent* _actor);
+
 			void SetPointLightComponent(class PointLightComponent* _point_light);
+			void SetDirectionalLightComponent(class DirectionalLightComponent* _dir_light);
+			void SetSpotLightComponent(class SpotLightComponent* _spot_light);
 		protected: // components
 			class TagComponent* m_TagComponent = nullptr;
 			class TransformComponent* m_TransformComponent = nullptr;
@@ -41,6 +44,8 @@ namespace OE1Core
 			class ActorComponent* m_ActorComponent = nullptr;
 
 			class PointLightComponent* m_PointLightComponent = nullptr;
+			class DirectionalLightComponent* m_DirectionalLightComponent = nullptr;
+			class SpotLightComponent* m_SpotLightComponent = nullptr;
 		protected: // flag
 			ImGuiTreeNodeFlags m_TreeNodeFlags = ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding;
 
@@ -55,7 +60,10 @@ namespace OE1Core
 			void IAnimationComponent();
 			void IThirdPersonCameraControllerComponent();
 			void IThirdPersonCharacterControllerComponent();
+
 			void IPointLight();
+			void ISpotLight();
+			void IDirectionalLight();
 
 		private: // bool
 			void IVModelInspect(IVModel* _model);

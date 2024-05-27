@@ -35,9 +35,12 @@ namespace OE1Core
 		m_RenderController = new RenderController(this);
 		m_GenesisController = new GenesisController(this);
 
+
 		// Init Icons
 		RegisterBillboardIcon(ViewportIconBillboardType::CAMERA, "Camera");
 		RegisterBillboardIcon(ViewportIconBillboardType::POINT_LIGHT, "PointLight");
+		RegisterBillboardIcon(ViewportIconBillboardType::DIRECTIONAL_LIGHT, "PointLight");
+		RegisterBillboardIcon(ViewportIconBillboardType::SPOT_LIGHT, "PointLight");
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::POINT_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("PointLight"))));
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::DIRECTIONAL_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("Sun"))));
 
@@ -175,5 +178,11 @@ namespace OE1Core
 	}
 	void Scene::SetProtagonist(Component::ActorComponent* _actor) {  m_Protagonist = _actor; }
 	Component::ActorComponent* Scene::GetProtagonist() { return m_Protagonist; }
+
+	Memory::EnvironmentVariablesBuffer& Scene::GetEnvVar() { return m_EnvVarBuffer;}
+	void Scene::UpdateEnvVar()
+	{
+		Memory::UniformBlockManager::UseBuffer(Memory::UniformBufferID::ENVIRONMENT_VARIABLES)->Update(Memory::s_EnvironmentVariablesBufferSize, 0, &m_EnvVarBuffer);
+	}
 	
 }

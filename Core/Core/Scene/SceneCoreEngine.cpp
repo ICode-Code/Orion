@@ -365,6 +365,10 @@ namespace OE1Core
 			iter->second->UpdateBuffer();
 		}
 
+		m_LightUtil.PointLightCount--;
+		Memory::UniformBlockManager::UseBuffer(
+			Memory::UniformBufferID::LIGHT_UTILITY)->Update(Memory::s_LightUtilPackageBufferSize, 0, &m_LightUtil);
+
 		return true;
 	}
 	Component::PointLightComponent* Scene::QueryPointLight(uint32_t _entity_id)
@@ -385,9 +389,118 @@ namespace OE1Core
 		_light->SetIndex(static_cast<int>(m_PointLightRegistry.size()));
 		m_PointLightRegistry.insert(std::make_pair(_entity_id, _light));
 		_light->UpdateBuffer();
+
+		m_LightUtil.PointLightCount++;
+		Memory::UniformBlockManager::UseBuffer(
+			Memory::UniformBufferID::LIGHT_UTILITY)->Update(Memory::s_LightUtilPackageBufferSize, 0, &m_LightUtil);
+	
 	}
 
 	///////////////////////////////////////////////////////////////////// POINT_LIGHT_END  ///////////////////////////////////////////
+
+
+	/////////////////////////////////////////// START DIRECTIONAL LIGHT ///////////////////////////////
+	bool Scene::PurgeDirectionalLight(uint32_t _entity_id)
+	{
+		if (m_DirectionalLightRegistry.find(_entity_id) == m_DirectionalLightRegistry.end())
+		{
+			LOG_ERROR("No Directional Light exist! ID:{0}", _entity_id);
+			return false;
+		}
+
+		m_DirectionalLightRegistry.erase(_entity_id);
+
+		// Update each buffer
+		int _idx = 0;
+		for (auto iter = m_DirectionalLightRegistry.begin(); iter != m_DirectionalLightRegistry.end(); iter++, _idx++)
+		{
+			iter->second->SetIndex(_idx);
+			iter->second->UpdateBuffer();
+		}
+
+		m_LightUtil.DirectionalLightCount--;
+		Memory::UniformBlockManager::UseBuffer(
+			Memory::UniformBufferID::LIGHT_UTILITY)->Update(Memory::s_LightUtilPackageBufferSize, 0, &m_LightUtil);
+
+		return true;
+	}
+	Component::DirectionalLightComponent* Scene::QueryDirectionalLight(uint32_t _entity_id)
+	{
+		if (m_DirectionalLightRegistry.find(_entity_id) == m_DirectionalLightRegistry.end())
+			return nullptr;
+
+		return m_DirectionalLightRegistry[_entity_id];
+	}
+	void Scene::RegisterDirectionalLight(uint32_t _entity_id, Component::DirectionalLightComponent* _light)
+	{
+		if (m_DirectionalLightRegistry.find(_entity_id) != m_DirectionalLightRegistry.end())
+		{
+			LOG_ERROR("Directional Light already exist! ID:{0}", _entity_id);
+			return;
+		}
+
+		_light->SetIndex(static_cast<int>(m_DirectionalLightRegistry.size()));
+		m_DirectionalLightRegistry.insert(std::make_pair(_entity_id, _light));
+		_light->UpdateBuffer();
+
+		m_LightUtil.DirectionalLightCount++;
+		Memory::UniformBlockManager::UseBuffer(
+			Memory::UniformBufferID::LIGHT_UTILITY)->Update(Memory::s_LightUtilPackageBufferSize, 0, &m_LightUtil);
+
+	}
+
+	//////////////////////////////////////////// END DIRECTIONAL LIGHT ///////////////////////////////
+
+	////////////////////////////////////////////// START SPOT LIGHT //////////////////////////////////////
+	bool Scene::PurgeSpotLight(uint32_t _entity_id)
+	{
+		if (m_SpotLightRegistry.find(_entity_id) == m_SpotLightRegistry.end())
+		{
+			LOG_ERROR("No Spot Light exist! ID:{0}", _entity_id);
+			return false;
+		}
+
+		m_SpotLightRegistry.erase(_entity_id);
+
+		// Update each buffer
+		int _idx = 0;
+		for (auto iter = m_SpotLightRegistry.begin(); iter != m_SpotLightRegistry.end(); iter++, _idx++)
+		{
+			iter->second->SetIndex(_idx);
+			iter->second->UpdateBuffer();
+		}
+
+		m_LightUtil.SpotLightCount--;
+		Memory::UniformBlockManager::UseBuffer(
+			Memory::UniformBufferID::LIGHT_UTILITY)->Update(Memory::s_LightUtilPackageBufferSize, 0, &m_LightUtil);
+
+		return true;
+	}
+	Component::SpotLightComponent* Scene::QuerySpotLight(uint32_t _entity_id)
+	{
+		if (m_SpotLightRegistry.find(_entity_id) == m_SpotLightRegistry.end())
+			return nullptr;
+
+		return m_SpotLightRegistry[_entity_id];
+	}
+	void Scene::RegisterSpotlight(uint32_t _entity_id, Component::SpotLightComponent* _light)
+	{
+		if (m_SpotLightRegistry.find(_entity_id) != m_SpotLightRegistry.end())
+		{
+			LOG_ERROR("Spot Light already exist! ID:{0}", _entity_id);
+			return;
+		}
+
+		_light->SetIndex(static_cast<int>(m_SpotLightRegistry.size()));
+		m_SpotLightRegistry.insert(std::make_pair(_entity_id, _light));
+		_light->UpdateBuffer();
+
+		m_LightUtil.SpotLightCount++;
+		Memory::UniformBlockManager::UseBuffer(
+			Memory::UniformBufferID::LIGHT_UTILITY)->Update(Memory::s_LightUtilPackageBufferSize, 0, &m_LightUtil);
+
+	}
+	///////////////////////////////////////////////// END SPOT LIGHT //////////////////////////////////
 
 	Ray* Scene::GetRay() { return m_SceneRay; }
 

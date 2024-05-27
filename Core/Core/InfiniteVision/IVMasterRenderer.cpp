@@ -19,6 +19,7 @@ namespace OE1Core
 			m_DebugShapeRenderer = new IVDebugShapeRenderer();
 			m_SceneDebugShapeRenderer = new IVSceneDebugShapeRenderer();
 			m_FullScreenQuadRenderer = new IVFullScreenQuadRenderer();
+			m_DefferedLightPassRenderer = new IVDefferedLightPassRenderer();
 		}
 		IVMasterRenderer::~IVMasterRenderer()
 		{
@@ -29,6 +30,7 @@ namespace OE1Core
 			delete m_MaterialPreviewRenderer;
 			delete m_SceneDebugShapeRenderer;
 			delete m_FullScreenQuadRenderer;
+			delete m_DefferedLightPassRenderer;
 		}
 		void IVMasterRenderer::PushToRenderStack(StaticMesh* _mesh)
 		{
@@ -118,6 +120,8 @@ namespace OE1Core
 			m_GridRenderer.Render(*m_Scene->m_Grid, ActiveCameraIdx);
 
 			_master_camera->MainFB()->Detach();
+
+			DefferedLightPass(_master_camera);
 		}
 		void IVMasterRenderer::ClientCameraPass(Component::CameraComponent* _clinet_camera)
 		{
@@ -154,7 +158,11 @@ namespace OE1Core
 
 		void IVMasterRenderer::DefferedLightPass(Component::CameraComponent* _camera)
 		{
+			_camera->LightFB()->Attach();
 
+			m_DefferedLightPassRenderer->Render(_camera);
+
+			_camera->LightFB()->Detach();
 		}
 	}
 }

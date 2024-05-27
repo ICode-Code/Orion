@@ -13,6 +13,7 @@
 #include "Renderers/MaterialPreviewRenderer/IVMaterialPreviewRenderer.h"
 #include "Renderers/SceneDebugShapeRenderer/IVSceneDebugShapeRenderer.h"
 #include "Renderers/FullScreenQuadRenderer/IVFullScreenQuadRenderer.h"
+#include "Renderers/DefferedLightPassRenderer/IVDefferedLightPassRenderer.h"
 
 // Render Stack
 #include "RenderStack/RenderStack.h"
@@ -65,6 +66,7 @@ namespace OE1Core
 			IVViewportBillboardIconRenderer* m_ViewportBillboardRenderer = nullptr;
 			IVMaterialPreviewRenderer* m_MaterialPreviewRenderer = nullptr;
 			IVFullScreenQuadRenderer* m_FullScreenQuadRenderer = nullptr;
+			IVDefferedLightPassRenderer* m_DefferedLightPassRenderer = nullptr;
 
 			// Debug
 			IVDebugShapeRenderer* m_DebugShapeRenderer = nullptr;

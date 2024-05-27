@@ -25,6 +25,7 @@ namespace OE1Core
 	void MasterMaterial::AssignShader(Shader* _shader)
 	{
 		m_Shader = _shader;
+		m_Shader->Attach();
 		m_Shader->RegisterTextureUnit("t_ColorMapTexture", 0);
 		m_Shader->RegisterTextureUnit("t_NoneColorMapTexture", 1);
 		m_Shader->AttachTextureUnit();
@@ -228,6 +229,8 @@ namespace OE1Core
 				_tai = MapIdx; 
 				_has_texture = true;
 
+				glBindTexture(GL_TEXTURE_2D_ARRAY, *_texture_id);
+
 				// And Finally Write
 				glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, _tai, _texture->GetWidth(), _texture->GetHeight(), 1, GL_RGBA, GL_UNSIGNED_BYTE, TexturePixel.data());
 				this->ApplyMapFilter();
@@ -261,7 +264,7 @@ namespace OE1Core
 			default_return = true;
 		}
 
-		this->Update();
+		//this->Update();
 
 		m_AvailableTexture = AvailTexture(m_TextureAvailFlag);
 		m_Type = m_AvailableTexture.GetMaterialType();
@@ -362,11 +365,11 @@ namespace OE1Core
 		if (!_texture)
 			return false;
 
-		bool _need_Shader_update = !m_TextureAvailFlag.HasMetalRoughness;
+		bool _need_Shader_update = !m_TextureAvailFlag.HasRoughness;
 
 		bool _state = UpdateTextureCore(
 
-			m_TextureAvailFlag.HasMetalRoughness,
+			m_TextureAvailFlag.HasRoughness,
 			m_TAI.Roughness,
 			m_HasNonColorMap,
 			&m_NonColorTexture,
@@ -383,11 +386,11 @@ namespace OE1Core
 		if (!_texture)
 			return false;
 
-		bool _need_Shader_update = !m_TextureAvailFlag.HasRoughness;
+		bool _need_Shader_update = !m_TextureAvailFlag.HasMetalRoughness;
 
 		bool _state = UpdateTextureCore(
 
-			m_TextureAvailFlag.HasRoughness,
+			m_TextureAvailFlag.HasMetalRoughness,
 			m_TAI.RoughnessMetal,
 			m_HasNonColorMap,
 			&m_NonColorTexture,

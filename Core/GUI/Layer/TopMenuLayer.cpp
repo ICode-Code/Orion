@@ -316,15 +316,21 @@ namespace OE1Core
 			{
 				if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Point Light", "        GameObject        "))
 				{
+					if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::POINT_LIGHT))
+						SceneEntityFactory::GetScene()->RegisterBillboardIcon(ViewportIconBillboardType::POINT_LIGHT, "PointLight");
 					SceneEntityFactory::CreatePointLight();
 				}
 				if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Spot Light", "        GameObject        "))
 				{
-
+					if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::SPOT_LIGHT))
+						SceneEntityFactory::GetScene()->RegisterBillboardIcon(ViewportIconBillboardType::SPOT_LIGHT, "SpotLight");
+					SceneEntityFactory::CreateSpotLight();
 				}
 				if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Directional Light", "        GameObject        "))
 				{
-
+					if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::DIRECTIONAL_LIGHT))
+						SceneEntityFactory::GetScene()->RegisterBillboardIcon(ViewportIconBillboardType::DIRECTIONAL_LIGHT, "Sun");
+					SceneEntityFactory::CreateDirectionalLight();
 				}
 
 				ImGui::EndMenu();

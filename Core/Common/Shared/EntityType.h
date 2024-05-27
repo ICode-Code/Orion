@@ -31,12 +31,14 @@ namespace OE1Core
 		T_AUDIO_SOURCE			= 0x13,
 		T_AUDIO_LISTENER		= 0x14,
 		T_UNIDENTIFIED			= 0x15,
-		T_WRAPPER				= 0x16
+		T_WRAPPER				= 0x16,
+		T_SPOT_LIGHT			= 0x17
 	};
 	static std::unordered_map < EntityType, std::pair < std::string, std::string >> s_TypeRegistry
 	{
 		{ EntityType::T_STATIC_MESH,		std::make_pair<std::string, std::string>("StaticMesh",			ICON_FA_CUBE)	},
 		{ EntityType::T_POINT_LIGHT,		std::make_pair<std::string, std::string>("PointLight",			ICON_FA_LIGHTBULB) },
+		{ EntityType::T_SPOT_LIGHT,			std::make_pair<std::string, std::string>("SpotLight",			ICON_FA_CIRCLE_DOT) },
 		{ EntityType::T_DIRECTIONAL_LIGHT,	std::make_pair<std::string, std::string>("DirectionalLight",	ICON_FA_SUN) },
 		{ EntityType::T_PLAYER,				std::make_pair<std::string, std::string>("Player",				ICON_FA_FLAG_CHECKERED) },
 		{ EntityType::T_BILLBOARD,			std::make_pair<std::string, std::string>("Billboard",			ICON_FA_IMAGES) },

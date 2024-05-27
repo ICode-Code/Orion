@@ -14,7 +14,6 @@ namespace OE1Core
 			: BaseLightComponent{ _other.m_BufferID, _idx }
 		{
 			m_Light = _other.m_Light;
-			m_Index = _idx;
 		}
 		PointLightComponent::~PointLightComponent()
 		{

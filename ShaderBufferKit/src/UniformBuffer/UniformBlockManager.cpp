@@ -49,6 +49,7 @@ namespace OE1Core
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::MATERIAL_REGISTRY,		Memory::UniformBuffer("MaterialProperties")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::TAI_REGISTRY,			Memory::UniformBuffer("TextureAccessIndex")));
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::ANIMATION_REGISTRY,		Memory::UniformBuffer("AnimationBuffer")));
+			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::ENVIRONMENT_VARIABLES,	Memory::UniformBuffer("EnvironmentVariablesBuffer")));
 
 			// Light
 			s_UniformBuffers.insert(std::make_pair(Memory::UniformBufferID::POINT_LIGHT_REGISTRY,			Memory::UniformBuffer("PointLightBuffer")));
@@ -72,6 +73,8 @@ namespace OE1Core
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::MATERIAL_REGISTRY],	Memory::s_MaterialPropertiesBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::TAI_REGISTRY],		Memory::s_TextureAccessIndexBufferSize, ORI_MAX_MATERIAL_PER_UNIFORM_BLOCK);
 			
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::ENVIRONMENT_VARIABLES],		Memory::s_EnvironmentVariablesBufferSize, 1);
+			
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::ANIMATION_REGISTRY],		Memory::s_AnimationOffsetBufferSize, ORI_MAX_ANIMATION_PER_UNIFORM_BLOCK);
 
 
@@ -79,7 +82,7 @@ namespace OE1Core
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::POINT_LIGHT_REGISTRY],			Memory::s_CoreLightPackageBufferSize, ORI_MAX_SCENE_POINT_LIGHT);
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::DIRECTIONAL_LIGHT_REGISTRY],		Memory::s_CoreLightPackageBufferSize, ORI_MAX_SCENE_DIRECTIONAL_LIGHT);
 			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::SPOT_LIGHT_REGISTRY],				Memory::s_CoreLightPackageBufferSize, ORI_MAX_SCENE_SPOT_LIGHT);
-			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::LIGHT_UTILITY],					Memory::s_CoreLightPackageBufferSize, 1);
+			CreateLinkUniformBuffer(s_UniformBuffers[Memory::UniformBufferID::LIGHT_UTILITY],					Memory::s_LightUtilPackageBufferSize, 1);
 
 			
 

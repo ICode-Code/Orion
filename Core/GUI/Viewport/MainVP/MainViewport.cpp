@@ -50,7 +50,7 @@ namespace OE1Core
 		ImGui::SetCursorPos({ 0.0f, 0.0f });
 		m_Offset = ImGui::GetCursorPos();
 
-		GLuint __taget_frame = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->GetRenderedScene();
+		GLuint __taget_frame = SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->LightFB()->GetAttachment(0);
 		switch (SceneManager::GetActiveScene()->GetRenderMode())
 		{
 		case RenderMode::BASE_COLOR:

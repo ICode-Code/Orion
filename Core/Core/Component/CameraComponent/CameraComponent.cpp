@@ -21,10 +21,12 @@ namespace OE1Core
 
 			// Init-Framebuffer
 			m_MainPassFramebuffer = new Renderer::IVForwardMainPassFramebuffer(Renderer::IVFrameSize::R_1k);
+			m_DefferedLightPassFramebuffer = new Renderer::IVDefferedMainLightPassFramebuffer(Renderer::IVFrameSize::R_1k);
 		}
 		CameraComponent::~CameraComponent()
 		{
 			delete m_MainPassFramebuffer;
+			delete m_DefferedLightPassFramebuffer;
 		}
 
 		void CameraComponent::SetBufferOffset(int _offset)
@@ -47,6 +49,7 @@ namespace OE1Core
 
 			m_Resolution = glm::ivec2(_width, _height);
 			m_MainPassFramebuffer->Update(_width, _height);
+			m_DefferedLightPassFramebuffer->Update(_width, _height);
 		}
 		void CameraComponent::UpdateBuffer(float _dt)
 		{
@@ -63,6 +66,7 @@ namespace OE1Core
 		}
 		GLuint CameraComponent::GetRenderedScene() { return m_MainPassFramebuffer->GetAttachment(0); }
 		Renderer::IVForwardMainPassFramebuffer* CameraComponent::MainFB() { return m_MainPassFramebuffer;  };
+		Renderer::IVDefferedMainLightPassFramebuffer* CameraComponent::LightFB() { return m_DefferedLightPassFramebuffer; };
 		float CameraComponent::GetAspectRatio()
 		{
 			return m_AspectRatio = (float)m_Resolution.x / (float)m_Resolution.y;

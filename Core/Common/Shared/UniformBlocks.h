@@ -30,6 +30,36 @@ namespace OE1Core
 
 		/// ///////////////////////////////////////////////////////////////////
 
+		/// ////////////////////////////////////// EnvironmentVariables-Block ///////////////////////////////
+		struct EnvironmentVariablesBuffer
+		{
+			float WorldLightIntensity = 1.0f;  // 4 bytes, offset 0
+			float Exposure = 1.0f;             // 4 bytes, offset 4
+			float Gamma = 2.2f;                // 4 bytes, offset 8
+			float Fresnel = 1.0f;              // 4 bytes, offset 12
+
+			glm::vec4 SunColor = glm::vec4(1.0f);         // 16 bytes, offset 16
+			glm::vec4 SunDirection = glm::vec4(1.0f);     // 16 bytes, offset 32
+
+			float SunBrightness = 1.0f;        // 4 bytes, offset 48
+			float SunRadius = 1.0f;            // 4 bytes, offset 52
+			float padding0[2];          // 8 bytes padding, offset 56
+
+			glm::vec4 FogColor = glm::vec4(0.5f);         // 16 bytes, offset 64
+
+			float FogGradiant = 4.73016f;          // 4 bytes, offset 80
+			float FogDensity = 0.00317f;           // 4 bytes, offset 84
+			float FogIntensity = 0.5f;         // 4 bytes, offset 88
+			float FogLowerLimit = -0.2f;        // 4 bytes, offset 92
+			float FogUpperLimit = 0.2f;        // 4 bytes, offset 96
+			int UseFog = false;                 // 4 bytes, offset 100
+
+			float padding1[3];          // 12 bytes padding, offset 104
+		};
+
+
+		inline static constexpr size_t s_EnvironmentVariablesBufferSize = sizeof(EnvironmentVariablesBuffer);
+		/// /////////////////////////////////////////////////////////////////////////////////////
 
 		/// //////////////////////////// Animation-Offsets //////////////////////
 
@@ -58,23 +88,29 @@ namespace OE1Core
 		/// //////////////////////////////////// Core Light Pkg /////////////
 		struct CoreLight
 		{
-			glm::vec4 Position;
-			glm::vec4 Color;
+			glm::vec4 Position		= glm::vec4(0.0f, 5.0f, 0.0f, 1.0f);
+			glm::vec4 Direction		= glm::vec4(-0.2f, -1.0f, -0.3f, 1.0f);
+			glm::vec4 Color			= glm::vec4(1.0f);
 			// for Dir light
 			// Args[0] ShadowMap Index, Args[1] BufferDataIndex, Args[2] CascadeCount, Args[3] Shadow Resolution
 			//
 			// For PointLight
 			// Args[0] ShadowMap Index, 
-			glm::ivec4 Args;
-			float Radius;
-			float Intensity;
-			float ShadowBias;
-			float TempratureFactor;
-			bool  AffectWorld;
-			bool  Static;
-			bool  CastShadow;
-			bool  SoftShadow;
-			bool  UseTemprature;
+			glm::ivec4 Args				= glm::ivec4(-1);
+			
+			float Radius				= 1.0f;
+			float InnerCutoff			= glm::cos(glm::radians(12.5f));
+			float OuterCutoff			= glm::cos(glm::radians(7.5f));
+			float padd;
+
+			float Intensity			= 5.0f;
+			float ShadowBias		= 0.001f;
+			float TempratureFactor	= 0.5f;
+			int  AffectWorld		= true;
+			int  Static				= false;
+			int  CastShadow			= false;
+			int  SoftShadow			= false;
+			int  UseTemprature		= false;
 		};
 		inline static constexpr size_t s_CoreLightPackageBufferSize = sizeof(CoreLight);
 
@@ -84,14 +120,14 @@ namespace OE1Core
 		/// //////////////////////////////////// Light Util Param /////////////
 		struct LightUtil
 		{
-			int PointLightCount;
-			int ActivePointLightCount;
+			int PointLightCount = 0;
+			int ActivePointLightCount = 0;
 
-			int DirectionalLightCount;
-			int ActiveDirectionalLightCount;
+			int DirectionalLightCount = 0;
+			int ActiveDirectionalLightCount = 0;
 
-			int SpotLightCount;
-			int ActiveSpotLight;
+			int SpotLightCount = 0;
+			int ActiveSpotLight = 0;
 		};
 		inline static constexpr size_t s_LightUtilPackageBufferSize = sizeof(LightUtil);
 

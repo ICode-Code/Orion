@@ -91,6 +91,16 @@ namespace OE1Core
 		Component::PointLightComponent* QueryPointLight(uint32_t _entity_id);
 		void RegisterPointLight(uint32_t _entity_id, Component::PointLightComponent* _light);
 
+		// Directional Light
+		bool PurgeDirectionalLight(uint32_t _entity_id);
+		Component::DirectionalLightComponent* QueryDirectionalLight(uint32_t _entity_id);
+		void RegisterDirectionalLight(uint32_t _entity_id, Component::DirectionalLightComponent* _light);
+
+		// Spot Light
+		bool PurgeSpotLight(uint32_t _entity_id);
+		Component::SpotLightComponent* QuerySpotLight(uint32_t _entity_id);
+		void RegisterSpotlight(uint32_t _entity_id, Component::SpotLightComponent* _light);
+
 
 		// DEBUG MESH
 
@@ -155,6 +165,9 @@ namespace OE1Core
 		void SetProtagonist(Component::ActorComponent* _actor);
 		Component::ActorComponent* GetProtagonist();
 
+		Memory::EnvironmentVariablesBuffer& GetEnvVar();
+		void UpdateEnvVar();
+
 
 	public:
 		class Renderer::IVRenderStack* m_RenderStack = nullptr;
@@ -169,6 +182,8 @@ namespace OE1Core
 
 		// Light
 		std::map<uint32_t, Component::PointLightComponent*> m_PointLightRegistry;
+		std::map<uint32_t, Component::DirectionalLightComponent*> m_DirectionalLightRegistry;
+		std::map<uint32_t, Component::SpotLightComponent*> m_SpotLightRegistry;
 
 		std::unordered_map<uint32_t, DebugMesh*> m_DebugMeshRegistry;
 		std::unordered_map<uint32_t, DynamicMesh*> m_DynamicMeshRegistry;
@@ -189,6 +204,8 @@ namespace OE1Core
 		float m_LastDelta = 0.0f;
 		Entity* m_ActivePlayerEntity = nullptr;
 		bool m_UseActiveThreadForAnimation = false;
+		Memory::LightUtil m_LightUtil;
+		Memory::EnvironmentVariablesBuffer m_EnvVarBuffer;
 
 
 

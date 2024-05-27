@@ -356,8 +356,6 @@ void main()
 
 #include <../ExternalAsset/Shaders/Header/UniformBlock/standard_static_mesh_texture_uniforms.h>
 #include <../ExternalAsset/Shaders/Header/UniformBlock/material_data_uniform_block.h>
-#include <../ExternalAsset/Shaders/Header/UniformBlock/enviroment_var_uniform_block.h>
-#include <../ExternalAsset/Shaders/Header/UniformBlock/light_uniform_block.h>
 
 )";
 	}
@@ -512,8 +510,8 @@ Metal = Materials[MaterialIndex].MetalRoughEmissionAlpha.r;
 	{
 		s_Source += R"(
 vec4 mat_arg = texture(t_NoneColorMapTexture, vec3(TexCoord, TextureIndex[MaterialIndex].RoughnessMetal));
-Metal = mat_arg.g;
-Roughness = mat_arg.b;
+Metal = mat_arg.b;
+Roughness = mat_arg.g;
 )";
 	}
 	void ShaderGenerator::FR_ReadAO()

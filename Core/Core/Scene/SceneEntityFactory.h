@@ -96,9 +96,16 @@ namespace OE1Core
 		static void CloneBoundingVolume(Entity& _src, Entity _dest);
 		static void CloneActorComponent(Entity _src, Entity _dest);
 
+		static void ClonePointLight(Entity _src, Entity _dest);
+		static void CloneDirectionalLight(Entity _src, Entity _dest);
+		static void CloneSpotLight(Entity _src, Entity _dest);
+
 
 	public: // Purge Util/ Some component need more that just like remove
 		static void RemovePointLightComponent(Entity _entity);
+		static void RemoveDirectionalLightComponent(Entity _entity);
+		static void RemoveSpotLightComponent(Entity _entity);
+
 		static void RemoveMeshComponent(Entity _entity);
 		static void RemoveBillboardComponent(Entity _entity);
 		static bool RemoveCameraPackageComponent(Entity _entity);

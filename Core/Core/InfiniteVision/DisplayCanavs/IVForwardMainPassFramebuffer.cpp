@@ -20,6 +20,11 @@ namespace OE1Core
 			glDeleteTextures(1, &m_Color);
 			glDeleteTextures(1, &m_UID);
 			glDeleteRenderbuffers(1, &m_Depth);
+
+			glDeleteTextures(1, &m_Position);
+			glDeleteTextures(1, &m_Normal);
+			glDeleteTextures(1, &m_MetalRougnessAOAlpha);
+			glDeleteTextures(1, &m_Emission);
 		}
 		void IVForwardMainPassFramebuffer::SetBufferAttachment()
 		{
@@ -68,6 +73,7 @@ namespace OE1Core
 			glBindTexture(GL_TEXTURE_2D, m_Emission);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
 
+			// DEPTH
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
 

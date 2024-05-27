@@ -7,6 +7,7 @@
 #include <vector>
 #include "../Core/DS/OptStructure/Frustum/Frustum.h"
 #include "../../InfiniteVision/DisplayCanavs/IVForwardMainPassFramebuffer.h"
+#include "../../InfiniteVision/DisplayCanavs/IVDefferedMainLightPassFrameebuffer.h"
 #include "CameraParameter.h"
 #include <UniformBuffer/UniformBlockManager.h>
 
@@ -52,6 +53,7 @@ namespace OE1Core
 
 			GLuint GetRenderedScene();
 			Renderer::IVForwardMainPassFramebuffer* MainFB();
+			Renderer::IVDefferedMainLightPassFramebuffer* LightFB();
 
 			std::vector<glm::vec3>& GetFrustumCorner();
 			Frustum& GetFrustum();
@@ -112,6 +114,7 @@ namespace OE1Core
 			Frustum m_Frustum;
 			int m_BufferOffset;
 			Renderer::IVForwardMainPassFramebuffer* m_MainPassFramebuffer = nullptr;
+			Renderer::IVDefferedMainLightPassFramebuffer* m_DefferedLightPassFramebuffer = nullptr;
 
 		private:
 			Memory::SceneTransfrom m_BufferTransform;

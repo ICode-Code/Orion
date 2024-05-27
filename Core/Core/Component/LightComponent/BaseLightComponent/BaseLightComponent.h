@@ -15,9 +15,9 @@ namespace OE1Core
 
 			void SetIndex(int _index);
 			int GetIndex();
-			void Update(glm::vec3 _position);
-			void UpdateBuffer();
-			Memory::CoreLight& GetLight();
+			virtual void Update(glm::vec3 _position, glm::vec3 _rot = glm::vec3(-0.2f, -1.0f, -0.3f));
+			virtual void UpdateBuffer();
+			Memory::CoreLight& GetData();
 			GLuint GetBufferID();
 
 

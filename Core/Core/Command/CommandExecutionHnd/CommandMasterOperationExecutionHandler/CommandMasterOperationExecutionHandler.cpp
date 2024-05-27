@@ -18,7 +18,7 @@ namespace OE1Core
 		{
 			ProcessAssetLoadCommands();
 			ProcessPurgeDynamicViewportCommand();
-			ProcessMaterialCreationCommand();
+			//ProcessMaterialCreationCommand();
 
 		}
 
@@ -143,6 +143,7 @@ namespace OE1Core
 						MasterMaterial* MASTER_MATERIAL = MaterialManager::RegisterMaterial(
 							commandX.MaterialName, new Shader(VERTEX_SHADER.c_str(), FRAGMENT_SHADER.c_str(), VERTEX_SHADER_PROXY.c_str())
 						);
+						MASTER_MATERIAL->m_AvailableTexture = commandX.AvialTextures;
 
 						// Assign textures to the material and update it
 						if (MATERIAL_TYPE == MaterialType::DEFAULT)
@@ -172,6 +173,14 @@ namespace OE1Core
 								MASTER_MATERIAL->RegisterEmissionMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::EMISSIVE]));
 							if (commandX.TextureFlag.HasAlpha)
 								MASTER_MATERIAL->RegisterAlphaMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::OPACITY]));
+
+							/*if (MASTER_MATERIAL->m_Dirty)
+							{
+								MASTER_MATERIAL->m_Shader->UpdateFragmentShader(
+									ShaderGenerator::GetForwardPixelShader(MASTER_MATERIAL->m_AvailableTexture)
+								);
+								MASTER_MATERIAL->m_Dirty = false;
+							}*/
 
 							// Update the material and assign it to the mesh
 							MASTER_MATERIAL->Update();

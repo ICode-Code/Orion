@@ -34,6 +34,8 @@ namespace OE1Core
 			IThirdPersonCameraControllerComponent();
 			IThirdPersonCharacterControllerComponent();
 			IPointLight();
+			ISpotLight();
+			IDirectionalLight();
 
 
 			ImGui::PopStyleColor(7);
@@ -50,6 +52,9 @@ namespace OE1Core
 		void InspectorComponent::SetThirdPersonCharacterControllerComponent(ThirdPersonCharacterControllerComponent* _tp_character_Controller_component) { m_ThirdPersonCharacterControllerComponent = _tp_character_Controller_component; };
 		void InspectorComponent::SetActorComponent(ActorComponent* _actor) { m_ActorComponent = _actor; };
 		void InspectorComponent::SetPointLightComponent(PointLightComponent* _point_light) { m_PointLightComponent = _point_light; };
+		
+		void InspectorComponent::SetDirectionalLightComponent(DirectionalLightComponent* _dir_light) { m_DirectionalLightComponent = _dir_light; }
+		void InspectorComponent::SetSpotLightComponent(SpotLightComponent* _spot_light) { m_SpotLightComponent = _spot_light; };
 		void InspectorComponent::ITag()
 		{
 			if (!m_TagComponent)
@@ -906,8 +911,50 @@ namespace OE1Core
 			{
 				ImGui::Indent(16.0f);
 
-				CustomFrame::UIEditorColor4("Color", glm::value_ptr(m_PointLightComponent->GetLight().Color));
+				CustomFrame::UIEditorColor4("Color", glm::value_ptr(m_PointLightComponent->GetData().Color));
+				CustomFrame::UIEditorFloat("Intensity", &m_PointLightComponent->GetData().Intensity, 0.0f, 1024.0f);
+				ImGui::Indent(-16.0f);
+				ImGui::TreePop();
+			}
+		}
+		void InspectorComponent::ISpotLight()
+		{
+			if (!m_SpotLightComponent)
+				return;
 
+			if (ImGui::TreeNodeEx("Spot Light", m_TreeNodeFlags))
+			{
+				ImGui::Indent(16.0f);
+
+				CustomFrame::UIEditorColor4("Color", glm::value_ptr(m_SpotLightComponent->GetData().Color));
+				CustomFrame::UIEditorFloatDrag("Intensity", &m_SpotLightComponent->GetData().Intensity);
+
+				/*static float _inner_cut = 12.5f;
+				if (CustomFrame::UIEditorFloatDrag("Raduis", &_inner_cut))
+					m_SpotLightComponent->GetData().InnerCutoff = glm::cos(glm::radians(_inner_cut));*/
+
+				static float _outer_cut = 20.0f;
+				if (CustomFrame::UIEditorFloatDrag("Raduis", &_outer_cut))
+				{
+					m_SpotLightComponent->GetData().OuterCutoff = glm::cos(glm::radians(_outer_cut));
+					m_SpotLightComponent->GetData().InnerCutoff = glm::cos(glm::radians(_outer_cut - 10.0f));
+				}
+
+				ImGui::Indent(-16.0f);
+				ImGui::TreePop();
+			}
+		}
+		void InspectorComponent::IDirectionalLight()
+		{
+			if (!m_DirectionalLightComponent)
+				return;
+
+			if (ImGui::TreeNodeEx("Directioanl Light", m_TreeNodeFlags))
+			{
+				ImGui::Indent(16.0f);
+
+				CustomFrame::UIEditorColor4("Color", glm::value_ptr(m_DirectionalLightComponent->GetData().Color));
+				CustomFrame::UIEditorFloat("Intensity", &m_DirectionalLightComponent->GetData().Intensity, 0.0f, 64.0f);
 				ImGui::Indent(-16.0f);
 				ImGui::TreePop();
 			}

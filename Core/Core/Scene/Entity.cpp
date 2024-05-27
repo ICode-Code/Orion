@@ -39,7 +39,13 @@ namespace OE1Core
 
 		if(HasComponent<Component::PointLightComponent>())
 			GetComponent<Component::PointLightComponent>().Update(_transform[3]);
+
+		if (HasComponent<Component::DirectionalLightComponent>())
+			GetComponent<Component::DirectionalLightComponent>().Update(_transform[3], GetComponent<Component::TransformComponent>().m_Euler);
 			
+		if (HasComponent<Component::SpotLightComponent>())
+			GetComponent<Component::SpotLightComponent>().Update(_transform[3], GetComponent<Component::TransformComponent>().m_Euler);
+
 
 
 	/*	if(HasComponent<Component::CameraPackageComponent>())

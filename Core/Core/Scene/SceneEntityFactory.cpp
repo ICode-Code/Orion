@@ -29,6 +29,10 @@ namespace OE1Core
 		CloneCameraPackageComponent(_src_entity, my_new_entity);
 		CloneBoundingVolume(_src_entity, my_new_entity);
 		CloneActorComponent(_src_entity, my_new_entity);
+		ClonePointLight(_src_entity, my_new_entity);
+		CloneSpotLight(_src_entity, my_new_entity);
+		CloneDirectionalLight(_src_entity, my_new_entity);
+		
 
 
 		return my_new_entity;
@@ -53,6 +57,9 @@ namespace OE1Core
 		while (!transform.IsLeaf())
 			transform.m_Children.front()->GetComponent<Component::TransformComponent>().RemoveParent();
 
+		RemovePointLightComponent(_entity);
+		RemoveDirectionalLightComponent(_entity);
+		RemoveSpotLightComponent(_entity);
 		RemoveBillboardComponent(_entity);
 		RemoveMeshComponent(_entity);
 		RemoveBoundingVolumeComponent(_entity);
@@ -159,10 +166,12 @@ namespace OE1Core
 		m_Scene->RegisterPointLight(static_cast<uint32_t>(my_entity), &my_entity.GetComponent<Component::PointLightComponent>());
 
 		Component::TransformComponent& transform = my_entity.GetComponent<Component::TransformComponent>();
-		transform.m_Position = _poit_light.GetLight().Position;
+		transform.m_Position = _poit_light.GetData().Position;
 		transform.Update();
+		 
+		ViewportBillboardIcon* _icon = m_Scene->GetBillboardIcon(ViewportIconBillboardType::POINT_LIGHT);
 
-		Component::ViewportBillboardComponent& billboard = my_entity.AddComponent<Component::ViewportBillboardComponent>(m_Scene->GetBillboardIcon(ViewportIconBillboardType::POINT_LIGHT), (uint32_t)my_entity, ViewportIconBillboardType::CAMERA);
+		Component::ViewportBillboardComponent& billboard = my_entity.AddComponent<Component::ViewportBillboardComponent>(_icon, (uint32_t)my_entity, ViewportIconBillboardType::POINT_LIGHT);
 		billboard.Update(transform, m_Scene->m_MasterSceneCamera->Camera->m_View);
 
 
@@ -172,21 +181,110 @@ namespace OE1Core
 
 		return my_entity;
 	}
+	void SceneEntityFactory::ClonePointLight(Entity _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::PointLightComponent>())
+			return;
+
+		Component::PointLightComponent& _poit_light = _dest.AddComponent<Component::PointLightComponent>(
+			_src.GetComponent<Component::PointLightComponent>(), 0);
+
+		m_Scene->RegisterPointLight(static_cast<uint32_t>(_dest), &_dest.GetComponent<Component::PointLightComponent>());
+
+		_dest.GetComponent<Component::InspectorComponent>().SetPointLightComponent(
+			&_dest.GetComponent<Component::PointLightComponent>()
+		);
+
+	}
 	Entity SceneEntityFactory::CreateDirectionalLight()
 	{
-		return Entity();
-
 		Entity my_entity = m_Scene->CreateEntity();
 		AddDefaultComponent(my_entity, "Scene Directional Light");
+
+		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_DIRECTIONAL_LIGHT);
+
+
+		Component::DirectionalLightComponent& _dir_light = my_entity.AddComponent<Component::DirectionalLightComponent>(
+			Memory::UniformBlockManager::GetBuffer(
+				Memory::UniformBufferID::DIRECTIONAL_LIGHT_REGISTRY)->Buffer);
+
+		m_Scene->RegisterDirectionalLight(static_cast<uint32_t>(my_entity), &my_entity.GetComponent<Component::DirectionalLightComponent>());
+
+		Component::TransformComponent& transform = my_entity.GetComponent<Component::TransformComponent>();
+		transform.m_Position = _dir_light.GetData().Position;
+		transform.m_Euler = _dir_light.GetData().Position;
+		transform.Update();
+
+		ViewportBillboardIcon* _icon = m_Scene->GetBillboardIcon(ViewportIconBillboardType::DIRECTIONAL_LIGHT);
+		
+		Component::ViewportBillboardComponent& billboard = my_entity.AddComponent<Component::ViewportBillboardComponent>(_icon, (uint32_t)my_entity, ViewportIconBillboardType::DIRECTIONAL_LIGHT);
+		billboard.Update(transform, m_Scene->m_MasterSceneCamera->Camera->m_View);
+
+
+		my_entity.GetComponent<Component::InspectorComponent>().SetDirectionalLightComponent(
+			&my_entity.GetComponent<Component::DirectionalLightComponent>()
+		);
+
+		return my_entity;
+	}
+	void SceneEntityFactory::CloneDirectionalLight(Entity _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::DirectionalLightComponent>())
+			return;
+
+		Component::DirectionalLightComponent& _poit_light = _dest.AddComponent<Component::DirectionalLightComponent>(
+			_src.GetComponent<Component::DirectionalLightComponent>(), 0);
+
+		m_Scene->RegisterDirectionalLight(static_cast<uint32_t>(_dest), &_dest.GetComponent<Component::DirectionalLightComponent>());
+
+		_dest.GetComponent<Component::InspectorComponent>().SetDirectionalLightComponent(
+			&_dest.GetComponent<Component::DirectionalLightComponent>()
+		);
+
 	}
 	Entity SceneEntityFactory::CreateSpotLight()
 	{
-		return Entity();
-
 		Entity my_entity = m_Scene->CreateEntity();
 		AddDefaultComponent(my_entity, "Scene Spot Light");
-	}
 
+		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_SPOT_LIGHT);
+
+
+		Component::SpotLightComponent& _dir_light = my_entity.AddComponent<Component::SpotLightComponent>(
+			Memory::UniformBlockManager::GetBuffer(
+				Memory::UniformBufferID::SPOT_LIGHT_REGISTRY)->Buffer, 0);
+
+		m_Scene->RegisterSpotlight(static_cast<uint32_t>(my_entity), &my_entity.GetComponent<Component::SpotLightComponent>());
+
+		Component::TransformComponent& transform = my_entity.GetComponent<Component::TransformComponent>();
+		transform.m_Position = _dir_light.GetData().Position;
+		transform.Update();
+
+		Component::ViewportBillboardComponent& billboard = my_entity.AddComponent<Component::ViewportBillboardComponent>(m_Scene->GetBillboardIcon(ViewportIconBillboardType::SPOT_LIGHT), (uint32_t)my_entity, ViewportIconBillboardType::SPOT_LIGHT);
+		billboard.Update(transform, m_Scene->m_MasterSceneCamera->Camera->m_View);
+
+
+		my_entity.GetComponent<Component::InspectorComponent>().SetSpotLightComponent(
+			&my_entity.GetComponent<Component::SpotLightComponent>()
+		);
+
+		return my_entity;
+	}
+	void SceneEntityFactory::CloneSpotLight(Entity _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::SpotLightComponent>())
+			return;
+
+		Component::SpotLightComponent& _poit_light = _dest.AddComponent<Component::SpotLightComponent>(
+			_src.GetComponent<Component::SpotLightComponent>(), 0);
+
+		m_Scene->RegisterSpotlight(static_cast<uint32_t>(_dest), &_dest.GetComponent<Component::SpotLightComponent>());
+
+		_dest.GetComponent<Component::InspectorComponent>().SetSpotLightComponent(
+			&_dest.GetComponent<Component::SpotLightComponent>()
+		);
+
+	}
 
 	////////////////////////////////////////////////////////////// END LIGHT ////////////////////////////////
 
@@ -720,6 +818,22 @@ namespace OE1Core
 
 		m_Scene->PurgePointLight(static_cast<uint32_t>(_entity));
 		_entity.RemoveComponent<Component::PointLightComponent>();
+	}
+	void SceneEntityFactory::RemoveDirectionalLightComponent(Entity _entity)
+	{
+		if (!_entity.HasComponent<Component::DirectionalLightComponent>())
+			return;
+
+		m_Scene->PurgeDirectionalLight(static_cast<uint32_t>(_entity));
+		_entity.RemoveComponent<Component::DirectionalLightComponent>();
+	}
+	void SceneEntityFactory::RemoveSpotLightComponent(Entity _entity)
+	{
+		if (!_entity.HasComponent<Component::SpotLightComponent>())
+			return;
+
+		m_Scene->PurgeSpotLight(static_cast<uint32_t>(_entity));
+		_entity.RemoveComponent<Component::SpotLightComponent>();
 	}
 	void SceneEntityFactory::RemoveMeshComponent(Entity _entity)
 	{

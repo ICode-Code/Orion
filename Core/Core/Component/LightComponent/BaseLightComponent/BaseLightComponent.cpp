@@ -9,11 +9,6 @@ namespace OE1Core
 		{
 			m_BufferID = _buffer;
 			m_Index = _index;
-
-			m_Light.Position = glm::vec4(0.0f, 5.0f, 0.0f, 0.0f);
-			m_Light.Intensity = 5.0f;
-			m_Light.Color = glm::vec4(1.0f);
-			m_Light.AffectWorld = true;
 		}
 		BaseLightComponent::~BaseLightComponent()
 		{
@@ -21,7 +16,7 @@ namespace OE1Core
 		}
 		GLuint BaseLightComponent::GetBufferID() { return m_BufferID; };
 
-		Memory::CoreLight& BaseLightComponent::GetLight() { return m_Light; };
+		Memory::CoreLight& BaseLightComponent::GetData() { return m_Light; };
 
 		void BaseLightComponent::SetIndex(int _index)
 		{
@@ -29,7 +24,7 @@ namespace OE1Core
 		}
 		int BaseLightComponent::GetIndex() { return m_Index; }
 
-		void BaseLightComponent::Update(glm::vec3 _position)
+		void BaseLightComponent::Update(glm::vec3 _position, glm::vec3 _rot)
 		{
 			m_Light.Position = glm::vec4(_position, 1.0f);
 			glBindBuffer(GL_UNIFORM_BUFFER, m_BufferID);

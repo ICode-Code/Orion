@@ -24,6 +24,8 @@
 
 // Light
 #include "LightComponent/PointLightComponent/PointLightComponent.h"
+#include "LightComponent/DirectionaLightlComponent/DirectionaLightlComponent.h"
+#include "LightComponent/SpotLightComponent/SpotLightComponent.h"
 
 #endif // !OE1_ICOMPONENT_H_
  

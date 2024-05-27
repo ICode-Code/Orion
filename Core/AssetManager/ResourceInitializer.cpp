@@ -23,6 +23,7 @@ namespace OE1Core
 
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "PointLight.png",			"PointLight");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Sun.png",					"Sun");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "SpotLight.png",			"SpotLight");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Camera.png",				"Camera");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Scene.png",				"SceneIco");
 
