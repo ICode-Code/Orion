@@ -27,6 +27,7 @@ namespace OE1Core
 		AddShaderFromDefaultPath("OES_SceneDebugShape.shader", ShaderID::SCENE_DEBUG_SHAPE);
 		AddShaderFromDefaultPath("OES_FullScreenQuad.shader",	ShaderID::FULL_SCREEN_QUAD);
 		AddShaderFromDefaultPath("OES_DefferedLightPass.shader", ShaderID::DEFFERED_LIGHT_PASS);
+		AddShaderFromDefaultPath("OES_Skybox.shader", ShaderID::SKYBOX);
 	}
 	void ShaderManager::AddShader(std::string _path, ShaderID _id, std::string _name)
 	{

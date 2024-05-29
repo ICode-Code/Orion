@@ -23,7 +23,7 @@ namespace OE1Core
 		{
 			glDeleteFramebuffers(1, &m_Framebuffer);
 		}
-
+		GLuint IVForwardBaseFramebuffer::GetBuffer() { return m_Framebuffer; };
 		int IVForwardBaseFramebuffer::GetWidth() const { return m_Width; }
 		int IVForwardBaseFramebuffer::GetHeight() const { return m_Height; }
 

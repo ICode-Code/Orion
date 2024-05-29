@@ -3,6 +3,7 @@
 
 #include "Animation/Animation.h"
 #include "../Core/Texture/Texture.h"
+#include "../Core/Texture/TextureCubeMap.h"
 #include "Texture/TextureLoader.h"
 #include "../Core/MeshCluster/IVModel.h"
 #include "../Core/MeshCluster/CoreDebugShape.h"
@@ -25,6 +26,9 @@ namespace OE1Core
 		// make sure it is not nullptr before using
 		static Texture* GetInternalTexture(std::string _name);
 
+		static TextureCubeMap* GetCubeMapTexture(std::string _name);
+		static std::unordered_map<std::string, TextureCubeMap*>& GetCubeMapTextureRegistry();
+		static void RegisterTextureCubeMap(std::vector<DataBlock::Image2D> _source, std::string _image);
 
 		static bool HasTexture(std::string _name);
 		static bool HasTexture(DataBlock::Image2D& _image);
@@ -79,6 +83,7 @@ namespace OE1Core
 		inline static std::unordered_map<DynamicAssetType, IVModel> s_InternalPurposeGeometry;
 
 		inline static std::unordered_map<std::string, Texture*> s_TextureInternalRegistry;
+		inline static std::unordered_map<std::string, TextureCubeMap*> s_TextureCubeMapInternalRegistry;
 
 		inline static std::unordered_map<std::string, IVModel> s_DebugMeshRegistry;
 

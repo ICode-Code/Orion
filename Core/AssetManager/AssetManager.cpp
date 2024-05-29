@@ -25,6 +25,11 @@ namespace OE1Core
 		for (auto iter : s_AnimationRegistry)
 			delete iter.second;
 		s_AnimationRegistry.clear();
+
+		for (auto iter : s_TextureCubeMapInternalRegistry)
+			delete iter.second;
+		s_TextureCubeMapInternalRegistry.clear();
+		
 	}
 	Texture* AssetManager::RegisterTexture(std::string _path, std::string _name)
 	{
@@ -88,6 +93,8 @@ namespace OE1Core
 		}
 
 		s_TextureInternalRegistry.insert(std::make_pair(_name, new Texture(image_raw)));
+
+		stbi_image_free(image_raw.Data);
 	}
 	void AssetManager::RegisterHDRITexture(std::string _path, std::string _name)
 	{
@@ -267,6 +274,28 @@ namespace OE1Core
 			return nullptr;
 		
 		return &s_DebugMeshRegistry[_name];
+	}
+
+	TextureCubeMap* AssetManager::GetCubeMapTexture(std::string _name)
+	{
+		if (s_TextureCubeMapInternalRegistry.find(_name) == s_TextureCubeMapInternalRegistry.end())
+			return nullptr;
+		return s_TextureCubeMapInternalRegistry[_name];
+	}
+	std::unordered_map<std::string, TextureCubeMap*>& AssetManager::GetCubeMapTextureRegistry() { return s_TextureCubeMapInternalRegistry; }
+	void AssetManager::RegisterTextureCubeMap(std::vector<DataBlock::Image2D> _source, std::string _name)
+	{
+		if (s_TextureCubeMapInternalRegistry.find(_name) != s_TextureCubeMapInternalRegistry.end())
+		{
+			LOG_ERROR("Cube Map Texture with the same name exist!");
+			
+			for (size_t i = 0; i < _source.size(); i++)
+				stbi_image_free(_source[i].Data);
+			_source.clear();
+			return;
+		}
+
+		s_TextureCubeMapInternalRegistry.insert(std::make_pair(_name, new TextureCubeMap(_source, _name)));
 	}
 
 }

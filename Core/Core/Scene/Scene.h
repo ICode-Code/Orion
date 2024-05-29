@@ -136,6 +136,9 @@ namespace OE1Core
 
 		Entity* GetActivePlayerEntity();
 		void SetActivePlayerEntity(Entity _entity);
+
+		TextureCubeMap* GetSceneCubeMap();
+		void SetSceneCubeMap(TextureCubeMap* _cube_map);
 		
 		/// <summary>
 		/// This function can be used in d/t senario for now we gone use it to add items into the 
@@ -171,6 +174,7 @@ namespace OE1Core
 
 	public:
 		class Renderer::IVRenderStack* m_RenderStack = nullptr;
+		TextureCubeMap* m_ActiveTextureCubeMap = nullptr;
 		Grid* m_Grid = nullptr;
 		SDL_Window* m_Window;
 		bool m_UtilizeSpecialDataStructureForFrusumCull = false;

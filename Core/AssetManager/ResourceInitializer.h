@@ -3,6 +3,7 @@
 
 #include "AssetManager.h"
 #include "DynamicAssetCreator/DynamicAssetCreator.h"
+#include <filesystem>
 
 namespace OE1Core
 {
@@ -17,10 +18,12 @@ namespace OE1Core
 		void InitTexture();
 		void InitBaseMesh();
 		void InitInternalUsageMesh();
+		void LoadDefaultCubeMap();
 
 
 	private:
 		inline static const std::string s_DefaultTexturePath = "../ExternalAsset/Default/Texture/";
+		inline static const std::filesystem::path s_DefaultCubemapTexturePath = "../ExternalAsset/Default/Cubemap/";
 		inline static const std::string s_DefaultMeshPath = "../ExternalAsset/Default/Mesh/";
 	};
 }

@@ -20,6 +20,7 @@ namespace OE1Core
 			m_SceneDebugShapeRenderer = new IVSceneDebugShapeRenderer();
 			m_FullScreenQuadRenderer = new IVFullScreenQuadRenderer();
 			m_DefferedLightPassRenderer = new IVDefferedLightPassRenderer();
+			m_SkyboxPassRenderer = new IVSkyboxRenderer();
 		}
 		IVMasterRenderer::~IVMasterRenderer()
 		{
@@ -31,6 +32,7 @@ namespace OE1Core
 			delete m_SceneDebugShapeRenderer;
 			delete m_FullScreenQuadRenderer;
 			delete m_DefferedLightPassRenderer;
+			delete m_SkyboxPassRenderer;
 		}
 		void IVMasterRenderer::PushToRenderStack(StaticMesh* _mesh)
 		{
@@ -107,21 +109,15 @@ namespace OE1Core
 
 			m_MeshRenderer->Render(m_Scene->m_RenderStack, ActiveCameraIdx);
 
-
-			m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), ActiveCameraIdx);
-
 			// Debug
 			m_DebugShapeRenderer->Render(m_Scene->m_DebugMeshRegistry);
 			//m_SceneDebugShapeRenderer->Render(m_Scene->m_TurboOctree->GetRootNode());
 
-
 			m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, ActiveCameraIdx);
-
-			m_GridRenderer.Render(*m_Scene->m_Grid, ActiveCameraIdx);
 
 			_master_camera->MainFB()->Detach();
 
-			DefferedLightPass(_master_camera);
+			DefferedLightPassMaster(_master_camera);
 		}
 		void IVMasterRenderer::ClientCameraPass(Component::CameraComponent* _clinet_camera)
 		{
@@ -134,6 +130,8 @@ namespace OE1Core
 			m_MeshRenderer->Render(m_Scene->m_RenderStack, _clinet_camera->GetBuffertOffset());
 
 			_clinet_camera->MainFB()->Detach();
+
+			DefferedLightPass(_clinet_camera);
 		}
 		void IVMasterRenderer::FlushRenderCommand()
 		{
@@ -142,7 +140,7 @@ namespace OE1Core
 
 		void IVMasterRenderer::RenderFullScreenQuadToDefaultFramebuffer(Component::CameraComponent* _camera, int _attachment_idx)
 		{
-			auto frame_buffer = _camera->MainFB();
+			auto frame_buffer = _camera->LightFB();
 			
 			// BIND DEFAULT FRAMEBUFFER
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -161,6 +159,41 @@ namespace OE1Core
 			_camera->LightFB()->Attach();
 
 			m_DefferedLightPassRenderer->Render(_camera);
+
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, _camera->MainFB()->GetBuffer());
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _camera->LightFB()->GetBuffer());
+			glBlitFramebuffer(
+				0, 0, _camera->MainFB()->GetWidth(), _camera->MainFB()->GetHeight(),
+				0, 0, _camera->MainFB()->GetWidth(), _camera->MainFB()->GetHeight(),
+				GL_DEPTH_BUFFER_BIT, GL_NEAREST
+			);
+			_camera->LightFB()->Attach(false);
+
+			if (m_Scene->m_ActiveTextureCubeMap)
+				m_SkyboxPassRenderer->Render(m_Scene->m_ActiveTextureCubeMap->GetTexture(), _camera->GetBuffertOffset());
+
+			_camera->LightFB()->Detach();
+		}
+		void IVMasterRenderer::DefferedLightPassMaster(Component::CameraComponent* _camera)
+		{
+			_camera->LightFB()->Attach();
+
+			m_DefferedLightPassRenderer->Render(_camera);
+
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, _camera->MainFB()->GetBuffer());
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _camera->LightFB()->GetBuffer());
+			glBlitFramebuffer(
+				0, 0, _camera->MainFB()->GetWidth(), _camera->MainFB()->GetHeight(),
+				0, 0, _camera->MainFB()->GetWidth(), _camera->MainFB()->GetHeight(),
+				GL_DEPTH_BUFFER_BIT, GL_NEAREST
+			);
+			_camera->LightFB()->Attach(false);
+
+			if (m_Scene->m_ActiveTextureCubeMap)
+				m_SkyboxPassRenderer->Render(m_Scene->m_ActiveTextureCubeMap->GetTexture(), _camera->GetBuffertOffset());
+
+			m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), 0);
+			m_GridRenderer.Render(*m_Scene->m_Grid, 0);
 
 			_camera->LightFB()->Detach();
 		}

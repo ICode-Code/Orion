@@ -43,7 +43,6 @@ namespace OE1Core
 		// Create Master Scene
 		SceneManager::RegisterScene("MasterScene", new Scene(s_EngineWindow->GetWin()), true);
 
-
 		// command processing
 		s_CommandExecutionHandleManager = new OE1Core::CommandHnd::ExeHandleManager(SceneManager::GetActiveScene());
 

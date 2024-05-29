@@ -14,6 +14,7 @@
 #include "Renderers/SceneDebugShapeRenderer/IVSceneDebugShapeRenderer.h"
 #include "Renderers/FullScreenQuadRenderer/IVFullScreenQuadRenderer.h"
 #include "Renderers/DefferedLightPassRenderer/IVDefferedLightPassRenderer.h"
+#include "Renderers/SkyboxRenderer/IVSkyboxRenderer.h"
 
 // Render Stack
 #include "RenderStack/RenderStack.h"
@@ -67,6 +68,7 @@ namespace OE1Core
 			IVMaterialPreviewRenderer* m_MaterialPreviewRenderer = nullptr;
 			IVFullScreenQuadRenderer* m_FullScreenQuadRenderer = nullptr;
 			IVDefferedLightPassRenderer* m_DefferedLightPassRenderer = nullptr;
+			IVSkyboxRenderer* m_SkyboxPassRenderer = nullptr;
 
 			// Debug
 			IVDebugShapeRenderer* m_DebugShapeRenderer = nullptr;
@@ -78,6 +80,7 @@ namespace OE1Core
 
 		public:
 			void DefferedLightPass(Component::CameraComponent* _camera);
+			void DefferedLightPassMaster(Component::CameraComponent* _camera);
 			/// <summary>
 			/// This function will take the camera and render the rendered scene into the default frambuffer
 			/// with screen full quad, REMEMBER this will clone rendered camera resolution and everything

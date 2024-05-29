@@ -14,6 +14,10 @@ namespace OE1Core
 		m_CameraManager = new SceneCameraManager(_window);
 		m_MasterSceneCamera = m_CameraManager->GetMasterCamera();
 
+		m_ActiveTextureCubeMap = AssetManager::GetCubeMapTexture("DeepNight");
+		if (!m_ActiveTextureCubeMap)
+			LOG_ERROR("Default Scene Cubemap faild to load!");
+
 
 		m_Grid = new Grid();
 		m_MyRenderer = new Renderer::IVMasterRenderer(m_Window, this);
@@ -39,8 +43,8 @@ namespace OE1Core
 		// Init Icons
 		RegisterBillboardIcon(ViewportIconBillboardType::CAMERA, "Camera");
 		RegisterBillboardIcon(ViewportIconBillboardType::POINT_LIGHT, "PointLight");
-		RegisterBillboardIcon(ViewportIconBillboardType::DIRECTIONAL_LIGHT, "PointLight");
-		RegisterBillboardIcon(ViewportIconBillboardType::SPOT_LIGHT, "PointLight");
+		RegisterBillboardIcon(ViewportIconBillboardType::DIRECTIONAL_LIGHT, "Sun");
+		RegisterBillboardIcon(ViewportIconBillboardType::SPOT_LIGHT, "SpotLight");
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::POINT_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("PointLight"))));
 		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::DIRECTIONAL_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("Sun"))));
 

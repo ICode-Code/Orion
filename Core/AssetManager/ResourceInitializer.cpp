@@ -1,11 +1,14 @@
 #include "ResourceInitializer.h"
 #include "../AssetManager/AssetParser/AssetParser.h"
+#include <iostream>
 
 namespace OE1Core
 {
 	ResourceInitializer::ResourceInitializer()
 	{
+		LOG_WARRNING("Loading Textures..");
 		InitTexture();
+		LoadDefaultCubeMap();
 		InitBaseMesh();
 		InitInternalUsageMesh();
 	}
@@ -31,6 +34,26 @@ namespace OE1Core
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "FPSTestProject.png",		"FPSTestProject");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "PBRTestProject.png",		"PBRTestProject");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Pose.png",				"Pose");
+
+	}
+	void ResourceInitializer::LoadDefaultCubeMap()
+	{
+		if(!std::filesystem::exists(s_DefaultCubemapTexturePath))
+			return;
+		for (auto& data_iter : std::filesystem::directory_iterator(s_DefaultCubemapTexturePath))
+		{
+			if (data_iter.is_directory())
+			{
+				std::string _name = data_iter.path().stem().string();
+				std::vector<DataBlock::Image2D> _cube_source;
+				for (auto& tex_iter : std::filesystem::directory_iterator(data_iter))
+					_cube_source.push_back(Loader::TextureLoader::OELoadImage(tex_iter.path().string()));
+
+				AssetManager::RegisterTextureCubeMap(_cube_source, _name);
+			}
+		}
+
+
 	}
 	void ResourceInitializer::InitBaseMesh()
 	{

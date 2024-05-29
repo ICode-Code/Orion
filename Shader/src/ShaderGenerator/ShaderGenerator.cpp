@@ -510,8 +510,8 @@ Metal = Materials[MaterialIndex].MetalRoughEmissionAlpha.r;
 	{
 		s_Source += R"(
 vec4 mat_arg = texture(t_NoneColorMapTexture, vec3(TexCoord, TextureIndex[MaterialIndex].RoughnessMetal));
-Metal = mat_arg.b;
-Roughness = mat_arg.g;
+Metal = mat_arg.g;
+Roughness = mat_arg.b;
 )";
 	}
 	void ShaderGenerator::FR_ReadAO()

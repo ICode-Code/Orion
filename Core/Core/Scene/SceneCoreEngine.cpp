@@ -7,6 +7,11 @@
 
 namespace OE1Core
 {
+	TextureCubeMap* Scene::GetSceneCubeMap() { return m_ActiveTextureCubeMap; };
+	void Scene::SetSceneCubeMap(TextureCubeMap* _cube_map)
+	{
+		m_ActiveTextureCubeMap = _cube_map;
+	}
 	Entity Scene::CreateEntity()
 	{
 		Entity my_entity(m_EntityRegistry.create(), this);
@@ -526,4 +531,6 @@ namespace OE1Core
 	{
 		m_MasterSceneCamera->Camera->UpdateRenderFrameSize(_width, _height);
 	}
+
+
 }

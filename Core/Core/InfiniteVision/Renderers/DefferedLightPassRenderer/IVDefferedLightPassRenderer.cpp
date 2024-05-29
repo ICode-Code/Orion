@@ -27,6 +27,7 @@ namespace OE1Core
 		void IVDefferedLightPassRenderer::Render(Component::CameraComponent* _camera)
 		{
 			m_Shader->Attach();
+			m_Shader->Set1i("ActiveCameraIndex", _camera->GetBuffertOffset());
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, _camera->MainFB()->m_Color);

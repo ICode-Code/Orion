@@ -21,7 +21,7 @@ namespace OE1Core
 			IVForwardBaseFramebuffer(const int _res[2]);
 			virtual ~IVForwardBaseFramebuffer();
 
-
+			virtual GLuint GetBuffer();
 			virtual void Attach(bool _clean_buffer = true, GLenum _usnage = GL_FRAMEBUFFER);
 
 			// Bind Defualt 
