@@ -5,6 +5,7 @@ namespace OE1Core
 {
 	Shader::Shader(std::string _path)
 	{
+		m_Arg.ShaderPath = _path;
 		m_Arg.IsExternalFile = true;
 		ProcessPackedShaderSource(ReadDiskFile(_path));
 		
@@ -147,7 +148,11 @@ namespace OE1Core
 	}
 	void Shader::Recompile()
 	{
-		CompileShader(m_Arg.VertexShader, m_Arg.VertexShaderSource);
+		ProcessPackedShaderSource(ReadDiskFile(m_Arg.ShaderPath));
+		UpdateVertexShader(m_Arg.VertexShaderSource);
+		UpdateFragmentShader(m_Arg.FragmentShaderSource);
+
+		/*CompileShader(m_Arg.VertexShader, m_Arg.VertexShaderSource);
 		CompileShader(m_Arg.FragmentShader, m_Arg.FragmentShaderSource);
 
 		if (m_Arg.HasGeometryShader)
@@ -159,7 +164,7 @@ namespace OE1Core
 			CompileShader(m_Arg.TessellationEvaluationShader, m_Arg.TessellationEvaluationShaderSource);
 		}
 
-		LinkProgram();
+		LinkProgram();*/
 	}
 	void Shader::InitShader()
 	{

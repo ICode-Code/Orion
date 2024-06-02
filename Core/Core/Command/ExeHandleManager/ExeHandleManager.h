@@ -27,6 +27,7 @@ namespace OE1Core
 			inline static CommandHnd::CommandContextOperationExeHandler* s_CommandContextOperationExeHandler = nullptr;
 			inline static CommandHnd::CommandIgnitionExecutionHandle* s_CommandIgnitionExecutionHandler = nullptr;
 			inline static CommandHnd::CommandMasterOperationExecutionHandle* s_CommandMasterOperationExecutionHandler = nullptr;
+			inline static CommandHnd::CommandSceneInitalization* s_CommandSceneIntializationExecuationHandler = nullptr;
 
 		};
 	}

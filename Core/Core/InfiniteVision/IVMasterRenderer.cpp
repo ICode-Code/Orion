@@ -158,7 +158,7 @@ namespace OE1Core
 		{
 			_camera->LightFB()->Attach();
 
-			m_DefferedLightPassRenderer->Render(_camera);
+			m_DefferedLightPassRenderer->Render(_camera, m_Scene->m_LightRoom);
 
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, _camera->MainFB()->GetBuffer());
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _camera->LightFB()->GetBuffer());
@@ -169,8 +169,8 @@ namespace OE1Core
 			);
 			_camera->LightFB()->Attach(false);
 
-			if (m_Scene->m_ActiveTextureCubeMap)
-				m_SkyboxPassRenderer->Render(m_Scene->m_ActiveTextureCubeMap->GetTexture(), _camera->GetBuffertOffset());
+			if (m_Scene->m_LightRoom->m_ActiveCubeMap)
+				m_SkyboxPassRenderer->Render(m_Scene->m_LightRoom->m_ActiveCubeMap->GetTexture(), _camera->GetBuffertOffset());
 
 			_camera->LightFB()->Detach();
 		}
@@ -178,7 +178,8 @@ namespace OE1Core
 		{
 			_camera->LightFB()->Attach();
 
-			m_DefferedLightPassRenderer->Render(_camera);
+			m_DefferedLightPassRenderer->Render(
+				_camera, m_Scene->m_LightRoom);
 
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, _camera->MainFB()->GetBuffer());
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _camera->LightFB()->GetBuffer());
@@ -189,8 +190,8 @@ namespace OE1Core
 			);
 			_camera->LightFB()->Attach(false);
 
-			if (m_Scene->m_ActiveTextureCubeMap)
-				m_SkyboxPassRenderer->Render(m_Scene->m_ActiveTextureCubeMap->GetTexture(), _camera->GetBuffertOffset());
+			if (m_Scene->m_LightRoom->m_ActiveCubeMap)
+				m_SkyboxPassRenderer->Render(m_Scene->m_LightRoom->m_ActiveCubeMap->GetTexture(), _camera->GetBuffertOffset());
 
 			m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), 0);
 			m_GridRenderer.Render(*m_Scene->m_Grid, 0);

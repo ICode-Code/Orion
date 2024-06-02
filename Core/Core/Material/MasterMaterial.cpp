@@ -152,8 +152,10 @@ namespace OE1Core
 			// Resize the vector
 			readBackBuf.BUFFER.resize(readBackBuf.WIDTH * readBackBuf.HEIGHT * readBackBuf.HEIGHT);
 
+			// Select if it is color ot not
+			GLint INTERNAL_FORMAT = _use_alpha ? GL_SRGB_ALPHA : GL_RGBA;
 			// Read image
-			glGetTexImage(GL_TEXTURE_2D_ARRAY, i, GL_RGBA, GL_UNSIGNED_BYTE, readBackBuf.BUFFER.data());
+			glGetTexImage(GL_TEXTURE_2D_ARRAY, i, INTERNAL_FORMAT, GL_UNSIGNED_BYTE, readBackBuf.BUFFER.data());
 
 			// Push back
 			_image_buffer.push_back(readBackBuf);

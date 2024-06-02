@@ -18,6 +18,8 @@ namespace OE1Core
 		s_EngineWindow->RegisterFollowUpEventCallback(std::bind(&CoreEngine::OnEngineEvent, this, std::placeholders::_1));
 		s_EngineWindow->SetCloseTrigger(&CloseWin::s_ShouldOpen);
 
+
+
 		// Load compile all the Shader
 		s_ShaderManager = new OE1Core::ShaderManager();
 
@@ -32,7 +34,6 @@ namespace OE1Core
 		s_CoreSystem = new OE1Core::CoreSystem();
 		s_SceneSystem = new OE1Core::SceneSystem();
 		s_ShaderSystem = new OE1Core::ShaderSystem(); 
-		
 
 		// Buffer Manger
 		s_MemeoryManager = new Memory::UniformBlockManager(s_ShaderSystem);
@@ -41,8 +42,7 @@ namespace OE1Core
 		s_AnimationManager = new AnimationManager();
 
 		// Create Master Scene
-		SceneManager::RegisterScene("MasterScene", new Scene(s_EngineWindow->GetWin()), true);
-
+		SceneManager::RegisterScene("MasterScene", new Scene(s_EngineWindow->GetWin(), &s_EngineWindow->m_Args.MainContext), true);
 		// command processing
 		s_CommandExecutionHandleManager = new OE1Core::CommandHnd::ExeHandleManager(SceneManager::GetActiveScene());
 
@@ -71,11 +71,10 @@ namespace OE1Core
 		s_EngineWindow->ResetCallbacks();
 		SceneManager::GetActiveScene()->SwitchContext(s_EngineWindow);
 		SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(SceneManager::GetActiveScene()->m_MasterSceneCamera->Camera->GetID());
+		
 		// Render Loop
 		while (s_EngineWindow->m_Args.Running && !s_EngineWindow->m_Args.Playing)
 		{
-			s_EngineWindow->PullEvent();
-
 			// any queued command will be executed here
 			CommandHnd::ExeHandleManager::ProcessContextCommandQueue();
 
@@ -84,6 +83,7 @@ namespace OE1Core
 			SceneManager::RenderScenesInEngine();
 
 
+			s_EngineWindow->PullEvent();
 			s_GuiBase->Attach();
 			s_GuiBase->Update();
 			s_GuiBase->Render(s_EngineWindow->GetWin(), s_EngineWindow->m_Args.MainContext);

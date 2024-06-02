@@ -57,7 +57,7 @@ namespace OE1Core
 				s_AbsPath,
 				aiProcess_Triangulate |
 				aiProcess_GenSmoothNormals |
-				aiProcess_FlipUVs |
+			//	aiProcess_FlipUVs |
 				aiProcess_CalcTangentSpace | 
 				aiProcess_GenBoundingBoxes
 			);

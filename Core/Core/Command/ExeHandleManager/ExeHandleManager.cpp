@@ -11,6 +11,7 @@ namespace OE1Core
 			s_CommandContextOperationExeHandler = new  CommandHnd::CommandContextOperationExeHandler(_scene);
 			s_CommandIgnitionExecutionHandler = new  CommandHnd::CommandIgnitionExecutionHandle(_scene);
 			s_CommandMasterOperationExecutionHandler = new  CommandHnd::CommandMasterOperationExecutionHandle(_scene);
+			s_CommandSceneIntializationExecuationHandler = new CommandHnd::CommandSceneInitalization(_scene);
 		}
 		ExeHandleManager::~ExeHandleManager()
 		{
@@ -26,6 +27,7 @@ namespace OE1Core
 		void ExeHandleManager::ProcessContextCommandQueue()
 		{
 			CommandHnd::CommandContextOperationExeHandler::ProcessQueue();
+			CommandHnd::CommandSceneInitalization::ProcessQueue();
 
 		}
 		void ExeHandleManager::ProcessLowFrequencyCommands()

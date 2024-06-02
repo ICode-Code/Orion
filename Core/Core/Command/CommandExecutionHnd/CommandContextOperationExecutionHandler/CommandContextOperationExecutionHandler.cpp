@@ -39,6 +39,9 @@ namespace OE1Core
 			ProcessMaterialReEvaluationCommand();
 			ProcessMaterialTextureExtractionForPReviewCommand();
 
+			// Shader Update
+			ProcessShaderRecompileCommand();
+
 			ProcessParseLoadedAssetCommand();
 
 			ProcessParseLoadedDynamicMeshCommand();
@@ -103,6 +106,17 @@ namespace OE1Core
 
 				delete renderer;
 				Command::s_MaterialTextureExtractionCommands.pop();
+			}
+		}
+		void CommandContextOperationExeHandler::ProcessShaderRecompileCommand()
+		{
+			while (!Command::s_ShaderRecompileCommands.empty())
+			{
+				auto& commandX = Command::s_ShaderRecompileCommands.front();
+
+				ShaderManager::ReLoadShader(commandX.ID);
+
+				Command::s_ShaderRecompileCommands.pop();
 			}
 		}
 		void CommandContextOperationExeHandler::ProcessMaterialReEvaluationCommand()

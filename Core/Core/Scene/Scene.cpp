@@ -8,14 +8,17 @@
 
 namespace OE1Core
 {
-	Scene::Scene(SDL_Window* _window)
-		: m_Window{ _window }
+	Scene::Scene(SDL_Window* _window, SDL_GLContext* _context)
+		: m_Window{ _window }, m_Context{ _context }
 	{
 		m_CameraManager = new SceneCameraManager(_window);
 		m_MasterSceneCamera = m_CameraManager->GetMasterCamera();
 
-		m_ActiveTextureCubeMap = AssetManager::GetCubeMapTexture("DeepNight");
-		if (!m_ActiveTextureCubeMap)
+		
+		m_LightRoom = new Renderer::IVLightRoom();
+
+		m_LightRoom->m_ActiveCubeMap = AssetManager::GetCubeMapTexture("DeepNight");
+		if (!m_LightRoom->m_ActiveCubeMap)
 			LOG_ERROR("Default Scene Cubemap faild to load!");
 
 
@@ -39,15 +42,18 @@ namespace OE1Core
 		m_RenderController = new RenderController(this);
 		m_GenesisController = new GenesisController(this);
 
+		m_EnvVarBuffer.Exposure = 1.0f;
+		m_EnvVarBuffer.Fresnel = 0.04f;
+		m_EnvVarBuffer.Gamma = 2.2f;
+		m_EnvVarBuffer.WorldLightIntensity = 1.0f;
+		UpdateEnvVar();
 
 		// Init Icons
 		RegisterBillboardIcon(ViewportIconBillboardType::CAMERA, "Camera");
 		RegisterBillboardIcon(ViewportIconBillboardType::POINT_LIGHT, "PointLight");
 		RegisterBillboardIcon(ViewportIconBillboardType::DIRECTIONAL_LIGHT, "Sun");
 		RegisterBillboardIcon(ViewportIconBillboardType::SPOT_LIGHT, "SpotLight");
-		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::POINT_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("PointLight"))));
-		//m_SceneBillboardIcon.insert(std::make_pair(ViewportIconBillboardType::DIRECTIONAL_LIGHT, new ViewportBillboardIcon(AssetManager::GetInternalTexture("Sun"))));
-
+		
 	}
 
 	Scene::~Scene()
@@ -63,6 +69,8 @@ namespace OE1Core
 		delete m_InputController;
 		delete m_RenderController;
 		delete m_GenesisController;
+		delete m_LightRoom;
+		delete m_LightRoomManager;
 
 		for (auto iter : m_StaticMeshRegistry)
 			delete iter.second;

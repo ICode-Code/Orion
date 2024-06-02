@@ -13,6 +13,7 @@
 namespace OE1Core
 {
 	class ActionButtonUtilityGroup;
+	class PreferenceWin;
 	namespace Component
 	{
 		class BaseCameraControllerComponent
@@ -20,6 +21,7 @@ namespace OE1Core
 			friend class InspectorComponent;
 			friend class CameraPackageComponent;
 			friend class ActionButtonUtilityGroup;
+			friend class PreferenceWin;
 		public:
 			BaseCameraControllerComponent(SDL_Window* _active_context);
 			virtual ~BaseCameraControllerComponent() = default;

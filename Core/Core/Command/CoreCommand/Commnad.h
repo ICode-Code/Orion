@@ -18,6 +18,7 @@ namespace OE1Core
 		class CommandContextOperationExeHandler;
 		class CommandIgnitionExecutionHandle;
 		class CommandMasterOperationExecutionHandle;
+		class CommandSceneInitalization;
 		class ExeHandleManager;
 	}
 
@@ -36,6 +37,7 @@ namespace OE1Core
 		friend class CommandHnd::CommandIgnitionExecutionHandle;
 		friend class CommandHnd::CommandMasterOperationExecutionHandle;
 		friend class CommandHnd::ExeHandleManager;
+		friend class CommandHnd::CommandSceneInitalization;
 	public:
 		static void RegisterContentBrowserLayerNotifyCallback(const ContentBrowserLayerNotifyCallback& _callback);
 		static void RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback);
@@ -56,6 +58,8 @@ namespace OE1Core
 		static void PushAnimationSwitchCommand(CommandDef::AnimationSwitchCommandDef _command);
 		static void PushSceneDebugShapeCreateCommand(CommandDef::SceneDebugShapeCreateCommandDef _command);
 		static void PushSceneDebugShapeUpdateCommand(CommandDef::SceneDebugShapeUpdateCommandDef _command);
+		static void PushSceneInitiCommand(CommandDef::CreateSceneLightRoomCommandDef _command);
+		static void PushShaderRecompileCommand(CommandDef::ShaderRecompileCommandDef _command);
 		/// <summary>
 		/// This Command processed at the end
 		/// </summary>
@@ -78,6 +82,8 @@ namespace OE1Core
 		inline static std::queue<CommandDef::AnimationSwitchCommandDef> s_AnimationSwitchCommands;
 		inline static std::queue<CommandDef::SceneDebugShapeCreateCommandDef> s_SceneDebugShapeCreateCommands;
 		inline static std::queue<CommandDef::SceneDebugShapeUpdateCommandDef> s_SceneDebugShapeUpdateCommands;
+		inline static std::queue<CommandDef::CreateSceneLightRoomCommandDef> s_CreateSceneLightRoomCommands;
+		inline static std::queue<CommandDef::ShaderRecompileCommandDef> s_ShaderRecompileCommands;
 	private: // callbacks
 		inline static ContentBrowserLayerNotifyCallback s_ContentBrowserLayerNotifyCallback;
 		inline static ThreadInfoLayerNotifyCallback s_ThreadInfoLayerNotifyCallback;

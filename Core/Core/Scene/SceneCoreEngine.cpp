@@ -7,10 +7,20 @@
 
 namespace OE1Core
 {
-	TextureCubeMap* Scene::GetSceneCubeMap() { return m_ActiveTextureCubeMap; };
+	TextureCubeMap* Scene::GetSceneCubeMap() { return m_LightRoom->m_ActiveCubeMap; };
 	void Scene::SetSceneCubeMap(TextureCubeMap* _cube_map)
 	{
-		m_ActiveTextureCubeMap = _cube_map;
+		m_LightRoom->m_ActiveCubeMap = _cube_map;
+	}
+	void Scene::SetLightRoom(GLuint _irradiance_map, GLuint _pre_filtered_map, GLuint _lut)
+	{
+		m_LightRoom->IrradianceMap = _irradiance_map;
+		m_LightRoom->PreFilteredEnviromentMap = _pre_filtered_map;
+		m_LightRoom->LUT = AssetManager::GetInternalTexture("LUT")->GetTexture();
+	}
+	void Scene::SetLightRoomManager(Renderer::IVLightRoomManager* _light_room)
+	{
+		m_LightRoomManager = _light_room;
 	}
 	Entity Scene::CreateEntity()
 	{

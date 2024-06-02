@@ -38,6 +38,8 @@ namespace OE1Core
 			static void ProcessMasterMaterialUpdateCommand();
 			static void ProcessMaterialReEvaluationCommand();
 			static void ProcessMaterialTextureExtractionForPReviewCommand();
+			static void ProcessShaderRecompileCommand();
+
 
 
 			// Animation

@@ -437,7 +437,7 @@ float Reflectivity = 0.04f;
 		s_Source += R"(
 EmissionStength = Materials[MaterialIndex].MetalRoughEmissionAlpha.b;
 Alpha = Materials[MaterialIndex].MetalRoughEmissionAlpha.a;
-Reflectivity = Materials[MaterialIndex].BaseReflectivityPadding.r;
+Reflectivity = Materials[MaterialIndex].BaseReflectivityMetalFacRoughnessFac.r;
 
 )";
 	}
@@ -510,8 +510,8 @@ Metal = Materials[MaterialIndex].MetalRoughEmissionAlpha.r;
 	{
 		s_Source += R"(
 vec4 mat_arg = texture(t_NoneColorMapTexture, vec3(TexCoord, TextureIndex[MaterialIndex].RoughnessMetal));
-Metal = mat_arg.g;
-Roughness = mat_arg.b;
+Metal = mat_arg.b;
+Roughness = mat_arg.g;
 )";
 	}
 	void ShaderGenerator::FR_ReadAO()
@@ -563,7 +563,7 @@ Emission = Materials[MaterialIndex].EmissionColor.rgb;
 
 	oPosition = FragPosition;
 	oNormal = vec4(Normal, 1.0f);
-	oMetalRougnessAOAlpha = vec4(Metal, Roughness, AO, Alpha);
+	oMetalRougnessAOAlpha = vec4(Metal * Materials[MaterialIndex].BaseReflectivityMetalFacRoughnessFac.y, Roughness * Materials[MaterialIndex].BaseReflectivityMetalFacRoughnessFac.z, AO, Alpha);
 	oEmission = vec4(Emission, 1.0f);
 	//oEmission.w = EmissionStength;
 

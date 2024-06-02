@@ -45,7 +45,7 @@ namespace OE1Core
 		io.UserData = _window;
 		
 		ImGui_ImplSDL2_InitForOpenGL(_window, _context);
-		ImGui_ImplOpenGL3_Init("#version 400 core");
+		ImGui_ImplOpenGL3_Init("#version 130 core");
 
 		static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_16_FA, 0 };
 		ImFontConfig icons_config; icons_config.MergeMode = true; icons_config.PixelSnapH = true;

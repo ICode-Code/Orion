@@ -79,4 +79,12 @@ namespace OE1Core
 	{
 		s_SceneDebugShapeUpdateCommands.push(_command);
 	}
+	void Command::PushSceneInitiCommand(CommandDef::CreateSceneLightRoomCommandDef _command)
+	{
+		s_CreateSceneLightRoomCommands.push(_command);
+	}
+	void Command::PushShaderRecompileCommand(CommandDef::ShaderRecompileCommandDef _command)
+	{
+		s_ShaderRecompileCommands.push(_command);
+	}
 }

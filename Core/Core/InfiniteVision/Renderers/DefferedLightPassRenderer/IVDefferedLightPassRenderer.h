@@ -4,6 +4,7 @@
 
 #include "../IVBaseRenderer.h"
 #include "../Core/DS/Quad/Quad.h"
+#include "../../IVLightRoom.h"
 
 
 namespace OE1Core
@@ -19,7 +20,7 @@ namespace OE1Core
 			IVDefferedLightPassRenderer();
 			~IVDefferedLightPassRenderer();
 
-			void Render(class Component::CameraComponent* _camera);
+			void Render(class Component::CameraComponent* _camera, IVLightRoom* _light_room);
 
 		protected:
 			OE1Core::DS::Quad* m_Quad = nullptr;

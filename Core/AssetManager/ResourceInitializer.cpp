@@ -34,6 +34,7 @@ namespace OE1Core
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "FPSTestProject.png",		"FPSTestProject");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "PBRTestProject.png",		"PBRTestProject");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Pose.png",				"Pose");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "ibl_brdf_lut.png",		 "LUT");
 
 	}
 	void ResourceInitializer::LoadDefaultCubeMap()
@@ -50,6 +51,26 @@ namespace OE1Core
 					_cube_source.push_back(Loader::TextureLoader::OELoadImage(tex_iter.path().string()));
 
 				AssetManager::RegisterTextureCubeMap(_cube_source, _name);
+			}
+		}
+
+		// Light 
+		for (auto& file_iter : std::filesystem::directory_iterator(s_DefaultEnvironmentTexturePath))
+		{
+			std::string _ext = file_iter.path().extension().string();
+
+			if (_ext == ".hdr")
+			{
+				std::string _path = file_iter.path().string();
+				std::string _name = file_iter.path().stem().string();
+
+				CommandDef::CreateSceneLightRoomCommandDef _commandX(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
+
+				_commandX.Name = _name;
+				_commandX.Path = _path;
+
+				Command::PushSceneInitiCommand(_commandX);
+
 			}
 		}
 

@@ -11,6 +11,9 @@
 #include "../Grid/Grid.h"
 
 #include "../InfiniteVision/IVMasterRenderer.h"
+#include "../InfiniteVision/IVLightRoom.h"
+#include "../InfiniteVision/LightRoomManager/IVLightRoomManager.h"
+
 #include "../Ray/Ray.h"
 #include "../CoreAnimation/Animator/SkeletonAnimator.h"
 #include <Entt/entt.hpp>
@@ -39,7 +42,7 @@ namespace OE1Core
 		friend class GenesisController;
 		friend class PreferenceWin;
 	public:
-		Scene(SDL_Window* _window);
+		Scene(SDL_Window* _window, SDL_GLContext* _context);
 		~Scene();
 
 		Entity CreateEntity();
@@ -111,6 +114,7 @@ namespace OE1Core
 
 
 
+
 		class ActiveEntity* GetActiveEntity(); 
 		void Update(int _width, int _height);
 		void ResetPhysics();
@@ -139,6 +143,9 @@ namespace OE1Core
 
 		TextureCubeMap* GetSceneCubeMap();
 		void SetSceneCubeMap(TextureCubeMap* _cube_map);
+
+		void SetLightRoom(GLuint _irradiance_map, GLuint _pre_filtered_map, GLuint _lut);
+		void SetLightRoomManager(Renderer::IVLightRoomManager* _light_room);
 		
 		/// <summary>
 		/// This function can be used in d/t senario for now we gone use it to add items into the 
@@ -173,10 +180,12 @@ namespace OE1Core
 
 
 	public:
+		OE1Core::Renderer::IVLightRoomManager* m_LightRoomManager = nullptr;
+		Renderer::IVLightRoom* m_LightRoom = nullptr;
 		class Renderer::IVRenderStack* m_RenderStack = nullptr;
-		TextureCubeMap* m_ActiveTextureCubeMap = nullptr;
 		Grid* m_Grid = nullptr;
 		SDL_Window* m_Window;
+		SDL_GLContext* m_Context;
 		bool m_UtilizeSpecialDataStructureForFrusumCull = false;
 
 		SceneCameraManager* m_CameraManager = nullptr;

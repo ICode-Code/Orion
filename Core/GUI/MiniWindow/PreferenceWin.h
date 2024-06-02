@@ -15,6 +15,21 @@ namespace OE1Core
 	private:
 		virtual void Update() override;
 		class Scene* m_Scene = nullptr;
+		ImGuiTreeNodeFlags m_Flag = ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth;
+		std::vector<std::string> m_Lables;
+		float m_Indent = 16.0f;
+
+
+	private: // style
+		void PushStyle();
+		void PopStyle();
+
+	private: // Win
+		void PostProcess();
+		void LightRoom();
+		void Grid();
+		void General();
+		void Physics();
 
 	};
 }

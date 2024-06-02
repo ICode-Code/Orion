@@ -127,13 +127,13 @@ namespace OE1Core
 			CustomFrame::UIEditorFloat("Base Reflectivity", &m_Material->GetParameter().BaseReflectivity_RF_MF.r, 0.0f, 1.0f, "%.3f");
 			
 
-			CustomFrame::UIEditorFloat("Roughness Factor", &m_Material->GetParameter().BaseReflectivity_RF_MF.g, 0.0f, 1.0f, "%.3f");
+			CustomFrame::UIEditorFloat("Roughness Factor", &m_Material->GetParameter().BaseReflectivity_RF_MF.b, 0.0f, 1.0f, "%.3f");
 			ImGui::SameLine();
 			ImGui::Text(ICON_FA_QUESTION);
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Indicates the overall strength of a material's roughness");
 
-			CustomFrame::UIEditorFloat("Metallic Factor", &m_Material->GetParameter().BaseReflectivity_RF_MF.b, 0.0f, 1.0f, "%.3f");
+			CustomFrame::UIEditorFloat("Metallic Factor", &m_Material->GetParameter().BaseReflectivity_RF_MF.g, 0.0f, 1.0f, "%.3f");
 			ImGui::SameLine();
 			ImGui::Text(ICON_FA_QUESTION);
 			if (ImGui::IsItemHovered())

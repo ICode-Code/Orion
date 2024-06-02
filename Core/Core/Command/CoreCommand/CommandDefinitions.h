@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include "MaterialType.h"
 #include "AvailTexture.h"
+#include "ShaderManager/ShaderID.h"
 #include "../../AssetLoader/src/Util/DataBlock.h"
 
 
@@ -215,7 +216,23 @@ namespace OE1Core
 			SceneDebugShapeUpdateCommandDef(std::string _file, int _line, std::string _func)
 				: CommandBase(_file, _line, _func)
 			{}
-			DS::TurboOTNode* Node;
+			DS::TurboOTNode* Node = nullptr;
+		};
+
+		struct CreateSceneLightRoomCommandDef : public CommandBase
+		{
+			CreateSceneLightRoomCommandDef(std::string _file, int _line, std::string _func)
+				: CommandBase(_file, _line, _func)
+			{}
+			std::string Path;
+			std::string Name;
+		};
+		struct ShaderRecompileCommandDef : public CommandBase
+		{
+			ShaderRecompileCommandDef(std::string _file, int _line, std::string _func)
+				: CommandBase(_file, _line, _func)
+			{}
+			ShaderID ID;
 		};
 	}
 }

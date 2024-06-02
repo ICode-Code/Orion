@@ -28,6 +28,12 @@ namespace OE1Core
 		AddShaderFromDefaultPath("OES_FullScreenQuad.shader",	ShaderID::FULL_SCREEN_QUAD);
 		AddShaderFromDefaultPath("OES_DefferedLightPass.shader", ShaderID::DEFFERED_LIGHT_PASS);
 		AddShaderFromDefaultPath("OES_Skybox.shader", ShaderID::SKYBOX);
+
+		AddShaderFromDefaultPath("IBL/OES_ConvertHDRI.shader", ShaderID::TO_CUBEMAP);
+		AddShaderFromDefaultPath("IBL/OES_GenerateIrradiance.shader", ShaderID::TO_IRRADIANCEMAP);
+
+		AddShaderFromDefaultPath("IBL/OES_PrefilterEnvironment.shader", ShaderID::PREFILTERD_ENV_MAP);
+		AddShaderFromDefaultPath("IBL/OES_PreBRDF.shader", ShaderID::PRE_BRDF_MAP);
 	}
 	void ShaderManager::AddShader(std::string _path, ShaderID _id, std::string _name)
 	{
@@ -42,6 +48,17 @@ namespace OE1Core
 	{
 		LOG_WARRNING("Processing: {0}", _name);
 		AddShader(s_DefaultShaderSourcePath + _name, _id, _name);
+	}
+	Shader* ShaderManager::ReLoadShader(ShaderID _id)
+	{
+		if (s_Shaders.find(_id) == s_Shaders.end())
+			return nullptr;
+
+		Shader* _shader = s_Shaders[_id];
+
+		//_shader->Recompile();
+
+		return _shader;
 	}
 	Shader* ShaderManager::GetShader(ShaderID _id)
 	{

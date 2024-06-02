@@ -21,7 +21,7 @@ namespace OE1Core
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, _texture);
 			glBindVertexArray(m_Quad->m_VAO);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 			glBindVertexArray(0);
 			m_Shader->Detach();

@@ -5,5 +5,6 @@
 #include "CommandContextOperationExecutionHandler/CommandContextOperationExecutionHandler.h"
 #include "CommandIgnitionExecutionHandler/CommandIgnitionExecutionHandler.h"
 #include "CommandMasterOperationExecutionHandler/CommandMasterOperationExecutionHandler.h"
+#include "CommandSceneIntialization/CommandSceneIntialization.h"
 
 #endif // !OE1_COMMAND_EXECUTION_HANDLE_H_

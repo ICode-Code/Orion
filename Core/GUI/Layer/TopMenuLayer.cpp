@@ -30,7 +30,10 @@ namespace OE1Core
 		this->Window();
 		this->Help();
 
+
 		ImGui::EndMainMenuBar();
+
+		//ImGui::Image((ImTextureID)SceneManager::GetActiveScene()->m_LightRoom->LUT, { 512, 512 }, { 0, 1 }, { 1, 0 });
 	}
 
 	void TopMenuLayer::File()
@@ -392,6 +395,14 @@ namespace OE1Core
 						if (SceneManager::GetActiveScene()->GetProtagonist()->GetCamera())
 							SceneManager::GetActiveScene()->m_CameraManager->EngagePilotMode(SceneManager::GetActiveScene()->GetProtagonist()->GetCamera()->GetID());
 				}
+			}
+
+			if (ImGui::MenuItem(ICON_FA_PLAY"   Recompile Main Shader", "        -        "))
+			{
+				CommandDef::ShaderRecompileCommandDef commandX(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
+				commandX.ID = ShaderID::DEFFERED_LIGHT_PASS;
+
+				Command::PushShaderRecompileCommand(commandX);
 			}
 
 			ImGui::EndMenu();

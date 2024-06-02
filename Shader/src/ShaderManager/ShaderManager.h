@@ -30,6 +30,8 @@ namespace OE1Core
 		~ShaderManager();
 
 		using ShaderRegistry = std::unordered_map<ShaderID, Shader*>;
+
+		static Shader* ReLoadShader(ShaderID _id);
 		// This might return nullptr
 		static Shader* GetShader(ShaderID _id);
 		static ShaderRegistry& GetShaderRegistry();
