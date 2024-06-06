@@ -24,6 +24,7 @@ namespace OE1Core
 			void RegisterEnviromnetMap(GLuint _env_map, std::string _name);
 			GLuint GetLUT();
 			GLuint GetPrefilteredReflectionMap(std::string _name);
+			GLuint GetPrefilteredPreviewReflectionMap(std::string _name);
 
 
 

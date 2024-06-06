@@ -28,12 +28,21 @@ namespace OE1Core
 		AddShaderFromDefaultPath("OES_FullScreenQuad.shader",	ShaderID::FULL_SCREEN_QUAD);
 		AddShaderFromDefaultPath("OES_DefferedLightPass.shader", ShaderID::DEFFERED_LIGHT_PASS);
 		AddShaderFromDefaultPath("OES_Skybox.shader", ShaderID::SKYBOX);
+		AddShaderFromDefaultPath("OES_FinalColorBlend.shader", ShaderID::FINAL_COLOR_BLEND);
 
+		// Preview
+		AddShaderFromDefaultPath("Preview/OES_SkyDomPreview.shader", ShaderID::SKY_DOM_PREVIEW);
+		AddShaderFromDefaultPath("Preview/OES_HDRPreview.shader", ShaderID::HDRI_PREVIEW);
+
+		// IBL
 		AddShaderFromDefaultPath("IBL/OES_ConvertHDRI.shader", ShaderID::TO_CUBEMAP);
 		AddShaderFromDefaultPath("IBL/OES_GenerateIrradiance.shader", ShaderID::TO_IRRADIANCEMAP);
-
 		AddShaderFromDefaultPath("IBL/OES_PrefilterEnvironment.shader", ShaderID::PREFILTERD_ENV_MAP);
 		AddShaderFromDefaultPath("IBL/OES_PreBRDF.shader", ShaderID::PRE_BRDF_MAP);
+
+		//Bloom
+		AddShaderFromDefaultPath("Bloom/OES_DownSamplePass.shader", ShaderID::BLOOM_DOWN_SAMPLE);
+		AddShaderFromDefaultPath("Bloom/OES_UpSamplePass.shader", ShaderID::BLOOM_UP_SAMPLE);
 	}
 	void ShaderManager::AddShader(std::string _path, ShaderID _id, std::string _name)
 	{

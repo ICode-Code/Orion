@@ -564,7 +564,7 @@ Emission = Materials[MaterialIndex].EmissionColor.rgb;
 	oPosition = FragPosition;
 	oNormal = vec4(Normal, 1.0f);
 	oMetalRougnessAOAlpha = vec4(Metal * Materials[MaterialIndex].BaseReflectivityMetalFacRoughnessFac.y, Roughness * Materials[MaterialIndex].BaseReflectivityMetalFacRoughnessFac.z, AO, Alpha);
-	oEmission = vec4(Emission, 1.0f);
+	oEmission = vec4(Emission, Materials[MaterialIndex].MetalRoughEmissionAlpha.b);
 	//oEmission.w = EmissionStength;
 
 )";

@@ -15,6 +15,13 @@
 #include "Renderers/FullScreenQuadRenderer/IVFullScreenQuadRenderer.h"
 #include "Renderers/DefferedLightPassRenderer/IVDefferedLightPassRenderer.h"
 #include "Renderers/SkyboxRenderer/IVSkyboxRenderer.h"
+#include "Renderers/FinalColorBlendPassRenderer/IVFinalColorBlendPassRenderer.h"
+#include "Renderers/HDRPreviewRenderer/IVHDRPreviewRenderer.h"
+#include "Renderers/SkyboxPreviewRenderer/IVSkyboxPreviewRenderer.h"
+
+
+// Postprocess
+#include "Postprocess/Bloom/IVBloom.h"
 
 // Render Stack
 #include "RenderStack/RenderStack.h"
@@ -61,6 +68,7 @@ namespace OE1Core
 			inline IVGridRenderer& GetGridRenderer() { return m_GridRenderer; }; 
 		protected: // Renderer
 			IVGridRenderer m_GridRenderer;
+			IVFinalColorBlendPassRenderer* m_FinalColorBlendRenderer = nullptr;
 			IVModelPreviewRenderer* m_ModelPreviewRenderer = nullptr;
 			IVMeshRenderer* m_MeshRenderer = nullptr;
 			IVOutlineRenderer* m_OutlineRenderer = nullptr;
@@ -69,6 +77,10 @@ namespace OE1Core
 			IVFullScreenQuadRenderer* m_FullScreenQuadRenderer = nullptr;
 			IVDefferedLightPassRenderer* m_DefferedLightPassRenderer = nullptr;
 			IVSkyboxRenderer* m_SkyboxPassRenderer = nullptr;
+			IVBloom* m_BloomProcessor = nullptr;
+
+			IVSkyboxPreviewRenderer* m_SkyBoxPreviewRenderer = nullptr;
+			IVHDRPreviewRenderer* m_HDRPreviewRenderer = nullptr;
 
 			// Debug
 			IVDebugShapeRenderer* m_DebugShapeRenderer = nullptr;
@@ -79,8 +91,14 @@ namespace OE1Core
 
 
 		public:
-			void DefferedLightPass(Component::CameraComponent* _camera);
+			void DefferedLightPassSlave(Component::CameraComponent* _camera);
 			void DefferedLightPassMaster(Component::CameraComponent* _camera);
+
+			void DefferedPostprocessPassMaster(Component::CameraComponent* _camera);
+			void DefferedPostprocessPassSlave(Component::CameraComponent* _camera);
+
+			void FinalColorBlendPassMaster(Component::CameraComponent* _camera);
+			void FinalColorBlendPassSlave(Component::CameraComponent* _camera);
 			/// <summary>
 			/// This function will take the camera and render the rendered scene into the default frambuffer
 			/// with screen full quad, REMEMBER this will clone rendered camera resolution and everything

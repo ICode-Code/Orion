@@ -227,6 +227,14 @@ namespace OE1Core
 			std::string Path;
 			std::string Name;
 		};
+		struct CreateSkyboxInitCommandDef : public CommandBase
+		{
+			CreateSkyboxInitCommandDef(std::string _file, int _line, std::string _func)
+				: CommandBase(_file, _line, _func)
+			{}
+			std::vector<DataBlock::Image2D> Sources;
+			std::string Name;
+		};
 		struct ShaderRecompileCommandDef : public CommandBase
 		{
 			ShaderRecompileCommandDef(std::string _file, int _line, std::string _func)

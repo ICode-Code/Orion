@@ -49,8 +49,14 @@ namespace OE1Core
 				std::vector<DataBlock::Image2D> _cube_source;
 				for (auto& tex_iter : std::filesystem::directory_iterator(data_iter))
 					_cube_source.push_back(Loader::TextureLoader::OELoadImage(tex_iter.path().string()));
+				
 
-				AssetManager::RegisterTextureCubeMap(_cube_source, _name);
+				CommandDef::CreateSkyboxInitCommandDef _commandX(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
+				_commandX.Sources = _cube_source;
+				_commandX.Name = _name;
+
+				Command::PushSkyBoxInitCommand(_commandX);
+				//AssetManager::RegisterTextureCubeMap(_cube_source, _name);
 			}
 		}
 

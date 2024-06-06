@@ -10,7 +10,7 @@ namespace OE1Core
 			m_Quad = new DS::Quad();
 			m_Cube = new DS::Cube();
 
-			//m_MipLevel = 12;
+			m_MipLevel = 6;
 			m_PreBRDF = ShaderManager::GetShader(ShaderID::PRE_BRDF_MAP);
 			m_PrefilteredMap = ShaderManager::GetShader(ShaderID::PREFILTERD_ENV_MAP);
 
@@ -36,6 +36,13 @@ namespace OE1Core
 
 			return m_PrefilteredReflectionMaps[_name];
 		}
+		GLuint IVSpecular::GetPrefilteredPreviewReflectionMap(std::string _name)
+		{
+			if (m_MapPreviews.find(_name) == m_MapPreviews.end())
+				return 0;
+
+			return m_MapPreviews[_name];
+		}
 
 		void IVSpecular::RegisterEnviromnetMap(GLuint _env_map, std::string _name)
 		{
@@ -49,6 +56,9 @@ namespace OE1Core
 			m_MapPreviews.insert(std::make_pair(_name, 0));
 			CreateCubeMapStorage(_name);
 			WritePrefilteredMap(_name);
+
+			// Write Preview
+			Renderer::IVHDRPreviewRenderer::Render(m_PrefilteredReflectionMaps[_name], m_MapPreviews[_name], SceneManager::GetActiveScene());
 		}
 
 		void IVSpecular::CreateCubeMapStorage(std::string _name)

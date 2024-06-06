@@ -38,7 +38,7 @@ namespace OE1Core
 	}
 
 	GLuint TextureCubeMap::GetTexture() const { return m_Texture; };
-	GLuint TextureCubeMap::GetPreview() const { return m_Prview; };
+	GLuint TextureCubeMap::GetPreview() const { return m_Preview; };
 	int TextureCubeMap::GetWidth() { return m_Width; };
 	int TextureCubeMap::GetHeight() { return m_Height; };
 

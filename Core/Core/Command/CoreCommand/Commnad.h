@@ -60,6 +60,7 @@ namespace OE1Core
 		static void PushSceneDebugShapeUpdateCommand(CommandDef::SceneDebugShapeUpdateCommandDef _command);
 		static void PushSceneInitiCommand(CommandDef::CreateSceneLightRoomCommandDef _command);
 		static void PushShaderRecompileCommand(CommandDef::ShaderRecompileCommandDef _command);
+		static void PushSkyBoxInitCommand(CommandDef::CreateSkyboxInitCommandDef _command);
 		/// <summary>
 		/// This Command processed at the end
 		/// </summary>
@@ -84,6 +85,7 @@ namespace OE1Core
 		inline static std::queue<CommandDef::SceneDebugShapeUpdateCommandDef> s_SceneDebugShapeUpdateCommands;
 		inline static std::queue<CommandDef::CreateSceneLightRoomCommandDef> s_CreateSceneLightRoomCommands;
 		inline static std::queue<CommandDef::ShaderRecompileCommandDef> s_ShaderRecompileCommands;
+		inline static std::queue<CommandDef::CreateSkyboxInitCommandDef> s_SkyBoxInitCommands;
 	private: // callbacks
 		inline static ContentBrowserLayerNotifyCallback s_ContentBrowserLayerNotifyCallback;
 		inline static ThreadInfoLayerNotifyCallback s_ThreadInfoLayerNotifyCallback;

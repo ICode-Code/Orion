@@ -87,4 +87,8 @@ namespace OE1Core
 	{
 		s_ShaderRecompileCommands.push(_command);
 	}
+	void Command::PushSkyBoxInitCommand(CommandDef::CreateSkyboxInitCommandDef _command)
+	{
+		s_SkyBoxInitCommands.push(_command);
+	}
 }

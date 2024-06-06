@@ -21,6 +21,11 @@ namespace OE1Core
 			m_FullScreenQuadRenderer = new IVFullScreenQuadRenderer();
 			m_DefferedLightPassRenderer = new IVDefferedLightPassRenderer();
 			m_SkyboxPassRenderer = new IVSkyboxRenderer();
+			m_FinalColorBlendRenderer = new IVFinalColorBlendPassRenderer();
+			m_BloomProcessor = new IVBloom();
+
+			m_SkyBoxPreviewRenderer = new IVSkyboxPreviewRenderer();
+			m_HDRPreviewRenderer = new IVHDRPreviewRenderer();;
 		}
 		IVMasterRenderer::~IVMasterRenderer()
 		{
@@ -33,6 +38,11 @@ namespace OE1Core
 			delete m_FullScreenQuadRenderer;
 			delete m_DefferedLightPassRenderer;
 			delete m_SkyboxPassRenderer;
+			delete m_BloomProcessor;
+			delete m_FinalColorBlendRenderer;
+
+			delete m_HDRPreviewRenderer;
+			delete m_SkyBoxPreviewRenderer;
 		}
 		void IVMasterRenderer::PushToRenderStack(StaticMesh* _mesh)
 		{
@@ -113,11 +123,11 @@ namespace OE1Core
 			m_DebugShapeRenderer->Render(m_Scene->m_DebugMeshRegistry);
 			//m_SceneDebugShapeRenderer->Render(m_Scene->m_TurboOctree->GetRootNode());
 
-			m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, ActiveCameraIdx);
-
 			_master_camera->MainFB()->Detach();
 
 			DefferedLightPassMaster(_master_camera);
+			DefferedPostprocessPassMaster(_master_camera);
+			FinalColorBlendPassMaster(_master_camera);
 		}
 		void IVMasterRenderer::ClientCameraPass(Component::CameraComponent* _clinet_camera)
 		{
@@ -131,7 +141,9 @@ namespace OE1Core
 
 			_clinet_camera->MainFB()->Detach();
 
-			DefferedLightPass(_clinet_camera);
+			DefferedLightPassSlave(_clinet_camera);
+			DefferedPostprocessPassSlave(_clinet_camera);
+			FinalColorBlendPassSlave(_clinet_camera);
 		}
 		void IVMasterRenderer::FlushRenderCommand()
 		{
@@ -140,7 +152,7 @@ namespace OE1Core
 
 		void IVMasterRenderer::RenderFullScreenQuadToDefaultFramebuffer(Component::CameraComponent* _camera, int _attachment_idx)
 		{
-			auto frame_buffer = _camera->LightFB();
+			auto frame_buffer = _camera->FinalColorFB();
 			
 			// BIND DEFAULT FRAMEBUFFER
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -154,7 +166,7 @@ namespace OE1Core
 			m_FullScreenQuadRenderer->Render(frame_buffer->GetAttachment(_attachment_idx));
 		}
 
-		void IVMasterRenderer::DefferedLightPass(Component::CameraComponent* _camera)
+		void IVMasterRenderer::DefferedLightPassSlave(Component::CameraComponent* _camera)
 		{
 			_camera->LightFB()->Attach();
 
@@ -181,6 +193,7 @@ namespace OE1Core
 			m_DefferedLightPassRenderer->Render(
 				_camera, m_Scene->m_LightRoom);
 
+
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, _camera->MainFB()->GetBuffer());
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _camera->LightFB()->GetBuffer());
 			glBlitFramebuffer(
@@ -193,10 +206,41 @@ namespace OE1Core
 			if (m_Scene->m_LightRoom->m_ActiveCubeMap)
 				m_SkyboxPassRenderer->Render(m_Scene->m_LightRoom->m_ActiveCubeMap->GetTexture(), _camera->GetBuffertOffset());
 
+
 			m_OutlineRenderer->Render(m_Scene->GetActiveEntity(), 0);
 			m_GridRenderer.Render(*m_Scene->m_Grid, 0);
+			m_ViewportBillboardRenderer->Render(m_Scene->m_SceneBillboardIcon, 0);
 
 			_camera->LightFB()->Detach();
+		}
+		void IVMasterRenderer::DefferedPostprocessPassMaster(Component::CameraComponent* _camera)
+		{
+			m_BloomProcessor->ApplyBloom(_camera);
+		}
+		void IVMasterRenderer::DefferedPostprocessPassSlave(Component::CameraComponent* _camera)
+		{
+			m_BloomProcessor->ApplyBloom(_camera);
+		}
+
+		void IVMasterRenderer::FinalColorBlendPassMaster(Component::CameraComponent* _camera)
+		{
+			auto frame_buffer = _camera->FinalColorFB();
+
+			frame_buffer->Attach();
+
+			m_FinalColorBlendRenderer->Render(_camera);
+
+			frame_buffer->Detach();
+		}
+		void IVMasterRenderer::FinalColorBlendPassSlave(Component::CameraComponent* _camera)
+		{
+			auto frame_buffer = _camera->FinalColorFB();
+
+			frame_buffer->Attach();
+
+			m_FinalColorBlendRenderer->Render(_camera);
+
+			frame_buffer->Detach();
 		}
 	}
 }

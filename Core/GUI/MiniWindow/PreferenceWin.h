@@ -24,12 +24,28 @@ namespace OE1Core
 		void PushStyle();
 		void PopStyle();
 
+		void PreviewItemPushStyle(ImVec4 _col = { 0.15f, 0.15f, 0.15f, 1.0f });
+		void PreviewItemPopStyle();
+
 	private: // Win
 		void PostProcess();
 		void LightRoom();
 		void Grid();
 		void General();
 		void Physics();
+
+
+	private: // Util func
+		void PrintPreviewItemName(const char* _name);
+
+	private: // column
+		float m_Padding = 45.0f;
+		float m_ThumbnailSize = 65.0f;
+		float m_CellSize = m_ThumbnailSize + m_Padding;
+		float m_MaxPanelWidth;
+		int m_ColumnCount;
+		int m_SkyBoxItemSelectID = 0;
+		int m_HDRItemSelectID = 0;
 
 	};
 }

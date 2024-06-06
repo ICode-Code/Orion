@@ -19,6 +19,7 @@ namespace OE1Core
 
 		private:
 			static void ProcessIBLLoad();
+			static void ProcessSkyBoxInitCommand();
 		};
 	}
 }

@@ -17,6 +17,20 @@ namespace OE1Core
 		void CommandSceneInitalization::ProcessQueue()
 		{
 			ProcessIBLLoad();
+			ProcessSkyBoxInitCommand();
+		}
+		void CommandSceneInitalization::ProcessSkyBoxInitCommand()
+		{
+			while (!Command::s_SkyBoxInitCommands.empty())
+			{
+				auto& commandX = Command::s_SkyBoxInitCommands.front();
+
+				
+				AssetManager::RegisterTextureCubeMap(commandX.Sources, commandX.Name);
+				LOG_INFO("Sky-Dom '{0}' Loaded", commandX.Name);
+
+				Command::s_SkyBoxInitCommands.pop();
+			}
 		}
 		void CommandSceneInitalization::ProcessIBLLoad()
 		{
@@ -29,7 +43,7 @@ namespace OE1Core
 
 
 				m_Scene->m_LightRoomManager->RegisterEnvironmentMap(commandX.Path, commandX.Name);
-				LOG_INFO("'{0}' Light Map Loaded", commandX.Name);
+				LOG_INFO("HDRI Light Map '{0}' Loaded", commandX.Name);
 				
 
 				m_Scene->SetLightRoom(

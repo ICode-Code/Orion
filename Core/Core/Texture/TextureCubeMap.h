@@ -9,6 +9,7 @@ namespace OE1Core
 {
 	class TextureCubeMap
 	{
+		friend class AssetManager;
 	public:
 		TextureCubeMap(std::vector<DataBlock::Image2D> _source, std::string _name);
 		~TextureCubeMap();
@@ -24,7 +25,7 @@ namespace OE1Core
 
 	protected:
 		GLuint m_Texture = 0;
-		GLuint m_Prview = 0;
+		GLuint m_Preview = 0;
 		int m_Width = 0;
 		int m_Height = 0;
 		std::string m_Name;

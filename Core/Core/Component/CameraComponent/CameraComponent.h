@@ -6,8 +6,14 @@
 
 #include <vector>
 #include "../Core/DS/OptStructure/Frustum/Frustum.h"
+
+// Framebuffers
 #include "../../InfiniteVision/DisplayCanavs/IVForwardMainPassFramebuffer.h"
 #include "../../InfiniteVision/DisplayCanavs/IVDefferedMainLightPassFrameebuffer.h"
+#include "../../InfiniteVision/DisplayCanavs/IVBloomFramebuffer.h"
+#include "../../InfiniteVision/DisplayCanavs/IVColorGradeFramebuffer.h"
+#include "../../InfiniteVision/DisplayCanavs/IVFinalColorBlendFramebuffer.h"
+
 #include "CameraParameter.h"
 #include <UniformBuffer/UniformBlockManager.h>
 
@@ -52,8 +58,13 @@ namespace OE1Core
 			void UpdateBuffer(float _dt);
 
 			GLuint GetRenderedScene();
+
+			// Query Framebuffer
 			Renderer::IVForwardMainPassFramebuffer* MainFB();
 			Renderer::IVDefferedMainLightPassFramebuffer* LightFB();
+			Renderer::IVColorGradeFramebuffer* PostProcessColorGradeFB();
+			Renderer::IVBloomFramebuffer* PostProcessBloomFM();
+			Renderer::IVFinalColorBlendFramebuffer* FinalColorFB();
 
 			std::vector<glm::vec3>& GetFrustumCorner();
 			Frustum& GetFrustum();
@@ -113,9 +124,14 @@ namespace OE1Core
 			std::vector<glm::vec3> m_FrustumCorner;
 			Frustum m_Frustum;
 			int m_BufferOffset;
-			Renderer::IVForwardMainPassFramebuffer* m_MainPassFramebuffer = nullptr;
-			Renderer::IVDefferedMainLightPassFramebuffer* m_DefferedLightPassFramebuffer = nullptr;
 
+
+		private: // Framebuffers
+			Renderer::IVForwardMainPassFramebuffer* m_MainPassFramebuffer					= nullptr;
+			Renderer::IVDefferedMainLightPassFramebuffer* m_DefferedLightPassFramebuffer	= nullptr;
+			Renderer::IVBloomFramebuffer* m_BloomPassFramebuffer							= nullptr;
+			Renderer::IVColorGradeFramebuffer* m_ColorGradeFramebuffer						= nullptr;
+			Renderer::IVFinalColorBlendFramebuffer* m_FinalColorBlendFramebuffer			= nullptr;
 		private:
 			Memory::SceneTransfrom m_BufferTransform;
 			CameraParameter::CAMERA_CONTROLLER_TYPE m_ControllerType;

@@ -48,6 +48,20 @@ namespace OE1Core
 		ImGui::PopStyleVar();
 	}
 
+	void PreferenceWin::PreviewItemPushStyle(ImVec4 _col)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, _col);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.10f, 0.10f, 0.10f, 1.0f });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, { 1 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 10.0f, 10.0f });
+	}
+	void PreferenceWin::PreviewItemPopStyle()
+	{
+		ImGui::PopStyleVar(3);
+		ImGui::PopStyleColor(2);
+	}
+
 	void PreferenceWin::Update()
 	{
 
@@ -141,6 +155,14 @@ namespace OE1Core
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 	}
+	void PreferenceWin::PrintPreviewItemName(const char* _name)
+	{
+		float textWidth = ImGui::CalcTextSize(_name).x;
+		float columnWidth = ImGui::GetContentRegionAvail().x;
+		float offset = (columnWidth - textWidth) * 0.5f;
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
+		ImGui::TextWrapped(_name);
+	}
 
 	void PreferenceWin::PostProcess()
 	{
@@ -155,6 +177,14 @@ namespace OE1Core
 	}
 	void PreferenceWin::LightRoom()
 	{
+
+		m_CellSize = m_ThumbnailSize + m_Padding;
+		m_MaxPanelWidth = ImGui::GetContentRegionAvail().x;
+		m_ColumnCount = (int)(m_MaxPanelWidth / m_CellSize);
+		if (m_ColumnCount < 1)
+			m_ColumnCount = 1;
+
+
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 4 });
 
 		if (ImGui::TreeNodeEx("World Lighting", m_Flag))
@@ -177,9 +207,21 @@ namespace OE1Core
 		if (ImGui::TreeNodeEx("Indirect Light", m_Flag))
 		{
 
+			m_HDRItemSelectID = 0;
+
+			ImGui::Columns(m_ColumnCount, "hdr_list", false);
+
 			for (auto& hdr_iter : m_Scene->m_LightRoomManager->GetSpeculars()->m_PrefilteredReflectionMaps)
 			{
-				if (ImGui::Button(hdr_iter.first.c_str(), { 120.0f, 0.0f }))
+
+				ImGui::PushID(m_HDRItemSelectID++);
+
+				PreviewItemPushStyle();
+				GLuint __preview = m_Scene->m_LightRoomManager->GetSpeculars()->GetPrefilteredPreviewReflectionMap(hdr_iter.first);
+				bool _reg_click = ImGui::ImageButton((ImTextureID)(uintptr_t)__preview, { m_ThumbnailSize, m_ThumbnailSize }, { 0, 1 }, { 1, 0 });
+				PreviewItemPopStyle();
+
+				if (_reg_click)
 				{
 					m_Scene->SetLightRoom(
 						m_Scene->m_LightRoomManager->GetDiffuseIrradiance()->GetIrradianceMap(hdr_iter.first),
@@ -187,13 +229,43 @@ namespace OE1Core
 						0
 					);
 				}
+
+
+				PrintPreviewItemName(hdr_iter.first.c_str());
+
+				ImGui::NextColumn();
+				ImGui::PopID();
 			}
 
+			ImGui::Columns(1);
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNodeEx("Sky Box", m_Flag))
+		if (ImGui::TreeNodeEx("Sky Dom", m_Flag))
 		{
+			auto& cube_map_reg = AssetManager::GetCubeMapTextureRegistry();
+			m_SkyBoxItemSelectID = 0;
 
+			ImGui::Columns(m_ColumnCount, "sky_dom_list", false);
+
+			for (auto& cube_map : cube_map_reg)
+			{
+				ImGui::PushID(m_SkyBoxItemSelectID++);
+				PreviewItemPushStyle();
+				
+				bool _reg_click = ImGui::ImageButton((ImTextureID)(uintptr_t)cube_map.second->GetPreview(), { m_ThumbnailSize, m_ThumbnailSize }, { 0, 1 }, { 1, 0 });
+				PreviewItemPopStyle();
+				if (_reg_click)
+				{
+					m_Scene->m_LightRoom->m_ActiveCubeMap = cube_map.second;
+				}
+
+				PrintPreviewItemName(cube_map.first.c_str());
+
+				ImGui::NextColumn();
+				ImGui::PopID();
+			}
+
+			ImGui::Columns(1);
 			ImGui::TreePop();
 		}
 

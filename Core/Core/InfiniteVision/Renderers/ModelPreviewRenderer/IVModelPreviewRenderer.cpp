@@ -33,10 +33,6 @@ namespace OE1Core
 			glGetIntegerv(GL_VIEWPORT, viewport);
 
 			IVModelPreviewFramebuffer _frame(_model_package.Preview);
-			_frame.SetClearColor({ 0.1f, 0.1f, 0.1f, 0.0f }); 
-			_frame.Attach();
-			glViewport(0, 0, _frame.GetWidth(), _frame.GetHeight());
-			s_LocalShader->Attach();
 
 			float _length = glm::length(_model_package.Bound.Max);
 			s_Camera->m_FieldOfView = 75;
@@ -46,6 +42,10 @@ namespace OE1Core
 			s_CameraController->Focus(glm::vec3(0.0f, _length / 2.0f, 0.0f), _length);
 			s_CameraController->UpdateCameraView();
 
+
+			_frame.SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f }); 
+			_frame.Attach();
+			s_LocalShader->Attach();
 
 			glm::vec3 _pos = glm::vec3(s_CameraController->GetFinalPosition().x, s_CameraController->GetFinalPosition().y, s_CameraController->GetFinalPosition().z);
 			s_Camera->Update(_pos);

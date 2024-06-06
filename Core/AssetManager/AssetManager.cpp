@@ -296,6 +296,14 @@ namespace OE1Core
 		}
 
 		s_TextureCubeMapInternalRegistry.insert(std::make_pair(_name, new TextureCubeMap(_source, _name)));
+
+		TextureCubeMap* _cube_map = s_TextureCubeMapInternalRegistry[_name];
+		Renderer::IVSkyboxPreviewRenderer::Render(
+			_cube_map->GetTexture(),
+			_cube_map->m_Preview,
+			SceneManager::GetActiveScene()
+		);
+
 	}
 
 }
