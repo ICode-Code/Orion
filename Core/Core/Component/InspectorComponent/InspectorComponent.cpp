@@ -912,7 +912,7 @@ namespace OE1Core
 				ImGui::Indent(16.0f);
 
 				CustomFrame::UIEditorColor4("Color", glm::value_ptr(m_PointLightComponent->GetData().Color));
-				CustomFrame::UIEditorFloat("Intensity", &m_PointLightComponent->GetData().Intensity, 0.0f, 1024.0f);
+				CustomFrame::UIEditorFloatDrag("Intensity", &m_PointLightComponent->GetData().Intensity, 0.5f, 0.0f, 1000000.0f);
 				ImGui::Indent(-16.0f);
 				ImGui::TreePop();
 			}
@@ -927,7 +927,7 @@ namespace OE1Core
 				ImGui::Indent(16.0f);
 
 				CustomFrame::UIEditorColor4("Color", glm::value_ptr(m_SpotLightComponent->GetData().Color));
-				CustomFrame::UIEditorFloatDrag("Intensity", &m_SpotLightComponent->GetData().Intensity);
+				CustomFrame::UIEditorFloatDrag("Intensity", &m_SpotLightComponent->GetData().Intensity, 0.5f, 0.0f, 1000000.0f);
 
 				/*static float _inner_cut = 12.5f;
 				if (CustomFrame::UIEditorFloatDrag("Raduis", &_inner_cut))
@@ -954,7 +954,7 @@ namespace OE1Core
 				ImGui::Indent(16.0f);
 
 				CustomFrame::UIEditorColor4("Color", glm::value_ptr(m_DirectionalLightComponent->GetData().Color));
-				CustomFrame::UIEditorFloat("Intensity", &m_DirectionalLightComponent->GetData().Intensity, 0.0f, 64.0f);
+				CustomFrame::UIEditorFloatDrag("Intensity", &m_DirectionalLightComponent->GetData().Intensity, 0.f, 0.0f, 10.0f);
 				ImGui::Indent(-16.0f);
 				ImGui::TreePop();
 			}

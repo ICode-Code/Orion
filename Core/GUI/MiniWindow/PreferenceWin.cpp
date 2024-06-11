@@ -163,12 +163,85 @@ namespace OE1Core
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
 		ImGui::TextWrapped(_name);
 	}
+	void PreferenceWin::UpdateCameraBloomQuality(int _mip_level)
+	{
+		auto _camera_component = m_Scene->m_EntityRegistry.view<Component::CameraComponent>();
+		for (auto ent : _camera_component)
+		{
+			Component::CameraComponent& _core_camera = _camera_component.get<Component::CameraComponent>(ent);
 
+			_core_camera.PostProcessBloomFM()->UpdateMipLevel(_mip_level);
+		}
+
+		m_Scene->m_MasterSceneCamera->Camera->PostProcessBloomFM()->UpdateMipLevel(_mip_level);
+	}
 	void PreferenceWin::PostProcess()
 	{
 		if (ImGui::TreeNodeEx("PostProcess", m_Flag))
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 4 });
+
+			if (ImGui::TreeNodeEx("Bloom", m_Flag))
+			{
+
+
+				if (CustomFrame::UIEditorFloat("Bloom Influence", &m_Scene->m_EnvVarBuffer.BloomInfluence, 0.001f, 1.0f))
+					m_Scene->UpdateEnvVar();
+				if (CustomFrame::UIEditorFloat("Filter Rad", &m_Scene->m_EnvVarBuffer.BloomFilterRadius, 0.001f, 10.0f))
+					m_Scene->UpdateEnvVar();
+
+
+				static int _default_bloom_qual = 1;
+				if (CustomFrame::UIEditorDropdown("Quality", &_default_bloom_qual, "Low\0 Medium\0 High\0 Ultra"))
+				{
+					if (_default_bloom_qual == 0)
+						UpdateCameraBloomQuality(2); // Very Low
+
+					switch (_default_bloom_qual)
+					{
+					case 0:// Low
+						UpdateCameraBloomQuality(2);
+						break;
+					case 1:// Medium
+						UpdateCameraBloomQuality(5);
+						break;
+					case 2:// High
+						UpdateCameraBloomQuality(8);
+						break;
+					case 3:// Ultra
+						UpdateCameraBloomQuality(12);
+						break;
+					default:
+						break;
+					}
+					
+				}
+
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNodeEx("Fog", m_Flag))
+			{
+				if(CustomFrame::UIEditorColor3("Bloom Color", glm::value_ptr(m_Scene->m_EnvVarBuffer.FogColor))) m_Scene->UpdateEnvVar();
+				if(CustomFrame::UIEditorFloatDrag("Gradiant", &m_Scene->m_EnvVarBuffer.FogGradiant, 0.002f, 0.0f, 50.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
+				if(CustomFrame::UIEditorFloatDrag("Density", &m_Scene->m_EnvVarBuffer.FogDensity, 0.0001f, 0.0001f, 1.0f, "%.5f", 0)) m_Scene->UpdateEnvVar();
+				if(CustomFrame::UIEditorFloat("Intensity", &m_Scene->m_EnvVarBuffer.FogIntensity, 0.0f, 1.0f, "%.2f")) m_Scene->UpdateEnvVar();
+				if(CustomFrame::UIEditorFloatDrag("Upper Limit", &m_Scene->m_EnvVarBuffer.FogUpperLimit, 0.002f, -10.0f, 1.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
+				if(CustomFrame::UIEditorFloatDrag("Lower Limit", &m_Scene->m_EnvVarBuffer.FogLowerLimit, 0.002f, -10.0f, 1.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNodeEx("Color Grading", m_Flag))
+			{
+				if (CustomFrame::UIEditorFloatDrag("Brightness", &m_Scene->m_EnvVarBuffer.Brightness, 0.002f, -1.0f, 1.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
+				if (CustomFrame::UIEditorFloatDrag("Contrast", &m_Scene->m_EnvVarBuffer.Contrast, 0.02f, 0.0f, 5.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
+				if (CustomFrame::UIEditorFloatDrag("Saturation", &m_Scene->m_EnvVarBuffer.Saturation, 0.002f, 0.0f, 5.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
+				if (CustomFrame::UIEditorFloatDrag("Hue", &m_Scene->m_EnvVarBuffer.Hue, 0.002f, -1.0f, 1.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
+				
+				ImGui::TreePop();
+			}
 
 
 			ImGui::PopStyleVar();
@@ -287,8 +360,10 @@ namespace OE1Core
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 4 });
 		if (ImGui::TreeNodeEx("General", m_Flag))
 		{
-			
-			CustomFrame::UIEditorCheckbox("Render Thread for Animation", &m_Scene->m_UseActiveThreadForAnimation);
+			ImGuiIO& io = ImGui::GetIO();
+
+			CustomFrame::UIEditorFloatDrag("Global Scale", &io.FontGlobalScale, 0.005f, 0.001f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp, 200.0f);
+			CustomFrame::UIEditorCheckbox("Render Thread for Animation", &m_Scene->m_UseActiveThreadForAnimation, 200.0f);
 
 
 			ImGui::TreePop();

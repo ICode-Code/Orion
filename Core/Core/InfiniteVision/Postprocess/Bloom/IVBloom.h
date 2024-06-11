@@ -6,7 +6,7 @@
 
 namespace OE1Core
 {
-
+	class Scene;
 	namespace Component 
 	{ 
 		class CameraComponent; 
@@ -16,6 +16,7 @@ namespace OE1Core
 		class IVBloom
 		{
 		friend class Component::CameraComponent;
+		friend class PreferenceWin;
 		public:
 			IVBloom();
 			~IVBloom();
@@ -28,6 +29,7 @@ namespace OE1Core
 			Shader* m_UpSample = nullptr;
 			Shader* m_DownSample = nullptr;
 			DS::Quad* m_Quad = nullptr;
+			Scene* m_Scene = nullptr;
 
 
 		protected:

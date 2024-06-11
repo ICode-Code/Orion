@@ -110,6 +110,7 @@ namespace OE1Core
 					m_Scene->m_RenderStack->RegisterOpaqueStaticMesh(re_evalutaion_buffer[i], re_evalutaion_buffer[i]->PackageID);
 			}
 		}
+		IVBloom* IVMasterRenderer::GetBloomProcessor() { return m_BloomProcessor; };
 		void IVMasterRenderer::MasterCameraPass(Component::CameraComponent* _master_camera)
 		{
 

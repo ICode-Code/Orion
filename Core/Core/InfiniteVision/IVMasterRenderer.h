@@ -61,6 +61,9 @@ namespace OE1Core
 			void ClientCameraPass(Component::CameraComponent* _clinet_camera);
 			void MasterCameraPass(Component::CameraComponent* _camera);
 
+
+			IVBloom* GetBloomProcessor();
+
 			/// <summary>
 			/// Must be called after all render command
 			/// </summary>

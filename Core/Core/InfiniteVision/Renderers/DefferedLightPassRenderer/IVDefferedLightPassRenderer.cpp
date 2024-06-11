@@ -17,10 +17,11 @@ namespace OE1Core
 			m_Shader->Set1i("it_normal",					2);
 			m_Shader->Set1i("it_emission",					3);
 			m_Shader->Set1i("it_metal_roughness_ao_alpha",	4);
+			m_Shader->Set1i("it_Rdepth", 5);
 
-			m_Shader->Set1i("it_irradiance_map",				5);
-			m_Shader->Set1i("it_pre_filtered_enviroment_map",	6);
-			m_Shader->Set1i("it_lookup_texture",				7);
+			m_Shader->Set1i("it_irradiance_map",				6);
+			m_Shader->Set1i("it_pre_filtered_enviroment_map",	7);
+			m_Shader->Set1i("it_lookup_texture",				8);
 			m_Shader->Detach();
 		}
 		IVDefferedLightPassRenderer::~IVDefferedLightPassRenderer()
@@ -32,6 +33,8 @@ namespace OE1Core
 		{
 			m_Shader->Attach();
 			m_Shader->Set1i("ActiveCameraIndex", _camera->GetBuffertOffset());
+			m_Shader->Set1f("near", _camera->m_Near);
+			m_Shader->Set1f("far", _camera->m_Far);
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, _camera->MainFB()->m_Color);
@@ -49,12 +52,15 @@ namespace OE1Core
 			glBindTexture(GL_TEXTURE_2D, _camera->MainFB()->m_MetalRougnessAOAlpha);
 
 			glActiveTexture(GL_TEXTURE5);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, _light_room->IrradianceMap);
+			glBindTexture(GL_TEXTURE_2D, _camera->MainFB()->m_Rdepth);
 
 			glActiveTexture(GL_TEXTURE6);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, _light_room->PreFilteredEnviromentMap);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, _light_room->IrradianceMap);
 
 			glActiveTexture(GL_TEXTURE7);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, _light_room->PreFilteredEnviromentMap);
+
+			glActiveTexture(GL_TEXTURE8);
 			glBindTexture(GL_TEXTURE_2D, _light_room->LUT);
 
 

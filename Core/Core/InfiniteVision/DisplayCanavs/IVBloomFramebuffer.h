@@ -6,6 +6,7 @@
 
 namespace OE1Core
 {
+	class PreferenceWin;
 	namespace Renderer
 	{
 		struct BloomMip
@@ -17,6 +18,7 @@ namespace OE1Core
 		class IVBloomFramebuffer : public IVForwardBaseFramebuffer
 		{
 			friend class IVBloom;
+			friend class PreferenceWin;
 		public:
 			IVBloomFramebuffer(const int _width, const int _height);
 			IVBloomFramebuffer(const int _res[2]);

@@ -32,11 +32,12 @@
 
 namespace OE1Core 
 {
-	namespace Renderer { class IVMasterRenderer; class IVRenderStack; }
+	namespace Renderer { class IVMasterRenderer; class IVRenderStack; class IVBloom; }
 	class Entity;
 	class Scene
 	{
 		friend Renderer::IVMasterRenderer;
+		friend class Renderer::IVBloom;
 		friend class InputController;
 		friend class RenderController;
 		friend class GenesisController;

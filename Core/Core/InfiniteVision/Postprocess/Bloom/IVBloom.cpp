@@ -1,5 +1,6 @@
 #include "IVBloom.h"
 #include "../Core/Component/CameraComponent/CameraComponent.h"
+#include "../Core/Scene/SceneManager.h"
 
 
 namespace OE1Core
@@ -9,9 +10,10 @@ namespace OE1Core
 		IVBloom::IVBloom()
 		{
 			m_Quad = new DS::Quad();
-
 			m_UpSample = ShaderManager::GetShader(ShaderID::BLOOM_UP_SAMPLE);
 			m_DownSample = ShaderManager::GetShader(ShaderID::BLOOM_DOWN_SAMPLE);
+
+			m_Scene = SceneManager::GetActiveScene();
 		}
 		IVBloom::~IVBloom()
 		{
@@ -77,7 +79,7 @@ namespace OE1Core
 			const auto& mip_chain = _camera->PostProcessBloomFM()->GetMipChain();
 
 			m_UpSample->Attach();
-			m_UpSample->Set1f("filterRadius", 0.006f);
+			m_UpSample->Set1f("filterRadius", SceneManager::GetActiveScene()->m_EnvVarBuffer.BloomFilterRadius / 100.0f);
 
 			for (size_t i = mip_chain.size() - 1; i > 0; i--)
 			{

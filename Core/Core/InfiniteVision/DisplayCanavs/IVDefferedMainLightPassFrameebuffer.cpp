@@ -43,7 +43,7 @@ namespace OE1Core
 
 			// DEPTH
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH32F_STENCIL8, m_Width, m_Height);
 
 			SetBufferAttachment();
 		}
@@ -64,7 +64,7 @@ namespace OE1Core
 			// Depth
 			glGenRenderbuffers(1, &m_Depth);
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH32F_STENCIL8, m_Width, m_Height);
 
 
 			// Attach to Framebuffer

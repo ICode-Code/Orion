@@ -46,6 +46,8 @@ namespace OE1Core
 		m_EnvVarBuffer.Fresnel = 0.04f;
 		m_EnvVarBuffer.Gamma = 2.2f;
 		m_EnvVarBuffer.WorldLightIntensity = 1.0f;
+
+		m_EnvVarBuffer.Brightness = 0.0f;
 		UpdateEnvVar();
 
 		// Init Icons

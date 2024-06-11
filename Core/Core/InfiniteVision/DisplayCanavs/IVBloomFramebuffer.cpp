@@ -42,7 +42,9 @@ namespace OE1Core
 
 			m_MipLevel = _mip_level;
 			m_MipChain.clear();
+			
 			Init();
+			Update(m_Width, m_Height);
 		}
 		void IVBloomFramebuffer::Update(int _width, int _height)
 		{

@@ -25,6 +25,7 @@ namespace OE1Core
 			glDeleteTextures(1, &m_Normal);
 			glDeleteTextures(1, &m_MetalRougnessAOAlpha);
 			glDeleteTextures(1, &m_Emission);
+			glDeleteTextures(1, &m_Rdepth);
 		}
 		void IVForwardMainPassFramebuffer::SetBufferAttachment()
 		{
@@ -35,6 +36,7 @@ namespace OE1Core
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_Normal, 0);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, m_MetalRougnessAOAlpha, 0);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, m_Emission, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_2D, m_Rdepth, 0);
 
 
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Depth);
@@ -74,8 +76,13 @@ namespace OE1Core
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
 
 			// DEPTH
+			glBindTexture(GL_TEXTURE_2D, m_Rdepth);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+
+
+			// DEPTH
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH32F_STENCIL8, m_Width, m_Height);
 
 			SetBufferAttachment();
 		}
@@ -124,10 +131,17 @@ namespace OE1Core
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
 			DefaultTextureFilter();
 
+
+			glGenTextures(1, &m_Rdepth);
+			glBindTexture(GL_TEXTURE_2D, m_Rdepth);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL);
+			DefaultTextureFilter();
+
+
 			// Depth
 			glGenRenderbuffers(1, &m_Depth);
 			glBindRenderbuffer(GL_RENDERBUFFER, m_Depth);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH32F_STENCIL8, m_Width, m_Height);
 
 
 			// Attach to Framebuffer
@@ -135,7 +149,7 @@ namespace OE1Core
 
 			SetBufferAttachment();
 
-			SetDrawBuffers(6);
+			SetDrawBuffers(7);
 
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 				LogError("IVFMainCanavs");

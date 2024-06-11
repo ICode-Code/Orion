@@ -56,7 +56,7 @@ void main()
 			FragPosition	= i_InstanceMatrices * vec4(i_Position, 1.0f);
 			Tangent			= i_Tangent;
 			BiTangent		= i_Bitangent;
-			VertNormal		= mat3(transpose(inverse(i_InstanceMatrices))) * i_Normal;  
+			VertNormal		= mat3(i_InstanceMatrices) * i_Normal;  
 			VertColor 		= i_Color;
 
 	////////////////////////////////////////////////////////////////////////////////////////
@@ -142,8 +142,7 @@ void main()
 			FragPosition	= i_InstanceMatrices * FinalBoneTransformation * vec4(i_Position.xyz, 1.0f);
 			Tangent			= i_Tangent;
 			BiTangent		= i_Bitangent;
-			VertNormal		= mat3(transpose(inverse(i_InstanceMatrices * FinalBoneTransformation))) * i_Normal;
-			VertNormal		= normalize(VertNormal);  
+			VertNormal		= mat3(i_InstanceMatrices * FinalBoneTransformation) * i_Normal; 
 			VertColor 		= i_Color;
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -231,8 +230,7 @@ void main()
 			FragPosition	= Model * FinalBoneTransformation * vec4(i_Position.xyz, 1.0f);
 			Tangent			= i_Tangent;
 			BiTangent		= i_Bitangent;
-			VertNormal		= mat3(transpose(inverse(Model * FinalBoneTransformation))) * i_Normal;
-			VertNormal		= normalize(VertNormal);  
+			VertNormal		= mat3(Model * FinalBoneTransformation) * i_Normal;  
 			VertColor 		= i_Color;
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -297,7 +295,7 @@ void main()
 			FragPosition	= Model * vec4(i_Position, 1.0f);
 			Tangent			= i_Tangent;
 			BiTangent		= i_Bitangent;
-			VertNormal		= mat3(transpose(inverse(Model))) * i_Normal;  
+			VertNormal		= mat3(Model) * i_Normal;  
 			VertColor 		= i_Color;
 
 	////////////////////////////////////////////////////////////////////////////////////////
@@ -371,6 +369,7 @@ layout(location = 2) out vec4 oPosition;
 layout(location = 3) out vec4 oNormal;
 layout(location = 4) out vec4 oMetalRougnessAOAlpha;
 layout(location = 5) out vec4 oEmission;
+layout(location = 6) out vec4 oRdepth;
 )";
 	}
 	void ShaderGenerator::CM_OpenMainPixelShader()
@@ -557,10 +556,10 @@ Emission = Materials[MaterialIndex].EmissionColor.rgb;
 	void ShaderGenerator::FR_ComputeFinalPixel()
 	{
 		s_Source += R"(
-	float Depth = (gl_FragCoord.z / gl_FragCoord.w);
 	PixelColor = vec4(Color, 1.0f);
 	UID = RenderID;
-
+	
+	oRdepth = vec4(vec3(gl_FragCoord.z), 1.0f);
 	oPosition = FragPosition;
 	oNormal = vec4(Normal, 1.0f);
 	oMetalRougnessAOAlpha = vec4(Metal * Materials[MaterialIndex].BaseReflectivityMetalFacRoughnessFac.y, Roughness * Materials[MaterialIndex].BaseReflectivityMetalFacRoughnessFac.z, AO, Alpha);

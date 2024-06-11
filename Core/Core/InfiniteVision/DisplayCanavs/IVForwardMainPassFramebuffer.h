@@ -22,15 +22,15 @@ namespace OE1Core
 			GLuint GetAttachment(int _index) override;
 
 
-		protected:
-			GLuint m_Depth;
 		public:
 			GLuint m_UID;
 			GLuint m_Color;
 			GLuint m_Position = 0;
 			GLuint m_Normal = 0;
+			GLuint m_Rdepth = 0;
 			GLuint m_MetalRougnessAOAlpha = 0;
 			GLuint m_Emission = 0;
+			GLuint m_Depth = 0;
 			
 		private: // util
 			void SetBufferAttachment() override;

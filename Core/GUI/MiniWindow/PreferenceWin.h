@@ -37,6 +37,7 @@ namespace OE1Core
 
 	private: // Util func
 		void PrintPreviewItemName(const char* _name);
+		void UpdateCameraBloomQuality(int _mip_level);
 
 	private: // column
 		float m_Padding = 45.0f;

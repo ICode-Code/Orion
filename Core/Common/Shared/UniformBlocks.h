@@ -43,7 +43,8 @@ namespace OE1Core
 
 			float SunBrightness = 1.0f;        // 4 bytes, offset 48
 			float SunRadius = 1.0f;            // 4 bytes, offset 52
-			float padding0[2];          // 8 bytes padding, offset 56
+			float BloomInfluence = 0.22f;    // 4 byte, 
+			float BloomFilterRadius = 0.6f; // 4 byte
 
 			glm::vec4 FogColor = glm::vec4(0.5f);         // 16 bytes, offset 64
 
@@ -54,7 +55,10 @@ namespace OE1Core
 			float FogUpperLimit = 0.2f;        // 4 bytes, offset 96
 			int UseFog = false;                 // 4 bytes, offset 100
 
-			float padding1[3];          // 12 bytes padding, offset 104
+			float Brightness = 0.1f;
+			float Contrast = 1.2f;
+			float Saturation = 1.3f;
+			float Hue = 0.0f;
 		};
 
 
