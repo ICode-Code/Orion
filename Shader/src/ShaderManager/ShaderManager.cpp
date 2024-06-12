@@ -65,7 +65,7 @@ namespace OE1Core
 
 		Shader* _shader = s_Shaders[_id];
 
-		//_shader->Recompile();
+		_shader->Recompile();
 
 		return _shader;
 	}

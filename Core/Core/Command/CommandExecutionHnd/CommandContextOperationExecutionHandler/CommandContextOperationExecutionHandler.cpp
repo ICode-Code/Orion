@@ -259,13 +259,15 @@ namespace OE1Core
 							if (commandX.TextureFlag.HasAlpha)
 								MASTER_MATERIAL->RegisterAlphaMap(AssetManager::GetTexture(_texture_access[DataBlock::TextureType::OPACITY]));
 
-							/*if (MASTER_MATERIAL->m_Dirty)
+							if (MASTER_MATERIAL->m_Dirty)
 							{
 								MASTER_MATERIAL->m_Shader->UpdateFragmentShader(
 									ShaderGenerator::GetForwardPixelShader(MASTER_MATERIAL->m_AvailableTexture)
 								);
+								Memory::UniformBlockManager::LinkShader(MASTER_MATERIAL->m_Shader);
+								MASTER_MATERIAL->AssignShader(MASTER_MATERIAL->m_Shader);
 								MASTER_MATERIAL->m_Dirty = false;
-							}*/
+							}
 
 							// Update the material and assign it to the mesh
 							MASTER_MATERIAL->Update();
@@ -369,6 +371,7 @@ namespace OE1Core
 					std::string _new_frag_shader = ShaderGenerator::GetForwardPixelShader(_flags);
 					command.Material->m_Shader->UpdateFragmentShader(_new_frag_shader);
 					Memory::UniformBlockManager::LinkShader(command.Material->m_Shader);
+					command.Material->AssignShader(command.Material->m_Shader);
 
 					CommandDef::MasterRendererMaterialRefreshCommandDef commandX(ORI_COMMAND_DEF_ARGS(__FUNCTION__));
 

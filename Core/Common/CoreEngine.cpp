@@ -103,7 +103,6 @@ namespace OE1Core
 
 		// Prepare for the render loop
 		s_GenesisWindow->EnableWin();
-		s_GenesisWindow->RegisterImGuiSDLEventProcessorCallback(std::bind(ImGui_ImplSDL2_ProcessEvent, std::placeholders::_1));
 		s_GenesisWindow->RegisterFollowUpEventCallback(std::bind(&CoreEngine::OnGenesisEvent, this, std::placeholders::_1));
 		s_GenesisWindow->RegisterFrameSizeUpdateCallback(std::bind(&CoreEngine::OnGenesisFrameSizeUpdate, this, std::placeholders::_1, std::placeholders::_2));
 		s_GenesisWindow->ResetCallbacks(); 
@@ -125,6 +124,16 @@ namespace OE1Core
 			SceneManager::RenderScenesInGame();
 
 			s_GenesisWindow->SwapBuffer();
+		}
+
+		if (SceneManager::GetActiveScene()->GetProtagonist())
+		{
+			if (SceneManager::GetActiveScene()->GetProtagonist()->GetCamera())
+			{
+				SceneManager::GetActiveScene()->GetProtagonist()->GetCamera()->SetFlightState(CameraParameter::CAMERA_FLIGHT_STATE::IDEL);
+				SceneManager::GetActiveScene()->GetProtagonist()->GetCamera()->SetPowerState(CameraParameter::CAMERA_POWER_STATE::OFF);
+
+			}
 		}
 
 		// On exist we destory the window 

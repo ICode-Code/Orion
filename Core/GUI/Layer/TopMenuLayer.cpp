@@ -321,19 +321,19 @@ namespace OE1Core
 				{
 					if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::POINT_LIGHT))
 						SceneEntityFactory::GetScene()->RegisterBillboardIcon(ViewportIconBillboardType::POINT_LIGHT, "PointLight");
-					SceneEntityFactory::CreatePointLight();
+					SceneManager::GetActiveScene()->GetActiveEntity()->Pick(SceneEntityFactory::CreatePointLight(), true);
 				}
 				if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Spot Light", "        GameObject        "))
 				{
 					if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::SPOT_LIGHT))
 						SceneEntityFactory::GetScene()->RegisterBillboardIcon(ViewportIconBillboardType::SPOT_LIGHT, "SpotLight");
-					SceneEntityFactory::CreateSpotLight();
+					SceneManager::GetActiveScene()->GetActiveEntity()->Pick(SceneEntityFactory::CreateSpotLight(), true);
 				}
 				if (ImGui::MenuItem(ICON_FA_LIGHTBULB"   Directional Light", "        GameObject        "))
 				{
 					if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::DIRECTIONAL_LIGHT))
 						SceneEntityFactory::GetScene()->RegisterBillboardIcon(ViewportIconBillboardType::DIRECTIONAL_LIGHT, "Sun");
-					SceneEntityFactory::CreateDirectionalLight();
+					SceneManager::GetActiveScene()->GetActiveEntity()->Pick(SceneEntityFactory::CreateDirectionalLight());
 				}
 
 				ImGui::EndMenu();
@@ -370,7 +370,7 @@ namespace OE1Core
 				if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::CAMERA))
 					SceneEntityFactory::GetScene()->RegisterBillboardIcon(ViewportIconBillboardType::CAMERA, "Camera");
 
-				SceneEntityFactory::CreateSceneCamera();
+				SceneManager::GetActiveScene()->GetActiveEntity()->Pick(SceneEntityFactory::CreateSceneCamera());
 			}
 
 			if (ImGui::MenuItem(ICON_FA_FLAG_CHECKERED"   Actor", "        Player Template        "))

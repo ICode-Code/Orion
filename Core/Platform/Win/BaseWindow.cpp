@@ -131,10 +131,10 @@ namespace OE1Core
 
 			SDL_MaximizeWindow(m_Args.Win);
 
-			SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+			//SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 			
 			// Create Shared Context with the main Context
-			m_Args.SharedContext = SDL_GL_CreateContext(m_Args.Win);
+			//m_Args.SharedContext = SDL_GL_CreateContext(m_Args.Win);
 
 			// Create Main OpenGL Context
 			m_Args.MainContext = SDL_GL_CreateContext(m_Args.Win);

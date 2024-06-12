@@ -148,23 +148,11 @@ namespace OE1Core
 	}
 	void Shader::Recompile()
 	{
+		Attach();
 		ProcessPackedShaderSource(ReadDiskFile(m_Arg.ShaderPath));
 		UpdateVertexShader(m_Arg.VertexShaderSource);
 		UpdateFragmentShader(m_Arg.FragmentShaderSource);
-
-		/*CompileShader(m_Arg.VertexShader, m_Arg.VertexShaderSource);
-		CompileShader(m_Arg.FragmentShader, m_Arg.FragmentShaderSource);
-
-		if (m_Arg.HasGeometryShader)
-			CompileShader(m_Arg.GeometryShader, m_Arg.GeometryShaderSource);
-
-		if (m_Arg.HasTessellationShader)
-		{
-			CompileShader(m_Arg.TessellationControlShader, m_Arg.TessellationControlShaderSource);
-			CompileShader(m_Arg.TessellationEvaluationShader, m_Arg.TessellationEvaluationShaderSource);
-		}
-
-		LinkProgram();*/
+		Detach();
 	}
 	void Shader::InitShader()
 	{

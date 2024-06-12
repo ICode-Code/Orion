@@ -151,7 +151,7 @@ namespace OE1Core
 			glGetTexLevelParameteriv(GL_TEXTURE_2D_ARRAY, i, GL_TEXTURE_HEIGHT, &readBackBuf.HEIGHT);
 
 			// Resize the vector
-			readBackBuf.BUFFER.resize(readBackBuf.WIDTH * readBackBuf.HEIGHT * readBackBuf.HEIGHT);
+			readBackBuf.BUFFER.resize(readBackBuf.WIDTH * readBackBuf.HEIGHT * 4);
 
 			// Read image
 			glGetTexImage(GL_TEXTURE_2D_ARRAY, i, GL_RGBA, GL_UNSIGNED_BYTE, readBackBuf.BUFFER.data());
