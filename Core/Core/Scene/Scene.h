@@ -27,6 +27,8 @@
 #include "RenderController/RenderController.h"
 #include "GenesisController/GenesisController.h"
 
+#include "../Audio/AudioMaster/AudioMaster.h"
+
 #include <unordered_map>
 #include <functional>
 
@@ -175,6 +177,7 @@ namespace OE1Core
 		void UpdateFrameRes_Genesis(int _width, int _height);
 		void SetProtagonist(Component::ActorComponent* _actor);
 		Component::ActorComponent* GetProtagonist();
+		AudioEngine::AudioMaster* GetAudioMaster();
 
 		Memory::EnvironmentVariablesBuffer& GetEnvVar();
 		void UpdateEnvVar();
@@ -205,6 +208,7 @@ namespace OE1Core
 		std::unordered_map<ViewportIconBillboardType, ViewportBillboardIcon*> m_SceneBillboardIcon;
 
 	protected:
+		AudioEngine::AudioMaster* m_AudioMaster = nullptr;
 		Component::ActorComponent* m_Protagonist = nullptr;
 		GenesisController* m_GenesisController = nullptr;
 		RenderController* m_RenderController = nullptr;

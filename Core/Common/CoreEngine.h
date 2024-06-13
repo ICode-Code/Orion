@@ -32,7 +32,6 @@
 #include "../Core/CoreAnimation/AnimationManager/AnimationManager.h"
 
 
-
 namespace OE1Core
 {
 	class CoreEngine

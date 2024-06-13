@@ -56,6 +56,10 @@ namespace OE1Core
 		RegisterBillboardIcon(ViewportIconBillboardType::DIRECTIONAL_LIGHT, "Sun");
 		RegisterBillboardIcon(ViewportIconBillboardType::SPOT_LIGHT, "SpotLight");
 		
+
+		// Init Audio
+		m_AudioMaster = new AudioEngine::AudioMaster();
+		m_AudioMaster->LoadAudio("../ExternalAsset/Default/Sound/intro.wav", "INTRO");
 	}
 
 	Scene::~Scene()
@@ -192,7 +196,7 @@ namespace OE1Core
 	}
 	void Scene::SetProtagonist(Component::ActorComponent* _actor) {  m_Protagonist = _actor; }
 	Component::ActorComponent* Scene::GetProtagonist() { return m_Protagonist; }
-
+	AudioEngine::AudioMaster* Scene::GetAudioMaster() { return m_AudioMaster; };
 	Memory::EnvironmentVariablesBuffer& Scene::GetEnvVar() { return m_EnvVarBuffer;}
 	void Scene::UpdateEnvVar()
 	{
