@@ -8,6 +8,18 @@
 namespace OE1Core
 {
 	TextureCubeMap* Scene::GetSceneCubeMap() { return m_LightRoom->m_ActiveCubeMap; };
+
+	void Scene::UpdateAudioComponents_Engine()
+	{
+		/*auto audio_source_view = m_EntityRegistry.view<Component::AudioSourceComponent>();
+
+		for (auto ent : audio_source_view)
+		{
+			Component::AudioSourceComponent& _audio_source = audio_source_view.get<Component::AudioSourceComponent>(ent);
+			if(!_audio_source.IsPlaying())
+				_audio_source.Play();
+		}*/
+	}
 	void Scene::SetSceneCubeMap(TextureCubeMap* _cube_map)
 	{
 		m_LightRoom->m_ActiveCubeMap = _cube_map;

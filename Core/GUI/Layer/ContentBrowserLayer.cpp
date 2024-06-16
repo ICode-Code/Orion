@@ -6,6 +6,7 @@ namespace OE1Core
 	{
 		m_FolderIcon = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Folder")->GetTexture();
 		m_UnknownFileIcon = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Unknown")->GetTexture();
+		m_AudioIcon = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Wav")->GetTexture();
 
 		m_ActiveDirectory = ORI_ACTIVE_PATH;
 		ORI_PROJECT_HOT_DIRECTORY = ORI_ACTIVE_PATH;
@@ -180,6 +181,7 @@ namespace OE1Core
 
 		s_ASSET_DRAG_ID = 0;
 		s_TEXTURE_DRAG_ID = 100;
+		s_MUSIC_DRAG_ID = 200;
 
 		for (size_t i = 0; i < m_DirEntry.size(); i++)
 		{
@@ -223,6 +225,43 @@ namespace OE1Core
 
 			ImGui::PopID();
 		}
+		for (size_t i = 0; i < m_MusicEntry.size(); i++)
+		{
+			ImGui::PushID(s_MUSIC_DRAG_ID++);
+
+			PushPanalItemStyle();
+			if (ImGui::ImageButton(m_AudioIcon, { m_ThumbnailSize, m_ThumbnailSize }))
+			{
+				AudioEngine::AudioMaster* _audio_master = SceneManager::GetActiveScene()->GetAudioMaster();
+				if (_audio_master->IsPlaying(m_MusicEntry[i].first.Name))
+					_audio_master->Stop();
+				else
+					_audio_master->PlayWithDefaultSource(m_MusicEntry[i].first.Name, false);
+			}
+			
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Click To Play/Stop");
+			
+			PopPanalItemStyle();
+
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				std::string package_payload = m_MusicEntry[i].first.Name;
+
+				ImGui::SetDragDropPayload("AudioDropTarget", package_payload.c_str(), package_payload.size() + 1); // +1 for the null terminator
+
+				ImGui::EndDragDropSource();
+			}
+
+
+			PrintName(m_MusicEntry[i].first.Name.c_str());
+			
+			ImGui::NextColumn();
+
+			ImGui::PopID();
+		}
+		
 
 		for (size_t i = 0; i < m_DynamicMeshEntry.size(); i++)
 		{

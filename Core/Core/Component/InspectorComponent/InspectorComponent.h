@@ -31,6 +31,10 @@ namespace OE1Core
 			void SetPointLightComponent(class PointLightComponent* _point_light);
 			void SetDirectionalLightComponent(class DirectionalLightComponent* _dir_light);
 			void SetSpotLightComponent(class SpotLightComponent* _spot_light);
+
+			// Audio
+			void SetAudioSourceComponent(class AudioSourceComponent* _audio);
+			void SetAudioSourceArrayComponent(class AudioSourceArrayComponent* _audio);
 		protected: // components
 			class TagComponent* m_TagComponent = nullptr;
 			class TransformComponent* m_TransformComponent = nullptr;
@@ -46,6 +50,11 @@ namespace OE1Core
 			class PointLightComponent* m_PointLightComponent = nullptr;
 			class DirectionalLightComponent* m_DirectionalLightComponent = nullptr;
 			class SpotLightComponent* m_SpotLightComponent = nullptr;
+
+
+			// Audio
+			class AudioSourceComponent* m_AudioComponent = nullptr;
+			class AudioSourceArrayComponent* m_AudioSourceArray = nullptr;
 		protected: // flag
 			ImGuiTreeNodeFlags m_TreeNodeFlags = ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding;
 
@@ -64,6 +73,10 @@ namespace OE1Core
 			void IPointLight();
 			void ISpotLight();
 			void IDirectionalLight();
+
+			// Audio
+			void IAudioSource();
+			void IAudioSourceArray();
 
 		private: // bool
 			void IVModelInspect(IVModel* _model);

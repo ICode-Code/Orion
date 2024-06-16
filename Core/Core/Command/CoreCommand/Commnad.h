@@ -41,7 +41,7 @@ namespace OE1Core
 	public:
 		static void RegisterContentBrowserLayerNotifyCallback(const ContentBrowserLayerNotifyCallback& _callback);
 		static void RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback);
-
+		static void CALL_ContentBrowserLayerNotifyCallback();
 	public:
 		static void PushModelPreviewRenderCommand(CommandDef::ModelPreviewRenderCommandDef _command);
 		static void PushDynamicMeshModelPreviewRenderCommand(CommandDef::DynamicMeshModelPreviewRenderCommandDef _command);

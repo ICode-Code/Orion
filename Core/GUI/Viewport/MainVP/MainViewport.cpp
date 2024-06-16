@@ -272,6 +272,25 @@ namespace OE1Core
 
 			ImGui::EndDragDropTarget();
 		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("AudioDropTarget"))
+			{
+				// Cast the payload data to a string
+				const char* data = static_cast<const char*>(payload->Data);
+
+				if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::AUDIO_SOURCE))
+					SceneEntityFactory::GetScene()->RegisterBillboardIcon(ViewportIconBillboardType::AUDIO_SOURCE, "AudioSource");
+
+					SceneManager::GetActiveScene()->GetActiveEntity()->Pick(
+						SceneEntityFactory::CreateGlobalAudioSource(std::string(data)), true);
+
+			}
+
+			ImGui::EndDragDropTarget();
+		}
 	}
 
 	bool MainViewport::HandlMouseClick(OECore::MouseButtonPressedEvent& e)

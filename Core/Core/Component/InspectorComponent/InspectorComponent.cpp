@@ -36,6 +36,8 @@ namespace OE1Core
 			IPointLight();
 			ISpotLight();
 			IDirectionalLight();
+			IAudioSource();
+			IAudioSourceArray();
 
 
 			ImGui::PopStyleColor(7);
@@ -55,6 +57,11 @@ namespace OE1Core
 		
 		void InspectorComponent::SetDirectionalLightComponent(DirectionalLightComponent* _dir_light) { m_DirectionalLightComponent = _dir_light; }
 		void InspectorComponent::SetSpotLightComponent(SpotLightComponent* _spot_light) { m_SpotLightComponent = _spot_light; };
+		
+		
+		void InspectorComponent::SetAudioSourceComponent(AudioSourceComponent* _audio) { m_AudioComponent = _audio; };
+		void InspectorComponent::SetAudioSourceArrayComponent(AudioSourceArrayComponent* _audio) { m_AudioSourceArray = _audio; };
+		
 		void InspectorComponent::ITag()
 		{
 			if (!m_TagComponent)
@@ -422,9 +429,6 @@ namespace OE1Core
 						ImGui::Indent(-16.0f);
 						ImGui::TreePop();
 					}
-				
-
-					ImGui::Indent(-16.0f); 
 
 				}
 
@@ -955,6 +959,90 @@ namespace OE1Core
 
 				CustomFrame::UIEditorColor4("Color", glm::value_ptr(m_DirectionalLightComponent->GetData().Color));
 				CustomFrame::UIEditorFloatDrag("Intensity", &m_DirectionalLightComponent->GetData().Intensity, 0.f, 0.0f, 10.0f);
+				ImGui::Indent(-16.0f);
+				ImGui::TreePop();
+			}
+		}
+
+		void InspectorComponent::IAudioSourceArray()
+		{
+			if (!m_AudioSourceArray)
+				return;
+
+			if (ImGui::TreeNodeEx("Audio Source Array", m_TreeNodeFlags))
+			{
+				ImGui::Indent(16.0f);
+
+
+
+
+				ImGui::Indent(-16.0f);
+				ImGui::TreePop();
+			}
+		}
+		void InspectorComponent::IAudioSource()
+		{
+			if (!m_AudioComponent)
+				return;
+
+			if (ImGui::TreeNodeEx("Audio Source", m_TreeNodeFlags))
+			{
+				ImGui::Indent(16.0f);
+
+
+				ImGui::SetNextItemWidth(200);
+
+				static std::string _target_source = m_AudioComponent->m_AudioOrigin.m_Name.c_str();
+				static int crt = 0;
+				ImGui::SetNextItemWidth(200);
+
+				ImGui::PushStyleColor(ImGuiCol_Button, { 0.2f, 0.2f , 0.2f, 1.0f });
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, { 1 });
+				ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.5f, 0.5f });
+
+				ImGui::Combo("Source Audio", &crt, _target_source.c_str());
+
+				ImGui::PopStyleVar(2);
+				ImGui::PopStyleColor();
+
+				if (ImGui::BeginDragDropTarget())
+				{
+
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("AudioDropTarget"))
+					{
+						// Cast the payload data to a string
+						const char* data = static_cast<const char*>(payload->Data);
+
+						_target_source = std::string(data);
+						std::string _name(data);
+						
+						m_AudioComponent->SetSource(SceneManager::GetActiveScene()->GetAudioMaster()->GetAudioBuffer(_name), _name);
+						m_AudioComponent->Play();
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+
+
+
+				if(CustomFrame::UIEditorFloatDrag("Pitch", &m_AudioComponent->m_AudioOrigin.m_Pitch, 0.1f, -2.0f, 2.0f)) m_AudioComponent->UpdateArg();
+				if(CustomFrame::UIEditorFloatDrag("Gain", &m_AudioComponent->m_AudioOrigin.m_Gain, 0.1f, 0.0f, 5.0f)) m_AudioComponent->UpdateArg();
+				if (CustomFrame::UIEditorCheckbox("Loop", &m_AudioComponent->m_AudioOrigin.m_Loop))
+					m_AudioComponent->SetLoop(m_AudioComponent->m_AudioOrigin.m_Loop);
+
+
+				CustomFrame::UIEditorCheckbox("Spatial Sound", &m_AudioComponent->m_AudioOrigin.m_SpatialSound);
+
+				ImGui::BeginDisabled(!m_AudioComponent->m_AudioOrigin.m_SpatialSound);
+
+				if (CustomFrame::UIEditorFloatDrag("Roll Off Factor", &m_AudioComponent->m_AudioOrigin.m_RolloffFactor, 0.1f, 0.0f, 32.0f)) m_AudioComponent->UpdateSpatialSoundArg();
+				if (CustomFrame::UIEditorFloatDrag("Refersence Distance", &m_AudioComponent->m_AudioOrigin.m_ReferenceDistance, 0.1f, 0.0f, 64.0f)) m_AudioComponent->UpdateSpatialSoundArg();
+				if (CustomFrame::UIEditorFloatDrag("Max Distance", &m_AudioComponent->m_AudioOrigin.m_MaxDistance, 0.1f, 0.0f, 256.0f)) m_AudioComponent->UpdateSpatialSoundArg();
+
+				ImGui::EndDisabled();
+					
+				
 				ImGui::Indent(-16.0f);
 				ImGui::TreePop();
 			}

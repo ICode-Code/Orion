@@ -75,6 +75,7 @@ namespace OE1Core
 
 		s_ActiveScene->InputUpdate(_dt);
 		s_ActiveScene->BufferUpdate(_dt);
+		s_ActiveScene->UpdateAudioComponents_Engine();
 	}
 	void SceneManager::RenderScenesInEngine()
 	{
@@ -87,6 +88,7 @@ namespace OE1Core
 	{
 		s_ActiveScene->InputUpdate_Genesis(_dt);
 		s_ActiveScene->BufferUpdate_Genesis(_dt);
+		s_ActiveScene->UpdateAudioComponents_Genesis();
 	}
 	void SceneManager::RenderScenesInGame()
 	{

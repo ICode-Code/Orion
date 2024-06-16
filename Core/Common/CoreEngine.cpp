@@ -47,7 +47,7 @@ namespace OE1Core
 		s_CommandExecutionHandleManager = new OE1Core::CommandHnd::ExeHandleManager(SceneManager::GetActiveScene());
 
 
-		SceneManager::GetActiveScene()->GetAudioMaster()->PlayWithDefaultSource("INTRO", false);
+	//	SceneManager::GetActiveScene()->GetAudioMaster()->PlayWithDefaultSource("INTRO", false);
 	}
 
 	CoreEngine::~CoreEngine()

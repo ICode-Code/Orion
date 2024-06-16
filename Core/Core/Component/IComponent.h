@@ -27,5 +27,9 @@
 #include "LightComponent/DirectionaLightlComponent/DirectionaLightlComponent.h"
 #include "LightComponent/SpotLightComponent/SpotLightComponent.h"
 
+// Audio
+#include "AudioComponent/AudioSourceComponent/AudioSourceComponent.h"
+#include "AudioComponent/AudioSourceArrayComponent/AudioSourceArrayComponent.h"
+
 #endif // !OE1_ICOMPONENT_H_
  

@@ -179,11 +179,13 @@ namespace OE1Core
 	{
 		if (ImGui::TreeNodeEx("PostProcess", m_Flag))
 		{
+			ImGui::Indent(m_Indent);
+
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 4 });
 
 			if (ImGui::TreeNodeEx("Bloom", m_Flag))
 			{
-
+				ImGui::Indent(m_Indent);
 
 				if (CustomFrame::UIEditorFloat("Bloom Influence", &m_Scene->m_EnvVarBuffer.BloomInfluence, 0.001f, 1.0f))
 					m_Scene->UpdateEnvVar();
@@ -217,12 +219,15 @@ namespace OE1Core
 					
 				}
 
+				ImGui::Indent(-m_Indent);
 
 				ImGui::TreePop();
 			}
 
 			if (ImGui::TreeNodeEx("Fog", m_Flag))
 			{
+				ImGui::Indent(m_Indent);
+
 				if(CustomFrame::UIEditorColor3("Bloom Color", glm::value_ptr(m_Scene->m_EnvVarBuffer.FogColor))) m_Scene->UpdateEnvVar();
 				if(CustomFrame::UIEditorFloatDrag("Gradiant", &m_Scene->m_EnvVarBuffer.FogGradiant, 0.002f, 0.0f, 50.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
 				if(CustomFrame::UIEditorFloatDrag("Density", &m_Scene->m_EnvVarBuffer.FogDensity, 0.0001f, 0.0001f, 1.0f, "%.5f", 0)) m_Scene->UpdateEnvVar();
@@ -230,21 +235,27 @@ namespace OE1Core
 				if(CustomFrame::UIEditorFloatDrag("Upper Limit", &m_Scene->m_EnvVarBuffer.FogUpperLimit, 0.002f, -10.0f, 1.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
 				if(CustomFrame::UIEditorFloatDrag("Lower Limit", &m_Scene->m_EnvVarBuffer.FogLowerLimit, 0.002f, -10.0f, 1.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
 
+				ImGui::Indent(-m_Indent);
 				ImGui::TreePop();
 			}
 
 			if (ImGui::TreeNodeEx("Color Grading", m_Flag))
 			{
+				ImGui::Indent(m_Indent);
+
 				if (CustomFrame::UIEditorFloatDrag("Brightness", &m_Scene->m_EnvVarBuffer.Brightness, 0.002f, -1.0f, 1.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
 				if (CustomFrame::UIEditorFloatDrag("Contrast", &m_Scene->m_EnvVarBuffer.Contrast, 0.02f, 0.0f, 5.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
 				if (CustomFrame::UIEditorFloatDrag("Saturation", &m_Scene->m_EnvVarBuffer.Saturation, 0.002f, 0.0f, 5.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
 				if (CustomFrame::UIEditorFloatDrag("Hue", &m_Scene->m_EnvVarBuffer.Hue, 0.002f, -1.0f, 1.0f, "%.3f", 0)) m_Scene->UpdateEnvVar();
 				
+				ImGui::Indent(-m_Indent);
 				ImGui::TreePop();
 			}
 
 
 			ImGui::PopStyleVar();
+
+			ImGui::Indent(-m_Indent);
 			ImGui::TreePop();
 		}
 	}
@@ -262,6 +273,7 @@ namespace OE1Core
 
 		if (ImGui::TreeNodeEx("World Lighting", m_Flag))
 		{
+			ImGui::Indent(m_Indent);
 
 
 			if (CustomFrame::UIEditorFloat("World Light Strength", &m_Scene->m_EnvVarBuffer.WorldLightIntensity, 0.01f, 16.0f))
@@ -274,6 +286,7 @@ namespace OE1Core
 				m_Scene->UpdateEnvVar();
 
 			
+			ImGui::Indent(-m_Indent);
 			ImGui::TreePop();
 		}
 
@@ -363,9 +376,67 @@ namespace OE1Core
 			ImGuiIO& io = ImGui::GetIO();
 
 			CustomFrame::UIEditorFloatDrag("Global Scale", &io.FontGlobalScale, 0.005f, 0.001f, 1.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp, 200.0f);
-			CustomFrame::UIEditorCheckbox("Render Thread for Animation", &m_Scene->m_UseActiveThreadForAnimation, 200.0f);
+			
 
+			ImGui::TreePop();
+		}
 
+		if (ImGui::TreeNodeEx("Animation", m_Flag))
+		{
+			ImGui::Indent(m_Indent);
+
+			CustomFrame::UIEditorCheckbox("Use Render Tread", &m_Scene->m_UseActiveThreadForAnimation, 200.0f);
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("If you check this, The Engine use the render thread to update the animation matrix!");
+
+			static int _default_fixed_step = 0;
+			if (CustomFrame::UIEditorDropdown("Fixed Update Time Step", &_default_fixed_step, "24\0 30\0 60"))
+			{
+				switch (_default_fixed_step)
+				{
+				case 0:
+					SkeletonAnimator::s_FixedUpdateStep = 1.0f/24.0f;
+					break;
+				case 1:
+					SkeletonAnimator::s_FixedUpdateStep = 1.0f/30.0f;
+					break;
+				case 2:
+					SkeletonAnimator::s_FixedUpdateStep = 1.0f/60.0f;
+					break;
+				default:
+					break;
+				}
+			}
+
+			ImGui::Indent(-m_Indent);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNodeEx("Spatial Audio", m_Flag))
+		{
+			ImGui::Indent(m_Indent);
+
+			static int _distance_model = 2;
+			if (CustomFrame::UIEditorDropdown("Quality", &_distance_model, "Exponet\0 Inverse\0 Linear"))
+			{
+
+				switch (_distance_model)
+				{
+				case 0:
+					m_Scene->GetAudioMaster()->SetDistanceModel(AL_EXPONENT_DISTANCE);
+					break;
+				case 1:
+					m_Scene->GetAudioMaster()->SetDistanceModel(AL_INVERSE_DISTANCE);
+					break;
+				case 2:
+					m_Scene->GetAudioMaster()->SetDistanceModel(AL_LINEAR_DISTANCE);
+					break;
+				default:
+					break;
+				}
+
+			}
+
+			ImGui::Indent(-m_Indent);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNodeEx("Editor Camera", m_Flag))

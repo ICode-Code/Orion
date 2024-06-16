@@ -27,7 +27,7 @@ namespace OE1Core
 				alcCloseDevice(m_Device);
 				return;
 			}
-
+			alDistanceModel(AL_LINEAR_DISTANCE);
 			alGenSources(1, &m_DefaultSource);
 		}
 		AudioMaster::~AudioMaster()
@@ -81,14 +81,37 @@ namespace OE1Core
 			alGenBuffers(1, &m_Buffers[_name]);
 			alBufferData(m_Buffers[_name], format, _audio_core.data(), static_cast<ALsizei>(_audio_core.size()), _source.sampleRate);
 
+			drwav_uninit(&_source);
+
+
+
+			std::string full_address = ORI_PROJECT_HOT_DIRECTORY + "\\" + _name + ".wav";
+				
+			std::ofstream file_texture(full_address, std::ios::out | std::ios::binary);
+			file_texture.close();
+			
+			Command::CALL_ContentBrowserLayerNotifyCallback();
 
 			return m_Buffers[_name];
+
 		}
 		bool AudioMaster::UnloadAudio(std::string _name)
 		{
 
 
 			return false;
+		}
+		void AudioMaster::SetDistanceModel(ALenum _model)
+		{
+			alDistanceModel(_model);
+		}
+		void AudioMaster::SetListenerPosition(glm::vec3 _pos)
+		{
+			alListener3f(AL_POSITION, _pos.x, _pos.y, _pos.z);
+		}
+		void AudioMaster::SetListenerVelocity(glm::vec3 _vel)
+		{
+			alListener3f(AL_VELOCITY, _vel.x, _vel.y, _vel.z);
 		}
 		ALuint AudioMaster::GetAudioBuffer(std::string _name)
 		{
@@ -103,11 +126,7 @@ namespace OE1Core
 
 		void AudioMaster::PlayWithDefaultSource(std::string _name, bool _finish)
 		{
-			if (m_Buffers.find(_name) == m_Buffers.end())
-			{
-				LOG_ERROR("No Audio file exist with a name {0} to play!", _name);
-				return;
-			}
+			alSourceStop(m_DefaultSource);
 			alSourcei(m_DefaultSource, AL_BUFFER, m_Buffers[_name]);
 			alSourcePlay(m_DefaultSource);
 
@@ -117,6 +136,16 @@ namespace OE1Core
 				while (_source_state == AL_PLAYING)
 					alGetSourcei(m_DefaultSource, AL_SOURCE_STATE, &_source_state);
 			}
+		}
+		bool AudioMaster::IsPlaying(std::string _name)
+		{
+			ALint _source_state;
+			alGetSourcei(m_DefaultSource, AL_SOURCE_STATE, &_source_state);
+			return _source_state == AL_PLAYING;
+		}
+		void AudioMaster::Stop()
+		{
+			alSourceStop(m_DefaultSource);
 		}
 	}
 }

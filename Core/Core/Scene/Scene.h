@@ -108,6 +108,11 @@ namespace OE1Core
 		void RegisterSpotlight(uint32_t _entity_id, Component::SpotLightComponent* _light);
 
 
+		// Audio
+		void UpdateAudioComponents_Engine();
+		void UpdateAudioComponents_Genesis();
+
+
 		// DEBUG MESH
 
 		bool  PurgeDebugMesh(uint32_t _package_id);
@@ -169,7 +174,9 @@ namespace OE1Core
 		void InputUpdate(float _dt);
 		void BufferUpdate(float _dt);
 		void InitRender();
+		void InitOnce();
 
+		void InitOnce_Genesis();
 		void InputUpdate_Genesis(float _dt);
 		void BufferUpdate_Genesis(float _dt);
 		void OnEvent_Genesis(OECore::IEvent& e);

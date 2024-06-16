@@ -60,6 +60,7 @@ namespace OE1Core
 		// Init Audio
 		m_AudioMaster = new AudioEngine::AudioMaster();
 		m_AudioMaster->LoadAudio("../ExternalAsset/Default/Sound/intro.wav", "INTRO");
+		m_AudioMaster->LoadAudio("../ExternalAsset/Default/Sound/DefaultAmbient.wav", "DefaultAmbient");
 	}
 
 	Scene::~Scene()
@@ -94,6 +95,10 @@ namespace OE1Core
 		if (m_ActivePlayerEntity)
 			delete m_ActivePlayerEntity;
 	}
+	void Scene::InitOnce() 
+	{
+		UpdateAudioComponents_Engine();
+	}
 	void Scene::InputUpdate(float _dt)
 	{
 		m_LastDelta = _dt;
@@ -104,7 +109,7 @@ namespace OE1Core
 
 		m_InputController->QuickInputUpdateControllerComponent(_dt);
 		m_InputController->QuickInputUpdateMasterCamera(_dt);
-
+		m_AudioMaster->SetListenerPosition(m_MasterSceneCamera->Camera->GetPosition());
 		if (m_UseActiveThreadForAnimation)
 			UpdateAnimationTransform();
 	}

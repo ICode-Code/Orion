@@ -38,6 +38,8 @@ namespace OE1Core
 
 		_target_entity->Update();
 
+		m_Scene->m_AudioMaster->SetListenerPosition(_camera->GetPosition());
+
 		if (m_Scene->ShouldUseRenderThreadForAnimationUpdate())
 			m_Scene->UpdateAnimationTransform();
 	}

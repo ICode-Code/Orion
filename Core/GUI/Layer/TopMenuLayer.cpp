@@ -107,6 +107,14 @@ namespace OE1Core
 					Command::PushTextureLoadCommand(command);
 				}
 			}
+			if (ImGui::MenuItem(ICON_FA_FILE_CIRCLE_PLUS"   Import Audio..."))
+			{
+				std::string loaded_file = WindowFileDialog::LoadFile("Wav Files (*.wav;)\0*.wav\0", WindowManager::GetEngineWindow()->GetWin(), "Load Audio");
+				if (!loaded_file.empty())
+				{
+					SceneManager::GetActiveScene()->GetAudioMaster()->LoadAudio(loaded_file, Loader::NameHandle::FilterFileName(loaded_file));
+				}
+			}
 			if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK"   Save", "  Ctr + S"))
 			{
 
@@ -338,6 +346,20 @@ namespace OE1Core
 
 				ImGui::EndMenu();
 			}
+
+			//if (ImGui::BeginMenu("Audio Source"))
+			//{
+			//	/*if (ImGui::MenuItem(ICON_FA_VOLUME_HIGH"   Global Ambient", "        GameObject        "))
+			//	{
+			//		if (!SceneEntityFactory::GetScene()->HasBillboardType(ViewportIconBillboardType::AUDIO_SOURCE))
+			//			SceneEntityFactory::GetScene()->RegisterBillboardIcon(ViewportIconBillboardType::AUDIO_SOURCE, "AudioSource");
+			//		
+			//		SceneManager::GetActiveScene()->GetActiveEntity()->Pick(
+			//			SceneEntityFactory::CreateGlobalAudioSource());
+			//	}*/
+
+			//	ImGui::EndMenu();
+			//}
 			
 			if (ImGui::BeginMenu("Simple Mesh"))
 			{

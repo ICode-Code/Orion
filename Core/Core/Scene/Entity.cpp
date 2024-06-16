@@ -40,6 +40,9 @@ namespace OE1Core
 		if(HasComponent<Component::PointLightComponent>())
 			GetComponent<Component::PointLightComponent>().Update(_transform[3]);
 
+		if (HasComponent<Component::AudioSourceComponent>())
+			GetComponent<Component::AudioSourceComponent>().Update(_transform[3]);
+
 		if (HasComponent<Component::DirectionalLightComponent>())
 			GetComponent<Component::DirectionalLightComponent>().Update(_transform[3], GetComponent<Component::TransformComponent>().m_Euler);
 			

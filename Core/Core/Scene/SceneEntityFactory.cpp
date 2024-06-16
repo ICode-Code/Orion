@@ -32,6 +32,7 @@ namespace OE1Core
 		ClonePointLight(_src_entity, my_new_entity);
 		CloneSpotLight(_src_entity, my_new_entity);
 		CloneDirectionalLight(_src_entity, my_new_entity);
+		CloneAudioSourceComponent(_src_entity, my_new_entity);
 		
 
 
@@ -63,6 +64,7 @@ namespace OE1Core
 		RemoveBillboardComponent(_entity);
 		RemoveMeshComponent(_entity);
 		RemoveBoundingVolumeComponent(_entity);
+		RemoveAudioSourceComponent(_entity);
 		m_Scene->m_EntityRegistry.destroy(_entity.GetHandle());
 		return true;
 	}
@@ -241,6 +243,34 @@ namespace OE1Core
 			&_dest.GetComponent<Component::DirectionalLightComponent>()
 		);
 
+	}
+	Entity SceneEntityFactory::CreateGlobalAudioSourceArray()
+	{
+		return m_Scene->CreateEntity();
+	}
+	Entity SceneEntityFactory::CreateGlobalAudioSource(std::string _name)
+	{
+		Entity my_entity = m_Scene->CreateEntity();
+		AddDefaultComponent(my_entity, "Ambient");
+		my_entity.GetComponent<Component::TagComponent>().SetType(EntityType::T_AUDIO_SOURCE);
+
+		Component::AudioSourceComponent& _audio_source = my_entity.AddComponent<Component::AudioSourceComponent>();
+		_audio_source.SetSource(m_Scene->GetAudioMaster()->GetAudioBuffer(_name), _name);
+	
+
+		Component::TransformComponent& transform = my_entity.GetComponent<Component::TransformComponent>();
+		transform.Update();
+
+		Component::ViewportBillboardComponent& billboard = my_entity.AddComponent<Component::ViewportBillboardComponent>(m_Scene->GetBillboardIcon(ViewportIconBillboardType::AUDIO_SOURCE), (uint32_t)my_entity, ViewportIconBillboardType::AUDIO_SOURCE);
+		billboard.Update(transform, m_Scene->m_MasterSceneCamera->Camera->m_View);
+
+
+
+		my_entity.GetComponent<Component::InspectorComponent>().SetAudioSourceComponent(
+			&my_entity.GetComponent<Component::AudioSourceComponent>()
+		);
+		_audio_source.Play();
+		return my_entity;
 	}
 	Entity SceneEntityFactory::CreateSpotLight()
 	{
@@ -725,6 +755,15 @@ namespace OE1Core
 			&_dest.GetComponent<Component::ActorComponent>()
 		);
 	}
+	void SceneEntityFactory::CloneAudioSourceComponent(Entity _src, Entity _dest)
+	{
+		if (!_src.HasComponent<Component::AudioSourceComponent>())
+			return;
+
+		_dest.AddComponent<Component::AudioSourceComponent>(_src.GetComponent<Component::AudioSourceComponent>());
+
+		_dest.GetComponent<Component::InspectorComponent>().SetAudioSourceComponent(&_dest.GetComponent<Component::AudioSourceComponent>());
+	}
 	void SceneEntityFactory::CloneTransformComponent(Entity _src, Entity _dest)
 	{
 		if (!_src.HasComponent<Component::TransformComponent>())
@@ -905,6 +944,16 @@ namespace OE1Core
 	{
 		return s_UniformDistribution(s_Engine);
 	}
+	void SceneEntityFactory::RemoveAudioSourceComponent(Entity _entity)
+	{
+		if (!_entity.HasComponent<Component::AudioSourceComponent>())
+			return;
 
+		Component::AudioSourceComponent& _source = _entity.GetComponent<Component::AudioSourceComponent>();
+		_source.Stop();
+
+		_entity.RemoveComponent<Component::AudioSourceComponent>();
+
+	}
 
 }

@@ -36,6 +36,10 @@ namespace OE1Core
 		static Entity CreateDirectionalLight();
 		static Entity CreateSpotLight();
 
+		// Create Audio
+		static Entity CreateGlobalAudioSource(std::string _name);
+		static Entity CreateGlobalAudioSourceArray();
+
 
 		// Component
 		static void AddAudioComponent(Entity _entity);
@@ -95,6 +99,7 @@ namespace OE1Core
 		static void CloneCameraPackageComponent(Entity& _src, Entity _dest);
 		static void CloneBoundingVolume(Entity& _src, Entity _dest);
 		static void CloneActorComponent(Entity _src, Entity _dest);
+		static void CloneAudioSourceComponent(Entity _src, Entity _dest);
 
 		static void ClonePointLight(Entity _src, Entity _dest);
 		static void CloneDirectionalLight(Entity _src, Entity _dest);
@@ -105,6 +110,7 @@ namespace OE1Core
 		static void RemovePointLightComponent(Entity _entity);
 		static void RemoveDirectionalLightComponent(Entity _entity);
 		static void RemoveSpotLightComponent(Entity _entity);
+		static void RemoveAudioSourceComponent(Entity _entity);
 
 		static void RemoveMeshComponent(Entity _entity);
 		static void RemoveBillboardComponent(Entity _entity);

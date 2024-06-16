@@ -14,13 +14,29 @@ namespace OE1Core
 
 	void SkeletonAnimator::UpdateAnimations(float _dt)
 	{
-		for (auto iter = s_AnimationSet.begin(); iter != s_AnimationSet.end(); iter++)
+
+		auto currentTime = std::chrono::high_resolution_clock::now();
+
+		float elapsedTime = std::chrono::duration<float>(currentTime - s_LastUpdateTime).count();
+
+		
+		// Accumulate elapsed time
+		s_TimeAccumulation += elapsedTime;
+
+		while (s_TimeAccumulation >= s_FixedUpdateStep)
 		{
-			if(iter->second->m_OnTransition)
-				iter->second->Interpolate(iter->second->m_DeltaFactor * (1.0f / iter->second->m_TickPerSecond));
-			else
-				iter->second->UpdateTransform(iter->second ->m_DeltaFactor * (1.0f / iter->second->m_TickPerSecond));
+			for (auto iter = s_AnimationSet.begin(); iter != s_AnimationSet.end(); iter++)
+			{
+				if (iter->second->m_OnTransition)
+					iter->second->Interpolate(s_FixedUpdateStep);
+				else
+					iter->second->UpdateTransform(s_FixedUpdateStep);
+			}
+
+			s_TimeAccumulation -= s_FixedUpdateStep; // Subtract the fixed time step from the accumulated time
 		}
+
+		s_LastUpdateTime = currentTime;
 	}
 	bool SkeletonAnimator::HasAnimation(uint32_t _id)
 	{

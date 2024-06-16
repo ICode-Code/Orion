@@ -9,6 +9,10 @@ namespace OE1Core
 	{
 		s_ContentBrowserLayerNotifyCallback = _callback;
 	}
+	void Command::CALL_ContentBrowserLayerNotifyCallback()
+	{
+		s_ContentBrowserLayerNotifyCallback();
+	}
 	void Command::RegisterThreadInfoLayerNotifyCallback(const ThreadInfoLayerNotifyCallback& _callback)
 	{
 		s_ThreadInfoLayerNotifyCallback = _callback;
