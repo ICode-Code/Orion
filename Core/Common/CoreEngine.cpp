@@ -29,6 +29,9 @@ namespace OE1Core
 		// Init UI
 		s_GuiBase = new OE1Core::GUIBase(s_EngineWindow->GetWin(), &s_EngineWindow->m_Args.MainContext);
 
+		// RTS
+		s_RTSInit = new RTSIntializer();
+
 		// Init System Interface
 		// This guys will be imporatnt whe  we have dynamic lib who want to interact with the core
 		s_CoreSystem = new OE1Core::CoreSystem();
@@ -62,6 +65,7 @@ namespace OE1Core
 		delete s_AnimationManager;
 		delete s_ResourceInitializer;
 		delete s_CommandExecutionHandleManager;
+		delete s_RTSInit;
 	}
 	void CoreEngine::RunEngine()
 	{

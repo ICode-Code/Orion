@@ -57,6 +57,8 @@ namespace OE1Core
 		static void CreateRichSkinnedMeshComponent(IVModel* _mesh, uint32_t _offset, Entity& _entity);
 		static void CreateAnimationComponent(DynamicMesh* _dynamic_mesh, uint32_t _offset, Entity& _entity);
 
+		// Script
+		static void AddScriptComponent(Entity _entity);
 
 
 		// Operation

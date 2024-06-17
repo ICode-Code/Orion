@@ -32,6 +32,9 @@ namespace OE1Core
 			void SetDirectionalLightComponent(class DirectionalLightComponent* _dir_light);
 			void SetSpotLightComponent(class SpotLightComponent* _spot_light);
 
+			// Script
+			void SetScriptComponent(class ScriptComponent* _script);
+
 			// Audio
 			void SetAudioSourceComponent(class AudioSourceComponent* _audio);
 			void SetAudioSourceArrayComponent(class AudioSourceArrayComponent* _audio);
@@ -51,6 +54,8 @@ namespace OE1Core
 			class DirectionalLightComponent* m_DirectionalLightComponent = nullptr;
 			class SpotLightComponent* m_SpotLightComponent = nullptr;
 
+			// Script
+			class ScriptComponent* m_ScriptComponent = nullptr;
 
 			// Audio
 			class AudioSourceComponent* m_AudioComponent = nullptr;
@@ -73,6 +78,9 @@ namespace OE1Core
 			void IPointLight();
 			void ISpotLight();
 			void IDirectionalLight();
+
+			// Script
+			void IScript();
 
 			// Audio
 			void IAudioSource();

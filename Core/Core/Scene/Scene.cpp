@@ -124,6 +124,17 @@ namespace OE1Core
 		m_RenderController->RenderClientCameraScene();
 		m_RenderController->FlushRenderCommand();
 	}
+	void Scene::ExeScript()
+	{
+		auto _script_comp_view = m_EntityRegistry.view<Component::ScriptComponent>();
+		for (auto ent : _script_comp_view)
+		{
+			Component::ScriptComponent& _script = _script_comp_view.get<Component::ScriptComponent>(ent);
+			
+			if (_script.IsActive())
+				_script.OnUpdate_D();
+		}
+	}
 	void Scene::HotComponentUpdate()
 	{
 		auto BillboatdCompView = m_EntityRegistry.view<Component::ViewportBillboardComponent>();

@@ -31,6 +31,8 @@
 
 #include "../Core/CoreAnimation/AnimationManager/AnimationManager.h"
 
+#include "../Core/RTS/RTSInitializer.h"
+
 
 namespace OE1Core
 {
@@ -69,6 +71,7 @@ namespace OE1Core
 		inline static OE1Core::ProjectManager* s_ProjectManager = nullptr;
 		inline static OE1Core::CommandHnd::ExeHandleManager* s_CommandExecutionHandleManager = nullptr;
 		inline static OE1Core::AnimationManager* s_AnimationManager = nullptr;
+		inline static OE1Core::RTSIntializer* s_RTSInit = nullptr;
 
 	protected: // Windows
 		inline static OE1Core::EngineWindow* s_EngineWindow = nullptr;

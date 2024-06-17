@@ -37,6 +37,17 @@ namespace OE1Core
 	{
 		m_GenesisController->InitRender();
 	}
+	void Scene::ExeScript_Genesis()
+	{
+		auto _script_comp_view = m_EntityRegistry.view<Component::ScriptComponent>();
+		for (auto ent : _script_comp_view)
+		{
+			Component::ScriptComponent& _script = _script_comp_view.get<Component::ScriptComponent>(ent);
+
+			if (_script.IsActive())
+				_script.OnUpdate();
+		}
+	} 
 	void Scene::OnEvent_Genesis(OECore::IEvent& e)
 	{
 		m_GenesisController->OnEvent(e);

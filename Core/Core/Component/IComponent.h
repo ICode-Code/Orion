@@ -31,5 +31,9 @@
 #include "AudioComponent/AudioSourceComponent/AudioSourceComponent.h"
 #include "AudioComponent/AudioSourceArrayComponent/AudioSourceArrayComponent.h"
 
+
+// Script
+#include "ScriptComponent/ScriptComponent.h"
+
 #endif // !OE1_ICOMPONENT_H_
  

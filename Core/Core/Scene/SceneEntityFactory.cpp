@@ -956,4 +956,17 @@ namespace OE1Core
 
 	}
 
+
+	void SceneEntityFactory::AddScriptComponent(Entity _entity)
+	{
+		if (_entity.HasComponent<Component::ScriptComponent>())
+			return;
+
+		std::string _name = "script_" + _entity.GetComponent<Component::TagComponent>().m_Identifier;
+		_entity.AddComponent<Component::ScriptComponent>(_name);
+
+		_entity.GetComponent<Component::InspectorComponent>().SetScriptComponent(
+			&_entity.GetComponent<Component::ScriptComponent>()
+		);
+	}
 }

@@ -24,6 +24,7 @@ namespace OE1Core
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Play.png",				"Play");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Unknown.png",				"Unknown");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "wav.png",					"Wav");
+		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "lua.png",					"Script");
 
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "PointLight.png",			"PointLight");
 		AssetManager::RegisterInternalTexture(s_DefaultTexturePath + "Sun.png",					"Sun");

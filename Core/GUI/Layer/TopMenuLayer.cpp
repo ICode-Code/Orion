@@ -244,6 +244,16 @@ namespace OE1Core
 
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::MenuItem(ICON_FA_CODE"    Script", "Lua Script"))
+			{
+				if (SceneManager::GetActiveScene()->GetActiveEntity()->ValidSelection())
+				{
+					SceneEntityFactory::AddScriptComponent(
+						SceneManager::GetActiveScene()->GetActiveEntity()->GetActive()
+					);
+				}
+			}
 			
 			
 

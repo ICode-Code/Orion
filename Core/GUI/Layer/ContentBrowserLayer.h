@@ -5,6 +5,8 @@
 #include "PreDef.h"
 #include <filesystem>
 
+#include "../SourceEditor/SourceEditorManager.h"
+
 #include <ShlObj.h>
 #include <Shlwapi.h> // For PathFileExists
 
@@ -70,6 +72,7 @@ namespace OE1Core
 		ImTextureID m_UnknownFileIcon	= 0;
 		ImTextureID m_AudioIcon			= 0;
 		ImTextureID m_AnimationIcon		= 0;
+		ImTextureID m_ScriptIcon		= 0;
 
 		inline static int s_ASSET_DRAG_ID = 0;
 		inline static int s_TEXTURE_DRAG_ID = 0;
@@ -78,6 +81,7 @@ namespace OE1Core
 		inline static int s_MUSIC_DRAG_ID = 0;
 		inline static int s_STATIC_MESH_DRAG_ID = 0;
 		inline static int s_DYNAMIC_MESH_DRAG_ID = 0;
+		inline static int s_SCRIPT_DRAG_ID = 0;
 
 
 		// Content List

@@ -30,6 +30,9 @@ namespace OE1Core
 
 		/// Viewport
 		s_Viewports.push_back(new MainViewport());
+
+		// Source Editor
+		s_SourceEditorManager = new SourceEditorManager();
 	}
 	GUIBase::~GUIBase()
 	{
@@ -46,6 +49,8 @@ namespace OE1Core
 		s_Layers.clear();
 		s_MiniWins.clear();
 		s_Viewports.clear();
+
+		delete s_SourceEditorManager;
 		delete s_GUI;
 	}
 	void GUIBase::Update()
@@ -90,6 +95,8 @@ namespace OE1Core
 			_dynamic_view_port.second->Render();
 		
 
+
+		SourceEditorManager::Render();
 	}
 	void GUIBase::OnEvent(OECore::IEvent& e)
 	{

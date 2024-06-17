@@ -5,6 +5,7 @@
 #include "Viewport/IViewport.h"
 #include "MiniWindow/IMiniWin.h"
 #include "Viewport/DynamicViewportManager/DynamicViewportManager.h"
+#include "SourceEditor/SourceEditorManager.h"
 
 #include <vector>
 #include <unordered_map>
@@ -27,6 +28,7 @@ namespace OE1Core
 		inline static std::vector<LayerBase*> s_Layers;
 		inline static std::vector<BaseViewport*> s_Viewports;
 		inline static std::vector<BaseMiniWindow*> s_MiniWins;
+		inline static SourceEditorManager* s_SourceEditorManager = nullptr;
 
 	protected:
 		inline static OE1Core::Gui* s_GUI = nullptr;

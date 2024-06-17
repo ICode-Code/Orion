@@ -38,6 +38,7 @@ namespace OE1Core
 			IDirectionalLight();
 			IAudioSource();
 			IAudioSourceArray();
+			IScript();
 
 
 			ImGui::PopStyleColor(7);
@@ -58,6 +59,7 @@ namespace OE1Core
 		void InspectorComponent::SetDirectionalLightComponent(DirectionalLightComponent* _dir_light) { m_DirectionalLightComponent = _dir_light; }
 		void InspectorComponent::SetSpotLightComponent(SpotLightComponent* _spot_light) { m_SpotLightComponent = _spot_light; };
 		
+		void InspectorComponent::SetScriptComponent(ScriptComponent* _script) { m_ScriptComponent = _script; };
 		
 		void InspectorComponent::SetAudioSourceComponent(AudioSourceComponent* _audio) { m_AudioComponent = _audio; };
 		void InspectorComponent::SetAudioSourceArrayComponent(AudioSourceArrayComponent* _audio) { m_AudioSourceArray = _audio; };
@@ -963,7 +965,27 @@ namespace OE1Core
 				ImGui::TreePop();
 			}
 		}
+		void InspectorComponent::IScript()
+		{
+			if (!m_ScriptComponent)
+				return;
 
+			if (ImGui::TreeNodeEx("Script Component", m_TreeNodeFlags))
+			{
+				ImGui::Indent(16.0f);
+
+				if(ImGui::Button("Edit", { 120.0f, 0.0f }))
+				{
+					SourceEditorManager::Register(m_ScriptComponent->m_Name, *m_ScriptComponent);
+				}
+
+				ImGui::Checkbox("Enable", &m_ScriptComponent->m_IsEnable);
+
+
+				ImGui::Indent(-16.0f);
+				ImGui::TreePop();
+			}
+		}
 		void InspectorComponent::IAudioSourceArray()
 		{
 			if (!m_AudioSourceArray)

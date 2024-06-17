@@ -175,12 +175,14 @@ namespace OE1Core
 		void BufferUpdate(float _dt);
 		void InitRender();
 		void InitOnce();
+		void ExeScript();
 
 		void InitOnce_Genesis();
 		void InputUpdate_Genesis(float _dt);
 		void BufferUpdate_Genesis(float _dt);
 		void OnEvent_Genesis(OECore::IEvent& e);
 		void InitRender_Genesis();
+		void ExeScript_Genesis();
 		void UpdateFrameRes_Genesis(int _width, int _height);
 		void SetProtagonist(Component::ActorComponent* _actor);
 		Component::ActorComponent* GetProtagonist();

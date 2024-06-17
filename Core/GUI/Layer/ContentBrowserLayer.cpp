@@ -7,6 +7,7 @@ namespace OE1Core
 		m_FolderIcon = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Folder")->GetTexture();
 		m_UnknownFileIcon = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Unknown")->GetTexture();
 		m_AudioIcon = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Wav")->GetTexture();
+		m_ScriptIcon = (ImTextureID)(intptr_t)AssetManager::GetInternalTexture("Script")->GetTexture();
 
 		m_ActiveDirectory = ORI_ACTIVE_PATH;
 		ORI_PROJECT_HOT_DIRECTORY = ORI_ACTIVE_PATH;
@@ -166,6 +167,8 @@ namespace OE1Core
 			}
 			else if (ext == ".wav" || ext == ".mp3")
 				m_MusicEntry.push_back(std::make_pair(info, data_iter));
+			else if (ext == ".lua")
+				m_ScriptEntry.push_back(std::make_pair(info, data_iter));
 			else 
 				m_UnknownFileEntry.push_back(std::make_pair(info, data_iter));
 
@@ -182,6 +185,7 @@ namespace OE1Core
 		s_ASSET_DRAG_ID = 0;
 		s_TEXTURE_DRAG_ID = 100;
 		s_MUSIC_DRAG_ID = 200;
+		s_SCRIPT_DRAG_ID = 300;
 
 		for (size_t i = 0; i < m_DirEntry.size(); i++)
 		{
@@ -257,6 +261,30 @@ namespace OE1Core
 
 			PrintName(m_MusicEntry[i].first.Name.c_str());
 			
+			ImGui::NextColumn();
+
+			ImGui::PopID();
+		}
+
+		for (size_t i = 0; i < m_ScriptEntry.size(); i++)
+		{
+			ImGui::PushID(s_SCRIPT_DRAG_ID++);
+
+			PushPanalItemStyle();
+			if (ImGui::ImageButton(m_ScriptIcon, { m_ThumbnailSize, m_ThumbnailSize }))
+			{
+
+				//SourceEditorManager::Register(m_ScriptEntry[i].first.Name, )
+			}
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Double Click to Edit");
+
+			PopPanalItemStyle();
+
+
+			PrintName(m_ScriptEntry[i].first.Name.c_str());
+
 			ImGui::NextColumn();
 
 			ImGui::PopID();
