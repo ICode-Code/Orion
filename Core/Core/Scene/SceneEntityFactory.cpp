@@ -965,6 +965,12 @@ namespace OE1Core
 		std::string _name = "script_" + _entity.GetComponent<Component::TagComponent>().m_Identifier;
 		_entity.AddComponent<Component::ScriptComponent>(_name);
 
+		Component::ScriptComponent& _script = _entity.GetComponent<Component::ScriptComponent>();
+		
+		if (_entity.HasComponent<Component::PointLightComponent>())
+			_entity.GetComponent<Component::PointLightComponent>().BindBaseLightComponent(_script.GetState());
+
+
 		_entity.GetComponent<Component::InspectorComponent>().SetScriptComponent(
 			&_entity.GetComponent<Component::ScriptComponent>()
 		);

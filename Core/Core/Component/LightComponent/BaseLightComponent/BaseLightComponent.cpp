@@ -37,5 +37,28 @@ namespace OE1Core
 			glBufferSubData(GL_UNIFORM_BUFFER, m_Index * Memory::s_CoreLightPackageBufferSize, Memory::s_CoreLightPackageBufferSize, &m_Light);
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		}
+		void BaseLightComponent::BindBaseLightComponent(lua_State* L)
+		{
+			using namespace luabridge;
+
+			getGlobalNamespace(L).beginNamespace("Memory")
+				.beginClass<Memory::CoreLight>("CoreLight")
+					.addData<glm::vec4>("Color", &Memory::CoreLight::Color)
+				.endClass()
+				.endNamespace()
+				.beginClass<BaseLightComponent>("BaseLightComponent")
+					.addConstructor<void(*)(GLuint, int)>()
+					//.addFunction("SetIndex", &BaseLightComponent::SetIndex)
+					.addFunction("GetIndex", &BaseLightComponent::GetIndex)
+					//.addFunction("Update", &BaseLightComponent::Update)
+					.addFunction("UpdateBuffer", &BaseLightComponent::UpdateBuffer)
+					.addFunction("GetData", &BaseLightComponent::GetData)
+					//.addFunction("GetBufferID", &BaseLightComponent::GetBufferID)
+				.endClass();
+
+			luabridge::push(L, this);
+			lua_setglobal(L, "LIGHT");
+
+		}
 	}
 }

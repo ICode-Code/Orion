@@ -115,5 +115,9 @@ namespace OE1Core
 		{
 
 		}
+		lua_State* ScriptComponent::GetState()
+		{
+			return m_State;
+		}
 	}
 }

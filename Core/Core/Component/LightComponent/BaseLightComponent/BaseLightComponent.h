@@ -3,6 +3,9 @@
 
 #include "UniformBlocks.h"
 
+#include <Lua/lua.hpp>
+#include <LuaBridge/LuaBridge.h>
+
 namespace OE1Core
 {
 	namespace Component
@@ -19,6 +22,7 @@ namespace OE1Core
 			virtual void UpdateBuffer();
 			Memory::CoreLight& GetData();
 			GLuint GetBufferID();
+			void BindBaseLightComponent(lua_State* L);
 
 
 		protected:

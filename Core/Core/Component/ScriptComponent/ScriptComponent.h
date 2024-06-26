@@ -48,6 +48,7 @@ namespace OE1Core
 			/// </summary>
 			/// <param name="_source"></param>
 			void RecompileFromSource(std::string _source);
+			lua_State* GetState();
 
 		private:
 			lua_State* m_State = nullptr;
